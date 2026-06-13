@@ -75,6 +75,87 @@
 
       
     <div>
+        <h1><a href="sovereign-clojure-bitcoin-integration.html">Clojure &amp; Bitcoin: Building a Sovereign Node &amp; Integration Sandbox</a></h1>
+        <div><hr /><h1 id="clojure-&amp;-bitcoin:-building-a-sovereign-node-&amp;-integration-sandbox">Clojure &amp; Bitcoin: Building a Sovereign Node &amp; Integration Sandbox</h1><p>Lisp (specifically Clojure) and Bitcoin are a natural match. Both prioritize immutable data structures, declarative transformations, and minimal state side-effects.</p><p>In this post, we&apos;ll walk through the architectural blueprint of <strong><a href="https://github.com/nurazhardotcom/bitcoin">bitcoin-clojure</a></strong>, a sandbox project showing how to query Bitcoin node RPCs, map spendable UTXOs from local SQLite databases, validate transaction payloads, and redact sensitive data at the edge.</p><hr /><h2 id="1.-node-rpc-client-plumbing">1. Node RPC Client Plumbing</h2><p>The first layer is talking to the Bitcoin node itself over JSON-RPC. Using <code>http-kit</code> and <code>cheshire</code> (JSON parser), we can call remote node methods natively:</p><pre><code class="language-clojure">(def rpc-config
+  {:url &quot;http://127.0.0.1:8332&quot;
+   :user &quot;rpcuser&quot;
+   :password &quot;rpcpassword&quot;})
+
+(defn rpc-call
+  &quot;Executes a JSON-RPC method call on the Bitcoin node.&quot;
+  ([method] (rpc-call method []))
+  ([method params]
+   (let [payload (json/generate-string
+                  {:jsonrpc &quot;2.0&quot;
+                   :id &quot;clj-rpc&quot;
+                   :method method
+                   :params params})
+         options {:headers {&quot;Content-Type&quot; &quot;application/json&quot;}
+                  :basic-auth [(:user rpc-config) (:password rpc-config)]
+                  :body payload}
+         response @(http/post (:url rpc-config) options)]
+     (if (= 200 (:status response))
+       (json/parse-string (:body response) true)
+       {:error (str &quot;HTTP Error: &quot; (:status response))}))))
+</code></pre><p>With this, running <code>(rpc-call &quot;getblockchaininfo&quot;)</code> returns a native Clojure map representing the blockchain status.</p><hr /><h2 id="2.-local-first-sandbox:-utxo-tracking-via-sqlite">2. Local-First Sandbox: UTXO Tracking via SQLite</h2><p>Instead of querying third-party APIs (which exposes your financial privacy), the sovereign way is to read directly from your local wallet database.</p><p>Using <code>next.jdbc</code> and <code>honey.sql</code>, we query spendable outputs (UTXOs) from a local wallet sandbox:</p><pre><code class="language-clojure">(defn query-wallet-utxos
+  &quot;Queries local SQLite database to list spendable outputs.&quot;
+  [db-path]
+  (let [ds (jdbc/get-datasource {:dbtype &quot;sqlite&quot; :dbname db-path})
+        query (sql/format {:select [:txid :outputIndex :amount :state]
+                           :from [:outputs]
+                           :where [:= :state &quot;SPENDABLE&quot;]})]
+    (jdbc/execute! ds query)))
+</code></pre><hr /><h2 id="3.-transaction-validation-with-malli">3. Transaction Validation with Malli</h2><p>To prevent malformed transaction request structures from reaching signing nodes, we define a declarative schema using <strong><a href="https://github.com/metosin/malli">Malli</a></strong>:</p><pre><code class="language-clojure">(def TransactionRequestSchema
+  [:map
+   [:appId :string]
+   [:inputs [:vector [:map
+                      [:txid [:re #&quot;^[a-fA-F0-9]{64}$&quot;]]
+                      [:outputIndex :int]]]]
+   [:outputs [:vector [:map
+                        [:toAddress [:re #&quot;^[13m-n2-9][a-km-zA-HJ-NP-Z1-9]{26,34}$&quot;]]
+                        [:satoshis [:pos-int]]]]]
+   [:metadata [:map
+               [:timestamp :int]
+               [:data :string]]]])
+</code></pre><p>This enforces strict hexagonal boundaries: matching valid transaction hex patterns, valid Bitcoin addresses, positive satoshi spends, and clean metadata.</p><hr /><h2 id="4.-privacy-sentry:-data-loss-prevention-(dlp)">4. Privacy Sentry: Data Loss Prevention (DLP)</h2><p>When attaching raw text metadata directly into transaction payloads or OP_RETURN scripts, leakages can happen. We inject a regex redaction layer to scrub sensitive Singapore NRIC profiles before they hit the blockchain:</p><pre><code class="language-clojure">(def sg-nric-regex #&quot;(?i)\b[SGTFAM]\d{7}[A-Z]\b&quot;)
+
+(defn redact-payload-metadata
+  &quot;Scans metadata text and redacts sensitive Singapore NRIC profiles.&quot;
+  [text]
+  (clojure.string/replace text sg-nric-regex &quot;[REDACTED_NRIC]&quot;))
+</code></pre><hr /><h2 id="why-this-architecture-fits-the-bitcoin-ethos">Why this Architecture Fits the Bitcoin Ethos</h2><p>By putting the RPC clients, local SQLite DBs, and payload validation under a Clojure workflow, we achieve:</p><ul><li><strong>Determinism</strong>: Zero side-effects inside key validations.</li><li><strong>Hermetic Runs</strong>: No dependency on cloud providers to run rules.</li><li><strong>Privacy</strong>: Data stays local and is scrubbed before broadcast.</li></ul><p>You can check out the sandbox project source code on GitHub: <strong><a href="https://github.com/nurazhardotcom/bitcoin">github.com/nurazhardotcom/bitcoin</a></strong>.</p></div>
+        
+        
+        <p><i>Published: 2026-06-14</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/architecture.html">architecture</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/security.html">security</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/clojure.html">clojure</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/bitcoin.html">bitcoin</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/sandbox.html">sandbox</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="how-to-maximize-clojure-usage-token-on-antigravity-ide.html">How to Maximize Clojure Usage &amp; Minimize Token Quota on Antigravity IDE</a></h1>
         <div><hr /><h1 id="how-to-maximize-clojure-usage-&amp;-minimize-token-quota-on-antigravity-ide">How to Maximize Clojure Usage &amp; Minimize Token Quota on Antigravity IDE</h1><p>Developing Clojure applications with AI assistance introduces a unique challenge: Clojure namespaces are dense, data structures are deeply nested, and code-as-data constructs demand precise context. If you feed entire namespaces and REPL outputs to reasoning-focused LLMs without a strategy, you will burn through your token quotas (and API budget) rapidly.</p><p>Here is how to optimize your developer workflow in <strong>Antigravity IDE</strong> using Gemini&apos;s <strong>Thinking Budget</strong> configurations.</p><hr /><h2 id="understanding-the-reasoning-settings-(thinking-levels)">🧠 Understanding the Reasoning Settings (Thinking Levels)</h2><p>Modern models (like Gemini 2.5/3.5 Flash and Pro) introduce a configurable <strong>Thinking Level</strong> (or Reasoning Budget). This setting represents how many internal, step-by-step reasoning tokens the model compiles before writing the final code.</p><p>To manage your tokens, you need to understand when to toggle between them:</p><table><thead><tr><th style="text-align:left;">Setting</th><th style="text-align:left;">When to Use</th><th style="text-align:left;">Clojure Dev Tasks</th><th style="text-align:left;">Quota Consumption</th><th style="text-align:left;">Latency</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Low / Off</strong></td><td style="text-align:left;">Simple, rote coding and direct translations</td><td style="text-align:left;">Boilerplate templating, converting JSON to edn, writing basic Babashka shell scripts.</td><td style="text-align:left;"><strong>Minimal</strong> (Input + Output only)</td><td style="text-align:left;"><strong>Very Fast</strong></td></tr><tr><td style="text-align:left;"><strong>Medium</strong></td><td style="text-align:left;">Logical, multi-step coding problems</td><td style="text-align:left;">Standard app functions, writing test suites, refactoring standard functions.</td><td style="text-align:left;"><strong>Moderate</strong></td><td style="text-align:left;"><strong>Moderate</strong></td></tr><tr><td style="text-align:left;"><strong>High</strong></td><td style="text-align:left;">Highly complex, stateful, or abstract logic</td><td style="text-align:left;">Designing advanced macros, debugging race conditions in <code>core.async</code> pipelines, orchestrating multi-agent systems.</td><td style="text-align:left;"><strong>Maximum</strong> (Adds hidden thinking tokens)</td><td style="text-align:left;"><strong>Slower</strong></td></tr></tbody></table><hr /><h2 id="tactical-rules-for-clojure-token-preservation">🛠️ Tactical Rules for Clojure Token Preservation</h2><h3 id="1.-repl-driven-prompting-(don&apos;t-copy-paste-entire-files)">1. REPL-Driven Prompting (Don&apos;t Copy-Paste Entire Files)</h3><p>Instead of copy-pasting your entire <code>core.clj</code> namespace to fix an error:</p><ol start="1"><li>Copy <strong>only</strong> the function signature and its spec (if you use <code>clojure.spec</code>).</li><li>Paste the exact stack trace from your REPL.</li><li>Keep the thinking level on <strong>Low</strong>. The model doesn&apos;t need to reason about your whole system to fix a syntax bug or structural partition mismatch.</li></ol><h3 id="2.-guard-against-the-chat-history-multiplier">2. Guard Against the Chat History Multiplier</h3><p>In interactive chats, the IDE sends your entire chat history back to the model on every new turn. If your previous prompts returned responses that consumed <strong>2,000 thinking tokens</strong>, those tokens are sent back as input on the next turn.</p><ul><li><strong>The Fix:</strong> Treat chat threads as transient. Once a bug is resolved or a concept is clear, close the chat thread and start a fresh one. This resets your input context back to zero.</li></ul><h3 id="3.-programmatic-control-via-babashka">3. Programmatic Control via Babashka</h3><p>If you write automation scripts that query the Gemini API directly, you can configure the thinking budget dynamically in your payload using <code>generationConfig</code>.</p><p>Here is a Babashka script template showing how to switch thinking budgets dynamically:</p><pre><code class="language-clojure">#!/usr/bin/env bb
 (require &apos;[babashka.http-client :as http]
