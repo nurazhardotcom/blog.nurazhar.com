@@ -3,10 +3,14 @@
   <head>
     <script>
       (function() {
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
       })();
     </script>
     <title>The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</title>
@@ -159,16 +163,22 @@ ALTER TABLE payouts ADD CONSTRAINT check_positive_payout CHECK (amount_sent &gt;
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const toggleButton = document.getElementById('theme-toggle');
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-        
-        toggleButton.addEventListener('click', () => {
-          const current = document.documentElement.getAttribute('data-theme');
-          const next = current === 'dark' ? 'light' : 'dark';
-          document.documentElement.setAttribute('data-theme', next);
-          localStorage.setItem('theme', next);
-          toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
-        });
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
       });
     </script>
   </body>
