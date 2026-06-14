@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-14T02:55:15+00:00</updated>
+  <updated>2026-06-14T03:12:28+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -313,6 +313,43 @@ for f in glob.glob(&quot;posts/*.md&quot;):
     E --&gt;|Git Push| F[GitHub Pages]
     F --&gt;|HTTPS CNAME| G(blog.nurazhar.com)
 </code></pre><ol start="1"><li><strong>Ingestion</strong>: It reads raw Markdown files from the <code>/posts</code> directory and reads configuration parameters from <code>bb.edn</code>.</li><li><strong>Metadata Parsing</strong>: It extracts frontmatter metadata (Title, Date, Tags, Description) from the top of each Markdown file.</li><li><strong>HTML Transformation</strong>: Using Clojure-based parsing engines, it transforms Markdown syntax into clean HTML.</li><li><strong>Templating</strong>: It uses <strong><a href="https://github.com/yogthos/Selmer">Selmer</a></strong> (a Django-like templating library written in Clojure) to wrap the rendered Markdown inside your main HTML layout (<code>/templates/base.html</code>, <code>/templates/post.html</code>, etc.).</li><li><strong>Feed &amp; Index Generation</strong>: It automatically aggregates posts sorted by date to generate:<ul><li><code>index.html</code> (the homepage loading up to <span class="formula">N</span> posts).</li><li><code>archive.html</code> (a list of all posts).</li><li><code>tags.html</code> (filtered views).</li><li><code>feed.xml</code> (RSS feed).</li></ul></li><li><strong>Output</strong>: All static resources are placed into a single <code>/public</code> directory, ready to be hosted anywhere.</li></ol><hr /><h2 id="3.-why-this-design-is-superior-(the-pros)">3. Why This Design is Superior (The Pros)</h2><ul><li><strong>Zero-Database Security</strong>: No dynamic database queries mean <strong>zero SQL injection, zero Server-Side Request Forgery (SSRF), and zero database connection exhaustion</strong>.</li><li><strong>Extreme Performance</strong>: Static HTML files are served directly by the web server (GitHub Pages / Nginx / Cloudflare) at edge speeds. The browser parses only clean HTML and CSS, rendering instantly.</li><li><strong>Low Footprint</strong>: No background servers running on Node.js or Python, minimizing CPU/Memory usage.</li><li><strong>Git as the Single Source of Truth</strong>: Posts are stored as plain text version-controlled files. Moving, backing up, or editing posts is as simple as running standard Git commands.</li></ul><hr /><h2 id="conclusion:-emulating-satoshi&apos;s-design-philosophy">Conclusion: Emulating Satoshi&apos;s Design Philosophy</h2><p>In his original 2008 Bitcoin v0.1 release, Satoshi Nakamoto focused on <strong>peer-to-peer simplicity</strong>—designing a system with direct nodes, no unnecessary intermediate layers, and raw efficiency.</p><p>Quickblog mirrors this philosophy in web development. By stripping away heavy JS frameworks, hydrations, client-side state managers, and database servers, it leaves you with exactly what the web was built for: <strong>clean, readable, and immortal HTML</strong>.</p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/red-teaming-ai-pipelines.html</id>
+    <link href="https://blog.nurazhar.com/red-teaming-ai-pipelines.html"/>
+    <title>Red Teaming AI Pipelines: How Attackers Weaponize LLMs &amp; How to Build Defensive Harnesses</title>
+    <updated>2026-06-14T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>In the landscape of AI security engineering, the threat model has shifted. We are no longer just securing static databases; we are securing <strong>dynamic, probabilistic execution runtimes (LLMs &amp; Autonomous Agents)</strong>.</p><p>To land roles in AI Security Engineering (such as at leading digital asset platforms), an engineer must understand both sides of the coin: <strong>how attackers weaponize LLMs</strong> and <strong>how to construct deterministic defensive verification gates</strong>.</p><p>Here is the structural blueprint of AI-driven threat generation and the architectural frameworks required to defend them.</p><hr /><h3 id="the-threat-model:-how-attackers-leverage-llms">The Threat Model: How Attackers Leverage LLMs</h3><p>Attackers use LLMs as automated, force-multiplying compilation engines rather than simple query-answering bots.</p><pre><code class="language-mermaid">graph TD
+    subgraph Offensive AI Pipeline [The Adversarial Loop]
+        A[Uncensored Local LLM] --&gt;|1. Generate Polymorphic Code| B[Polymorphic Script]
+        A --&gt;|2. Search Source Code| C[Locate Zero-Day Logic Bug]
+        
+        B --&gt; D[Signature Evasion]
+        C --&gt; E[Exploit Construction]
+        
+        D --&gt; F[Delivery: Supply Chain Injection / AUR]
+        E --&gt; F
+    end
+    
+    style A fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
+    style F fill:#f9e2af,stroke:#111,stroke-width:2px,color:#111
+</code></pre><h4 id="1.-polymorphic-payload-generation">1. Polymorphic Payload Generation</h4><p>Traditional security systems look for static indicators of compromise (hashes or signature strings). Attackers use local, fine-tuned LLMs to rewrite the syntax of malicious shell scripts dynamically on every download.</p><ul><li>By changing variable naming structures, altering execution pathways, and obfuscating payloads (e.g., swapping standard calls for dynamically computed base64 evaluation hooks), the malware performs the exact same function but completely evades signature-based static detection.</li></ul><h4 id="2.-automated-vulnerability-auditing-(targeting-zero-days)">2. Automated Vulnerability Auditing (Targeting Zero-Days)</h4><p>State-sponsored groups feed massive codebases (such as open-source libraries or OS modules) into automated agent pipelines. These agents are programmed to trace variable bounds, look for memory leaks, and identify injection points, generating functional exploit payloads at scale.</p><hr /><h3 id="the-defensive-architecture:-constructing-the-test-harness">The Defensive Architecture: Constructing the Test Harness</h3><p>To secure LLM integrations and agentic workflows, we must treat the probabilistic model output as an <strong>untrusted process</strong>. We apply classic sandboxing and input/output contract boundaries.</p><pre><code class="language-mermaid">graph TD
+    subgraph Defensive Engineering [The Hardened RAG Gateway]
+        Input[User Prompt / File Input] --&gt; Gate1[Input Guardrail: Prompt Injection Filter]
+        Gate1 --&gt;|Clean Context| Model[Probabilistic LLM Engine]
+        Model --&gt;|Raw String Output| Gate2[Output Validator: Deterministic JSON Schema Parser]
+        Gate2 --&gt;|Valid Contract Match| Target[System Action / Tool Execution]
+        Gate2 --&gt;|Invalid / Threat Flagged| Alert[Abort Execution &amp; Log Telemetry]
+    end
+    
+    style Model fill:#89b4fa,stroke:#111,stroke-width:2px,color:#111
+    style Gate2 fill:#a6e3a1,stroke:#111,stroke-width:2px,color:#111
+    style Alert fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
+</code></pre><h4 id="the-core-security-principles">The Core Security Principles</h4><table><thead><tr><th style="text-align:left;">Risk Vector</th><th style="text-align:left;">Threat Mechanics</th><th style="text-align:left;">Defensive Mitigation (The Test Harness)</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Prompt Injection</strong></td><td style="text-align:left;">Adversarial inputs tricking the model to ignore system prompt rules.</td><td style="text-align:left;"><strong>Context Isolation</strong>: Separating system instructions from untrusted user data via clear boundary delimiters.</td></tr><tr><td style="text-align:left;"><strong>Insecure Tool Use</strong></td><td style="text-align:left;">Agents executing commands natively (e.g., executing raw bash strings).</td><td style="text-align:left;"><strong>Deterministic JSON Contracts</strong>: Forcing the model to output <em>only</em> strict JSON schemas that map to safe, pre-validated parameters.</td></tr><tr><td style="text-align:left;"><strong>Data Leakage</strong></td><td style="text-align:left;">Parametric memory containing PII/keys exposing data during queries.</td><td style="text-align:left;"><strong>RAG Filter layers</strong>: Running localized regex/entity extraction on context before it is loaded into the LLM context window.</td></tr></tbody></table><hr /><h3 id="practical-implementation:-building-the-audit-gateway">Practical Implementation: Building the Audit Gateway</h3><p>In a secure Software Development Life Cycle (SDLC) that adopts AI automation, the security engineer builds <strong>repeatable validation engines</strong>.</p><p>For example, when auditing third-party code packages or automated agent outputs, we execute static analysis rules targeting privilege escalation risks:</p><pre><code class="language-clojure">;; Example signature check inside an automated Clojure/Babashka harness:
+(def security-rules
+  [{:id &quot;NET-01&quot; :level :critical :desc &quot;Outbound payload downloads&quot; :regex #&quot;(?i)\b(curl|wget)\b&quot;}
+   {:id &quot;PERS-01&quot; :level :high :desc &quot;Persistence hooks&quot; :regex #&quot;(?i)(/etc/systemd/system|/etc/cron)&quot;}])
+</code></pre><p>By placing these automated validations directly inside developer pipelines (like Git pre-commit hooks or packaging environments), we prevent compromised scripts or corrupted AI actions from executing on the host workstation.</p><h3 id="bridging-the-gap:-ai-security-as-an-infrastructure-challenge">Bridging the Gap: AI Security as an Infrastructure Challenge</h3><p>Ultimately, securing AI is not about changing the weights of the model; it is about <strong>designing the security infrastructure around it</strong>. By wrapping AI runtimes in isolated execution boundaries, validating outputs with deterministic contracts, and auditing inputs before they reach the context window, we ensure agentic automation remains secure and reliable.</p></div>]]></content>
   </entry>
   <entry>
     <id>https://blog.nurazhar.com/repetition-loops-and-aur-audit.html</id>
