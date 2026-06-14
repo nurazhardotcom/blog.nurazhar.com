@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-14T02:14:48+00:00</updated>
+  <updated>2026-06-14T02:26:15+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -206,6 +206,17 @@ package() {
 ;; Example: Run a low-cost, fast query
 (println (query-gemini &quot;Generate a basic Babashka task definition for file-syncing.&quot; 0))
 </code></pre><hr /><h2 id="conclusion">🎯 Conclusion</h2><p>Treating LLM usage like hardware memory management makes you a highly efficient developer:</p><ul><li>Use <strong>Low</strong> by default for 90% of your coding and rapid chatting.</li><li>Elevate to <strong>High</strong> reasoning exclusively for architectural bottlenecks or macro debugging.</li><li>Keep your chat history short.</li></ul></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html</id>
+    <link href="https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html"/>
+    <title>Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell</title>
+    <updated>2026-06-14T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>In systems administration and software security engineering, one of the most common anti-patterns is installing development runtimes globally via system package managers (e.g., <code>sudo pacman -S</code> or <code>sudo apt-get install</code>).</p><p>While convenient, this practice introduces unnecessary structural entropy and violates the <strong>Principle of Least Privilege (PoLP)</strong>. Here is why userspace installations are superior, followed by a clean bootstrapping script for modern environments running the <strong>Fish shell</strong>.</p><hr /><h3 id="the-security-&amp;-operations-case-for-userspace">The Security &amp; Operations Case for Userspace</h3><ol start="1"><li><strong>Privilege Isolation</strong>: Compilers, linters, package managers, and binary downloaders do not require root permissions. Running them system-wide creates unnecessary attack surface. A vulnerability in a cargo build script (<code>build.rs</code>) or a malicious dependency should never have write access to <code>/usr/bin</code> or <code>/etc</code>.</li><li><strong>Deterministic Version Management</strong>: Modern development moves faster than operating system release cycles. Systems that manage toolchains locally in <code>$HOME/.cargo</code> or <code>$HOME/.rustup</code> allow developers to pin toolchains per project without risking conflicts with OS-level binaries.</li><li><strong>No Configuration Drift</strong>: System updates should not break your development environments. Keeping the compiler toolchain within the user context ensures clean isolation from core OS updates.</li></ol><hr /><h3 id="bootstrapping-rust-in-userspace-(via-fish-shell)">Bootstrapping Rust in Userspace (via Fish Shell)</h3><p>Most legacy bootstrap instructions assume Bash or Zsh, resulting in messy exports appended to <code>.bashrc</code> or <code>.zshrc</code>.</p><p>On modern setups running the <strong>Fish shell</strong>, we can use Fish&apos;s native universal path variables to cleanly expose the userspace binaries without modifying global configuration files.</p><h4 id="step-1:-userspace-installation">Step 1: Userspace Installation</h4><p>Run the official installer. The <code>--no-modify-path</code> flag is critical—it prevents the installer from trying to append legacy bash syntax to your dotfiles.</p><pre><code class="language-fish">curl --proto &apos;=https&apos; --sv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+</code></pre><h4 id="step-2:-configure-the-user-path-in-fish">Step 2: Configure the User Path in Fish</h4><p>Instead of manually editing config files, Fish provides the <code>fish_add_path</code> helper. This modifies the <code>fish_user_paths</code> universal variable securely and permanently.</p><pre><code class="language-fish">fish_add_path $HOME/.cargo/bin
+</code></pre><p>This updates your user path configuration immediately across all active and future Fish sessions.</p><hr /><h3 id="verification">Verification</h3><p>Confirm that the compiler is running from userspace:</p><pre><code class="language-fish">which rustc
+# Output: /home/username/.cargo/bin/rustc
+</code></pre><p>By confining the compiler, compiler tooling, and cargo crates to userspace, we achieve zero system footprint, high version control flexibility, and a much cleaner security posture.</p></div>]]></content>
   </entry>
   <entry>
     <id>https://blog.nurazhar.com/quickblog-double-title-gotcha.html</id>
