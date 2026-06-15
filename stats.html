@@ -39,133 +39,150 @@
       });
     </script>
 
-
+{% if favicon-tags %}{{favicon-tags | safe}}{% endif %}
 
     <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
     <meta name="title" content="Analytics Dashboard">
     <meta name="twitter:title" content="Analytics Dashboard">
     <meta property="og:title" content="Analytics Dashboard">
     <meta property="og:type" content="website">
-
-    <meta name="description" content="Private visitor analytics dashboard for blog.nurazhar.com">
-    <meta name="twitter:description" content="Private visitor analytics dashboard for blog.nurazhar.com">
-    <meta property="og:description" content="Private visitor analytics dashboard for blog.nurazhar.com">
-
-
-    <meta name="twitter:url" content="https://blog.nurazhar.com/stats.html">
-    <meta property="og:url" content="https://blog.nurazhar.com/stats.html">
-
-
+{% if sharing.description %}
+    <meta name="description" content="{{sharing.description}}">
+    <meta name="twitter:description" content="{{sharing.description}}">
+    <meta property="og:description" content="{{sharing.description}}">
+{% endif %}
+{% if sharing.url %}
+    <meta name="twitter:url" content="{{sharing.url}}">
+    <meta property="og:url" content="{{sharing.url}}">
+{% endif %}
+{% if sharing.image %}
+    <meta name="twitter:image" content="{{sharing.image}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="{{sharing.image}}">
+    <meta property="og:image:alt" content="{{sharing.image-alt}}">
+{% else %}
     <meta name="twitter:card" content="summary">
-
-
-
+{% endif %}
+{% if sharing.author %}
+    <meta name="twitter:creator" content="{{sharing.author}}">
+{% endif %}
+{% if sharing.twitter-handle %}
+    <meta name="twitter:site" content="{{sharing.twitter-handle}}">
+{% endif %}
   </head>
   <body>
 
     <div class="site-header">
       <div class="wrapper">
         <div class="site-nav">
-          <a class="page-link" href="stats.html">Stats</a>
-          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="stats{{page-suffix}}">Stats</a>
+          <a class="page-link" href="archive{{page-suffix}}">Archive</a>
           <a class="page-link" href="tags/index.html">Tags</a>
-          
+          {% if discuss-link %}<a class="page-link" href="{{discuss-link}}">Discuss</a>{% endif %}
 	  <a class="page-link" href="atom.xml">
             Feed
           </a>
-	  
-	  
+	  {% if twitter-handle %}
+	  <a class="page-link" href="https://twitter.com/{{twitter-handle}}">
+            Twitter
+          </a>
+	  {% endif %}
+	  {% if about-link %}
+	  <a class="page-link" href="{{about-link}}">About</a>
+	  {% endif %}
           <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
         </div>
         <div>
           <h1 class="site-title">
-            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
+            <a class="page-link" href="index.html">Nur Azhar's</a>
           </h1>
-	  <p>Thoughts on clojure, linux, security and Bitcoin&#39;s 0.1v (Satoshi Nakamoto&#39;s Design) in an era of artificial intelligence</p>
+	  <p>Thoughts on clojure, linux, security and Bitcoin's 0.1v (Satoshi Nakamoto's Design) in an era of artificial intelligence</p>
         </div>
       </div>
     </div>
 
     <div class="wrapper">
 
-      <h1>
-  
-  Analytics Dashboard
-  
-</h1>
-<div><hr /><div id="analytics-app" style="margin-top: 30px; font-family: system-ui, -apple-system, sans-serif;">
+      <div id="analytics-app" style="margin-top: 30px; font-family: system-ui, -apple-system, sans-serif;">
   <!-- Authentication Form -->
   <div id="auth-section" style="max-width: 400px; margin: 40px auto; padding: 30px; border-radius: 8px; border: 1px solid var(--code-border); background: var(--code-bg); box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
     <h3 style="margin-top: 0; margin-bottom: 20px; color: var(--text-color);">Access Secure Dashboard</h3>
     <input type="password" id="passcode-input" placeholder="Enter dashboard passcode" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid var(--code-border); background: var(--bg-color); color: var(--text-color); font-size: 1rem; box-sizing: border-box;" />
     <button id="auth-submit" style="width: 100%; padding: 12px; border: none; background: var(--link-color); color: var(--bg-color); font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 1rem; transition: opacity 0.2s;">View Analytics</button>
     <p id="auth-error" style="color: #ff4444; margin-top: 15px; font-size: 0.9rem; display: none;">Invalid passcode. Please try again.</p>
-  </div>  <!-- Dashboard Content (hidden initially) -->  <div id="dashboard-section" style="display: none;">
+  </div>
+
+  <!-- Dashboard Content (hidden initially) -->
+  <div id="dashboard-section" style="display: none;">
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--code-border); padding-bottom: 15px; margin-bottom: 30px;">
       <h2 style="margin: 0; color: var(--text-color);">Visitor Metrics</h2>
       <button id="logout-btn" style="padding: 6px 12px; background: transparent; border: 1px solid var(--code-border); color: var(--text-color); border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Lock</button>
-    </div><pre><code>&lt;!-- Stats Grid --&gt;
-&lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;&quot;&gt;
-  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);&quot;&gt;
-    &lt;div style=&quot;font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;&quot;&gt;Total Logged Views&lt;/div&gt;
-    &lt;div id=&quot;stat-total-views&quot; style=&quot;font-size: 2rem; font-weight: bold; color: var(--text-color);&quot;&gt;0&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);&quot;&gt;
-    &lt;div style=&quot;font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;&quot;&gt;Tracked Pages&lt;/div&gt;
-    &lt;div id=&quot;stat-total-pages&quot; style=&quot;font-size: 2rem; font-weight: bold; color: var(--text-color);&quot;&gt;0&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);&quot;&gt;
-    &lt;div style=&quot;font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;&quot;&gt;Primary Country&lt;/div&gt;
-    &lt;div id=&quot;stat-top-country&quot; style=&quot;font-size: 2rem; font-weight: bold; color: var(--text-color);&quot;&gt;-&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+    </div>
 
-&lt;div style=&quot;display: grid; grid-template-columns: 1fr; gap: 40px;&quot;&gt;
-  &lt;!-- Page Views Table --&gt;
-  &lt;div&gt;
-    &lt;h3 style=&quot;border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);&quot;&gt;Top Visited Pages&lt;/h3&gt;
-    &lt;table style=&quot;width: 100%; border-collapse: collapse; margin-top: 10px;&quot;&gt;
-      &lt;thead&gt;
-        &lt;tr style=&quot;text-align: left; border-bottom: 1px solid var(--code-border); color: var(--text-color);&quot;&gt;
-          &lt;th style=&quot;padding: 10px 5px;&quot;&gt;Path&lt;/th&gt;
-          &lt;th style=&quot;padding: 10px 5px; text-align: right; width: 100px;&quot;&gt;Pageviews&lt;/th&gt;
-        &lt;/tr&gt;
-      &lt;/thead&gt;
-      &lt;tbody id=&quot;pages-tbody&quot;&gt;
-        &lt;!-- Dynamically populated --&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
-  &lt;/div&gt;
+    <!-- Stats Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+      <div style="padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);">
+        <div style="font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;">Total Logged Views</div>
+        <div id="stat-total-views" style="font-size: 2rem; font-weight: bold; color: var(--text-color);">0</div>
+      </div>
+      <div style="padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);">
+        <div style="font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;">Tracked Pages</div>
+        <div id="stat-total-pages" style="font-size: 2rem; font-weight: bold; color: var(--text-color);">0</div>
+      </div>
+      <div style="padding: 20px; border-radius: 6px; border: 1px solid var(--code-border); background: var(--code-bg);">
+        <div style="font-size: 0.9rem; color: var(--text-color); opacity: 0.7; margin-bottom: 5px;">Primary Country</div>
+        <div id="stat-top-country" style="font-size: 2rem; font-weight: bold; color: var(--text-color);">-</div>
+      </div>
+    </div>
 
-  &lt;!-- Two Column Layout for Country and Referrer --&gt;
-  &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;&quot;&gt;
-    &lt;!-- Countries --&gt;
-    &lt;div&gt;
-      &lt;h3 style=&quot;border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);&quot;&gt;Geographic Distribution&lt;/h3&gt;
-      &lt;div id=&quot;countries-list&quot; style=&quot;margin-top: 15px;&quot;&gt;
-        &lt;!-- Dynamically populated --&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
+    <div style="display: grid; grid-template-columns: 1fr; gap: 40px;">
+      <!-- Page Views Table -->
+      <div>
+        <h3 style="border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);">Top Visited Pages</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="text-align: left; border-bottom: 1px solid var(--code-border); color: var(--text-color);">
+              <th style="padding: 10px 5px;">Path</th>
+              <th style="padding: 10px 5px; text-align: right; width: 100px;">Pageviews</th>
+            </tr>
+          </thead>
+          <tbody id="pages-tbody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
 
-    &lt;!-- Referrers --&gt;
-    &lt;div&gt;
-      &lt;h3 style=&quot;border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);&quot;&gt;Top Referrers&lt;/h3&gt;
-      &lt;table style=&quot;width: 100%; border-collapse: collapse; margin-top: 10px;&quot;&gt;
-        &lt;thead&gt;
-          &lt;tr style=&quot;text-align: left; border-bottom: 1px solid var(--code-border); color: var(--text-color);&quot;&gt;
-            &lt;th style=&quot;padding: 10px 5px;&quot;&gt;Source&lt;/th&gt;
-            &lt;th style=&quot;padding: 10px 5px; text-align: right; width: 80px;&quot;&gt;Views&lt;/th&gt;
-          &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody id=&quot;referrers-tbody&quot;&gt;
-          &lt;!-- Dynamically populated --&gt;
-        &lt;/tbody&gt;
-      &lt;/table&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-</code></pre>  </div>
-</div><script>
+      <!-- Two Column Layout for Country and Referrer -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <!-- Countries -->
+        <div>
+          <h3 style="border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);">Geographic Distribution</h3>
+          <div id="countries-list" style="margin-top: 15px;">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Referrers -->
+        <div>
+          <h3 style="border-bottom: 2px solid var(--link-color); padding-bottom: 8px; color: var(--text-color);">Top Referrers</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <thead>
+              <tr style="text-align: left; border-bottom: 1px solid var(--code-border); color: var(--text-color);">
+                <th style="padding: 10px 5px;">Source</th>
+                <th style="padding: 10px 5px; text-align: right; width: 80px;">Views</th>
+              </tr>
+            </thead>
+            <tbody id="referrers-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
   (function() {
     const API_URL = 'https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/stats';
     const authSection = document.getElementById('auth-section');
@@ -287,32 +304,14 @@
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
   })();
-</script></div>
-
-<p><i>Published: 2026-06-15</i></p>
-
-<p>
-  <i>
-  Tagged:
-  
-  <span class="tag">
-    <a href="tags/meta.html">meta</a>
-  </span>
-  
-  <span class="tag">
-    <a href="tags/systems.html">systems</a>
-  </span>
-  
-  </i>
-</p>
+</script>
 
 
-
-      
+      {% if not skip-archive %}
       <div style="margin-bottom: 20px; float: right;">
-        <a class="page-link" href="archive.html">Archive</a>
+        <a class="page-link" href="archive{{page-suffix}}">Archive</a>
       </div>
-      
+      {% endif %}
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
