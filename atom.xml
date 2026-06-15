@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-15T06:16:22+00:00</updated>
+  <updated>2026-06-15T06:19:53+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -510,7 +510,7 @@ $$ LANGUAGE plpgsql;
     <link href="https://blog.nurazhar.com/why-llms-fail-at-mermaid-diagrams.html"/>
     <title>The Mermaid Loop: Why LLMs Repeatedly Fail at Diagram Syntax</title>
     <updated>2026-06-15T23:59:59+00:00</updated>
-    <content type="html"><![CDATA[<div><hr /><p>If you&apos;ve spent any time pair-programming with LLMs (Gemini, Claude, GPT-4o), you&apos;ve likely run into a frustrating, repeating loop:</p><ol start="1"><li>You ask the model to generate a flowchart.</li><li>It outputs a <strong>Mermaid.js</strong> diagram block.</li><li>You render it, and the parser instantly breaks with a syntax error.</li><li>You tell the model about the error. It apologizes, fixes it, and then... <strong>makes the exact same mistake in the next post.</strong></li></ol><p>This isn&apos;t just a minor glitch; it is a systemic architectural bias in how Large Language Models generate structured text.</p><p>Here is a technical dissection of why LLMs fail at Mermaid diagrams, why they can&apos;t get it right the first time, and why analyzing this error is a masterclass in understanding the limitations of generative AI.</p><hr /><h2 id="the-error:-the-unquoted-punctuation-trap">The Error: The Unquoted Punctuation Trap</h2><p>In the last two blog posts I published, the model generated Mermaid diagrams with subgraphs that looked like this:</p><pre><code class="language-mermaid">subgraph Linux (Lieutenants)
+    <content type="html"><![CDATA[<div><hr /><p>If you&apos;ve spent any time pair-programming with LLMs (Gemini, Claude, GPT-4o), you&apos;ve likely run into a frustrating, repeating loop:</p><ol start="1"><li>You ask the model to generate a flowchart.</li><li>It outputs a <strong>Mermaid.js</strong> diagram block.</li><li>You render it, and the parser instantly breaks with a syntax error.</li><li>You tell the model about the error. It apologizes, fixes it, and then... <strong>makes the exact same mistake in the next post.</strong></li></ol><p>This isn&apos;t just a minor glitch; it is a systemic architectural bias in how Large Language Models generate structured text.</p><p>Here is a technical dissection of why LLMs fail at Mermaid diagrams, why they can&apos;t get it right the first time, and why analyzing this error is a masterclass in understanding the limitations of generative AI.</p><hr /><h2 id="the-error:-the-unquoted-punctuation-trap">The Error: The Unquoted Punctuation Trap</h2><p>In the last two blog posts I published, the model generated Mermaid diagrams with subgraphs that looked like this:</p><pre><code class="language-text">subgraph Linux (Lieutenants)
     L_Core[Linus Torvalds]
 end
 </code></pre><p>To a human, this looks perfectly readable. But to the Mermaid.js parser, the parentheses in <code>Linux (Lieutenants)</code> are control characters used for node shapes. To treat them as a literal string title, the syntax <strong>must</strong> be quoted:</p><pre><code class="language-mermaid">subgraph linux [&quot;Linux (Lieutenants)&quot;]
