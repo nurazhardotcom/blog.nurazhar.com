@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-15T00:52:15+00:00</updated>
+  <updated>2026-06-15T00:53:32+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -13,7 +13,7 @@
     <link href="https://blog.nurazhar.com/postgres-threshold-batching.html"/>
     <title>Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</title>
     <updated>2026-06-15T23:59:59+00:00</updated>
-    <content type="html"><![CDATA[<div><hr /><h1 id="scaling-micro-transactions:-many-to-one-payout-batching-inside-postgres">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</h1><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
+    <content type="html"><![CDATA[<div><hr /><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
     subgraph Old Architecture: 1-to-1
         Tx[Fan Transaction] --&gt;|Unique Link| P1[Artist Payout]
     end
