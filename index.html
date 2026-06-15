@@ -89,6 +89,89 @@
 
       
     <div>
+        <h1><a href="postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a></h1>
+        <div><hr /><h1 id="scaling-micro-transactions:-many-to-one-payout-batching-inside-postgres">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</h1><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code>[Fan Transaction] ── (1:1) ──&gt; [Artist Payout]
+</code></pre><p>To support batching, we inverted this relation. A single <code>payout</code> can clear multiple incoming <code>transactions</code>. The database structure became <strong>many-to-one</strong>:</p><pre><code>[Fan Transaction 1] ──┐
+[Fan Transaction 2] ──┼── (Many:1) ──&gt; [Artist Payout]
+[Fan Transaction 3] ──┘
+</code></pre><p>In SQL, this is implemented by:</p><ol start="1"><li>Removing the <code>transaction_id</code> column from the <code>payouts</code> table.</li><li>Adding a nullable <code>payout_id UUID REFERENCES payouts(id) ON DELETE SET NULL</code> to the <code>transactions</code> table.</li></ol><hr /><h2 id="2.-natively-batching-with-pl/pgsql-triggers">2. Natively Batching with PL/pgSQL Triggers</h2><p>Instead of spinning up a background cron job (which introduces latency and state drift), we use an <strong><code>AFTER UPDATE</code> row trigger</strong> in Postgres to calculate and batch balances on the fly.</p><p>When a transaction status is updated to <code>&apos;success&apos;</code>, the trigger calculates the current pending balance of all successful transactions for the artist that have not yet been paid out:</p><pre><code class="language-sql">CREATE OR REPLACE FUNCTION process_payment_split()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_artist_id UUID;
+    v_pending_amount NUMERIC(12, 4);
+    v_amount_sent NUMERIC(12, 4);
+    v_commission_retained NUMERIC(12, 4);
+    v_payout_id UUID;
+    v_threshold NUMERIC(12, 4) := 10.0000; -- SGD 10.00 threshold
+BEGIN
+    -- Trigger split when transaction status updates to &apos;success&apos;
+    IF NEW.status = &apos;success&apos; AND (TG_OP = &apos;INSERT&apos; OR OLD.status IS NULL OR OLD.status != &apos;success&apos;) THEN
+        -- Find the artist associated with the track
+        SELECT artist_id INTO v_artist_id FROM tracks WHERE id = NEW.track_id;
+
+        -- Sum all successful, unpaid transactions for this artist
+        SELECT COALESCE(SUM(t.amount), 0) INTO v_pending_amount
+        FROM transactions t
+        JOIN tracks tr ON t.track_id = tr.id
+        WHERE tr.artist_id = v_artist_id
+          AND t.status = &apos;success&apos;
+          AND t.payout_id IS NULL;
+
+        -- If the accumulated balance meets or exceeds the threshold, batch the payout
+        IF v_pending_amount &gt;= v_threshold THEN
+            v_amount_sent := v_pending_amount * 0.80; -- 80% to artist
+            v_commission_retained := v_pending_amount * 0.20; -- 20% commission
+
+            -- Create a single grouped payout record
+            INSERT INTO payouts (artist_id, amount_sent, commission_retained, currency, status)
+            VALUES (v_artist_id, v_amount_sent, v_commission_retained, NEW.currency, &apos;pending&apos;)
+            RETURNING id INTO v_payout_id;
+
+            -- Update all pending transactions to point to this settling payout_id
+            UPDATE transactions
+            SET payout_id = v_payout_id
+            WHERE id IN (
+                SELECT t.id
+                FROM transactions t
+                JOIN tracks tr ON t.track_id = tr.id
+                WHERE tr.artist_id = v_artist_id
+                  AND t.status = &apos;success&apos;
+                  AND t.payout_id IS NULL
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+</code></pre><hr /><h2 id="3.-the-stateless-proxy-loop">3. The Stateless Proxy Loop</h2><p>Because the database handles the complex state transitions and batching internally, the serverless API router (GCP Cloud Function / Cloudflare Worker) remains completely stateless:</p><ol start="1"><li>The payment gateway webhook sends a <code>success</code> callback to the GCP Cloud Function.</li><li>The function inserts the transaction into Neon Postgres.</li><li>If the trigger finds the artist&apos;s total pending balance is below the threshold, it commits the write and immediately returns a success message to the gateway (payout pending).</li><li>If the threshold is reached, the database compiles the payout record and returns the new <code>payout_id</code>. The function detects this, calls the outbound Tazapay settlement API, submits a single Merkle notary proof on the blockchain, and commits.</li></ol><hr /><h2 id="conclusion:-thermodynamic-software-engineering">Conclusion: Thermodynamic Software Engineering</h2><p>By shifting the computational logic directly to Postgres constraints and trigger functions:</p><ul><li>We achieve <strong>zero CPU overhead</strong> on the API proxy gateway.</li><li>We <strong>eliminate network transaction costs</strong> by <span class="formula">N</span> times, ensuring micro-payments remain profitable for creators.</li><li>We preserve the <strong>single source of truth</strong> directly inside database relations.</li></ul></div>
+        
+        
+        <p><i>Published: 2026-06-15</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/architecture.html">architecture</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/postgres.html">postgres</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/database.html">database</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/optimization.html">optimization</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="ai-first-sdlc-and-cognitive-vertigo.html">AI-First SDLC: Designing for High Velocity and Cognitive Vertigo</a></h1>
         <div><hr /><p>If you use autonomous coding agents for more than a few hours, you will hit a wall.</p><p>It is a silent, exhausting kind of fatigue. You didn’t write a single line of boilerplate, you didn&apos;t fight compiler configurations, and you didn&apos;t search documentation. Yet, your head is throbbing, you feel dizzy, and your mental stamina is completely shot.</p><p>This is <strong>Cognitive Vertigo (or Cognitive G-Force)</strong>. It is caused by the collapse of latency between <em>intent</em> and <em>execution</em>. When you are no longer limited by typing speed, your brain is forced into a continuous loop of high-frequency architecture evaluation, context-switching, and code review.</p><p>To survive a full-time role in this new era without burning out, you must discard the traditional developer workflow and adopt an <strong>AI-First Software Development Lifecycle (SDLC)</strong>.</p><hr /><h2 id="the-paradigm-shift:-think-slow,-build-fast">The Paradigm Shift: Think Slow, Build Fast</h2><p>In the traditional SDLC, developers spend 80% of their energy coding and 20% designing. When coding, your brain operates in a slow, sequential state.</p><p>In an AI-First SDLC, this relationship is inverted:</p><pre><code class="language-mermaid">gantt
     title Traditional vs. AI-First Developer Lifecycles
