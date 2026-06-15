@@ -397,6 +397,50 @@ $$ LANGUAGE plpgsql;
     </div>
 
     <div>
+        <h1><a href="license-and-derivation-divergence-electrumsv-vs-yours-wallet.html">The License &amp; Derivation Divergence: Why My Mnemonic Didn&#39;t Import to Yours Wallet</a></h1>
+        <div><hr /><p>Yesterday, I tried importing a seed phrase generated in my ElectrumSV desktop client (modeled in <code>nurazhardotcom/Bitcoin-Wallet</code>) into <strong>Yours Wallet</strong>, a modern Chrome extension designed for BSV and 1Sat Ordinals.</p><p>The wallet immediately threw a generic validation error: <strong>&quot;Invalid Mnemonic!&quot;</strong></p><p>As a developer, this sent me down a rabbit hole into the codebase of both wallets to find out what was going on. Is Yours Wallet broken? Was it a simple misconfiguration? Or is there a fundamental architectural divergence?</p><p>Here is what I uncovered about the cryptographic standards, derivation path designs, and the hidden licensing risks governing these two platforms.</p><hr /><h2 id="1.-mnemonic-divergence:-electrum-seeds-vs.-bip-39">1. Mnemonic Divergence: Electrum Seeds vs. BIP-39</h2><p>The most basic reason an ElectrumSV seed phrase won&apos;t load in Yours Wallet is that <strong>they speak completely different mnemonic languages</strong>.</p><p>Most modern cryptocurrency wallets use the <strong>BIP-39</strong> standard. It uses a fixed English wordlist of 2048 words. To check if a seed phrase is valid, it computes a checksum based on the entropy bytes.</p><p>In <code>yours-wallet</code> under <code>src/utils/keys.ts</code>, we see standard validation using the npm <code>bip39</code> package:</p><pre><code class="language-typescript">if (validMnemonic) {
+  const isValid = bip39.validateMnemonic(validMnemonic);
+  if (!isValid) throw new Error(&apos;Invalid Mnemonic!&apos;);
+}
+</code></pre><p>However, <strong>Electrum (and by extension ElectrumSV) explicitly does not use BIP-39.</strong></p><p>Electrum created its own custom mnemonic seed format before BIP-39 existed, and they chose not to adopt BIP-39 for several architectural reasons:</p><ol start="1"><li><strong>Self-Identifying Seed Versions:</strong> Electrum seeds include a prefix (encoded into the hash of the words) that identifies what kind of wallet (standard, SegWit, 2FA) and derivation path the seed requires.</li><li><strong>No Checksum Dependency:</strong> BIP-39 requires a wordlist checksum, which Electrum developers argue makes internationalization and custom wordlists fragile.</li></ol><p>Because of this, an Electrum seed phrase imported into a BIP-39 validator fails the checksum and gets flagged as an <code>&quot;Invalid Mnemonic!&quot;</code> before any keys can even be derived.</p><hr /><h2 id="2.-the-derivation-path-clash">2. The Derivation Path Clash</h2><p>If you bypassed the mnemonic constraint and used a BIP-39 seed in both clients, you would run into another surprise: <strong>different default derivation paths.</strong></p><ul><li><strong>ElectrumSV</strong> (under BIP-44 mode) maps its receiving addresses onto the standard receiving index chain:<figure class="formula">\text{m/44&apos;/236&apos;/0&apos;/0/x}</figure></li><li><strong>Yours Wallet</strong>, however, maps its default wallet address to the change chain:<figure class="formula">\text{m/44&apos;/236&apos;/0&apos;/1/0}</figure></li></ul><p>To bridge this, Yours Wallet actually includes a legacy sweep service under <code>src/services/Keys.service.ts</code> that fires on initialization:</p><pre><code class="language-typescript">const sweepWallet = generateKeysFromTag(keys.mnemonic, &quot;m/44&apos;/236&apos;/0&apos;/0/0&quot;);
+// Query and sweep any UTXOs sitting at the old default path
+</code></pre><p>If it detects funds on the standard <code>m/44&apos;/236&apos;/0&apos;/0/0</code> path, it automatically sweeps them into the change address path Yours Wallet uses. But this sweep only runs <em>after</em> a valid BIP-39 mnemonic is successfully decrypted—something an Electrum seed cannot achieve.</p><hr /><h2 id="3.-the-licensing-trap:-mit-vs.-open-bsv-license">3. The Licensing Trap: MIT vs. Open BSV License</h2><p>Beyond cryptography, the codebase comparison revealed a significant legal divergence that every developer in the space should be aware of.</p><h3 id="yours-wallet:-permissive-mit">Yours Wallet: Permissive MIT</h3><p>Yours Wallet is licensed under the <strong>MIT License</strong>. This is a highly permissive, standard open-source license. You can fork it, write custom extensions, build commercial closed-source apps, and launch it on any network (BTC, BSV, BCH, MVC, etc.) without fear of legal recourse, provided you retain the copyright header.</p><h3 id="electrumsv:-the-&quot;open-bsv&quot;-constraint">ElectrumSV: The &quot;Open BSV&quot; Constraint</h3><p>ElectrumSV is built on a hybrid codebase. While it inherits MIT-licensed code from Electrum and Electron Cash, its proprietary and net-new features are covered by the <strong>Open BSV License</strong>:</p><blockquote><p><em>&quot;The Software, and any software that is derived from the Software or parts thereof, can only be used on the Bitcoin SV blockchains.&quot;</em></p></blockquote><p>This network-locking clause makes the license <strong>non-compliant with the Open Source Definition (OSD)</strong> managed by the Open Source Initiative (OSI) because it discriminates against other networks (violating Clause 6).</p><p>From a developer standpoint:</p><ul><li>If you fork ElectrumSV and attempt to repurpose the codebase for a BTC, LTC, or BCH wallet, you are <strong>violating the copyright license</strong> and exposing your project to litigation.</li><li>If you fork Yours Wallet, you are legally free to deploy it on any network.</li></ul><hr /><h2 id="the-verdict">The Verdict</h2><p>If you have legacy wallets in ElectrumSV and want to move to Yours Wallet, the solution isn&apos;t to import your seed phrase. Instead:</p><ol start="1"><li><strong>Export the raw private key (WIF format)</strong> from ElectrumSV for your specific address.</li><li>Go to Yours Wallet -&gt; <strong>Settings</strong> -&gt; <strong>Accounts</strong> and import the account using the private key (WIF).</li><li>Or simpler: perform a standard on-chain transaction to transfer the balance to a freshly generated Yours Wallet address.</li></ol><p>For developers seeking a clean, legally unencumbered foundation for multi-chain wallet development, <strong>Yours Wallet&apos;s MIT-licensed codebase</strong> is the clear choice.</p></div>
+        
+        
+        <p><i>Published: 2026-06-15</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/wallet.html">wallet</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/open-source.html">open-source</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/bip39.html">bip39</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/licensing.html">licensing</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/bitcoin.html">bitcoin</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/electrum.html">electrum</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="postgres-zero-cost-analytics.html">Zero-Backend Analytics: Collapsing Web Tracking to Postgres and GCP for $0</a></h1>
         <div><hr /><p>Yesterday, I wanted to see who was reading this blog.</p><p>Naturally, my first stop was the default GitHub Pages traffic graph. If you&apos;ve ever looked at it, you know it is aggressively basic: you get a raw count of pageviews and unique visitors over a rolling 14-day window. No geographic data, no device breakdowns, and it completely wipes your history every two weeks.</p><p>I wanted more, but I didn&apos;t want to pay, and more importantly, <strong>I wanted to control my own data.</strong></p><p>Here is the journey of how I built an isolated, privacy-first, zero-maintenance analytics engine using only Neon Postgres and GCP Cloud Functions for exactly <strong>$0/month</strong>.</p><hr /><h2 id="the-lazy-path-vs.-the-bloat">The Lazy Path vs. The Bloat</h2><p>My search for analytics took me down a familiar rabbit hole of modern web tracking:</p><ol start="1"><li><strong>The SaaS route (Umami, Plausible, etc.):</strong> Great interfaces, but they either charge a monthly subscription, store my data on third-party servers, or force me to deal with cookie banners and consent frameworks.</li><li><strong>The Cloudflare route:</strong> Route the blog&apos;s custom domain through Cloudflare and get edge-computed analytics. It&apos;s free and script-free, but honestly, I was too lazy to reconfigure DNS records, manage SSL certificates, and sign up for another platform dashboard just to see country metrics.</li><li><strong>The Self-Hosted Container route:</strong> Deploying something like GoatCounter (a fantastic Go-based analytics tool) on GCP Cloud Run. But since Cloud Run is stateless, I couldn&apos;t use local SQLite storage. I would need to provision a persistent SQL database anyway.</li></ol><p>If I have to spin up a database, why not just go native?</p><hr /><h2 id="postgres-can-do-everything">Postgres Can Do Everything</h2><p>We live in an era where PostgreSQL is no longer just a relational database; it is a application foundation. With Neon&apos;s generous free tier (giving you 10 branches/databases per project at $0), spinning up a new SQL database takes about three seconds.</p><p>The setup is stupidly simple. A single table:</p><pre><code class="language-sql">CREATE TABLE page_views (
     id SERIAL PRIMARY KEY,
