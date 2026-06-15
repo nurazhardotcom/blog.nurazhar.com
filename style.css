@@ -47,9 +47,35 @@ a {
 }
 
 .wrapper {
-  max-width: 800px;
-  margin: 0 auto 0 auto;
-  padding: 0 15px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Constrain readable post line path width for UX */
+.wrapper > h1:first-child,
+.wrapper > div:not(#kanban-app):not(#analytics-app) {
+  max-content-width: 100%;
+}
+
+/* Limit textual paragraph columns inside wrapper to 720px for ideal reading comfort */
+.wrapper p, 
+.wrapper ul:not(.index), 
+.wrapper ol, 
+.wrapper blockquote,
+.wrapper > h2,
+.wrapper > h3,
+.wrapper > h4,
+.wrapper > hr {
+  max-width: 720px;
+}
+
+/* Let wide assets, code boxes, and tables flex larger up to 1000px if space permits */
+.wrapper pre,
+.wrapper table,
+.wrapper .mermaid {
+  max-width: 1000px;
+  margin-left: 0;
 }
 
 h2 {
