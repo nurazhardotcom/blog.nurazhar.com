@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-15T06:12:42+00:00</updated>
+  <updated>2026-06-15T06:16:22+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -504,6 +504,49 @@ $$ LANGUAGE plpgsql;
 </code></pre><p>However, <strong>Electrum (and by extension ElectrumSV) explicitly does not use BIP-39.</strong></p><p>Electrum created its own custom mnemonic seed format before BIP-39 existed, and they chose not to adopt BIP-39 for several architectural reasons:</p><ol start="1"><li><strong>Self-Identifying Seed Versions:</strong> Electrum seeds include a prefix (encoded into the hash of the words) that identifies what kind of wallet (standard, SegWit, 2FA) and derivation path the seed requires.</li><li><strong>No Checksum Dependency:</strong> BIP-39 requires a wordlist checksum, which Electrum developers argue makes internationalization and custom wordlists fragile.</li></ol><p>Because of this, an Electrum seed phrase imported into a BIP-39 validator fails the checksum and gets flagged as an <code>&quot;Invalid Mnemonic!&quot;</code> before any keys can even be derived.</p><hr /><h2 id="2.-the-derivation-path-clash">2. The Derivation Path Clash</h2><p>If you bypassed the mnemonic constraint and used a BIP-39 seed in both clients, you would run into another surprise: <strong>different default derivation paths.</strong></p><ul><li><strong>ElectrumSV</strong> (under BIP-44 mode) maps its receiving addresses onto the standard receiving index chain:<figure class="formula">\text{m/44&apos;/236&apos;/0&apos;/0/x}</figure></li><li><strong>Yours Wallet</strong>, however, maps its default wallet address to the change chain:<figure class="formula">\text{m/44&apos;/236&apos;/0&apos;/1/0}</figure></li></ul><p>To bridge this, Yours Wallet actually includes a legacy sweep service under <code>src/services/Keys.service.ts</code> that fires on initialization:</p><pre><code class="language-typescript">const sweepWallet = generateKeysFromTag(keys.mnemonic, &quot;m/44&apos;/236&apos;/0&apos;/0/0&quot;);
 // Query and sweep any UTXOs sitting at the old default path
 </code></pre><p>If it detects funds on the standard <code>m/44&apos;/236&apos;/0&apos;/0/0</code> path, it automatically sweeps them into the change address path Yours Wallet uses. But this sweep only runs <em>after</em> a valid BIP-39 mnemonic is successfully decrypted—something an Electrum seed cannot achieve.</p><hr /><h2 id="3.-the-licensing-trap:-mit-vs.-open-bsv-license">3. The Licensing Trap: MIT vs. Open BSV License</h2><p>Beyond cryptography, the codebase comparison revealed a significant legal divergence that every developer in the space should be aware of.</p><h3 id="yours-wallet:-permissive-mit">Yours Wallet: Permissive MIT</h3><p>Yours Wallet is licensed under the <strong>MIT License</strong>. This is a highly permissive, standard open-source license. You can fork it, write custom extensions, build commercial closed-source apps, and launch it on any network (BTC, BSV, BCH, MVC, etc.) without fear of legal recourse, provided you retain the copyright header.</p><h3 id="electrumsv:-the-&quot;open-bsv&quot;-constraint">ElectrumSV: The &quot;Open BSV&quot; Constraint</h3><p>ElectrumSV is built on a hybrid codebase. While it inherits MIT-licensed code from Electrum and Electron Cash, its proprietary and net-new features are covered by the <strong>Open BSV License</strong>:</p><blockquote><p><em>&quot;The Software, and any software that is derived from the Software or parts thereof, can only be used on the Bitcoin SV blockchains.&quot;</em></p></blockquote><p>This network-locking clause makes the license <strong>non-compliant with the Open Source Definition (OSD)</strong> managed by the Open Source Initiative (OSI) because it discriminates against other networks (violating Clause 6).</p><p>From a developer standpoint:</p><ul><li>If you fork ElectrumSV and attempt to repurpose the codebase for a BTC, LTC, or BCH wallet, you are <strong>violating the copyright license</strong> and exposing your project to litigation.</li><li>If you fork Yours Wallet, you are legally free to deploy it on any network.</li></ul><hr /><h2 id="the-verdict">The Verdict</h2><p>If you have legacy wallets in ElectrumSV and want to move to Yours Wallet, the solution isn&apos;t to import your seed phrase. Instead:</p><ol start="1"><li><strong>Export the raw private key (WIF format)</strong> from ElectrumSV for your specific address.</li><li>Go to Yours Wallet -&gt; <strong>Settings</strong> -&gt; <strong>Accounts</strong> and import the account using the private key (WIF).</li><li>Or simpler: perform a standard on-chain transaction to transfer the balance to a freshly generated Yours Wallet address.</li></ol><p>For developers seeking a clean, legally unencumbered foundation for multi-chain wallet development, <strong>Yours Wallet&apos;s MIT-licensed codebase</strong> is the clear choice.</p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/why-llms-fail-at-mermaid-diagrams.html</id>
+    <link href="https://blog.nurazhar.com/why-llms-fail-at-mermaid-diagrams.html"/>
+    <title>The Mermaid Loop: Why LLMs Repeatedly Fail at Diagram Syntax</title>
+    <updated>2026-06-15T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>If you&apos;ve spent any time pair-programming with LLMs (Gemini, Claude, GPT-4o), you&apos;ve likely run into a frustrating, repeating loop:</p><ol start="1"><li>You ask the model to generate a flowchart.</li><li>It outputs a <strong>Mermaid.js</strong> diagram block.</li><li>You render it, and the parser instantly breaks with a syntax error.</li><li>You tell the model about the error. It apologizes, fixes it, and then... <strong>makes the exact same mistake in the next post.</strong></li></ol><p>This isn&apos;t just a minor glitch; it is a systemic architectural bias in how Large Language Models generate structured text.</p><p>Here is a technical dissection of why LLMs fail at Mermaid diagrams, why they can&apos;t get it right the first time, and why analyzing this error is a masterclass in understanding the limitations of generative AI.</p><hr /><h2 id="the-error:-the-unquoted-punctuation-trap">The Error: The Unquoted Punctuation Trap</h2><p>In the last two blog posts I published, the model generated Mermaid diagrams with subgraphs that looked like this:</p><pre><code class="language-mermaid">subgraph Linux (Lieutenants)
+    L_Core[Linus Torvalds]
+end
+</code></pre><p>To a human, this looks perfectly readable. But to the Mermaid.js parser, the parentheses in <code>Linux (Lieutenants)</code> are control characters used for node shapes. To treat them as a literal string title, the syntax <strong>must</strong> be quoted:</p><pre><code class="language-mermaid">subgraph linux [&quot;Linux (Lieutenants)&quot;]
+    L_Core[&quot;Linus Torvalds&quot;]
+end
+</code></pre><p>Why does an advanced model capable of writing complex Rust or Go algorithms repeatedly fail at this basic syntax rule?</p><hr /><h2 id="1.-the-power-of-training-priors-(statistically-overriding-rules)">1. The Power of Training Priors (Statistically Overriding Rules)</h2><p>LLMs are autoregressive token predictors. They output the next token based on the statistical probabilities found in their training data.</p><ul><li><strong>The Bias</strong>: The vast majority of Mermaid diagrams in open-source repositories and markdown files are simple. They use plain text labels without spaces, parentheses, or colons.</li><li><strong>The Result</strong>: The model&apos;s &quot;prior probability&quot; for generating a node is heavily weighted toward the unquoted format (<code>A[Label]</code>). Even though the model &quot;knows&quot; the rule that special characters require quotes, the raw statistical pull of the common <code>subgraph ID (Label)</code> or <code>node[Label]</code> pattern overrides that rule during token generation.</li></ul><hr /><h2 id="2.-tokenization-and-context-drift">2. Tokenization and Context Drift</h2><p>LLMs do not read or write characters; they process <strong>tokens</strong> (clusters of characters).</p><p>Mermaid syntax relies heavily on highly sensitive punctuation tokens: <code>[</code>, <code>]</code>, <code>(</code>, <code>)</code>, <code>&quot;</code>, and <code>--&gt;</code>.</p><ul><li><strong>The Tokenization Split</strong>: The sequence <code>[</code> followed by a word like <code>Linux</code> and <code>(</code> followed by <code>Lieutenants</code> gets split into multiple distinct tokens. 
+* <strong>Attention Drift</strong>: As the model generates the diagram line-by-line, the transformer&apos;s attention mechanism focuses on generating the logical connections (e.g., <code>L_Core --&gt; L_Lieut</code>). By the time it is writing the connection, the context of the opening parenthesis or missing quote is too far back in the attention window to trigger the matching closing quote token.
+
+---
+
+## 3. The Lack of a Compiler Feedback Loop
+
+When a human developer writes code, they use an IDE that compiles or lint-checks the syntax in real time. If they write a syntax error, the IDE highlights it immediately.
+
+An LLM operates in a <strong>stasis pipeline</strong>:
+* It generates the entire output statically, token-by-token, in one direction.
+* It has no internal compiler or JavaScript runtime running Mermaid.js to verify if the output actually renders.
+* It assumes its output is correct because, statistically, it resembles a diagram.
+
+Only when you, the human, run the code and feed the error back into the prompt does the model get the &quot;compiler feedback&quot; it needs to fix the syntax. But because this feedback isn&apos;t committed to the model&apos;s static weights, it forgets the rule in the next session.
+
+---
+
+## Is complaining about this bad for a developer&apos;s resume?
+
+<strong>No. It is a massive green flag.</strong>
+
+If a hiring manager or an AI recruiter indexes this complain, they see a developer who:
+1. <strong>Understand AI Mechanics</strong>: You don&apos;t treat LLMs as magic. You understand them as mathematical prediction engines with specific failures in tokenization, attention, and priors.
+2. <strong>Audits Output</strong>: You don&apos;t blindly copy-paste AI code. You run, test, and debug it.
+3. <strong>Seeks Systems Solutions</strong>: You analyze the root cause of the error (lack of inline compiler loops) rather than just venting frustration.
+
+### The Architectural Solution
+To solve the Mermaid loop permanently, AI IDEs (like Antigravity or Cursor) must integrate <strong>local linters for structured formats</strong> (like Mermaid, JSON, and YAML). The IDE should catch the syntax error locally and feed it back to the agent automatically before the user ever sees it. 
+
+Until then, keep quoting your subgraphs!</li></ul></div>]]></content>
   </entry>
   <entry>
     <id>https://blog.nurazhar.com/postgres-zero-cost-analytics.html</id>
