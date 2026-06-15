@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-15T00:53:32+00:00</updated>
+  <updated>2026-06-15T01:12:34+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -104,7 +104,7 @@
     <link href="https://blog.nurazhar.com/quickblog-double-title-gotcha.html"/>
     <title>Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</title>
     <updated>2026-06-14T23:59:59+00:00</updated>
-    <content type="html"><![CDATA[<div><hr /><h1 id="quickblog-gotcha:-why-your-post-titles-are-displaying-twice">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</h1><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
+    <content type="html"><![CDATA[<div><hr /><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
 Date: 2026-06-14
 ---
 # My Great Post

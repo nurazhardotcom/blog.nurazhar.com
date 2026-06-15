@@ -93,6 +93,8 @@
         
             <li><span><a href="../postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a> - 2026-06-15</span></li>
         
+            <li><span><a href="../postgres-zero-cost-analytics.html">Zero-Backend Analytics: Collapsing Web Tracking to Postgres and GCP for $0</a> - 2026-06-15</span></li>
+        
             <li><span><a href="../15-minute-serverless-vapt.html">The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</a> - 2026-06-14</span></li>
         
     </ul>
@@ -121,6 +123,20 @@
           });
         }
       });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
     </script>
   </body>
 </html>

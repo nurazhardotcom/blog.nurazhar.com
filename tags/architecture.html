@@ -93,6 +93,8 @@
         
             <li><span><a href="../postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a> - 2026-06-15</span></li>
         
+            <li><span><a href="../postgres-zero-cost-analytics.html">Zero-Backend Analytics: Collapsing Web Tracking to Postgres and GCP for $0</a> - 2026-06-15</span></li>
+        
             <li><span><a href="../ai-first-sdlc-and-cognitive-vertigo.html">AI-First SDLC: Designing for High Velocity and Cognitive Vertigo</a> - 2026-06-14</span></li>
         
             <li><span><a href="../repetition-loops-and-aur-audit.html">Taming LLM Repetition Loops &amp; Building aur-audit for the AUR Security Incident</a> - 2026-06-14</span></li>
@@ -129,6 +131,20 @@
           });
         }
       });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
     </script>
   </body>
 </html>

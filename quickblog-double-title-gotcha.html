@@ -92,7 +92,7 @@
   Quickblog Gotcha: Why Your Post Titles Are Displaying Twice
   
 </h1>
-<div><hr /><h1 id="quickblog-gotcha:-why-your-post-titles-are-displaying-twice">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</h1><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
+<div><hr /><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
 Date: 2026-06-14
 ---
 # My Great Post
@@ -169,6 +169,20 @@ for f in glob.glob(&quot;posts/*.md&quot;):
           });
         }
       });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
     </script>
   </body>
 </html>

@@ -89,6 +89,222 @@
 
       
     <div>
+        <h1><a href="stats.html">Analytics Dashboard</a></h1>
+        <div><hr /><div id="analytics-app" style="margin-top: 30px; font-family: system-ui, -apple-system, sans-serif;">
+  <!-- Authentication Form -->
+  <div id="auth-section" style="max-width: 400px; margin: 40px auto; padding: 30px; border-radius: 8px; border: 1px solid var(--border-color, #e0e0e0); background: var(--bg-card, #fafafa); box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+    <h3 style="margin-top: 0; margin-bottom: 20px;">Access Secure Dashboard</h3>
+    <input type="password" id="passcode-input" placeholder="Enter dashboard passcode" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc; font-size: 1rem; box-sizing: border-box;" />
+    <button id="auth-submit" style="width: 100%; padding: 12px; border: none; background: #0066cc; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 1rem; transition: background 0.2s;">View Analytics</button>
+    <p id="auth-error" style="color: #ff3333; margin-top: 15px; font-size: 0.9rem; display: none;">Invalid passcode. Please try again.</p>
+  </div>  <!-- Dashboard Content (hidden initially) -->  <div id="dashboard-section" style="display: none;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color, #e0e0e0); padding-bottom: 15px; margin-bottom: 30px;">
+      <h2 style="margin: 0;">Visitor Metrics</h2>
+      <button id="logout-btn" style="padding: 6px 12px; background: transparent; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">Lock</button>
+    </div><pre><code>&lt;!-- Stats Grid --&gt;
+&lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;&quot;&gt;
+  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--border-color, #e0e0e0); background: var(--bg-card, #fafafa);&quot;&gt;
+    &lt;div style=&quot;font-size: 0.9rem; color: #666; margin-bottom: 5px;&quot;&gt;Total Logged Views&lt;/div&gt;
+    &lt;div id=&quot;stat-total-views&quot; style=&quot;font-size: 2rem; font-weight: bold;&quot;&gt;0&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--border-color, #e0e0e0); background: var(--bg-card, #fafafa);&quot;&gt;
+    &lt;div style=&quot;font-size: 0.9rem; color: #666; margin-bottom: 5px;&quot;&gt;Tracked Pages&lt;/div&gt;
+    &lt;div id=&quot;stat-total-pages&quot; style=&quot;font-size: 2rem; font-weight: bold;&quot;&gt;0&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style=&quot;padding: 20px; border-radius: 6px; border: 1px solid var(--border-color, #e0e0e0); background: var(--bg-card, #fafafa);&quot;&gt;
+    &lt;div style=&quot;font-size: 0.9rem; color: #666; margin-bottom: 5px;&quot;&gt;Primary Country&lt;/div&gt;
+    &lt;div id=&quot;stat-top-country&quot; style=&quot;font-size: 2rem; font-weight: bold;&quot;&gt;-&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style=&quot;display: grid; grid-template-columns: 1fr; gap: 40px;&quot;&gt;
+  &lt;!-- Page Views Table --&gt;
+  &lt;div&gt;
+    &lt;h3 style=&quot;border-bottom: 2px solid #0066cc; padding-bottom: 8px;&quot;&gt;Top Visited Pages&lt;/h3&gt;
+    &lt;table style=&quot;width: 100%; border-collapse: collapse; margin-top: 10px;&quot;&gt;
+      &lt;thead&gt;
+        &lt;tr style=&quot;text-align: left; border-bottom: 1px solid #ccc;&quot;&gt;
+          &lt;th style=&quot;padding: 10px 5px;&quot;&gt;Path&lt;/th&gt;
+          &lt;th style=&quot;padding: 10px 5px; text-align: right; width: 100px;&quot;&gt;Pageviews&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody id=&quot;pages-tbody&quot;&gt;
+        &lt;!-- Dynamically populated --&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Two Column Layout for Country and Referrer --&gt;
+  &lt;div style=&quot;display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;&quot;&gt;
+    &lt;!-- Countries --&gt;
+    &lt;div&gt;
+      &lt;h3 style=&quot;border-bottom: 2px solid #0066cc; padding-bottom: 8px;&quot;&gt;Geographic Distribution&lt;/h3&gt;
+      &lt;div id=&quot;countries-list&quot; style=&quot;margin-top: 15px;&quot;&gt;
+        &lt;!-- Dynamically populated --&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Referrers --&gt;
+    &lt;div&gt;
+      &lt;h3 style=&quot;border-bottom: 2px solid #0066cc; padding-bottom: 8px;&quot;&gt;Top Referrers&lt;/h3&gt;
+      &lt;table style=&quot;width: 100%; border-collapse: collapse; margin-top: 10px;&quot;&gt;
+        &lt;thead&gt;
+          &lt;tr style=&quot;text-align: left; border-bottom: 1px solid #ccc;&quot;&gt;
+            &lt;th style=&quot;padding: 10px 5px;&quot;&gt;Source&lt;/th&gt;
+            &lt;th style=&quot;padding: 10px 5px; text-align: right; width: 80px;&quot;&gt;Views&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody id=&quot;referrers-tbody&quot;&gt;
+          &lt;!-- Dynamically populated --&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>  </div>
+</div><script>
+  (function() {
+    const API_URL = 'https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/stats';
+    const authSection = document.getElementById('auth-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const passcodeInput = document.getElementById('passcode-input');
+    const authSubmit = document.getElementById('auth-submit');
+    const authError = document.getElementById('auth-error');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Stats elements
+    const statTotalViews = document.getElementById('stat-total-views');
+    const statTotalPages = document.getElementById('stat-total-pages');
+    const statTopCountry = document.getElementById('stat-top-country');
+    const pagesTbody = document.getElementById('pages-tbody');
+    const referrersTbody = document.getElementById('referrers-tbody');
+    const countriesList = document.getElementById('countries-list');
+
+    // Check saved passcode
+    const savedCode = sessionStorage.getItem('analytics_code');
+    if (savedCode) {
+      loadStats(savedCode);
+    }
+
+    authSubmit.addEventListener('click', () => {
+      const code = passcodeInput.value.trim();
+      if (code) {
+        loadStats(code);
+      }
+    });
+
+    passcodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const code = passcodeInput.value.trim();
+        if (code) loadStats(code);
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('analytics_code');
+      dashboardSection.style.display = 'none';
+      authSection.style.display = 'block';
+      passcodeInput.value = '';
+    });
+
+    async function loadStats(code) {
+      try {
+        const res = await fetch(`${API_URL}?code=${encodeURIComponent(code)}`);
+        if (!res.ok) {
+          throw new Error('Unauthorized');
+        }
+        const data = await res.json();
+        
+        // Save code on success
+        sessionStorage.setItem('analytics_code', code);
+        authError.style.display = 'none';
+        authSection.style.display = 'none';
+        dashboardSection.style.display = 'block';
+
+        renderDashboard(data);
+      } catch (err) {
+        authError.style.display = 'block';
+        sessionStorage.removeItem('analytics_code');
+      }
+    }
+
+    function renderDashboard(data) {
+      // Calculate totals
+      const totalViews = data.pages.reduce((acc, p) => acc + parseInt(p.views, 10), 0);
+      const totalPages = data.pages.length;
+      const topCountry = data.countries.length > 0 ? data.countries[0].country : '-';
+
+      statTotalViews.textContent = totalViews.toLocaleString();
+      statTotalPages.textContent = totalPages;
+      statTopCountry.textContent = topCountry;
+
+      // Render Pages
+      pagesTbody.innerHTML = data.pages.map(p => `
+        <tr style="border-bottom: 1px solid var(--border-color, #f0f0f0);">
+          <td style="padding: 10px 5px; font-family: monospace; font-size: 0.9rem; word-break: break-all;">${escapeHtml(p.page_path)}</td>
+          <td style="padding: 10px 5px; text-align: right; font-weight: 500;">${parseInt(p.views, 10).toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      // Render Referrers
+      referrersTbody.innerHTML = data.referrers.length > 0 ? data.referrers.map(r => {
+        let domain = r.referrer;
+        try {
+          domain = new URL(r.referrer).hostname;
+        } catch (e) {}
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color, #f0f0f0);">
+            <td style="padding: 10px 5px; font-size: 0.9rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(r.referrer)}">${escapeHtml(domain)}</td>
+            <td style="padding: 10px 5px; text-align: right; font-weight: 500;">${parseInt(r.views, 10).toLocaleString()}</td>
+          </tr>
+        `;
+      }).join('') : `<tr><td colspan="2" style="padding: 15px; text-align: center; color: #888;">No referrals recorded</td></tr>`;
+
+      // Render Countries
+      const maxCountryViews = data.countries.length > 0 ? Math.max(...data.countries.map(c => parseInt(c.views, 10))) : 1;
+      countriesList.innerHTML = data.countries.map(c => {
+        const views = parseInt(c.views, 10);
+        const percentage = (views / maxCountryViews) * 100;
+        return `
+          <div style="margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px;">
+              <span style="font-weight: 500;">${escapeHtml(c.country)}</span>
+              <span>${views.toLocaleString()}</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: var(--border-color, #f0f0f0); border-radius: 4px; overflow: hidden;">
+              <div style="width: ${percentage}%; height: 100%; background: #0066cc; border-radius: 4px;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  })();
+</script></div>
+        
+        
+        <p><i>Published: 2026-06-15</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/meta.html">meta</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/systems.html">systems</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a></h1>
         <div><hr /><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
     subgraph Old Architecture: 1-to-1
@@ -173,6 +389,80 @@ $$ LANGUAGE plpgsql;
                 
                     <span class="tag">
                         <a href="tags/optimization.html">optimization</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
+        <h1><a href="postgres-zero-cost-analytics.html">Zero-Backend Analytics: Collapsing Web Tracking to Postgres and GCP for $0</a></h1>
+        <div><hr /><p>Yesterday, I wanted to see who was reading this blog.</p><p>Naturally, my first stop was the default GitHub Pages traffic graph. If you&apos;ve ever looked at it, you know it is aggressively basic: you get a raw count of pageviews and unique visitors over a rolling 14-day window. No geographic data, no device breakdowns, and it completely wipes your history every two weeks.</p><p>I wanted more, but I didn&apos;t want to pay, and more importantly, <strong>I wanted to control my own data.</strong></p><p>Here is the journey of how I built an isolated, privacy-first, zero-maintenance analytics engine using only Neon Postgres and GCP Cloud Functions for exactly <strong>$0/month</strong>.</p><hr /><h2 id="the-lazy-path-vs.-the-bloat">The Lazy Path vs. The Bloat</h2><p>My search for analytics took me down a familiar rabbit hole of modern web tracking:</p><ol start="1"><li><strong>The SaaS route (Umami, Plausible, etc.):</strong> Great interfaces, but they either charge a monthly subscription, store my data on third-party servers, or force me to deal with cookie banners and consent frameworks.</li><li><strong>The Cloudflare route:</strong> Route the blog&apos;s custom domain through Cloudflare and get edge-computed analytics. It&apos;s free and script-free, but honestly, I was too lazy to reconfigure DNS records, manage SSL certificates, and sign up for another platform dashboard just to see country metrics.</li><li><strong>The Self-Hosted Container route:</strong> Deploying something like GoatCounter (a fantastic Go-based analytics tool) on GCP Cloud Run. But since Cloud Run is stateless, I couldn&apos;t use local SQLite storage. I would need to provision a persistent SQL database anyway.</li></ol><p>If I have to spin up a database, why not just go native?</p><hr /><h2 id="postgres-can-do-everything">Postgres Can Do Everything</h2><p>We live in an era where PostgreSQL is no longer just a relational database; it is a application foundation. With Neon&apos;s generous free tier (giving you 10 branches/databases per project at $0), spinning up a new SQL database takes about three seconds.</p><p>The setup is stupidly simple. A single table:</p><pre><code class="language-sql">CREATE TABLE page_views (
+    id SERIAL PRIMARY KEY,
+    page_path VARCHAR(255) NOT NULL,
+    referrer VARCHAR(512),
+    country VARCHAR(10) DEFAULT &apos;Unknown&apos;,
+    user_agent VARCHAR(512),
+    viewed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_page_views_path ON page_views(page_path);
+</code></pre><p>To feed this table, we don&apos;t need a heavy Node.js or Rails server. We just need a single serverless endpoint that scales to zero when no one is reading.</p><hr /><h2 id="the-boundary-trap:-resisting-easy-coupling">The Boundary Trap: Resisting Easy Coupling</h2><p>Since I already have a production payment rail engine (<code>lagu-lagu</code>) running on Neon Postgres and GCP Cloud Functions, my first instinct was to just append the tracking code there. One database, one function, zero new setups.</p><p>But this is a dangerous architectural trap.</p><p>A personal blog tracker has a completely different lifecycle, risk profile, and security boundary than a financial payment split ledger. Coupling them violates the <strong>Single Responsibility Principle</strong> and introduces a massive security blast radius:</p><blockquote><p>[!WARNING] If a vulnerability is found in the blog tracking API or dashboard code, an attacker could compromise the database credentials and gain read/write access to payment webhook logs and artist payout records.</p></blockquote><p>To prevent this, we chose <strong>strict isolation at zero cost</strong>:</p><ul><li><strong>Database level:</strong> A completely separate Neon database (<code>blog_analytics</code>) with isolated user credentials.</li><li><strong>Backend level:</strong> A dedicated, lightweight GCP Cloud Function (<code>blog-analytics-api</code>) that has no access to the payment schemas.</li></ul><hr /><h2 id="the-$0-serverless-pipeline">The $0 Serverless Pipeline</h2><p>The final architecture is incredibly clean:</p><pre><code class="language-mermaid">graph TD
+    subgraph Blog (Static on GitHub Pages)
+        BlogHTML[blog.nurazhar.com] -- POST /track --&gt; CF[GCP Cloud Function]
+        StatsDashboard[stats.html] -- GET /stats --&gt; CF
+    end
+    subgraph GCP &amp; Neon (Isolated Analytics Backend)
+        CF -- Writes Views --&gt; DB[(Neon Postgres DB)]
+    end
+    style BlogHTML fill:#f9f,stroke:#333,stroke-width:1px
+    style CF fill:#bbf,stroke:#333,stroke-width:1px
+    style DB fill:#bfb,stroke:#333,stroke-width:1px
+</code></pre><h3 id="1.-the-10-line-tracker">1. The 10-Line Tracker</h3><p>In <code>base.html</code>, we drop a tiny, non-blocking script:</p><pre><code class="language-html">&lt;script&gt;
+  (function() {
+    if (window.location.hostname === &apos;localhost&apos;) return;
+    fetch(&apos;https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/blog-analytics-api/track&apos;, {
+      method: &apos;POST&apos;,
+      headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
+      body: JSON.stringify({
+        path: window.location.pathname,
+        referrer: document.referrer || null
+      })
+    }).catch(err =&gt; console.error(err));
+  })();
+&lt;/script&gt;
+</code></pre><h3 id="2.-geolocation-at-the-edge">2. Geolocation at the Edge</h3><p>Instead of loading heavy client-side IP lookup scripts or calling slow external APIs, the GCP Cloud Function reads Google&apos;s edge routing headers directly:</p><pre><code class="language-javascript">const country = req.headers[&apos;x-appengine-country&apos;] || &apos;Unknown&apos;;
+</code></pre><p>Google Cloud automatically geolocates the inbound TCP request at the network edge and injects the ISO country code into the request header. We save it instantly. No cookies, no privacy invasions, and 100% accurate country data.</p><h3 id="3.-the-minimalist-dashboard">3. The Minimalist Dashboard</h3><p>To view the stats, we don&apos;t load a bloated dashboard dashboard app. We just generated a static <code>/stats.html</code> page directly inside the blog. It prompts for a secure passcode, fetches aggregated queries from our function, and renders CSS-only bar charts:</p><pre><code class="language-sql">-- Fetching Top Countries
+SELECT country, COUNT(*) as views 
+FROM page_views 
+GROUP BY country 
+ORDER BY views DESC LIMIT 20;
+</code></pre><hr /><h2 id="the-software-janitor&apos;s-victory">The Software Janitor&apos;s Victory</h2><p>By refusing to sign up for more SaaS tools and rejecting database-heavy open-source containers, the blog remains 100% static, fast, and secure.</p><ul><li><strong>Monthly Cost:</strong> $0 (well within Neon and GCP free tiers).</li><li><strong>Maintenance:</strong> Zero servers to patch.</li><li><strong>Control:</strong> The raw SQL data is mine. I can run complex queries, export it, or build custom visualizers whenever I want.</li></ul><p>Sometimes, the cleanest solution isn&apos;t adding more tools; it&apos;s collapsing what you already have into the simplest possible primitives.</p></div>
+        
+        
+        <p><i>Published: 2026-06-15</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/architecture.html">architecture</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/postgres.html">postgres</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/minimalism.html">minimalism</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/database.html">database</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/serverless.html">serverless</a>
                     </span>
                 
             </i></p>
@@ -625,7 +915,7 @@ PreBuildCommand = /home/nurazhar/.local/bin/aur-audit
 
     <div>
         <h1><a href="quickblog-double-title-gotcha.html">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</a></h1>
-        <div><hr /><h1 id="quickblog-gotcha:-why-your-post-titles-are-displaying-twice">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</h1><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
+        <div><hr /><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
 Date: 2026-06-14
 ---
 # My Great Post
@@ -1146,6 +1436,20 @@ ALTER TABLE payouts ADD CONSTRAINT check_positive_payout CHECK (amount_sent &gt;
           });
         }
       });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
     </script>
   </body>
 </html>
