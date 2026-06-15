@@ -227,11 +227,11 @@ $$ LANGUAGE plpgsql;
 
 CREATE INDEX idx_page_views_path ON page_views(page_path);
 </code></pre><p>To feed this table, we don&apos;t need a heavy Node.js or Rails server. We just need a single serverless endpoint that scales to zero when no one is reading.</p><hr /><h2 id="the-boundary-trap:-resisting-easy-coupling">The Boundary Trap: Resisting Easy Coupling</h2><p>Since I already have a production payment rail engine (<code>lagu-lagu</code>) running on Neon Postgres and GCP Cloud Functions, my first instinct was to just append the tracking code there. One database, one function, zero new setups.</p><p>But this is a dangerous architectural trap.</p><p>A personal blog tracker has a completely different lifecycle, risk profile, and security boundary than a financial payment split ledger. Coupling them violates the <strong>Single Responsibility Principle</strong> and introduces a massive security blast radius:</p><blockquote><p>[!WARNING] If a vulnerability is found in the blog tracking API or dashboard code, an attacker could compromise the database credentials and gain read/write access to payment webhook logs and artist payout records.</p></blockquote><p>To prevent this, we chose <strong>strict isolation at zero cost</strong>:</p><ul><li><strong>Database level:</strong> A completely separate Neon database (<code>blog_analytics</code>) with isolated user credentials.</li><li><strong>Backend level:</strong> A dedicated, lightweight GCP Cloud Function (<code>blog-analytics-api</code>) that has no access to the payment schemas.</li></ul><hr /><h2 id="the-$0-serverless-pipeline">The $0 Serverless Pipeline</h2><p>The final architecture is incredibly clean:</p><pre><code class="language-mermaid">graph TD
-    subgraph Blog (Static on GitHub Pages)
+    subgraph &quot;Blog (Static on GitHub Pages)&quot;
         BlogHTML[blog.nurazhar.com] -- POST /track --&gt; CF[GCP Cloud Function]
         StatsDashboard[stats.html] -- GET /stats --&gt; CF
     end
-    subgraph GCP &amp; Neon (Isolated Analytics Backend)
+    subgraph &quot;GCP &amp; Neon (Isolated Analytics Backend)&quot;
         CF -- Writes Views --&gt; DB[(Neon Postgres DB)]
     end
     style BlogHTML fill:#f9f,stroke:#333,stroke-width:1px
