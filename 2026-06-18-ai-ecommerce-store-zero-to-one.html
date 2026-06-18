@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Nur Azhar&#39;s - Building an AI-Powered E-Commerce Store from Zero to One</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Nur Azhar&#39;s">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+    <!-- Social sharing -->
+    <meta name="title" content="Building an AI-Powered E-Commerce Store from Zero to One">
+    <meta name="twitter:title" content="Building an AI-Powered E-Commerce Store from Zero to One">
+    <meta property="og:title" content="Building an AI-Powered E-Commerce Store from Zero to One">
+    <meta property="og:type" content="website">
+    <meta name="description" content="An end-to-end walkthrough of SmartShop - a Django REST + React + Google Gemini storefront with personalised recommendations, semantic search, and an in-app shopping assistant.">
+    <meta name="twitter:description" content="An end-to-end walkthrough of SmartShop - a Django REST + React + Google Gemini storefront with personalised recommendations, semantic search, and an in-app shopping assistant.">
+    <meta property="og:description" content="An end-to-end walkthrough of SmartShop - a Django REST + React + Google Gemini storefront with personalised recommendations, semantic search, and an in-app shopping assistant.">
+    <meta name="twitter:url" content="https://blog.nurazhar.com/2026-06-18-ai-ecommerce-store-zero-to-one.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/2026-06-18-ai-ecommerce-store-zero-to-one.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="keywords" content="django, react, vite, gemini, ai, e-commerce, docker, mermaid, rest, portfolio, smartshop">
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          <a class="page-link" href="atom.xml">Feed</a>
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div>
+          <h1 class="site-title">
+            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
+          </h1>
+          <p>Thoughts on clojure, linux, security and Bitcoin&#39;s 0.1v (Satoshi Nakamoto&#39;s Design) in an era of artificial intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div>
+        <h1>Building an AI-Powered E-Commerce Store from Zero to One</h1>
+        <div class="post-meta">2026-06-18 &middot; Tags:
+          <a href="tags/django.html">django</a>,
+          <a href="tags/react.html">react</a>,
+          <a href="tags/vite.html">vite</a>,
+          <a href="tags/gemini.html">gemini</a>,
+          <a href="tags/ai.html">ai</a>,
+          <a href="tags/e-commerce.html">e-commerce</a>,
+          <a href="tags/docker.html">docker</a>,
+          <a href="tags/mermaid.html">mermaid</a>,
+          <a href="tags/rest.html">rest</a>,
+          <a href="tags/portfolio.html">portfolio</a>,
+          <a href="tags/smartshop.html">smartshop</a>
+        </div>
+
+        <p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&#39;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p>
+
+        <p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop" target="_blank" rel="noopener noreferrer">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p>
+
+        <blockquote>
+          <p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p>
+        </blockquote>
+
+        <hr>
+
+        <h2>Diagram 1 - What SmartShop actually is</h2>
+        <pre><code class="language-mermaid">graph LR
+    User((Shopper)) -->|HTTPS| React["React + Vite SPA&lt;br/&gt;port 5173"]
+    React -->|Axios JSON| API["Django REST API&lt;br/&gt;port 8000"]
+    API --> ORM[(SQLite&lt;br/&gt;users + products + orders)]
+    API --> Media[(/media/product_images)]
+    API -.->|optional| Gemini["Google Gemini&lt;br/&gt;gemini-1.5-flash / 2.0 / pro / gemma fallback"]
+    Gemini -.->|JSON or text| API</code></pre>
+        <p>Two services, one persistent volume for media, an optional AI leg. Everything else is convention.</p>
+
+        <hr>
+
+        <h2>1. Starting from zero</h2>
+        <p>When you sit down to build a &quot;real-feeling&quot; storefront in 2026, the temptation is to spin up five managed services and a CI pipeline before writing a single model. The discipline of this project is the opposite: <strong>keep the dependency surface to things that run on a developer laptop with zero accounts</strong>.</p>
+        <p>Our &quot;must-haves&quot; list, ranked by what hurts when it&#39;s missing:</p>
+        <ul>
+          <li>an HTTP API that holds users, products and orders</li>
+          <li>a web UI that&#39;s fast on first paint and looks intentional</li>
+          <li>an AI story that&#39;s <em>honest</em> - present when it works, gracefully absent when it doesn&#39;t</li>
+          <li>one command to bring the whole stack up (<code>docker compose up --build</code>)</li>
+          <li>one command to reset the demo state for the next stakeholder</li>
+        </ul>
+        <p>Anything that ate more than a day of yak-shaving was a candidate to defer.</p>
+
+        <h2>Diagram 2 - The minimum viable stack</h2>
+        <pre><code class="language-mermaid">graph TD
+    subgraph "Dev laptop (no accounts needed)"
+      A[Python 3.12 + Django 6] --> B[SQLite]
+      C[Node 20 + Vite 5] --> D[React 18 SPA]
+    end
+    subgraph "Swappable layer"
+      E[Google Gemini SDK&lt;br/&gt;optional]
+    end
+    A -.->|pip install| E
+    D -.->|npm| F[localhost:5173]
+    A -.->|runserver| G[localhost:8000]</code></pre>
+        <p>Two runtimes, three pinned dependencies, one optional AI leg. We add Postgres, Redis, a queue, or a managed object store only when the SQLite boundary starts to hurt.</p>
+
+        <hr>
+
+        <h2>2. Stack choice and architecture trade-offs</h2>
+        <h3>Why Django REST over FastAPI</h3>
+        <p>Boring-on-purpose wins here. DRF ships with token auth, an ORM, a migrations engine, a permissions layer, browsable API, and a serialiser abstraction. For a demo with nine endpoints, <strong>that&#39;s the entire backend library</strong>. FastAPI is excellent when you need async streaming and 10k req/s; we don&#39;t, and we&#39;d be writing the auth scaffolding ourselves if we used it.</p>
+        <h3>Why Vite + React over Next.js</h3>
+        <p>A static SPA is the right fit when the only data source is JSON over HTTP, and when SSR/SEO doesn&#39;t matter for the use case (an authenticated dashboard demo). Vite gives us a 200 ms dev-loop on a 50-file React app; Next.js would have asked us to model routing, layouts, and edge caching we don&#39;t need.</p>
+        <h3>Why SQLite (deliberately)</h3>
+        <p>For a portfolio/demo, SQLite means: zero config, single file you can <code>rm</code> and reseed, full Django ORM semantics, and instant cold start in Docker. The day we need concurrent writes, we promote to Postgres behind the same <code>DATABASES</code> setting.</p>
+
+        <h2>Diagram 3 - The physical layout</h2>
+        <pre><code class="language-mermaid">graph LR
+    subgraph Host
+      direction TB
+      subgraph dc["docker compose"]
+        direction TB
+        Frontend["frontend service&lt;br/&gt;node:20-alpine + Vite&lt;br/&gt;5173:5173"]
+        Backend["backend service&lt;br/&gt;python:3.12-slim + Django&lt;br/&gt;8000:8000"]
+      end
+      Volume["./backend volume&lt;br/&gt;(avoids baked-in container)"]
+    end
+    Frontend -->|fetch /api/*| Backend
+    Backend --- Volume</code></pre>
+        <p>A bind mount on <code>backend/</code> is intentional - it lets us edit models and see them without rebuilding. Production would inject the image instead.</p>
+        <blockquote><p><strong>Note (added post-audit):</strong> the <code>docker-compose.yml</code> for the published repo now wires every required env into the backend container: <code>DJANGO_SECRET_KEY</code> is declared required (the service refuses to start if it is unset, via <code>${VAR:?...}</code> syntax), and <code>DJANGO_DEBUG</code>, <code>DJANGO_ALLOWED_HOSTS</code>, <code>DJANGO_CORS_ALLOWED_ORIGINS</code>, <code>GEMINI_API_KEY</code>, <code>OPEN_API_KEY</code>, <code>DJANGO_ADMIN_RESET_TOKEN</code>, <code>DJANGO_SETTINGS_JSON</code>, throttle rates, and reseed-path overrides are all routed. The previously-quiet docker fallback to a hardcoded dev <code>SECRET_KEY</code> is gone.</p></blockquote>
+
+        <hr>
+
+        <h2>3. Backend foundation - scaffolding the shop</h2>
+        <h3>Models in five lines</h3>
+        <p>The data model is two tables, both pragmatic. No soft-delete columns, no audit trails, no <code>created_by</code>/<code>updated_by</code>. The demo lives or dies on visibility, not forensic evidence.</p>
+        <p><strong><code>backend/smartshop/models.py</code></strong></p>
+        <ul>
+          <li><code>SmartShopProduct</code>: <code>name</code>, <code>category</code>, <code>price</code>, <code>image</code> (ImageField, nullable).</li>
+          <li><code>SmartShopPurchaseOrder</code>: FK to <code>User</code>, FK to <code>SmartShopProduct</code>, <code>quantity</code>, <code>purchase_date</code> (auto).</li>
+        </ul>
+        <p>That&#39;s the entire schema.</p>
+
+        <h2>Diagram 4 - Entity-relationship</h2>
+        <pre><code class="language-mermaid">erDiagram
+    USER ||--o{ PURCHASE_ORDER : "places"
+    PRODUCT ||--o{ PURCHASE_ORDER : "is in"
+    USER {
+        int id PK
+        string username
+        string email
+        string password "hashed"
+    }
+    PRODUCT {
+        int id PK
+        string name
+        string category
+        decimal price
+        string image "path under /media/"
+    }
+    PURCHASE_ORDER {
+        int id PK
+        int user_id FK
+        int product_id FK
+        int quantity
+        datetime purchase_date
+    }</code></pre>
+        <p>One user, many purchase orders. One product, many purchase orders. The recommender reads order history per user; the recommend endpoint takes <code>user_id</code> as a path parameter.</p>
+
+        <h3>URLs and views - the API surface</h3>
+        <ul>
+          <li><code>POST /api/register/</code> -&gt; <code>register_user</code></li>
+          <li><code>POST /api/login/</code> -&gt; <code>login_user</code></li>
+          <li><code>POST /api/buy/</code> -&gt; <code>purchase_product</code></li>
+          <li><code>GET /api/products/</code> -&gt; <code>list_products</code></li>
+          <li><code>GET /api/recommend/&lt;user_id&gt;/</code> -&gt; <code>recommend_products</code></li>
+          <li><code>GET /api/search/?q=...</code> -&gt; <code>smart_search</code></li>
+          <li><code>POST /api/chatbot/</code> -&gt; <code>chatbot_assist</code></li>
+          <li><code>POST /api/products/&lt;pk&gt;/ai-details/</code> -&gt; <code>product_ai_details</code></li>
+          <li><code>POST /api/reseed/</code> -&gt; <code>reseed_db</code> (admin demo button)</li>
+          <li><code>GET|POST /api/settings/</code> -&gt; <code>manage_settings</code></li>
+        </ul>
+
+        <h2>Diagram 5 - API controller map</h2>
+        <pre><code class="language-mermaid">classDiagram
+    class UrlRouter {
+      +"/register/"
+      +"/login/"
+      +"/products/"
+      +"/buy/"
+      +"/recommend/&lt;user_id&gt;/"
+      +"/search/"
+      +"/chatbot/"
+      +"/reseed/"
+      +"/settings/"
+      +"/products/&lt;pk&gt;/ai-details/"
+    }
+    class Views {
+      +register_user(req)
+      +login_user(req)
+      +list_products(req)
+      +purchase_product(req)
+      +recommend_products(req, user_id)
+      +smart_search(req)
+      +chatbot_assist(req)
+      +product_ai_details(req, pk)
+      +reseed_db(req)
+      +manage_settings(req)
+    }
+    UrlRouter --> Views : resolves to function</code></pre>
+        <p>Function-based views on purpose. CBVs shine when you reuse mixins; we don&#39;t.</p>
+
+        <blockquote><p><strong>Note (added post-audit):</strong> the <code>/api/buy/</code> endpoint originally looked up the buyer from a <code>user_id</code> field in the request body - a textbook IDOR pattern. It is now <code>IsAuthenticated</code> and uses only <code>request.user</code>; any client-supplied <code>user_id</code> is ignored. Quantity is validated as a positive integer in the <code>[1, 1000]</code> range, and unhandled errors no longer leak <code>str(e)</code> to the response body.</p></blockquote>
+
+        <h2>Diagram 6 - Registration sequence</h2>
+        <pre><code class="language-mermaid">sequenceDiagram
+    participant U as React UI
+    participant A as /api/register/
+    participant DB as SQLite
+    U->>A: POST { username, email, password }
+    A->>DB: User.objects.create_user(...)
+    DB-->>A: User row
+    A->>DB: Token.objects.get_or_create(user=...)
+    DB-->>A: Token.key
+    A-->>U: 201 { token, username, email, user_id }</code></pre>
+        <p>The login endpoint is identical except it calls <code>authenticate()</code> instead.</p>
+
+        <hr>
+
+        <h2>4. Frontend - React + Vite UI shell</h2>
+        <p>A 600-line <code>App.jsx</code> covers the entire demo UI. Three reasons we resisted splitting it:</p>
+        <ol>
+          <li>The cognitive load of jumping across six files for a beginner reader is real.</li>
+          <li>State is genuinely shared (the current user token affects header, cart, recommender all at once).</li>
+          <li>A portfolio reader can land on <code>App.jsx</code> and follow the entire user journey top-to-bottom.</li>
+        </ol>
+
+        <h2>Diagram 7 - Frontend state lifecycle</h2>
+        <pre><code class="language-mermaid">stateDiagram-v2
+    [*] --> GuestBrowse
+    GuestBrowse: GuestBrowse
+    GuestBrowse --> LoggingIn: click Login
+    LoggingIn --> Authenticated: POST /api/login/ 200
+    LoggingIn --> GuestBrowse: 4xx
+    Authenticated --> ConfiguringAI: open admin bar
+    ConfiguringAI --> Authenticated: paste Gemini key
+    Authenticated --> Shopping: click Buy
+    Shopping --> Authenticated: 200
+    Authenticated --> GuestBrowse: logout</code></pre>
+
+        <h3>Glassmorphism without a design system</h3>
+        <p>The look - frosted header, soft shadows, animated buttons - is six CSS custom properties plus a <code>@keyframes</code> rule. We add nothing to the bundle for it. Two lessons: a coherent style system doesn&#39;t need to be a system; it can be six CSS variables and discipline. A portfolio UI is judged on first 3 seconds; glassmorphism earns that attention cheaply.</p>
+
+        <hr>
+
+        <h2>5. Integrating AI - hooking up Gemini</h2>
+        <p>Free tier, fast <code>flash</code> variant, and a generous multimodality opening for a future image-features demo. The kicker, though, is the <strong>model family list</strong> we wire in <code>views.py</code>:</p>
+        <pre><code class="language-python"># Indicative ordering; per-view lists differ in views.py.
+models_to_try = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-flash-latest",
+                 "gemini-1.5-pro",
+                 "gemma-2-27b-it", "gemma-2-9b-it"]</code></pre>
+        <p>When a quota error hits one model, we walk the list. The UI shows whichever model answered (or <code>rule_fallback</code> if none did).</p>
+
+        <h2>Diagram 8 - Secure API key storage flow</h2>
+        <pre><code class="language-mermaid">sequenceDiagram
+    participant Admin as Demo speaker
+    participant FE as React UI
+    participant BE as Django view
+    participant Disk as settings.json (gitignored)
+    Note over BE,Disk: Only one of (.env / runtime) is non-empty.&lt;br/&gt;Backend prefers runtime, falls back to env, falls back to None.
+    Admin->>FE: paste Gemini key in "Keys Needed" pill
+    FE->>BE: POST /api/settings/ { gemini_api_key }
+    BE->>Disk: write settings.json
+    Disk-->>BE: ok
+    BE-->>FE: 200 { gemini_api_key_configured: true }
+    Admin->>FE: click Buy
+    FE->>BE: GET /api/recommend/{uid}/
+    BE->>Disk: read settings.json
+    BE-->>FE: results + Method=geminiflash-latest</code></pre>
+
+        <hr>
+
+        <h2>6. The recommendation engine - the cascade</h2>
+        <h3>Path A - catalog rules (offline-safe)</h3>
+        <p>Look at the user&#39;s most-recent purchase, find products in the same <code>category</code> that they haven&#39;t bought yet, top up with popular items. Cheap, deterministic, fast. <strong>Always available.</strong></p>
+        <h3>Path B - Gemini assists (online-only)</h3>
+        <p>Render a strict prompt asking the LLM to return a comma-separated list of product names, then post-process with <code>difflib.get_close_matches(ai_name, real_names)</code> to map any hallucinated name back to a real DB row. This is critical - LLMs hallucinate product names. Mapping them back is the second half of the integration.</p>
+
+        <h2>Diagram 9 - The recommendation cascade</h2>
+        <pre><code class="language-mermaid">flowchart TD
+    Start([GET /recommend/uid/]) --> Hist[Fetch user's purchase history]
+    Hist --> Check{"history exists?"}
+    Check -- no --> Cold[Popular items fallback]
+    Check -- yes --> Cats[Same-category candidates]
+    Cats --> HasKey{Gemini key&lt;br/&gt;configured?}
+    HasKey -- no --> Cache[Return category hits]
+    HasKey -- yes --> Prompt[Build strict prompt:&lt;br/&gt;history + catalog]
+    Prompt --> Call[genai.GenerativeModel...]
+    Call -->|429| Rotate[Rotate to next model]
+    Rotate --> Call
+    Call -->|200| Parse[Parse comma-separated names]
+    Parse --> Map[difflib.get_close_matches&lt;br/&gt;-&gt; real IDs]
+    Map --> Mixed[Mix: AI hits + category hits]
+    Mixed --> Out([200 { products, method }])
+    Cache --> Out
+    Cold --> Out</code></pre>
+
+        <h2>Diagram 10 - LLM strict-prompting protocol</h2>
+        <pre><code class="language-mermaid">sequenceDiagram
+    participant FE as React
+    participant V as recommend_products
+    participant G as Gemini API
+    FE->>V: GET /recommend/{uid}/
+    V->>V: history = order list, last 5&lt;br/&gt;candidates = product catalog&lt;br/&gt;(deduped from history)
+    V->>G: configure(api_key)
+    V->>G: prompt = "User history: X, Y, Z.&lt;br/&gt;Candidates: A, B, C, D, E, ...&lt;br/&gt;Return only comma-separated names."
+    G-->>V: "A, C, F (hallucinated), J"
+    V->>V: parse -> ['A','C','F','J']
+    V->>V: difflib.get_close_matches for 'F'
+    V->>V: F -> matched to 'Camping Solar Lamp (id=42)'
+    V-->>FE: [A, C, matched-42, J, ...]&lt;br/&gt;method: "gemini (gemini-1.5-flash)"</code></pre>
+
+        <hr>
+
+        <h2>7. Smart semantic search (with offline fallback)</h2>
+        <p><code>LIKE &#39;%query%&#39;</code> was the V1 find-by-name behaviour. &quot;warm jackets&quot; ought to find coats and hoodies, not literally the word &quot;warm&quot;.</p>
+        <h3>Online: let the LLM return product IDs</h3>
+        <p>We feed Gemini the catalog as <code>[{id, name, category}, ...]</code>, ask it to return comma-separated IDs (not names). Parsing IDs is robust to hallucination - any non-existent ID simply doesn&#39;t match a row.</p>
+        <h3>Offline: a curated synonyms map</h3>
+        <p>For cold querying, a small dictionary ships with the demo: <code>warm</code> -&gt; jackets, parkas, hoodies, blankets; <code>gaming</code> -&gt; monitors, mouse, keyboard, headphones; <code>outdoor</code> -&gt; tents, lamps, backpacks, water bottles.</p>
+
+        <h2>Diagram 11 - Search paths</h2>
+        <pre><code class="language-mermaid">flowchart LR
+    Q[/"q = warm jackets"/] --> Key{API key?}
+    Key -- no --> Dict[Synonym map:&lt;br/&gt;warm -> jackets, parkas, blankets]
+    Dict --> Cat[Filter catalog by category]
+    Cat --> Results([product list])
+    Key -- yes --> LLM[Gemini: return comma-separated IDs]
+    LLM --> Validate[Validate IDs against catalog]
+    Validate -- mismatch --> Dict
+    Validate -- good --> Results</code></pre>
+
+        <hr>
+
+        <h2>8. Dynamic product details &amp; synthesised pros/cons</h2>
+        <p>Click a product card and a detail panel opens. The <strong>AI bit</strong> is a button labelled <em>&quot;Analyse with AI&quot;</em>. Click it, and <code>/api/products/&lt;pk&gt;/ai-details/</code> returns a structured JSON block with <code>summary</code>, <code>pros[]</code>, and <code>cons[]</code>. We force the LLM to return a JSON block (with a regex scrape if needed). Pure-text outputs are rejected - the UI demands structure.</p>
+
+        <h2>Diagram 12 - Forcing structured JSON out of the LLM</h2>
+        <pre><code class="language-mermaid">flowchart TD
+    Click([User clicks 'Analyse with AI']) --> Post[POST /products/pk/ai-details/]
+    Post --> BuildPrompt["prompt = 'Return only JSON:&lt;br/&gt;{summary, pros[], cons[]}'"]
+    BuildPrompt --> Call[genai.GenerativeModel.generate_content]
+    Call --> Raw[Raw text response]
+    Raw --> Extract["Regex scan for a JSON fenced block"]
+    Extract -->|match| Parse[json.loads]
+    Extract -->|miss| Wrap[Wrap the whole text as summary]
+    Parse --> Out([200 JSON])
+    Wrap --> Out</code></pre>
+
+        <hr>
+
+        <h2>9. The in-app shopping assistant</h2>
+        <p>A floating bubble at the bottom-right opens a chat panel. The user types a question. The frontend POSTs to <code>/api/chatbot/</code>, the backend composes a system prompt that injects the catalog as context, and the LLM responds conversationally. The bot is strictly read-only against the catalogue - it cannot perform actions.</p>
+
+        <h2>Diagram 13 - Chatbot async state</h2>
+        <pre><code class="language-mermaid">stateDiagram-v2
+    [*] --> Idle
+    Idle: Bubble idle
+    Idle --> Typing: user types
+    Typing --> Posting: send button
+    Posting --> Thinking: spinner
+    Thinking --> Rendering: response ok
+    Thinking --> Idle: response 4xx&lt;br/&gt;(silent fallback message)
+    Rendering --> Idle</code></pre>
+        <p>The asymmetry between the happy path and the error path is important. Errors don&#39;t bubble as red toast - they degrade to a polite &quot;Here are some popular items:&quot; so the user never feels stranded.</p>
+
+        <hr>
+
+        <h2>10. Infrastructure &amp; dev experience</h2>
+
+        <h2>Diagram 14 - Docker-Compose topology</h2>
+        <pre><code class="language-mermaid">graph TD
+    subgraph "docker compose up --build"
+        B["backend service&lt;br/&gt;build: ./backend&lt;br/&gt;ports: 8000:8000&lt;br/&gt;volumes: ./backend:/app&lt;br/&gt;restart: always"]
+        F["frontend service&lt;br/&gt;build: .&lt;br/&gt;Dockerfile.frontend&lt;br/&gt;ports: 5173:5173&lt;br/&gt;volumes: .:/app, /app/node_modules&lt;br/&gt;depends_on: [backend]&lt;br/&gt;restart: always"]
+    end
+    B -.->|exposes /api/*| F</code></pre>
+
+        <h3>The reseed button (a tiny magic trick)</h3>
+        <p>The top admin bar has a button labelled <em>&quot;Reset Database&quot;</em>. Click it, and the entire catalogue + orders are wiped and re-seeded from two SQL files (<code>Products.sql</code>, <code>PurchaseOrder.sql</code>). The backend uses <code>connection.cursor()</code> on the raw sqlite connection to run the script.</p>
+
+        <h2>Diagram 15 - The reseed round-trip</h2>
+        <pre><code class="language-mermaid">sequenceDiagram
+    participant FE as React top bar
+    participant V as /api/reseed/
+    participant DB as SQLite
+    participant SQL as Products.sql + PurchaseOrder.sql
+    FE->>V: POST {}
+    V->>DB: DELETE FROM purchase_orders
+    V->>DB: DELETE FROM products
+    V->>DB: DELETE FROM sqlite_sequence WHERE name IN ('...','...')
+    V->>SQL: read + executescript()
+    SQL->>DB: 50+ INSERTs products, ~30 inserts orders
+    V-->>FE: 200 { reseeded: true }
+    FE->>FE: toast 'Database reset - try logging in again'</code></pre>
+
+        <hr>
+
+        <h2>11. Shipping open source - the zero-to-one release</h2>
+        <h3>Action 1 - what NOT to commit</h3>
+        <ul>
+          <li><code>backend/.env</code> (any developer-local secrets)</li>
+          <li><code>backend/settings.json</code> (the runtime key store)</li>
+          <li><code>backend/db.sqlite3</code> (the demo database, may contain real-test users)</li>
+          <li><code>backend/.venv/</code>, <code>node_modules/</code>, <code>dist/</code> (heavy build artefacts)</li>
+          <li><code>*.pem</code>, <code>*.key</code>, <code>credentials*</code></li>
+        </ul>
+        <h3>Action 2 - what to commit instead</h3>
+        <ul>
+          <li><code>.env.example</code> - same shape as <code>.env</code>, with placeholders</li>
+          <li><code>.gitignore</code> - Django + React + secrets, with explicit <code>**/db.sqlite3</code></li>
+          <li><code>README.md</code> - one section per operating mode (Docker / no-Docker), with explicit security notes</li>
+        </ul>
+        <h3>Action 3 - inject SECRET_KEY through env</h3>
+        <pre><code class="language-python">SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    '&lt;django startproject default&gt;',
+)</code></pre>
+        <h3>Action 4 - verify with a live secret sweep</h3>
+        <p>Before pushing to GitHub, sweep the staging tree for any <code>AIza...</code>, <code>sk-...</code>, <code>ghp_...</code> pattern. Sweep the <strong>remote</strong> after pushing to confirm.</p>
+        <h3>Action 5 - choose visibility deliberately</h3>
+        <p>Public repos are great for portfolios, but if the project has any environment-specific secrets, private is fine, and GitHub lets you flip later.</p>
+
+        <h2>Diagram 16 - Open-source release checklist</h2>
+        <pre><code class="language-mermaid">flowchart LR
+    Repo[Local project] --> Ign[Apply .gitignore&lt;br/&gt;.env, settings.json,&lt;br/&gt;db.sqlite3, venv, node_modules]
+    Ign --> ExEnv[Write .env.example&lt;br/&gt;placeholders only]
+    ExEnv --> PatchKey[Patch SECRET_KEY&lt;br/&gt;env-first with dev fallback]
+    PatchKey --> ReadMe[Write README&lt;br/&gt;demo creds + setup + API key note]
+    ReadMe --> LocalSweep{Sweep LOCAL&lt;br/&gt;for AIza / sk- / ghp_}
+    LocalSweep -- hit --> Ign
+    LocalSweep -- clean --> GhCreate[gh repo create .. --public]
+    GhCreate --> Push[git push origin main]
+    Push --> RemoteSweep{Sweep REMOTE&lt;br/&gt;via gh api contents}
+    RemoteSweep -- hit --> PatchKey
+    RemoteSweep -- clean --> Done([Live, public, scrubbed])</code></pre>
+
+        <hr>
+
+        <h2>12. What this all buys you</h2>
+        <p>A portfolio reader who clones the repo and pushes a button gets:</p>
+        <ul>
+          <li>a working storefront with two services on <code>5173</code> and <code>8000</code></li>
+          <li>a one-click <em>&quot;Reset Database&quot;</em> that brings the demo back to slide-deck state</li>
+          <li>an admin bar to paste a Gemini key and watch the recommendation method transition from <code>rule_fallback</code> to <code>gemini (gemini-1.5-flash)</code> in real-time</li>
+          <li>a chat bubble that explains the catalogue using the LLM as a shop assistant</li>
+          <li>a public repo they can fork without leaking anyone&#39;s keys</li>
+        </ul>
+
+        <h2>Diagram 17 - What changed when AI was bolted on</h2>
+        <pre><code class="language-mermaid">graph LR
+    subgraph "V0: pure CRUD"
+      V0A[GET /products/]
+      V0B[POST /buy/]
+    end
+    subgraph "V1: catalog rules"
+      V1A[GET /recommend/uid/]
+      V1A --> V1Rules[same-category dedupe]
+    end
+    subgraph "V2: AI cascade"
+      V2A[GET /recommend/uid/]
+      V2A --> V2Rules[same-category dedupe]
+      V2A --> V2LLM[Gemini prompt + diff-match]
+      V2A --> V2Method[method = name of winner]
+    end
+    V0A --> V1A --> V2A</code></pre>
+
+        <hr>
+
+        <h2>13. Closing notes for the curious</h2>
+        <ul>
+          <li><strong>One person can ship this in a week.</strong> The bulk is wiring, not thinking.</li>
+          <li><strong>The hardest bug was the LLM hallucination diff-match.</strong> <code>difflib.get_close_matches</code> with a 0.6 cutoff is the sweet spot.</li>
+          <li><strong>The cheapest UX win was the &quot;method&quot; label.</strong> Truth on the screen builds more trust than any marketing banner.</li>
+          <li><strong>The OpenAI key field is dead code - for now.</strong> Leave the seam, don&#39;t pretend it&#39;s wired.</li>
+        </ul>
+        <p>The full source: <a href="https://github.com/nurazhardotcom/lithan_smartshop" target="_blank" rel="noopener noreferrer">github.com/nurazhardotcom/lithan_smartshop</a>.</p>
+
+        <hr>
+
+        <h2>Update: post-launch security audit</h2>
+        <blockquote><p>Posted 2026-06-18: after this blog was drafted, the SmartShop repo was reviewed against a public-grade security audit. The remediations below are now live on <code>nurazhardotcom/lithan_smartshop</code> main.</p></blockquote>
+
+        <h3>Findings vs remediations</h3>
+        <table>
+          <thead><tr><th>Audit finding</th><th>Code state now</th></tr></thead>
+          <tbody>
+            <tr><td>Hardcoded <code>SECRET_KEY</code> fallback (<code>django-insecure-...</code>)</td><td><code>settings.py</code> raises <code>ImproperlyConfigured</code> on missing <code>DJANGO_SECRET_KEY</code>. Dev-only opt-in requires <code>DJANGO_ALLOW_INSECURE_DEV_KEY=1</code> + <code>DJANGO_DEBUG=True</code>.</td></tr>
+            <tr><td><code>DEBUG = True</code> hardcoded</td><td><code>DEBUG = _env_bool("DJANGO_DEBUG", "False")</code></td></tr>
+            <tr><td><code>CORS_ALLOW_ALL_ORIGINS = True</code></td><td>explicit allowlist via <code>DJANGO_CORS_ALLOWED_ORIGINS</code></td></tr>
+            <tr><td>IDOR: <code>purchase_product</code> honoured a client-supplied <code>user_id</code></td><td>now <code>IsAuthenticated</code>, uses only <code>request.user</code>, validates quantity as int in <code>[1, 1000]</code></td></tr>
+            <tr><td><code>reseed_db</code>, <code>manage_settings</code>, <code>buy</code> were <code>AllowAny</code></td><td><code>reseed_db</code> and <code>manage_settings</code> are <code>IsAdminUser</code>; <code>buy</code> is <code>IsAuthenticated</code></td></tr>
+            <tr><td>No rate limiting on auth endpoints</td><td><code>@ratelimit(key=&#39;ip&#39;, rate=&#39;5/m&#39;)</code> on register; <code>10/m</code> on login</td></tr>
+            <tr><td>Hardcoded <code>/home/nurazhar/...</code> fixture paths</td><td>env-driven <code>RESEED_PRODUCTS_SQL</code> / <code>RESEED_PURCHASE_SQL</code> with safe <code>BASE_DIR</code> defaults</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Demo-grade shortcuts still in the repo</h3>
+        <p>These are intentional and documented in the SmartShop README under <strong>Security Notes for Reviewers</strong>. Replace them before any non-demo use: <code>password123</code> for seed users, SQLite as the database, the historic literal <code>django-insecure-...</code> in early git commits.</p>
+
+        <h3>What you do before deploying anywhere real</h3>
+        <ol>
+          <li>Generate a fresh <code>DJANGO_SECRET_KEY</code>: <code>python -c &quot;import secrets; print(secrets.token_urlsafe(64))&quot;</code></li>
+          <li>Set <code>DJANGO_ADMIN_RESET_TOKEN</code> so even an <code>is_staff=True</code> user cannot trigger reseed alone.</li>
+          <li>Override seed passwords via <code>SEED_ADMIN1_PASSWORD</code> / <code>SEED_ADMIN2_PASSWORD</code> env vars, or delete the demo accounts entirely.</li>
+          <li>If you cloned before the audit commits landed, rotate anything ever derived from the historic <code>SECRET_KEY</code> literal.</li>
+        </ol>
+
+        <p>Full source lives at <a href="https://github.com/nurazhardotcom/lithan_smartshop" target="_blank" rel="noopener noreferrer">github.com/nurazhardotcom/lithan_smartshop</a>; live security posture lives in its README under &quot;Security Notes for Reviewers&quot;.</p>
+      </div>
+    </div>
+
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">&copy; 2026 Nur Azhar. Build in public.</div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try { localStorage.setItem('theme', next); } catch (e) {}
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: window.location.pathname, referrer: document.referrer || null })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
