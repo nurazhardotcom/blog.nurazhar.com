@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-18T02:40:09+00:00</updated>
+  <updated>2026-06-18T02:46:01+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -13,7 +13,7 @@
     <link href="https://blog.nurazhar.com/2026-06-18-ai-ecommerce-store-zero-to-one.html"/>
     <title>Building an AI-Powered E-Commerce Store from Zero to One</title>
     <updated>2026-06-18T23:59:59+00:00</updated>
-    <content type="html"><![CDATA[<div><hr /><h1 id="building-an-ai-powered-e-commerce-store-from-zero-to-one">Building an AI-Powered E-Commerce Store from Zero to One</h1><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
+    <content type="html"><![CDATA[<div><hr /><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
     User((Shopper)) --&gt;|HTTPS| React[&quot;React + Vite SPA&lt;br/&gt;port 5173&quot;]
     React --&gt;|Axios JSON| API[&quot;Django REST API&lt;br/&gt;port 8000&quot;]
     API --&gt; ORM[(SQLite&lt;br/&gt;users + products + orders)]
@@ -135,20 +135,20 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
 </code></pre><p>The &quot;red dot -&gt; green dot&quot; UI pill is intentional feedback. The user trusts the toggle more than a console log.</p><hr /><h2 id="6.-the-recommendation-engine---the-cascade">6. The recommendation engine - the cascade</h2><p>The point of an LLM-shaped recommender is that it can read <strong>intent</strong> from a query, not just categories. We solve it as a cascade.</p><h3 id="path-a---catalog-rules-(offline-safe)">Path A - catalog rules (offline-safe)</h3><p>Look at the user&apos;s most-recent purchase, find products in the same <code>category</code> that they haven&apos;t bought yet, top up with popular items. Cheap, deterministic, fast. <strong>Always available.</strong></p><h3 id="path-b---gemini-assists-(online-only)">Path B - Gemini assists (online-only)</h3><p>Render a strict prompt:</p><blockquote><p>&quot;Here are the user&apos;s last purchases. Here is the candidate catalog. Return a comma-separated list of product NAMES that complement the user&apos;s owned items.&quot;</p></blockquote><p>Then we post-process: <code>difflib.get_close_matches(ai_name, real_names)</code> to map any hallucinated name back to a real DB row. This is critical - LLMs hallucinate product names. Mapping them back is the second half of the integration.</p><h2 id="diagram-9---the-recommendation-cascade">Diagram 9 - The recommendation cascade</h2><pre><code class="language-mermaid">flowchart TD
     Start([GET /recommend/uid/]) --&gt; Hist[Fetch user&apos;s purchase history]
     Hist --&gt; Check{&quot;history exists?&quot;}
-    Check -- no --&gt; Cold[Popular items fallback]
+    Check -- no --&gt; ColdStart[Popular items fallback]
     Check -- yes --&gt; Cats[Same-category candidates]
-    Cats --&gt; HasKey{Gemini key&lt;br/&gt;configured?}
-    HasKey -- no --&gt; Cache[Return category hits]
+    Cats --&gt; HasKey{&quot;Gemini key&lt;br/&gt;configured?&quot;}
+    HasKey -- no --&gt; RuleOnly[Return category hits]
     HasKey -- yes --&gt; Prompt[Build strict prompt:&lt;br/&gt;history + catalog]
     Prompt --&gt; Call[genai.GenerativeModel...]
-    Call --&gt;|429| Rotate[Rotate to next model]
+    Call -.-&gt;|429 quota| Rotate[Rotate to next model]
     Rotate --&gt; Call
-    Call --&gt;|200| Parse[Parse comma-separated names]
+    Call -.-&gt;|200 OK| Parse[Parse comma-separated names]
     Parse --&gt; Map[difflib.get_close_matches&lt;br/&gt;-&gt; real IDs]
     Map --&gt; Mixed[Mix: AI hits + category hits]
-    Mixed --&gt; Out([200 { products, method }])
-    Cache --&gt; Out
-    Cold --&gt; Out
+    Mixed --&gt; Out[[200 { products, method }]]
+    RuleOnly --&gt; Out
+    ColdStart --&gt; Out
 </code></pre><p><code>method</code> is the UI fidelity bit. It returns <code>gemini (gemini-1.5-flash)</code>, <code>gemini_quota_exceeded</code>, <code>gemini_error (4xx: ...)</code>, or <code>rule_fallback</code>. The frontend shows the badge verbatim.</p><h2 id="diagram-10---llm-strict-prompting-protocol">Diagram 10 - LLM strict-prompting protocol</h2><pre><code class="language-mermaid">sequenceDiagram
     participant FE as React
     participant V as recommend_products
