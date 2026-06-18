@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-18T03:00:15+00:00</updated>
+  <updated>2026-06-18T03:06:22+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -135,20 +135,20 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
 </code></pre><p>The &quot;red dot -&gt; green dot&quot; UI pill is intentional feedback. The user trusts the toggle more than a console log.</p><hr /><h2 id="6.-the-recommendation-engine---the-cascade">6. The recommendation engine - the cascade</h2><p>The point of an LLM-shaped recommender is that it can read <strong>intent</strong> from a query, not just categories. We solve it as a cascade.</p><h3 id="path-a---catalog-rules-(offline-safe)">Path A - catalog rules (offline-safe)</h3><p>Look at the user&apos;s most-recent purchase, find products in the same <code>category</code> that they haven&apos;t bought yet, top up with popular items. Cheap, deterministic, fast. <strong>Always available.</strong></p><h3 id="path-b---gemini-assists-(online-only)">Path B - Gemini assists (online-only)</h3><p>Render a strict prompt:</p><blockquote><p>&quot;Here are the user&apos;s last purchases. Here is the candidate catalog. Return a comma-separated list of product NAMES that complement the user&apos;s owned items.&quot;</p></blockquote><p>Then we post-process: <code>difflib.get_close_matches(ai_name, real_names)</code> to map any hallucinated name back to a real DB row. This is critical - LLMs hallucinate product names. Mapping them back is the second half of the integration.</p><h2 id="diagram-9---the-recommendation-cascade">Diagram 9 - The recommendation cascade</h2><pre><code class="language-mermaid">flowchart TD
     Start([GET /recommend/uid/]) --&gt; Hist[Fetch user&apos;s purchase history]
     Hist --&gt; Check{&quot;history exists?&quot;}
-    Check -- no --&gt; ColdStart[Popular items fallback]
+    Check -- no --&gt; Cold[Popular items fallback]
     Check -- yes --&gt; Cats[Same-category candidates]
-    Cats --&gt; HasKey{&quot;Gemini key&lt;br/&gt;configured?&quot;}
-    HasKey -- no --&gt; RuleOnly[Return category hits]
-    HasKey -- yes --&gt; Prompt[Build strict prompt:&lt;br/&gt;history + catalog]
+    Cats --&gt; HasKey{&quot;Gemini key configured?&quot;}
+    HasKey -- no --&gt; Rule[Return category hits]
+    HasKey -- yes --&gt; Prompt[Build strict prompt]
     Prompt --&gt; Call[genai.GenerativeModel...]
-    Call -.-&gt; Rotate[Rotate to next model]
+    Call --&gt; Rotate[Rotate to next model]
     Rotate --&gt; Call
-    Call -.-&gt; Parse[Parse comma-separated names]
-    Parse --&gt; Map[difflib.get_close_matches&lt;br/&gt;-&gt; real IDs]
-    Map --&gt; Mixed[Mix: AI hits + category hits]
-    Mixed --&gt; Out[[200 { products, method }]]
-    RuleOnly --&gt; Out
-    ColdStart -.-&gt; Out
+    Call --&gt; Parse[Parse comma-separated names]
+    Parse --&gt; Map[difflib.get_close_matches to real IDs]
+    Map --&gt; Mix[Mix AI hits + category hits]
+    Mix --&gt; Out([Return 200 with method])
+    Rule --&gt; Out
+    Cold --&gt; Out
 </code></pre><p><code>method</code> is the UI fidelity bit. It returns <code>gemini (gemini-1.5-flash)</code>, <code>gemini_quota_exceeded</code>, <code>gemini_error (4xx: ...)</code>, or <code>rule_fallback</code>. The frontend shows the badge verbatim.</p><h2 id="diagram-10---llm-strict-prompting-protocol">Diagram 10 - LLM strict-prompting protocol</h2><pre><code class="language-mermaid">sequenceDiagram
     participant FE as React
     participant V as recommend_products
