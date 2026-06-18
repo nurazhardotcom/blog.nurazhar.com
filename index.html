@@ -222,14 +222,14 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     HasKey -- no --&gt; RuleOnly[Return category hits]
     HasKey -- yes --&gt; Prompt[Build strict prompt:&lt;br/&gt;history + catalog]
     Prompt --&gt; Call[genai.GenerativeModel...]
-    Call -.-&gt;|429 quota| Rotate[Rotate to next model]
+    Call -.-&gt; Rotate[Rotate to next model]
     Rotate --&gt; Call
-    Call -.-&gt;|200 OK| Parse[Parse comma-separated names]
+    Call -.-&gt; Parse[Parse comma-separated names]
     Parse --&gt; Map[difflib.get_close_matches&lt;br/&gt;-&gt; real IDs]
     Map --&gt; Mixed[Mix: AI hits + category hits]
     Mixed --&gt; Out[[200 { products, method }]]
     RuleOnly --&gt; Out
-    ColdStart --&gt; Out
+    ColdStart -.-&gt; Out
 </code></pre><p><code>method</code> is the UI fidelity bit. It returns <code>gemini (gemini-1.5-flash)</code>, <code>gemini_quota_exceeded</code>, <code>gemini_error (4xx: ...)</code>, or <code>rule_fallback</code>. The frontend shows the badge verbatim.</p><h2 id="diagram-10---llm-strict-prompting-protocol">Diagram 10 - LLM strict-prompting protocol</h2><pre><code class="language-mermaid">sequenceDiagram
     participant FE as React
     participant V as recommend_products
