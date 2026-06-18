@@ -93,7 +93,7 @@
 
       
     <div>
-        <h1><a href="2026-06-18-ai-ecommerce-store-zero-to-one.html">Building an AI-Powered E-Commerce Store from Zero to One</a></h1>
+        <h1><a href="ai-ecommerce-store-zero-to-one.html">Building an AI-Powered E-Commerce Store from Zero to One</a></h1>
         <div><hr /><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
     User((Shopper)) --&gt;|HTTPS| React[&quot;React + Vite SPA&lt;br/&gt;port 5173&quot;]
     React --&gt;|Axios JSON| API[&quot;Django REST API&lt;br/&gt;port 8000&quot;]

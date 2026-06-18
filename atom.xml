@@ -3,14 +3,14 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-18T02:46:01+00:00</updated>
+  <updated>2026-06-18T02:54:29+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
   </author>
   <entry>
-    <id>https://blog.nurazhar.com/2026-06-18-ai-ecommerce-store-zero-to-one.html</id>
-    <link href="https://blog.nurazhar.com/2026-06-18-ai-ecommerce-store-zero-to-one.html"/>
+    <id>https://blog.nurazhar.com/ai-ecommerce-store-zero-to-one.html</id>
+    <link href="https://blog.nurazhar.com/ai-ecommerce-store-zero-to-one.html"/>
     <title>Building an AI-Powered E-Commerce Store from Zero to One</title>
     <updated>2026-06-18T23:59:59+00:00</updated>
     <content type="html"><![CDATA[<div><hr /><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
