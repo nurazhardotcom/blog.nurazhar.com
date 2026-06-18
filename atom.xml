@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-18T04:33:59+00:00</updated>
+  <updated>2026-06-18T05:58:41+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -199,24 +199,25 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     Configure --&gt; TryModels[&quot;Try models in order:&lt;br/&gt;1. gemini-1.5-flash&lt;br/&gt;2. gemini-2.0-flash&lt;br/&gt;3. gemini-flash-latest&lt;br/&gt;4. gemini-1.5-pro&lt;br/&gt;5. gemma-2-27b-it&lt;br/&gt;6. gemma-2-9b-it&quot;]
     TryModels --&gt; Success{Success?}
     Success -- yes --&gt; Return[Return AIrecommend + method]
-    Success -- no (429 / 4xx / net) --&gt; NextModel[Rotate to next model]
+    Success -- &quot;no: 429/4xx/net&quot; --&gt; NextModel[Rotate to next model]
     NextModel --&gt; TryModels
-    Success -- all fail --&gt; Rule[rule_fallback:&lt;br/&gt;Counter(purchased_categories)&lt;br/&gt;.most_common(1)]
+    Success -- all fail --&gt; Rule[&quot;rule_fallback:&lt;br/&gt;Counter(purchased_categories)&lt;br/&gt;.most_common(1)&quot;]
     Rule --&gt; Return
     None --&gt; Rule
 </code></pre><p>This precedence chain means the demo never hard-fails on quota: the speaker can keep clicking Buy even when Google returns 429.</p><hr /><h2 id="6.-the-recommendation-engine---the-cascade">6. The recommendation engine - the cascade</h2><p>The point of an LLM-shaped recommender is that it can read <strong>intent</strong> from a query, not just categories. We solve it as a cascade.</p><h3 id="path-a---catalog-rules-(offline-safe)">Path A - catalog rules (offline-safe)</h3><p>Look at the user&apos;s most-recent purchase, find products in the same <code>category</code> that they haven&apos;t bought yet, top up with popular items. Cheap, deterministic, fast. <strong>Always available.</strong></p><h3 id="path-b---gemini-assists-(online-only)">Path B - Gemini assists (online-only)</h3><p>Render a strict prompt:</p><blockquote><p>&quot;Here are the user&apos;s last purchases. Here is the candidate catalog. Return a comma-separated list of product NAMES that complement the user&apos;s owned items.&quot;</p></blockquote><p>Then we post-process: <code>difflib.get_close_matches(ai_name, real_names)</code> to map any hallucinated name back to a real DB row. This is critical - LLMs hallucinate product names. Mapping them back is the second half of the integration.</p><h2 id="diagram-9---the-recommendation-cascade">Diagram 9 - The recommendation cascade</h2><pre><code class="language-mermaid">flowchart TD
     Start([GET /recommend/uid/]) --&gt; Hist[Fetch user&apos;s purchase history]
     Hist --&gt; Check{&quot;history exists?&quot;}
     Check -- no --&gt; Cold[Popular items fallback]
-    Check -- yes --&gt; Cats[Same-category candidates&lt;br/&gt;(exclude already bought)]
+    Check -- yes --&gt; Cats[&quot;Same-category candidates&lt;br/&gt;(exclude already bought)&quot;]
     Cats --&gt; HasKey{&quot;Gemini key configured?&quot;}
     HasKey -- no --&gt; Rule[Return category hits]
-    HasKey -- yes --&gt; Prompt[Build strict prompt&lt;br/&gt;&quot;Return only comma-separated names&quot;]
-    Prompt --&gt; Call[genai.GenerativeModel(...)]
-    Call --&gt; Rotate[Rotate to next model]
+    HasKey -- yes --&gt; Prompt[&quot;Build strict prompt: return only comma-separated names&quot;]
+    Prompt --&gt; Call[&quot;genai.GenerativeModel(...)&quot;]
+    Call --&gt; TryResult{Model responded?}
+    TryResult -- &quot;no: quota/error&quot; --&gt; Rotate[Rotate to next model in chain]
     Rotate --&gt; Call
-    Call --&gt; Parse[Parse comma-separated names]
-    Parse --&gt; Map[difflib.get_close_matches&lt;br/&gt;cutoff=0.5 against real product names]
+    TryResult -- yes --&gt; Parse[Parse comma-separated names]
+    Parse --&gt; Map[&quot;difflib.get_close_matches&lt;br/&gt;cutoff=0.5 against real product names&quot;]
     Map --&gt; Mix[Mix AI hits + category hits]
     Mix --&gt; Out([Return 200 with method])
     Rule --&gt; Out
@@ -354,10 +355,10 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     V--&gt;&gt;FE: 200 { reseeded: true }
     FE-&gt;&gt;FE: toast &apos;Database reset - try logging in again&apos;
 </code></pre><p>The &quot;log in again&quot; toast is a tiny budget: we know the demo user wants to re-paste creds or hop accounts. We tell them rather than letting the UI silently 401.</p><h3 id="why-use-raw-sql-for-seeding-(a-confession)">Why use raw SQL for seeding (a confession)</h3><p><code>seed_db.py</code> reads SQL files via <code>connection.connection.executescript()</code>. Trade-offs:</p><ul><li>we can hand-edit fixtures in SQL and re-run them</li><li>the demo product list reads cleanly as a spreadsheet alongside the screenshots</li><li>downside: SQL syntax is dialect-bound (Postgres-port = rewrite)</li></ul><p>For a demo that lives forever in SQLite, that&apos;s a fine trade.</p><h2 id="diagram-15a---reseed-sql-file-paths-and-env-overrides">Diagram 15a - Reseed SQL file paths and env overrides</h2><pre><code class="language-mermaid">flowchart TD
-    Start[POST /api/reseed/] --&gt; Env1{RESEEED&lt;br/&gt;PRODUCTS_SQL&lt;br/&gt;set?}
+    Start[POST /api/reseed/] --&gt; Env1{RESEED&lt;br/&gt;PRODUCTS_SQL&lt;br/&gt;set?}
     Env1 -- yes --&gt; P1[Use env path]
     Env1 -- no --&gt; P2[BASE_DIR/smartshop/fixtures/Products.sql]
-    Start --&gt; Env2{RESEEED&lt;br/&gt;PURCHASE_SQL&lt;br/&gt;set?}
+    Start --&gt; Env2{RESEED&lt;br/&gt;PURCHASE_SQL&lt;br/&gt;set?}
     Env2 -- yes --&gt; Q1[Use env path]
     Env2 -- no --&gt; Q2[BASE_DIR/smartshop/fixtures/PurchaseOrder.sql]
     P1 --&gt; Read[Read files via executescript]
@@ -367,7 +368,7 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     Read --&gt; Missing{File missing?}
     Missing -- yes --&gt; Warn[Return warning + continue]
     Missing -- no --&gt; Exec[Execute SQL against SQLite connection]
-    Exec --&gt; Done[200 { reseeded: true }]
+    Exec --&gt; Done[&quot;200 reseeded: true&quot;]
 </code></pre><p>The env-driven paths mean the published repo never hardcodes <code>/home/nurazhar/...</code> - a post-audit fix.</p><hr /><h2 id="11.-shipping-open-source---the-zero-to-one-release">11. Shipping open source - the zero-to-one release</h2><p>The repo goes from local folder to public GitHub. The step that matters most is the <strong>security scrub</strong> - skipped at your peril. The original draft of this section described five concrete actions; <strong>after</strong> the post was written the team ran a public-grade audit and found several gaps that those five actions alone did not catch. What the published repo currently ships (commits <code>00d5ad1</code> -&gt; <code>8903a1d</code> -&gt; <code>1625a91</code> -&gt; <code>27e6991</code>) goes further than the list below.</p><p>Five concrete actions (the original v1 checklist; <strong>aim higher than these today</strong>):</p><h3 id="action-1---what-not-to-commit">Action 1 - what NOT to commit</h3><ul><li><code>backend/.env</code> (any developer-local secrets)</li><li><code>backend/settings.json</code> (the runtime key store)</li><li><code>backend/db.sqlite3</code> (the demo database, may contain real-test users)</li><li><code>backend/.venv/</code>, <code>node_modules/</code>, <code>dist/</code> (heavy build artefacts)</li><li><code>*.pem</code>, <code>*.key</code>, <code>credentials*</code></li></ul><h3 id="action-2---what-to-commit-instead">Action 2 - what to commit instead</h3><ul><li><code>.env.example</code> - same shape as <code>.env</code>, <strong>with placeholders</strong>, so newcomers know what to fill in. Comments link to <a href="https://aistudio.google.com/app/apikey">https://aistudio.google.com/app/apikey</a> for the free Gemini key.</li><li><code>.gitignore</code> - Django + React + secrets, with explicit <code>**/db.sqlite3</code> so nested DBs don&apos;t slip in.</li><li><code>README.md</code> - one section per operating mode (Docker / no-Docker), with explicit security notes.</li></ul><h3 id="action-3---inject-secret-key-through-env,-keep-dev-fallback">Action 3 - inject SECRET_KEY through env, keep dev fallback</h3><p>The default <code>django-insecure-...</code> SECRET_KEY Django ships is a publicly-known dev value. Two changes:</p><pre><code class="language-python">SECRET_KEY = os.getenv(
     &apos;DJANGO_SECRET_KEY&apos;,
     &apos;django-insecure-DO-NOT-USE-IN-PRODUCTION&apos;,
@@ -384,17 +385,17 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     Push --&gt; RemoteSweep{&quot;Sweep REMOTE&lt;br/&gt;via gh api /git/trees&quot;}
     RemoteSweep -- hit --&gt; PatchKey
     RemoteSweep -- clean --&gt; Done([&quot;Live, public or private, scrubbed&quot;])
-</code></pre><p>The loop is real. We&apos;ve needed two passes on real projects - the first push, the secret scan callout, the patch, the second push.</p><h2 id="diagram-16a---security-audit-findings-mapped-to-code-changes">Diagram 16a - Security audit findings mapped to code changes</h2><pre><code class="language-mermaid">flowchart LR
+</code></pre><p>The loop is real. We&apos;ve needed two passes on real projects - the first push, the secret scan callout, the patch, the second push.</p><h2 id="diagram-16a---security-audit-findings-mapped-to-code-changes">Diagram 16a - Security audit findings mapped to code changes</h2><pre><code class="language-mermaid">flowchart TD
     A[Hardcoded SECRET_KEY] --&gt; A1[ImproperlyConfigured raised&lt;br/&gt;DJANGO_ALLOW_INSECURE_DEV_KEY opt-in]
-    B[DEBUG=True hardcoded] --&gt; B1[_env_bool(DJANGO_DEBUG, False)]
-    C[ALLOWED_HOSTS=[]] --&gt; C1[env-driven allowlist&lt;br/&gt;Docker-aware defaults]
+    B[&quot;DEBUG=True hardcoded&quot;] --&gt; B1[&quot;_env_bool(DJANGO_DEBUG, False)&quot;]
+    C[&quot;ALLOWED_HOSTS=[]&quot;] --&gt; C1[&quot;env-driven allowlist&lt;br/&gt;Docker-aware defaults&quot;]
     D[CORS_ALLOW_ALL_ORIGINS] --&gt; D1[explicit allowlist&lt;br/&gt;DJANGO_CORS_ALLOW_ALL=1 escape hatch]
-    E[IDOR: buy() used body user_id] --&gt; E1[IsAuthenticated&lt;br/&gt;request.user only&lt;br/&gt;qty 1-1000]
+    E[&quot;IDOR: buy used body user_id&quot;] --&gt; E1[&quot;IsAuthenticated&lt;br/&gt;request.user only&lt;br/&gt;qty 1-1000&quot;]
     F[reseed/manage_settings public] --&gt; F1[IsAdminUser&lt;br/&gt;X-Admin-Token double-gate]
     G[Hardcoded fixture paths] --&gt; G1[RESEED_PRODUCTS_SQL env&lt;br/&gt;safe BASE_DIR defaults]
     H[settings.json hardcoded path] --&gt; H1[DJANGO_SETTINGS_JSON&lt;br/&gt;configurable path]
     I[No rate limiting on auth] --&gt; I1[5/m register, 10/m login&lt;br/&gt;env-tunable]
-    J[str(e) in error responses] --&gt; J1[logger.exception + generic body]
+    J[&quot;str-e in error responses&quot;] --&gt; J1[&quot;logger.exception + generic body&quot;]
     K[No env wiring in compose] --&gt; K1[DJANGO_SECRET_KEY required&lt;br/&gt;+ all overrides]
 </code></pre><p>Each finding maps to one or more code-level fixes in the published repo.</p><hr /><h2 id="12.-what-this-all-buys-you">12. What this all buys you</h2><p>A portfolio reader who clones the repo and pushes a button gets:</p><ul><li>a working storefront with two services on <code>5173</code> and <code>8000</code></li><li>a one-click <em>&quot;Reset Database&quot;</em> that brings the demo back to slide-deck state</li><li>an admin bar to paste a Gemini key and watch the recommendation method transition from <code>rule_fallback</code> to <code>gemini (gemini-1.5-flash)</code> in real-time</li><li>a chat bubble that explains the catalogue using the LLM as a shop assistant</li><li>a public repo they can fork without leaking anyone&apos;s keys</li></ul><p>A senior engineer reading the codebase gets a small, opinionated answer to &quot;how do you wire an LLM into a CRUD app without surrendering the engineering quality&quot;: constraints, cascade, failover, named state, public release scrubbed and verified.</p><h2 id="diagram-17---what-changed-when-ai-was-bolted-on">Diagram 17 - What changed when AI was bolted on</h2><pre><code class="language-mermaid">graph LR
     subgraph &quot;V0: pure CRUD&quot;
