@@ -911,6 +911,45 @@ New way (tool calling):
     </div>
 
     <div>
+        <h1><a href="2026-06-19-hermes-agent-memory-limits.html">Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)</a></h1>
+        <div><hr /><h2 id="the-problem">The Problem</h2><p>I was trying to update my user profile in Hermes Agent&apos;s memory today. Simple task — add my career trajectory. The tool kept rejecting the write:</p><pre><code>Replacement would put memory at 1,467/1,375 chars.
+</code></pre><p>Then it failed again. And again. Three retries, same error. The memory tool was stuck in a loop because the user profile store had hit its hard limit of 1,375 characters.</p><h2 id="what&apos;s-actually-happening">What&apos;s Actually Happening</h2><p>Hermes Agent has two memory stores:</p><ul><li><strong>User profile</strong> — who you are (1,375 char limit)</li><li><strong>Agent notes</strong> — your environment, conventions, lessons (2,200 char limit)</li></ul><p>Every entry gets injected into the system prompt on every single turn. That means every character of memory competes with the actual conversation for space in the context window.</p><h2 id="why-the-limit-exists">Why the Limit Exists</h2><p><strong>1. Context window is finite.</strong></p><p>LLMs have a maximum context window — the total number of tokens they can process in one request. If your memory store was unlimited, it could consume a huge chunk of that window before the agent even starts working on your request.</p><p>At ~4 chars per token, the current user profile limit (1,375 chars) costs roughly 344 tokens. The agent notes (2,200 chars) cost ~550 tokens. Combined, that&apos;s ~900 tokens of overhead per turn — before any conversation history or tool output.</p><p><strong>2. Token cost is real.</strong></p><p>Every token injected into the prompt costs money. At scale, an agent making thousands of API calls per day with bloated memory stores would burn through credits fast. The limit forces discipline.</p><p><strong>3. Signal-to-noise ratio.</strong></p><p>Unlimited memory becomes a dumping ground. Most stored facts are irrelevant to any given session. A hard limit forces you to keep only what actually matters — your name, preferences, stable environment facts. Not a log of everything that ever happened.</p><p><strong>4. Performance.</strong></p><p>Larger memory = more tokens to process on every turn = slower responses. Keeping it compact means faster cycles.</p><h2 id="how-i-fixed-it">How I Fixed It</h2><p>The issue was that I had two entries with overlapping career information. The old entry:</p><blockquote><p>7yr IT ops ICA (CyberArk, Entra ID, Carbon Black, Tenable, Guardium)</p></blockquote><p>And a newer entry with the same info plus more detail. Together they exceeded the limit.</p><p>The fix: remove the old entry, write a consolidated one that captures the full trajectory in fewer characters:</p><blockquote><p>Career: IT Support → Cybersecurity Analyst → Compliance/TechFresh → Application Support (DCS, Power Automate/Odoo/WordPress) → now Full Stack Dev (Lithan diploma + lagu-lagu). 7yr total.</p></blockquote><p>Same information, half the characters.</p><h2 id="working-with-the-limit">Working With the Limit</h2><p><strong>Do:</strong></p><ul><li>Write declarative facts, not narratives</li><li>Use session_search to recall past task details instead of memorizing them</li><li>Prune entries that are no longer relevant</li><li>Put reusable procedures in skills, not memory</li></ul><p><strong>Don&apos;t:</strong></p><ul><li>Store task progress, PR numbers, or temporary state</li><li>Duplicate information across entries</li><li>Treat memory as a conversation log</li></ul><h2 id="the-bigger-pattern">The Bigger Pattern</h2><p>This is a general principle in system design: <strong>constraints force better decisions.</strong> An unlimited memory store would be easier to use but worse to operate. The character limit is a feature — it keeps the agent lean and forces you to be intentional about what you remember.</p><p>Same reason BSV has unbounded block size but practical limits emerge from hardware and bandwidth. Constraints aren&apos;t the enemy. They&apos;re the design.</p></div>
+        
+        
+        <p><i>Published: 2026-06-19</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/token-cost.html">token-cost</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/hermes-agent.html">hermes-agent</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/design-decisions.html">design-decisions</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/context-window.html">context-window</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/ai-agents.html">ai-agents</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/memory.html">memory</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="ai-ecommerce-store-zero-to-one.html">Building an AI-Powered E-Commerce Store from Zero to One</a></h1>
         <div><hr /><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
     User((Shopper)) --&gt;|HTTPS| React[&quot;React + Vite SPA&lt;br/&gt;port 5173&quot;]
