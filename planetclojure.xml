@@ -3,14 +3,14 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-19T12:17:13+00:00</updated>
+  <updated>2026-06-19T12:19:01+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
   </author>
   <entry>
-    <id>https://blog.nurazhar.com/2026-06-18-python-to-babashka-etl-rewrite.html</id>
-    <link href="https://blog.nurazhar.com/2026-06-18-python-to-babashka-etl-rewrite.html"/>
+    <id>https://blog.nurazhar.com/python-to-babashka-etl-rewrite.html</id>
+    <link href="https://blog.nurazhar.com/python-to-babashka-etl-rewrite.html"/>
     <title>From Python to Babashka: Rewriting a Crypto ETL Pipeline in Clojure</title>
     <updated>2026-06-18T23:59:59+00:00</updated>
     <content type="html"><![CDATA[<div><hr /><h2 id="the-original:-python-+-sqlite">The Original: Python + SQLite</h2><p>I had a small Python project — <code>sol-de-tracker</code> — that fetches the current Solana price from CoinGecko and stores it in SQLite. Two scripts, ~60 lines total:</p><pre><code class="language-python"># get_sol_price.py
@@ -134,8 +134,8 @@ bb get_bsv_price_with_db.bb   # ... saved to bsv_data.db
 </code></pre><p>Or a <code>systemd</code> timer for more control. The Babashka binary starts fast enough that cron overhead is negligible.</p><hr /><h2 id="takeaways">Takeaways</h2><ol start="1"><li><p><strong>Babashka is not a JVM.</strong> The GraalVM sandbox strips out <code>java.sql</code>, <code>java.beans</code>, and other core Java modules. Don&apos;t assume Java interop &quot;just works&quot; — test it.</p></li><li><p><strong>Shelling out is idiomatic.</strong> For SQLite, CLI tools, and other system utilities, <code>clojure.java.shell</code> is the Babashka way. It&apos;s clean, dependency-free, and the <code>sqlite3</code> CLI is more battle-tested than most JDBC drivers.</p></li><li><p><strong>&quot;Built-in&quot; means &quot;available in some versions.&quot;</strong> The <code>next.jdbc</code> namespace may or may not be present depending on your Babashka version. Always verify with <code>bb -e &apos;(require (quote [next.jdbc :as jdbc]))&apos;</code> before depending on it.</p></li><li><p><strong>Zero-dependency scripts are powerful.</strong> The entire project — HTTP client, JSON parser, SQLite persistence — runs with <code>bb</code> and <code>sqlite3</code>. No package manager, no lock files, no containers.</p></li><li><p><strong>The rename from SOL to BSV was mechanical.</strong> CoinGecko uses <code>bitcoin-cash-sv</code> as the BSV coin ID. Changing the API URL, variable names, and database file took 2 minutes. The code structure didn&apos;t change at all.</p></li></ol><hr /><h2 id="links">Links</h2><ul><li><strong>Source:</strong> <a href="https://github.com/nurazhardotcom/sol-de-tracker">sol-de-tracker</a> (original Python)</li><li><strong>Babashka:</strong> <a href="https://babashka.org/">babashka.org</a></li><li><strong>CoinGecko API:</strong> <a href="https://www.coingecko.com/en/api">coingecko.com/api</a></li><li><strong>quickblog:</strong> <a href="https://github.com/borkdude/quickblog">github.com/borkdude/quickblog</a> (this blog&apos;s engine)</li></ul></div>]]></content>
   </entry>
   <entry>
-    <id>https://blog.nurazhar.com/2026-06-17-env-secret-leak-fix.html</id>
-    <link href="https://blog.nurazhar.com/2026-06-17-env-secret-leak-fix.html"/>
+    <id>https://blog.nurazhar.com/env-secret-leak-fix.html</id>
+    <link href="https://blog.nurazhar.com/env-secret-leak-fix.html"/>
     <title>How a Single ".env" in allowed-extensions Could Leak Your Secrets to LLMs</title>
     <updated>2026-06-17T23:59:59+00:00</updated>
     <content type="html"><![CDATA[<div><hr /><p>In our AI context bundler (<code>generate_context.clj</code>), a single line allowed <code>.env</code> files to be read, bundled into <code>ai_context.txt</code>, and sent to external LLMs:</p><pre><code class="language-clojure">(def allowed-extensions #{&quot;.py&quot; &quot;.js&quot; &quot;.jsx&quot; &quot;.ts&quot; &quot;.tsx&quot; &quot;.html&quot; &quot;.css&quot;

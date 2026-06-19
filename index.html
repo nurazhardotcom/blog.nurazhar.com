@@ -1457,7 +1457,7 @@ models_to_try = [&quot;gemini-1.5-flash&quot;, &quot;gemini-2.0-flash&quot;, &qu
     </div>
 
     <div>
-        <h1><a href="2026-06-18-python-to-babashka-etl-rewrite.html">From Python to Babashka: Rewriting a Crypto ETL Pipeline in Clojure</a></h1>
+        <h1><a href="python-to-babashka-etl-rewrite.html">From Python to Babashka: Rewriting a Crypto ETL Pipeline in Clojure</a></h1>
         <div><hr /><h2 id="the-original:-python-+-sqlite">The Original: Python + SQLite</h2><p>I had a small Python project — <code>sol-de-tracker</code> — that fetches the current Solana price from CoinGecko and stores it in SQLite. Two scripts, ~60 lines total:</p><pre><code class="language-python"># get_sol_price.py
 import requests
 
@@ -1805,7 +1805,7 @@ sudo mkdir -p /etc/systemd/system/cachyos-rate-mirrors.timer.d; printf &apos;[Ti
     </div>
 
     <div>
-        <h1><a href="2026-06-17-env-secret-leak-fix.html">How a Single &quot;.env&quot; in allowed-extensions Could Leak Your Secrets to LLMs</a></h1>
+        <h1><a href="env-secret-leak-fix.html">How a Single &quot;.env&quot; in allowed-extensions Could Leak Your Secrets to LLMs</a></h1>
         <div><hr /><p>In our AI context bundler (<code>generate_context.clj</code>), a single line allowed <code>.env</code> files to be read, bundled into <code>ai_context.txt</code>, and sent to external LLMs:</p><pre><code class="language-clojure">(def allowed-extensions #{&quot;.py&quot; &quot;.js&quot; &quot;.jsx&quot; &quot;.ts&quot; &quot;.tsx&quot; &quot;.html&quot; &quot;.css&quot;
                            &quot;.json&quot; &quot;.md&quot; &quot;.sql&quot; &quot;.env&quot; &quot;.ini&quot; &quot;.toml&quot; &quot;.clj&quot;})
 </code></pre><h2 id="jurisdiction-/-data-flow">Jurisdiction / Data Flow</h2><p>Local filesystem → Babashka script → <code>ai_context.txt</code> → External LLM API (OpenRouter, Anthropic, etc.) → Model provider logs/training data.</p><h2 id="why-this-matters">Why This Matters</h2><table><thead><tr><th>Secret Type</th><th>Typical Location</th><th>Risk if Leaked</th></tr></thead><tbody><tr><td>API Keys</td><td><code>.env</code>, <code>secrets.yaml</code></td><td>Full account compromise, billing abuse</td></tr><tr><td>Database URLs</td><td><code>.env</code>, <code>config.toml</code></td><td>Data exfiltration, ransomware</td></tr><tr><td>JWT Secrets</td><td><code>.env</code></td><td>Token forgery, auth bypass</td></tr><tr><td>Cloud Credentials</td><td><code>.aws/credentials</code>, <code>.gcp/</code></td><td>Infrastructure takeover</td></tr></tbody></table><h2 id="the-fix:-defense-in-depth">The Fix: Defense in Depth</h2><p>Three layers, not one.</p><h3 id="layer-1:-remove-.env-from-allowlist">Layer 1: Remove <code>.env</code> from Allowlist</h3><pre><code class="language-diff">- #{&quot;.py&quot; &quot;.js&quot; &quot;.jsx&quot; &quot;.ts&quot; &quot;.tsx&quot; &quot;.html&quot; &quot;.css&quot;
