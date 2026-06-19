@@ -3,11 +3,20 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-18T12:49:58+00:00</updated>
+  <updated>2026-06-19T06:16:26+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
   </author>
+  <entry>
+    <id>https://blog.nurazhar.com/hermes-desktop-bulk-session-archive.html</id>
+    <link href="https://blog.nurazhar.com/hermes-desktop-bulk-session-archive.html"/>
+    <title>Fixing the Session Archive Problem in Hermes Desktop</title>
+    <updated>2026-06-19T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Today I noticed my Hermes Desktop sidebar had 37 sessions. Each required clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><h2 id="the-fix">The Fix</h2><p>Added a bulk archive endpoint following the existing pattern:</p><pre><code class="language-bash">PATCH /api/sessions/bulk-archive
+{&quot;ids&quot;: [&quot;id1&quot;, &quot;id2&quot;], &quot;archived&quot;: true}
+</code></pre><p>Backend work was straightforward. The frontend needed a helper function <code>archiveSessions()</code>. UI checkboxes still pending.</p><h2 id="related-bug:-desktop-terminal-bypass">Related Bug: Desktop Terminal Bypass</h2><p>While implementing this, I noticed the desktop executed shell commands without approval prompts. I committed and pushed without explicit consent. That&apos;s a real bug - the desktop should gate terminal access.</p><p>Issue #48843 tracks the feature. PR #2 submitted. Need to fix the approval flow separately.</p></div>]]></content>
+  </entry>
   <entry>
     <id>https://blog.nurazhar.com/ai-ecommerce-store-zero-to-one.html</id>
     <link href="https://blog.nurazhar.com/ai-ecommerce-store-zero-to-one.html"/>

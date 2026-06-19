@@ -93,6 +93,38 @@
 
       
     <div>
+        <h1><a href="hermes-desktop-bulk-session-archive.html">Fixing the Session Archive Problem in Hermes Desktop</a></h1>
+        <div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Today I noticed my Hermes Desktop sidebar had 37 sessions. Each required clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><h2 id="the-fix">The Fix</h2><p>Added a bulk archive endpoint following the existing pattern:</p><pre><code class="language-bash">PATCH /api/sessions/bulk-archive
+{&quot;ids&quot;: [&quot;id1&quot;, &quot;id2&quot;], &quot;archived&quot;: true}
+</code></pre><p>Backend work was straightforward. The frontend needed a helper function <code>archiveSessions()</code>. UI checkboxes still pending.</p><h2 id="related-bug:-desktop-terminal-bypass">Related Bug: Desktop Terminal Bypass</h2><p>While implementing this, I noticed the desktop executed shell commands without approval prompts. I committed and pushed without explicit consent. That&apos;s a real bug - the desktop should gate terminal access.</p><p>Issue #48843 tracks the feature. PR #2 submitted. Need to fix the approval flow separately.</p></div>
+        
+        
+        <p><i>Published: 2026-06-19</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/desktop.html">desktop</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/hermes.html">hermes</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/fix.html">fix</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/devtools.html">devtools</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="ai-ecommerce-store-zero-to-one.html">Building an AI-Powered E-Commerce Store from Zero to One</a></h1>
         <div><hr /><p>A user clicks <strong>Buy</strong> on a 4K Smart TV. Instantly, the storefront doesn&apos;t just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.</p><p>This post is the full journey of <strong>SmartShop</strong>, our reference storefront. Everything you read about here lives in the public repo <a href="https://github.com/nurazhardotcom/lithan_smartshop">github.com/nurazhardotcom/lithan_smartshop</a>. Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.</p><blockquote><p>Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.</p></blockquote><hr /><h2 id="diagram-1---what-smartshop-actually-is">Diagram 1 - What SmartShop actually is</h2><pre><code class="language-mermaid">graph LR
     User((Shopper)) --&gt;|HTTPS| React[&quot;React + Vite SPA&lt;br/&gt;port 5173&quot;]
