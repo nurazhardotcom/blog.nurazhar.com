@@ -94,9 +94,17 @@
       
     <div>
         <h1><a href="hermes-desktop-bulk-session-archive.html">Fixing the Session Archive Problem in Hermes Desktop</a></h1>
-        <div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Today I noticed my Hermes Desktop sidebar had 37 sessions. Each required clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><h2 id="the-fix">The Fix</h2><p>Added a bulk archive endpoint following the existing pattern:</p><pre><code class="language-bash">PATCH /api/sessions/bulk-archive
-{&quot;ids&quot;: [&quot;id1&quot;, &quot;id2&quot;], &quot;archived&quot;: true}
-</code></pre><p>Backend work was straightforward. The frontend needed a helper function <code>archiveSessions()</code>. UI checkboxes still pending.</p><h2 id="related-bug:-desktop-terminal-bypass">Related Bug: Desktop Terminal Bypass</h2><p>While implementing this, I noticed the desktop executed shell commands without approval prompts. I committed and pushed without explicit consent. That&apos;s a real bug - the desktop should gate terminal access.</p><p>Issue #48843 tracks the feature. PR #2 submitted. Need to fix the approval flow separately.</p></div>
+        <div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="how-i-fixed-it-(pr-workflow)">How I Fixed It (PR Workflow)</h2><h3 id="step-1:-find-the-pattern">Step 1: Find the Pattern</h3><p>Looked at existing bulk-delete for sessions - <code>POST /api/sessions/bulk-delete</code> with <code>{&quot;ids&quot;: [...]}</code>. Sessions sidebar uses React + TypeScript.</p><h3 id="step-2:-create-an-issue">Step 2: Create an Issue</h3><p>Opened <a href="https://github.com/NousResearch/hermes-agent/issues/48843">Issue #48843</a> describing the feature request.</p><h3 id="step-3:-implement">Step 3: Implement</h3><p>Created branch <code>feature/bulk-session-archive</code>:</p><p><strong>Backend (<code>hermes_cli/web_server.py</code>):</strong></p><pre><code class="language-python"># Added endpoint
+@app.post(&quot;/api/sessions/bulk-archive&quot;)
+async def bulk_archive_sessions_endpoint(...):
+    # Mirrors bulk-delete pattern
+    # 500-item hard cap for safety
+</code></pre><p><strong>Frontend (<code>apps/desktop/src/hermes.ts</code>):</strong></p><pre><code class="language-typescript">export function archiveSessions(ids: string[], archived: boolean, profile?: string) {
+  return window.hermesDesktop.api(...) // calls the backend
+}
+</code></pre><p><strong>Tests:</strong> Added <code>test_bulk_archive_sessions</code> and <code>test_bulk_unarchive_sessions</code>.</p><h3 id="step-4:-push-to-fork">Step 4: Push to Fork</h3><pre><code class="language-bash">git remote add fork https://github.com/nurazhardotcom/hermes-agent.git
+git push fork feature/bulk-session-archive
+</code></pre><p>Created PR at <a href="https://github.com/nurazhardotcom/hermes-agent/pull/2">https://github.com/nurazhardotcom/hermes-agent/pull/2</a></p><h2 id="related-bug:-desktop-terminal-bypass">Related Bug: Desktop Terminal Bypass</h2><p>While implementing, I noticed the desktop executed shell commands without approval prompts. I committed and pushed without explicit consent. That&apos;s a bug - the desktop should gate terminal access.</p><p>Filed as part of Issue #48843.</p><h2 id="status">Status</h2><ul><li>Backend + frontend helper: Done (<a href="https://github.com/nurazhardotcom/hermes-agent/pull/2">PR #2</a>)</li><li>UI selection checkboxes: Still needed (React work)</li><li>Terminal approval prompt: Separate fix required</li></ul></div>
         
         
         <p><i>Published: 2026-06-19</i></p>
@@ -114,6 +122,10 @@
                 
                     <span class="tag">
                         <a href="tags/fix.html">fix</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/opensource.html">opensource</a>
                     </span>
                 
                     <span class="tag">
