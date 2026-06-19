@@ -13,11 +13,11 @@
         }
       })();
     </script>
-    <title>Nur Azhar&#39;s - Tag - ai</title>
+    <title>How Hermes Agent Memory Actually Works</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="application/atom+xml" rel="alternate" href="../atom.xml" title="Nur Azhar&#39;s - Tag - ai">
-    <link rel="stylesheet" href="../style.css">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="How Hermes Agent Memory Actually Works">
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
     
@@ -42,18 +42,14 @@
 
 
     <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
-    <meta name="title" content="Nur Azhar&#39;s - Tag - ai">
-    <meta name="twitter:title" content="Nur Azhar&#39;s - Tag - ai">
-    <meta property="og:title" content="Nur Azhar&#39;s - Tag - ai">
+    <meta name="title" content="How Hermes Agent Memory Actually Works">
+    <meta name="twitter:title" content="How Hermes Agent Memory Actually Works">
+    <meta property="og:title" content="How Hermes Agent Memory Actually Works">
     <meta property="og:type" content="website">
 
-    <meta name="description" content="Posts tagged &quot;ai&quot; - Blog in an era of artificial intelligence">
-    <meta name="twitter:description" content="Posts tagged &quot;ai&quot; - Blog in an era of artificial intelligence">
-    <meta property="og:description" content="Posts tagged &quot;ai&quot; - Blog in an era of artificial intelligence">
 
-
-    <meta name="twitter:url" content="https://blog.nurazhar.com/tags/index.html">
-    <meta property="og:url" content="https://blog.nurazhar.com/tags/index.html">
+    <meta name="twitter:url" content="https://blog.nurazhar.com/hermes-agent-memory-system.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/hermes-agent-memory-system.html">
 
 
     <meta name="twitter:card" content="summary">
@@ -66,12 +62,12 @@
     <div class="site-header">
       <div class="wrapper">
         <div class="site-nav">
-          <a class="page-link" href="../stats.html">Stats</a>
-          <a class="page-link" href="../kanban.html">Kanban</a>
-          <a class="page-link" href="../archive.html">Archive</a>
-          <a class="page-link" href="../tags/index.html">Tags</a>
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
           
-	  <a class="page-link" href="../atom.xml">
+	  <a class="page-link" href="atom.xml">
             Feed
           </a>
 	  
@@ -82,7 +78,7 @@
         </div>
         <div>
           <h1 class="site-title">
-            <a class="page-link" href="../index.html">Nur Azhar&#39;s</a>
+            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
           </h1>
 	  <p>Blog in an era of artificial intelligence</p>
         </div>
@@ -91,30 +87,65 @@
 
     <div class="wrapper">
 
-      <div style="width: 600px">
-    <h1>Tag - ai</h1>
-    <ul class="index">
-        
-            <li><span><a href="../hermes-agent-memory-system.html">How Hermes Agent Memory Actually Works</a> - 2026-06-19</span></li>
-        
-            <li><span><a href="../ai-ecommerce-store-zero-to-one.html">Building an AI-Powered E-Commerce Store from Zero to One</a> - 2026-06-18</span></li>
-        
-            <li><span><a href="../training-data-poisoning-invisible-cyber-threat.html">Training Data Poisoning: The Invisible Cyber Threat Reshaping AI Security</a> - 2026-06-17</span></li>
-        
-            <li><span><a href="../building-a-local-mermaid-viewer-with-the-llm-that-cant-draw.html">Building a Local Mermaid Viewer With the LLM That Can&#39;t Draw</a> - 2026-06-16</span></li>
-        
-            <li><span><a href="../the-recursive-self-improvement-illusion.html">The Recursive Self-Improvement Illusion: AI&#39;s Hidden Human Scaffold</a> - 2026-06-15</span></li>
-        
-            <li><span><a href="../why-llms-fail-at-mermaid-diagrams.html">The Mermaid Loop: Why LLMs Repeatedly Fail at Diagram Syntax</a> - 2026-06-15</span></li>
-        
-            <li><span><a href="../repetition-loops-and-aur-audit.html">Taming LLM Repetition Loops &amp; Building aur-audit for the AUR Security Incident</a> - 2026-06-14</span></li>
-        
-            <li><span><a href="../red-teaming-ai-pipelines.html">Red Teaming AI Pipelines: How Attackers Weaponize LLMs &amp; How to Build Defensive Harnesses</a> - 2026-06-14</span></li>
-        
-    </ul>
-</div>
+      <h1>
+  
+  How Hermes Agent Memory Actually Works
+  
+</h1>
+<div><h1 id="how-hermes-agent-memory-actually-works">How Hermes Agent Memory Actually Works</h1><p>Unlike conversational AIs that absorb patterns unconsciously, Hermes uses <strong>explicit durable memory</strong> - you decide what gets stored and what gets forgotten.</p><h2 id="the-memory-architecture">The Memory Architecture</h2><pre><code class="language-mermaid">flowchart TD
+    subgraph &quot;Persistent Storage&quot;
+        A[&quot;~/.hermes/memories/user.md&quot;] --&gt;|1,375 char limit| B[Character Budget]
+        C[&quot;~/.hermes/memories/memory.md&quot;] --&gt;|Same limit| B
+    end
+    
+    subgraph &quot;Runtime Context&quot;
+        D[Hermes Session] --&gt;|Injects both memories| E{LLM Decision}
+        B --&gt;|Injected into every prompt| D
+        F[Skills Directory] --&gt;|Loaded on-demand| D
+    end
+    
+    subgraph &quot;User Control&quot;
+        G[Explicit memory calls] --&gt;|add/replace/remove| A
+        H[Explicit skill calls] --&gt;|create/patch/delete| F
+    end
+    
+    style A fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
+    style C fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
+    style G fill:#313244,stroke:#a6e3a1,color:#cdd6f4
+    style H fill:#313244,stroke:#a6e3a1,color:#cdd6f4
+</code></pre><h2 id="key-constraints">Key Constraints</h2><ul><li><strong>Hard 1,375 character limit</strong> per memory file</li><li>No unconscious pattern absorption</li><li>No session-to-session learning without explicit <code>memory</code> tool calls</li><li>Skills (<code>skill_manage</code>) for procedural memory - separate from user facts</li></ul><h2 id="why-this-matters">Why This Matters</h2><table><thead><tr><th>Feature</th><th>Hermes Agent</th><th>Perplexity/Antigravity</th></tr></thead><tbody><tr><td>Pattern learning</td><td>❌ Explicit only</td><td>✅ Unconscious absorption</td></tr><tr><td>Memory limit</td><td>1,375 chars hard cap</td><td>Unlimited cloud storage</td></tr><tr><td>Memory drift</td><td>Impossible - you control all writes</td><td>Inevitable - patterns shift</td></tr><tr><td>Tool execution</td><td>✅ Direct to your terminal</td><td>❌ Chat only</td></tr></tbody></table><h2 id="practical-implications">Practical Implications</h2><p>When you tell Hermes something via <code>memory</code>, it:</p><ol start="1"><li>Gets stored in plain text markdown</li><li>Is injected into every subsequent prompt in that profile</li><li>Can be read/modified/deleted anytime via <code>memory</code> tool</li></ol><p>No magic. No drift. No unconscious learning. Just explicit, durable facts you control.</p><blockquote><p>This blog post was written to clarify how Hermes memory works after confusion about unconscious pattern absorption. It&apos;s a feature, not a bug - you stay in control.</p></blockquote></div>
+
+<p><i>Published: 2026-06-19</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/hermes.html">hermes</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/tools.html">tools</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/memory.html">memory</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai.html">ai</a>
+  </span>
+  
+  </i>
+</p>
 
 
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
       
     </div>
     
