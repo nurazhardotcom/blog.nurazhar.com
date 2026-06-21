@@ -147,7 +147,7 @@ fatal: Authentication failed for &apos;https://github.com/nurazhardotcom/blog.nu
     A[&quot;Git Push Request&quot;] --&gt; B{&quot;GITHUB_TOKEN&lt;br/&gt;env var set?&quot;}
     B --&gt;|&quot;Yes&quot;| C[&quot;Use GITHUB_TOKEN&lt;br/&gt;(highest priority)&quot;]
     B --&gt;|&quot;No&quot;| D{&quot;gh auth&lt;br/&gt;keyring token?&quot;}
-    D --&gt;|&quot;Yes&quot;| E[&quot;Use keyring token&lt;br/&gt;(gho_****)&quot;]
+    D --&gt;|&quot;Yes&quot;| E[&quot;Use keyring token&lt;br/&gt;([REDACTED])&quot;]
     D --&gt;|&quot;No&quot;| F{&quot;SSH key&lt;br/&gt;configured?&quot;}
     F --&gt;|&quot;Yes&quot;| G[&quot;Use SSH&lt;br/&gt;(git@github.com)&quot;]
     F --&gt;|&quot;No&quot;| H{&quot;~/.git-credentials&lt;br/&gt;file exists?&quot;}
@@ -171,13 +171,13 @@ fatal: Authentication failed for &apos;https://github.com/nurazhardotcom/blog.nu
   ✓ Logged in to github.com account nurazhardotcom (keyring)
   - Active account: false        ← buried under the broken token
   - Git operations protocol: https
-  - Token: gho_****
+  - Token: [REDACTED]
   - Token scopes: &apos;delete_repo&apos;, &apos;gist&apos;, &apos;read:org&apos;, &apos;repo&apos;, &apos;workflow&apos;
 </code></pre><p>Two accounts. The broken one is <strong>active</strong>. The valid one is <strong>inactive</strong>. That&apos;s the bug.</p><h3 id="step-2:-find-the-rogue-token">Step 2: Find the rogue token</h3><pre><code class="language-bash">env | grep GITHUB_TOKEN
-</code></pre><pre><code>GITHUB_TOKEN=github_pat_antigravitydummytoken
+</code></pre><pre><code>GITHUB_TOKEN=[REDACTED]
 </code></pre><p>A <strong>dummy placeholder token</strong> injected by the IDE process into every spawned shell. It&apos;s not a real token — it&apos;s a sentinel value — but <code>gh</code> doesn&apos;t know that. It just sees <code>GITHUB_TOKEN</code> is set and tries to use it.</p><h3 id="step-3:-trace-the-source">Step 3: Trace the source</h3><pre><code class="language-bash">grep -rl &quot;github_pat_antigravity&quot; ~/.config/ ~/.local/
-</code></pre><pre><code>/home/nurazhar/.local/share/antigravity-ide/resources/app/extensions/.../language_server_linux_x64
-/home/nurazhar/.local/bin/agy
+</code></pre><pre><code>~/ .local/share/antigravity-ide/resources/app/extensions/.../language_server_linux_x64
+~/ .local/bin/agy
 </code></pre><p>It&apos;s baked into the IDE binary. You can&apos;t delete it — you have to <strong>override</strong> it.</p><h3 id="step-4:-check-ssh">Step 4: Check SSH</h3><pre><code class="language-bash">ssh -T git@github.com
 </code></pre><pre><code>git@github.com: Permission denied (publickey).
 </code></pre><p>SSH key exists on disk (<code>~/.ssh/id_ed25519</code>) but was <strong>never registered</strong> on GitHub. Dead weight.</p><h3 id="step-5:-check-git-credential-helper">Step 5: Check Git credential helper</h3><pre><code class="language-bash">git config --global credential.helper
@@ -188,8 +188,8 @@ cat ~/.git-credentials
 </code></pre><p>Clean. Nothing stale here.</p><hr /><h2 id="the-entropy-map">📊 The Entropy Map</h2><p>Here&apos;s what the full credential landscape looked like <strong>before</strong> the fix:</p><pre><code class="language-mermaid">graph TB
     subgraph &quot;❌ Before — High Entropy&quot;
         direction TB
-        ENV[&quot;🔴 GITHUB_TOKEN env var&lt;br/&gt;github_pat_antigravitydummytoken&lt;br/&gt;&lt;b&gt;INVALID — Active&lt;/b&gt;&quot;]
-        KR[&quot;🟢 Keyring token&lt;br/&gt;gho_****&lt;br/&gt;&lt;b&gt;VALID — Inactive&lt;/b&gt;&quot;]
+        ENV[&quot;🔴 GITHUB_TOKEN env var&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;INVALID — Active&lt;/b&gt;&quot;]
+        KR[&quot;🟢 Keyring token&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Inactive&lt;/b&gt;&quot;]
         SSH[&quot;🟡 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;EXISTS — Not registered&lt;/b&gt;&quot;]
         GC[&quot;⚪ ~/.git-credentials&lt;br/&gt;&lt;b&gt;Does not exist&lt;/b&gt;&quot;]
         HELPER[&quot;⚪ Git credential helper&lt;br/&gt;&lt;b&gt;Not configured&lt;/b&gt;&quot;]
@@ -221,7 +221,7 @@ ssh -T git@github.com
 </code></pre><hr /><h2 id="the-final-state-—-zero-entropy">✅ The Final State — Zero Entropy</h2><pre><code class="language-mermaid">graph TB
     subgraph &quot;✅ After — Zero Entropy&quot;
         direction TB
-        KR2[&quot;🟢 Keyring token (HTTPS)&lt;br/&gt;gho_****&lt;br/&gt;&lt;b&gt;VALID — Active — Primary&lt;/b&gt;&quot;]
+        KR2[&quot;🟢 Keyring token (HTTPS)&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Active — Primary&lt;/b&gt;&quot;]
         SSH2[&quot;🟢 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;Registered on GitHub&lt;/b&gt;&quot;]
         FISH[&quot;🟢 config.fish override&lt;br/&gt;set -gx GITHUB_TOKEN (gh auth token)&lt;br/&gt;&lt;b&gt;Neutralizes IDE dummy token&lt;/b&gt;&quot;]
     end
