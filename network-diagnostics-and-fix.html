@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -142,27 +156,160 @@
   Network Diagnostics: Fixing Chrome Connection Drops on CachyOS
   
 </h1>
-<div><hr /><p>When Chrome reports &quot;connection dropped&quot; on sites like <strong>x.com</strong> or <strong>github.com</strong>, the instinct is to blame the browser. In practice, the problem is almost always a <strong>network‑level issue</strong> that Chrome is simply surfacing. This post documents a real debugging session on a CachyOS (Arch‑based) laptop and the systematic approach to isolate the root cause.</p><hr /><h2 id="diagnostic-flow">🗺️ Diagnostic Flow</h2><p>Before diving into commands, here&apos;s the decision tree we followed:</p><pre><code class="language-mermaid">flowchart TD
-    A[&quot;🌐 Chrome reports connection drop&quot;] --&gt; B{&quot;DNS resolves&lt;br/&gt;the hostname?&quot;}
-    B --&gt;|&quot;No&quot;| B1[&quot;Fix DNS config&lt;br/&gt;(switch to 8.8.8.8)&quot;]
-    B1 --&gt; C
-    B --&gt;|&quot;Yes&quot;| C[&quot;🏓 Ping the host&quot;]
-    C --&gt;|&quot;Replies OK&quot;| C1[&quot;Problem is above L3&lt;br/&gt;(TLS, proxy, browser)&quot;]
-    C --&gt;|&quot;100% packet loss&quot;| D[&quot;🔍 Traceroute&quot;]
-    D --&gt;|&quot;Stops at local&lt;br/&gt;gateway&quot;| E[&quot;Check router /&lt;br/&gt;firewall / iptables&quot;]
-    D --&gt;|&quot;Stops at ISP&lt;br/&gt;edge&quot;| F[&quot;Contact ISP&quot;]
-    D --&gt;|&quot;Reaches destination&lt;br/&gt;but no reply&quot;| G[&quot;Host may be&lt;br/&gt;blocking ICMP&quot;]
-    E --&gt;|&quot;Rule found&quot;| H[&quot;Remove / adjust&lt;br/&gt;firewall rule&quot;]
-    E --&gt;|&quot;No rule&quot;| I[&quot;Try a different&lt;br/&gt;network (hotspot)&quot;]
-    H --&gt; J[&quot;✅ Retest — ping succeeds&quot;]
-    F --&gt; J
-    I --&gt;|&quot;Works on hotspot&quot;| F
-    I --&gt;|&quot;Still fails&quot;| K[&quot;Check for OS-level&lt;br/&gt;proxy / VPN&quot;]
-    G --&gt; L[&quot;Test with curl&lt;br/&gt;or openssl s_client&quot;]
-    L --&gt; J
-    K --&gt; J
-    J --&gt; M[&quot;🎉 Chrome works again&quot;]
-</code></pre><hr /><h2 id="1.-verify-dns-configuration">1. Verify DNS Configuration</h2><p>The first step is confirming which DNS servers the system actually uses.</p><pre><code class="language-bash">cat /etc/resolv.conf
+<div><hr /><p>When Chrome reports &quot;connection dropped&quot; on sites like <strong>x.com</strong> or <strong>github.com</strong>, the instinct is to blame the browser. In practice, the problem is almost always a <strong>network‑level issue</strong> that Chrome is simply surfacing. This post documents a real debugging session on a CachyOS (Arch‑based) laptop and the systematic approach to isolate the root cause.</p><hr /><h2 id="diagnostic-flow">🗺️ Diagnostic Flow</h2><p>Before diving into commands, here&apos;s the decision tree we followed:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+A: "🌐 Chrome reports connection drop"
+B: "DNS resolves\nthe hostname?" {
+  shape: diamond
+}
+B1: "Fix DNS config\n(switch to 8.8.8.8)"
+C: "🏓 Ping the host"
+C1: "Problem is above L3\n(TLS, proxy, browser)"
+D: "🔍 Traceroute"
+E: "Check router /\nfirewall / iptables"
+F: "Contact ISP"
+G: "Host may be\nblocking ICMP"
+H: "Remove / adjust\nfirewall rule"
+I: "Try a different\nnetwork (hotspot)"
+J: "✅ Retest — ping succeeds"
+K: "Check for OS-level\nproxy / VPN"
+L: "Test with curl\nor openssl s_client"
+M: "🎉 Chrome works again"
+#
+B -> B1: No
+B1 -> C
+B -> C: Yes
+C -> C1: "Replies OK"
+C -> D: "100% packet loss"
+D -> E: "Stops at local\ngateway"
+D -> F: "Stops at ISP\nedge"
+D -> G: "Reaches destination\nbut no reply"
+E -> H: "Rule found"
+E -> I: "No rule"
+H -> J
+F -> J
+I -> F: "Works on hotspot"
+I -> K: "Still fails"
+G -> L
+L -> J
+K -> J
+J -> M
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 942 1711"><svg class="d2-2768567646 d2-svg" width="942" height="1711" viewBox="-21 -21 942 1711"><rect x="-21.000000" y="-21.000000" width="942.000000" height="1711.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2768567646 .text-bold {
+	font-family: "d2-2768567646-font-bold";
+}
+@font-face {
+	font-family: d2-2768567646-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-2768567646 .text-italic {
+	font-family: "d2-2768567646-font-italic";
+}
+@font-face {
+	font-family: d2-2768567646-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-2768567646 .fill-N1{fill:#0A0F25;}
+		.d2-2768567646 .fill-N2{fill:#676C7E;}
+		.d2-2768567646 .fill-N3{fill:#9499AB;}
+		.d2-2768567646 .fill-N4{fill:#CFD2DD;}
+		.d2-2768567646 .fill-N5{fill:#DEE1EB;}
+		.d2-2768567646 .fill-N6{fill:#EEF1F8;}
+		.d2-2768567646 .fill-N7{fill:#FFFFFF;}
+		.d2-2768567646 .fill-B1{fill:#0D32B2;}
+		.d2-2768567646 .fill-B2{fill:#0D32B2;}
+		.d2-2768567646 .fill-B3{fill:#E3E9FD;}
+		.d2-2768567646 .fill-B4{fill:#E3E9FD;}
+		.d2-2768567646 .fill-B5{fill:#EDF0FD;}
+		.d2-2768567646 .fill-B6{fill:#F7F8FE;}
+		.d2-2768567646 .fill-AA2{fill:#4A6FF3;}
+		.d2-2768567646 .fill-AA4{fill:#EDF0FD;}
+		.d2-2768567646 .fill-AA5{fill:#F7F8FE;}
+		.d2-2768567646 .fill-AB4{fill:#EDF0FD;}
+		.d2-2768567646 .fill-AB5{fill:#F7F8FE;}
+		.d2-2768567646 .stroke-N1{stroke:#0A0F25;}
+		.d2-2768567646 .stroke-N2{stroke:#676C7E;}
+		.d2-2768567646 .stroke-N3{stroke:#9499AB;}
+		.d2-2768567646 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2768567646 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2768567646 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2768567646 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2768567646 .stroke-B1{stroke:#0D32B2;}
+		.d2-2768567646 .stroke-B2{stroke:#0D32B2;}
+		.d2-2768567646 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2768567646 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2768567646 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2768567646 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2768567646 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2768567646 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2768567646 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2768567646 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2768567646 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2768567646 .background-color-N1{background-color:#0A0F25;}
+		.d2-2768567646 .background-color-N2{background-color:#676C7E;}
+		.d2-2768567646 .background-color-N3{background-color:#9499AB;}
+		.d2-2768567646 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2768567646 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2768567646 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2768567646 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2768567646 .background-color-B1{background-color:#0D32B2;}
+		.d2-2768567646 .background-color-B2{background-color:#0D32B2;}
+		.d2-2768567646 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2768567646 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2768567646 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2768567646 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2768567646 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2768567646 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2768567646 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2768567646 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2768567646 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2768567646 .color-N1{color:#0A0F25;}
+		.d2-2768567646 .color-N2{color:#676C7E;}
+		.d2-2768567646 .color-N3{color:#9499AB;}
+		.d2-2768567646 .color-N4{color:#CFD2DD;}
+		.d2-2768567646 .color-N5{color:#DEE1EB;}
+		.d2-2768567646 .color-N6{color:#EEF1F8;}
+		.d2-2768567646 .color-N7{color:#FFFFFF;}
+		.d2-2768567646 .color-B1{color:#0D32B2;}
+		.d2-2768567646 .color-B2{color:#0D32B2;}
+		.d2-2768567646 .color-B3{color:#E3E9FD;}
+		.d2-2768567646 .color-B4{color:#E3E9FD;}
+		.d2-2768567646 .color-B5{color:#EDF0FD;}
+		.d2-2768567646 .color-B6{color:#F7F8FE;}
+		.d2-2768567646 .color-AA2{color:#4A6FF3;}
+		.d2-2768567646 .color-AA4{color:#EDF0FD;}
+		.d2-2768567646 .color-AA5{color:#F7F8FE;}
+		.d2-2768567646 .color-AB4{color:#EDF0FD;}
+		.d2-2768567646 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2768567646);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2768567646);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2768567646);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2768567646);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2768567646);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2768567646);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2768567646);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2768567646);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="0.000000" y="29.000000" width="298.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="149.000000" y="67.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🌐 Chrome reports connection drop</text></g><g class="Qg=="><g class="shape" ><path d="M 478 124 C 477 124 476 124 476 124 L 359 63 C 358 62 358 61 359 61 L 476 0 C 477 -1 479 -1 480 0 L 597 60 C 598 61 598 62 597 62 L 480 124 C 480 124 479 124 478 124 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="478.000000" y="59.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="478.000000" dy="0.000000">DNS resolves</tspan><tspan x="478.000000" dy="18.500000">the hostname?</tspan></text></g><g class="QjE="><g class="shape" ><rect x="393.000000" y="245.000000" width="171.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="478.500000" y="283.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="478.500000" dy="0.000000">Fix DNS config</tspan><tspan x="478.500000" dy="18.500000">(switch to 8.8.8.8)</tspan></text></g><g class="Qw=="><g class="shape" ><rect x="398.000000" y="427.000000" width="161.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="478.500000" y="465.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🏓 Ping the host</text></g><g class="QzE="><g class="shape" ><rect x="380.000000" y="614.000000" width="197.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="478.500000" y="652.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="478.500000" dy="0.000000">Problem is above L3</tspan><tspan x="478.500000" dy="18.500000">(TLS, proxy, browser)</tspan></text></g><g class="RA=="><g class="shape" ><rect x="637.000000" y="622.000000" width="146.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="710.000000" y="660.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🔍 Traceroute</text></g><g class="RQ=="><g class="shape" ><rect x="311.000000" y="833.000000" width="169.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="395.500000" y="871.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="395.500000" dy="0.000000">Check router /</tspan><tspan x="395.500000" dy="18.500000">firewall / iptables</tspan></text></g><g class="Rg=="><g class="shape" ><rect x="302.000000" y="1263.000000" width="127.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="365.500000" y="1301.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Contact ISP</text></g><g class="Rw=="><g class="shape" ><rect x="740.000000" y="1052.000000" width="144.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="812.000000" y="1090.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="812.000000" dy="0.000000">Host may be</tspan><tspan x="812.000000" dy="18.500000">blocking ICMP</tspan></text></g><g class="SA=="><g class="shape" ><rect x="81.000000" y="1255.000000" width="159.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="160.500000" y="1293.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="160.500000" dy="0.000000">Remove / adjust</tspan><tspan x="160.500000" dy="18.500000">firewall rule</tspan></text></g><g class="SQ=="><g class="shape" ><rect x="382.000000" y="1052.000000" width="175.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="469.500000" y="1090.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="469.500000" dy="0.000000">Try a different</tspan><tspan x="469.500000" dy="18.500000">network (hotspot)</tspan></text></g><g class="Sg=="><g class="shape" ><rect x="568.000000" y="1437.000000" width="229.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="682.500000" y="1475.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">✅ Retest — ping succeeds</text></g><g class="Sw=="><g class="shape" ><rect x="489.000000" y="1255.000000" width="175.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="576.500000" y="1293.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="576.500000" dy="0.000000">Check for OS-level</tspan><tspan x="576.500000" dy="18.500000">proxy / VPN</tspan></text></g><g class="TA=="><g class="shape" ><rect x="724.000000" y="1255.000000" width="176.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="812.000000" y="1293.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="812.000000" dy="0.000000">Test with curl</tspan><tspan x="812.000000" dy="18.500000">or openssl s_client</tspan></text></g><g class="TQ=="><g class="shape" ><rect x="577.000000" y="1603.000000" width="212.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="683.000000" y="1641.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🎉 Chrome works again</text></g><g class="KEIgLSZndDsgQjEpWzBd"><marker id="mk-d2-2768567646-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 478.000000 126.000000 C 478.000000 172.399994 478.000000 196.699997 478.000000 241.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="478.000000" y="190.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><g class="KEIxIC0mZ3Q7IEMpWzBd"><path d="M 478.000000 329.000000 C 478.000000 367.000000 478.000000 387.000000 478.000000 423.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEIgLSZndDsgQylbMF0="><path d="M 524.477321 102.348156 C 596.200012 167.800003 614.500000 204.800003 614.500000 235.250000 C 614.500000 265.700012 598.099976 387.000000 535.915184 424.917570" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="615.000000" y="270.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEMgLSZndDsgQzEpWzBd"><path d="M 478.000000 494.500000 C 478.000000 541.299988 478.000000 565.700012 478.000000 610.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="478.500000" y="559.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Replies OK</text></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 561.352718 493.265278 C 679.500000 541.302002 709.500000 567.299988 709.500000 618.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="663.500000" y="540.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">100% packet loss</text></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 634.611697 681.136013 C 443.899994 747.695007 395.750000 778.299988 395.750000 829.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="487.500000" y="730.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="487.500000" dy="0.000000">Stops at local</tspan><tspan x="487.500000" dy="18.500000">gateway</tspan></text></g><g class="KEQgLSZndDsgRilbMF0="><path d="M 706.818929 689.491786 C 701.400024 749.099976 700.000000 786.400024 700.000000 819.250000 C 700.000000 852.099976 700.000000 895.900024 700.000000 928.750000 C 700.000000 961.599976 700.000000 1005.400024 700.000000 1038.250000 C 700.000000 1071.099976 645.799988 1210.900024 432.828573 1275.341539" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="700.000000" y="1065.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="700.000000" dy="0.000000">Stops at ISP</tspan><tspan x="700.000000" dy="18.500000">edge</tspan></text></g><g class="KEQgLSZndDsgRylbMF0="><path d="M 741.365988 688.960848 C 797.599976 749.099976 812.000000 786.400024 812.000000 819.250000 C 812.000000 852.099976 812.000000 997.299988 812.000000 1048.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="812.000000" y="855.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="812.000000" dy="0.000000">Reaches destination</tspan><tspan x="812.000000" dy="18.500000">but no reply</tspan></text></g><g class="KEUgLSZndDsgSClbMF0="><path d="M 309.685491 914.341163 C 190.699997 969.500000 160.500000 1005.400024 160.500000 1038.250000 C 160.500000 1071.099976 160.500000 1206.699951 160.500000 1251.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="160.500000" y="1046.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Rule found</text></g><g class="KEUgLSZndDsgSSlbMF0="><path d="M 424.109400 916.164101 C 459.799988 969.700012 469.000000 997.299988 469.000000 1048.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="463.000000" y="984.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No rule</text></g><g class="KEggLSZndDsgSilbMF0="><path d="M 160.500000 1339.000000 C 160.500000 1377.000000 242.100006 1400.000000 564.549815 1451.370681" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEYgLSZndDsgSilbMF0="><path d="M 365.500000 1331.000000 C 365.500000 1375.400024 406.100006 1397.599976 564.629734 1438.989536" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEkgLSZndDsgRilbMF0="><path d="M 425.063164 1134.891224 C 376.100006 1182.300049 363.700012 1208.300049 364.442036 1259.500420" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="373.500000" y="1194.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Works on hotspot</text></g><g class="KEkgLSZndDsgSylbMF0="><path d="M 512.936836 1134.891223 C 561.900024 1182.300049 574.700012 1206.699951 575.434436 1251.500537" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /><text x="563.500000" y="1191.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Still fails</text></g><g class="KEcgLSZndDsgTClbMF0="><path d="M 812.000000 1135.500000 C 812.000000 1182.300049 812.000000 1206.699951 812.000000 1251.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEwgLSZndDsgSilbMF0="><path d="M 812.000000 1339.000000 C 812.000000 1377.000000 796.400024 1397.000000 737.367517 1434.841336" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEsgLSZndDsgSilbMF0="><path d="M 576.500000 1339.000000 C 576.500000 1377.000000 589.299988 1397.000000 637.347902 1434.537424" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><g class="KEogLSZndDsgTSlbMF0="><path d="M 682.750000 1505.000000 C 682.750000 1543.000000 682.750000 1563.000000 682.750000 1599.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2768567646-3488378134)" mask="url(#d2-2768567646)" /></g><mask id="d2-2768567646" maskUnits="userSpaceOnUse" x="-21" y="-21" width="942" height="1711">
+<rect x="-21" y="-21" width="942" height="1711" fill="white"></rect>
+<rect x="467.000000" y="174.000000" width="22" height="21" fill="black"></rect>
+<rect x="602.000000" y="254.000000" width="26" height="21" fill="black"></rect>
+<rect x="441.000000" y="543.000000" width="75" height="21" fill="black"></rect>
+<rect x="605.000000" y="524.000000" width="117" height="21" fill="black"></rect>
+<rect x="441.000000" y="714.000000" width="93" height="37" fill="black"></rect>
+<rect x="659.000000" y="1049.000000" width="82" height="37" fill="black"></rect>
+<rect x="744.000000" y="839.000000" width="136" height="37" fill="black"></rect>
+<rect x="123.000000" y="1030.000000" width="75" height="21" fill="black"></rect>
+<rect x="437.000000" y="968.000000" width="52" height="21" fill="black"></rect>
+<rect x="315.000000" y="1178.000000" width="117" height="21" fill="black"></rect>
+<rect x="533.000000" y="1175.000000" width="61" height="21" fill="black"></rect>
+</mask></svg></svg>
+</div><hr /><h2 id="1.-verify-dns-configuration">1. Verify DNS Configuration</h2><p>The first step is confirming which DNS servers the system actually uses.</p><pre><code class="language-bash">cat /etc/resolv.conf
 </code></pre><p>On a systemd‑based distro (like CachyOS), this typically shows:</p><pre><code>nameserver 127.0.0.53
 </code></pre><p>That&apos;s the <strong>systemd‑resolved stub</strong> — it forwards queries upstream. To see the real upstream servers:</p><pre><code class="language-bash">systemd-resolve --status | grep &quot;DNS Servers&quot;
 </code></pre><p>Our output:</p><pre><code>DNS Servers: 8.8.8.8#dns.google 8.8.4.4#dns.google
@@ -180,18 +327,128 @@ traceroute -n github.com
 </code></pre><p>If the trace stops at your gateway (hop 1 or 2), the issue is <strong>local</strong> — firewall, NAT misconfiguration, or router problem.</p><blockquote><p><strong>Note:</strong> On CachyOS, <code>traceroute</code> may not be installed by default. Install it with <code>paru -S traceroute</code> or use the pre‑installed <code>tracepath -n x.com</code> as an alternative.</p></blockquote><hr /><h2 id="4.-firewall-/-iptables-inspection">4. Firewall / iptables Inspection</h2><pre><code class="language-bash">sudo iptables -L -v -n | grep -E &quot;OUTPUT|REJECT|DROP&quot;
 </code></pre><p>Look for rules that <code>DROP</code> or <code>REJECT</code> outbound traffic to the destination IPs (<code>162.159.140.229</code>, <code>20.205.243.166</code>) or to ports 80/443.</p><hr /><h2 id="5.-test-from-another-network">5. Test From Another Network</h2><p>The simplest isolation test: tether a phone hotspot and retry:</p><pre><code class="language-bash">ping -c 3 x.com
 ping -c 3 github.com
-</code></pre><p>If it works on the hotspot, the problem is <strong>specific to your current LAN or ISP</strong>.</p><hr /><h2 id="6.-common-fixes">6. Common Fixes</h2><table><thead><tr><th>Root Cause</th><th>Fix</th></tr></thead><tbody><tr><td><strong>Router / modem glitch</strong></td><td>Power‑cycle: unplug → wait 30s → plug back in</td></tr><tr><td><strong>Local firewall rule</strong></td><td>Remove or adjust the offending <code>iptables</code> / <code>nftables</code> rule</td></tr><tr><td><strong>ISP blocking</strong></td><td>Contact ISP with traceroute evidence</td></tr><tr><td><strong>VPN / proxy interference</strong></td><td>Disconnect VPN, disable proxy, retest</td></tr><tr><td><strong>Stale DNS cache</strong></td><td><code>sudo systemd-resolve --flush-caches</code></td></tr></tbody></table><hr /><h2 id="key-takeaway">Key Takeaway</h2><p>Network connectivity problems often masquerade as browser bugs. By systematically checking <strong>DNS → ping → traceroute → firewall</strong> you can pinpoint the failure layer in minutes and either fix it locally or hand concrete evidence to your ISP.</p><pre><code class="language-mermaid">graph LR
-    A[&quot;Layer 7&lt;br/&gt;Chrome&quot;] --&gt; B[&quot;Layer 4&lt;br/&gt;TCP/TLS&quot;]
-    B --&gt; C[&quot;Layer 3&lt;br/&gt;IP / ICMP&quot;]
-    C --&gt; D[&quot;Layer 2&lt;br/&gt;Ethernet / Wi-Fi&quot;]
-    D --&gt; E[&quot;Layer 1&lt;br/&gt;Physical&quot;]
+</code></pre><p>If it works on the hotspot, the problem is <strong>specific to your current LAN or ISP</strong>.</p><hr /><h2 id="6.-common-fixes">6. Common Fixes</h2><table><thead><tr><th>Root Cause</th><th>Fix</th></tr></thead><tbody><tr><td><strong>Router / modem glitch</strong></td><td>Power‑cycle: unplug → wait 30s → plug back in</td></tr><tr><td><strong>Local firewall rule</strong></td><td>Remove or adjust the offending <code>iptables</code> / <code>nftables</code> rule</td></tr><tr><td><strong>ISP blocking</strong></td><td>Contact ISP with traceroute evidence</td></tr><tr><td><strong>VPN / proxy interference</strong></td><td>Disconnect VPN, disable proxy, retest</td></tr><tr><td><strong>Stale DNS cache</strong></td><td><code>sudo systemd-resolve --flush-caches</code></td></tr></tbody></table><hr /><h2 id="key-takeaway">Key Takeaway</h2><p>Network connectivity problems often masquerade as browser bugs. By systematically checking <strong>DNS → ping → traceroute → firewall</strong> you can pinpoint the failure layer in minutes and either fix it locally or hand concrete evidence to your ISP.</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+A: "Layer 7\nChrome" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#333"
+}
+B: "Layer 4\nTCP/TLS" {
+  style.fill: "#ffa94d"
+  style.stroke: "#333"
+}
+C: "Layer 3\nIP / ICMP" {
+  style.fill: "#51cf66"
+  style.stroke: "#333"
+}
+D: "Layer 2\nEthernet / Wi-Fi" {
+  style.fill: "#339af0"
+  style.stroke: "#333"
+}
+E: "Layer 1\nPhysical" {
+  style.fill: "#845ef7"
+  style.stroke: "#333"
+}
+#
+B -> C
+C -> D
+D -> E
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 811 266"><svg class="d2-2702701991 d2-svg" width="811" height="266" viewBox="-21 -21 811 266"><rect x="-21.000000" y="-21.000000" width="811.000000" height="266.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2702701991 .text-bold {
+	font-family: "d2-2702701991-font-bold";
+}
+@font-face {
+	font-family: d2-2702701991-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA2UAAoAAAAAFLwAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAAuAAAAPwEkAXFZ2x5ZgAAAgwAAAbxAAAJHMva36FoZWFkAAAJAAAAADYAAAA2G38e1GhoZWEAAAk4AAAAJAAAACQKfwXhaG10eAAACVwAAACFAAAAiEDgBblsb2NhAAAJ5AAAAEYAAABGKUInDm1heHAAAAosAAAAIAAAACAAOgD3bmFtZQAACkwAAAMoAAAIKgjwVkFwb3N0AAANdAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3icjM7LKrQBAIfx3/vN+zEY5/N5ljaSUi5A1BQ1RVlLilJKNq7GQhK2kiSuxUaW4wr+Msnas/4tHhQqCtSUWlhQV6qqW7Rkxao1Gxq2NO3YtWffgSMnzpwn/MjltlzXsKlp+1ceOnb6LfOWz7Tykfe85iXPecpjHnKfu9zmJte5ymUu2i9/qzBn3qQp02bM+qei9F+HTlVduvWo6dWn34BBQ4aNGDVm3ARfAAAA//8BAAD//9n7NDd4nFxWW2zb5hU+/y9KtBXZDiVRlGTdKEqkJEeSJYpiHF9kJ7LsJFZ8S5y0vmVGWzt1YgepUqe1sw5Y0ACBjA1wtnoJsGbABuyhfSiylwbIBuxhm4ECfUiLDgOaZWkx9GWIgRlFu0lUQVJ2Lg8ShV+H55zv+875SDDCCACewzfBAI3QAlagAUSKpcKiIHCkLMoyxxhkAVHkCLYqv/utECWiUSIW2PS/PTuLijP4ZvX8ZHFu7tvZzk7l1x/fU9bRG/cAECRqO7gdb0IrgDHI81ImmxXTDobkeS5oMtF2h5jOyowJTY/dGD+1PpZ7hT3hkrkDR9smBiM554kxy9AvLpz/1agYnGG86ZnDr1wMuabOAoIiAHqCy7BP65NmaZHmaJYuok3l/w8fohZcXvvp6i/XAOqx3+AyND4bW0S3le8eP8bltffWqrAbB49wGQxqnEgVN3C5Wqrf/xiXwaifs3RxA2Fcrm6v7d2HP8Rl8Gv/2xwORsxmZZtIcSpcmSNJThA4H6bp4m/Oma1mwkyZ5++8SzYaCGl6dDpDEA0kLisPPT0+X48HBaulJ4HhEf/t77+/7R8ZDjwBwFqNdlwGC9i1KmmHg7abTBxHU2JayvAcV3w0eLlQKPWPDl7p7crjsjA1PDSX/BKNLYgxvU+utoPNeBNimhaC7FDJlzK8ICTw88LQdgfD6BWQvfed9EluIpKIi22n2C6+81z+4MXY8UCvwMc7Yic7C4eWLO2JV3180Ov3WkPNyUIyeyZzIDbtavV7fD4q6DzZn506CAhcANiGy0CqCDiJpTnqk7vof3fx/rW16rbeYzOAIYDLwAKIhme4fPrLwBl4XuBMJtJw/a334qZmE2G2mQtXC2abmSCbyPh66ePehiYjYWpq6MZl5VNxPpOZF1FK+TS1IEnzaZSqllCEL4ZCRV75O2CI1XbQZ6gCLuAAmKA6pLJGAylopNAUp9aT01lZ0mb2j/mRaxuYi/p7Q1Jy8dDsa1fMhH+gwRW2nejyW07nTpxpYQUn/SNvaOmS8rXo4S4xttPmNq+T0TCGajvoPqqA+8Wd0JnXN8KEXP3LfYNv5hMDnn4uIOVy7c6E7VB4wtJ9eWy81O1jZr1Dfb1FuuVsoFXlDmt5/4Uq4FQn8ZnMqo4kq6qt5jWIGbUQ8g9cOnzkfOfAdJLAyhfmQkrKpviZW3eFA8Gspac0NlrK5RbztnBjVmRfcvvQoaiU1DXqU4vh+/VJpMldkigtMUn1bZCe4+nRoxvegCfixPc/eMnVtjitfILYbMTFKB9BrQYyAHyJH2AeAgBAAgs39Ny1HWTF96FFV4ISqT1C/jbUuUE1GkmT1RK2TB7HXPULxorQBSOp92Twooo2N5SojopK6XOdkXvXPlWvQkrqs7HHUiPHN7yBcLv6lUTbvf54WySY2m23XfmoftnFjSp13PUaz+K+YiYCxT3gaDvniz+HW9cIk6gCLS84orZrgraO+hQgR245n1/O5Zby+aVcPJGIJ+LxuvbdpfGxy90rxd6+IXUE6pqgn6EKWJ/Dr2+z3lnrEE97zM4m135Ptx1tn06njMZ3CCKaVh4BArq2g95HFRA03p96A697w14y1Rl8mLabHqTm+cPBnJ/1eRNuX2fk3KmO0/7D7oy7o4MPdEcXLLx/ytXK2CiHzWwJdUT7JwTnGbtDcLqa93EdiSPT+ixRtR20hEvAaGxIEifJsqgZ9NNFgKnh/BD19soK57W4zIxNtrw+sXXBdO3aG3+NhU3Eosmi57LUelAVbavMPsUgywaRqZuHLBqa8RUH2+ImrQ3hiJn8082BfVYz0UA1dq1/wBwc/rOJuIiMIa8bffV5sBDmBrjPlX09p+r+WQBA/8CrYAEQJdXBsllZXYDCjZXMYPD8ygpanjR77NXKih7vA0Bf4+vgUeN7sC5t3VM0vdXNEenw6NVCKhqUnSPJuXxuRuqcyji7HD85Wbx6Lp5MCe7htJie7JaWl7MG45qa11HbQf/E1yH6olactDtAu85lN5G0Xuu/xQtc3luIJA96jvVP9Eb4oOw7dmDu0NxbsigP9C1a0pFpT0gIeaKOhSTPhn3ul/m2yfFUwUHsL/Z0jrfpHmMDQN/hVWhUt8AmqlapWrFNYiWbygVH33nXiAiLuzmt/OebPxw9ihrm/aM+d7ZVWdp8Ff1YWb+4qWI4AID+jVehCUDswTIrsXSzgXzfFCx0KV+he/KR8H7i9d/fGl97+cibqz+f1vhsgy3EopT6fJYlkW77dmthQT1vqp1FWfwX9ZyxiYamrbNbdwyvVW7V9wI+Q9u7z/S+DbSt7AdU+xB3wDh+oL4/UJrj62yFE4lwOJHAHTGOi6kf+AEAAP//AQAA//8NfODFAAAAAAEAAAACC4UUZ24JXw889QABA+gAAAAA2F2ghAAAAADdZi82/jf+xAhtA/EAAQADAAIAAAAAAAAAAQAAA9j+7wAACJj+N/43CG0AAQAAAAAAAAAAAAAAAAAAACJ4nATAMQ7BcBTH8e/7NWkiKf6iJJYu/pO2VgPLWzp5iYTFadzATSxWF7C7jYWPnpx4gwa2yoQqwnpCJaEvoQuhjrU6VkXPRFM29iGrJGuPW83OGry44jrgasl2x+3Fwm7MNKJSYlCiUWKpxFyJzo60dmZsNQ6/xx8AAP//AQAA//+rsBDQAAAAAAAALAAsAFgAbgCCAI4AngDQAPIBMgFEAX4BtgHiAhYCOAJEAmACkgK0AuADAAM8A2IDkgOqA9YEFAQ4BFIEXgRsBHgEjgAAAAEAAAAiAJAADABjAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyUz24bVRTGf05s0wrBAkVVuonugkWR6NhUSdU2K4fUikUUB48LQkJIE8/4jzKeGXkmDuEJWPMWvEVXPATPgVij+Xzs2AXRJoqSfHfu+fOdc75zgR3+ZptK9SHwRz0xXGGvfm54iwf1E8PbtOtbhqs8qf1puEZYmxuu83mtZ/gj3lZ/M/yA/epPhh+yW20b/phn1R3Dn2w7/jL8Kfu8XeAKvOBXwxV2yQxvscOPhrd5hMWsVHlE03CNz9gzXGcP6DOhIGZCwgjHkAkjrpgRkeMTMWPCkIgQR4cWMYW+JgRCjtF/fg3wKZgRKOKYAkeMT0xAztgi/iKvlHNlHOo0s7sWBWMCLuRxSUCCI2VESkLEpeIUFGS8okGDnIH4ZhTkeORMiPFImTGiQZc2p/QZMyHH0VakkplPypCCawLld2ZRdmZAREJurK5ICMXTiV8k7w6nOLpksl2PfLoR4Usc38m75JbK9is8/bo1Zpt5l2wC5upnrK7EurnWBMe6LfO2+Fa44BXuXv3ZZPL+HoX6XyjyBVeaf6hJJWKS4NwuLXwpyHePcRzp3MFXR76nQ58Turyhr3OLHj1anNGnw2v5dunh+JouZxzLoyO8uGtLMWf8gOMbOrIpY0fWn8XEIn4mM3Xn4jhTHVMy9bxk7qnWSBXefcLlDqUb6sjlM9AelZZO80u0ZwEjU0UmhlP1cqmN3PoXmiKmqqWc7e19uQ1z273lFt+QaodLtS44lZNbMHrfVL13NHOtH4+AkJQLWQxImdKg4Ea8zwm4IsZxrO6daEsKWiufMs+NVBIxFYMOieLMyPQ3MN34xn2woXtnb0ko/5Lp5aqq+2Rx6tXtjN6oe8s737ocrU2gYVNN19Q0ENfEtB9pp9b5+/LN9bqlPOWIlJjwXy/AMzya7HPAIWNlGOhmbq9DUy9Ek5ccqvpLIlkNpefIIhzg8ZwDDnjJ83f6uGTijItbcVnP3eKYI7ocflAVC/suR7xeffv/rL+LaVO1OJ6uTi/uPcUnd1DrF9qz2/eyp4mVk5hbtNutOCNgWnJxu+s1ucd4/wAAAP//AQAA///0t09ReJxiYGYAg//nGIwYsAAAAAAA//8BAAD//y8BAgMAAAA=");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style A fill:#ff6b6b,stroke:#333,color:#fff
-    style B fill:#ffa94d,stroke:#333
-    style C fill:#51cf66,stroke:#333
-    style D fill:#339af0,stroke:#333,color:#fff
-    style E fill:#845ef7,stroke:#333,color:#fff
-</code></pre><p>In our case the failure was at <strong>Layer 3</strong> (ICMP packets never reached the destination), which means Chrome&apos;s &quot;connection dropped&quot; error was just the messenger — not the cause.</p><hr /><p><em>Related: <a href="./cachyos-rate-mirrors-timer-fix.md">CachyOS Mirror Timer Fix</a></em></p></div>
+		.d2-2702701991 .fill-N1{fill:#0A0F25;}
+		.d2-2702701991 .fill-N2{fill:#676C7E;}
+		.d2-2702701991 .fill-N3{fill:#9499AB;}
+		.d2-2702701991 .fill-N4{fill:#CFD2DD;}
+		.d2-2702701991 .fill-N5{fill:#DEE1EB;}
+		.d2-2702701991 .fill-N6{fill:#EEF1F8;}
+		.d2-2702701991 .fill-N7{fill:#FFFFFF;}
+		.d2-2702701991 .fill-B1{fill:#0D32B2;}
+		.d2-2702701991 .fill-B2{fill:#0D32B2;}
+		.d2-2702701991 .fill-B3{fill:#E3E9FD;}
+		.d2-2702701991 .fill-B4{fill:#E3E9FD;}
+		.d2-2702701991 .fill-B5{fill:#EDF0FD;}
+		.d2-2702701991 .fill-B6{fill:#F7F8FE;}
+		.d2-2702701991 .fill-AA2{fill:#4A6FF3;}
+		.d2-2702701991 .fill-AA4{fill:#EDF0FD;}
+		.d2-2702701991 .fill-AA5{fill:#F7F8FE;}
+		.d2-2702701991 .fill-AB4{fill:#EDF0FD;}
+		.d2-2702701991 .fill-AB5{fill:#F7F8FE;}
+		.d2-2702701991 .stroke-N1{stroke:#0A0F25;}
+		.d2-2702701991 .stroke-N2{stroke:#676C7E;}
+		.d2-2702701991 .stroke-N3{stroke:#9499AB;}
+		.d2-2702701991 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2702701991 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2702701991 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2702701991 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2702701991 .stroke-B1{stroke:#0D32B2;}
+		.d2-2702701991 .stroke-B2{stroke:#0D32B2;}
+		.d2-2702701991 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2702701991 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2702701991 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2702701991 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2702701991 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2702701991 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2702701991 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2702701991 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2702701991 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2702701991 .background-color-N1{background-color:#0A0F25;}
+		.d2-2702701991 .background-color-N2{background-color:#676C7E;}
+		.d2-2702701991 .background-color-N3{background-color:#9499AB;}
+		.d2-2702701991 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2702701991 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2702701991 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2702701991 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2702701991 .background-color-B1{background-color:#0D32B2;}
+		.d2-2702701991 .background-color-B2{background-color:#0D32B2;}
+		.d2-2702701991 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2702701991 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2702701991 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2702701991 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2702701991 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2702701991 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2702701991 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2702701991 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2702701991 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2702701991 .color-N1{color:#0A0F25;}
+		.d2-2702701991 .color-N2{color:#676C7E;}
+		.d2-2702701991 .color-N3{color:#9499AB;}
+		.d2-2702701991 .color-N4{color:#CFD2DD;}
+		.d2-2702701991 .color-N5{color:#DEE1EB;}
+		.d2-2702701991 .color-N6{color:#EEF1F8;}
+		.d2-2702701991 .color-N7{color:#FFFFFF;}
+		.d2-2702701991 .color-B1{color:#0D32B2;}
+		.d2-2702701991 .color-B2{color:#0D32B2;}
+		.d2-2702701991 .color-B3{color:#E3E9FD;}
+		.d2-2702701991 .color-B4{color:#E3E9FD;}
+		.d2-2702701991 .color-B5{color:#EDF0FD;}
+		.d2-2702701991 .color-B6{color:#F7F8FE;}
+		.d2-2702701991 .color-AA2{color:#4A6FF3;}
+		.d2-2702701991 .color-AA4{color:#EDF0FD;}
+		.d2-2702701991 .color-AA5{color:#F7F8FE;}
+		.d2-2702701991 .color-AB4{color:#EDF0FD;}
+		.d2-2702701991 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2702701991);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2702701991);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2702701991);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2702701991);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2702701991);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2702701991);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2702701991);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2702701991);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="2.000000" y="0.000000" width="101.000000" height="82.000000" stroke="#333" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="52.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="52.500000" dy="0.000000">Layer 7</tspan><tspan x="52.500000" dy="18.500000">Chrome</tspan></text></g><g class="Qg=="><g class="shape" ><rect x="0.000000" y="142.000000" width="105.000000" height="82.000000" stroke="#333" fill="#ffa94d" style="stroke-width:2;" /></g><text x="52.500000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="52.500000" dy="0.000000">Layer 4</tspan><tspan x="52.500000" dy="18.500000">TCP/TLS</tspan></text></g><g class="Qw=="><g class="shape" ><rect x="205.000000" y="142.000000" width="106.000000" height="82.000000" stroke="#333" fill="#51cf66" style="stroke-width:2;" /></g><text x="258.000000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="258.000000" dy="0.000000">Layer 3</tspan><tspan x="258.000000" dy="18.500000">IP / ICMP</tspan></text></g><g class="RA=="><g class="shape" ><rect x="411.000000" y="142.000000" width="154.000000" height="82.000000" stroke="#333" fill="#339af0" style="stroke-width:2;" /></g><text x="488.000000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="488.000000" dy="0.000000">Layer 2</tspan><tspan x="488.000000" dy="18.500000">Ethernet / Wi-Fi</tspan></text></g><g class="RQ=="><g class="shape" ><rect x="665.000000" y="142.000000" width="104.000000" height="82.000000" stroke="#333" fill="#845ef7" style="stroke-width:2;" /></g><text x="717.000000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="717.000000" dy="0.000000">Layer 1</tspan><tspan x="717.000000" dy="18.500000">Physical</tspan></text></g><g class="KEIgLSZndDsgQylbMF0="><marker id="mk-d2-2702701991-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 107.000000 183.000000 C 145.000000 183.000000 165.000000 183.000000 201.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2702701991-3488378134)" mask="url(#d2-2702701991)" /></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 313.000000 183.000000 C 351.000000 183.000000 371.000000 183.000000 407.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2702701991-3488378134)" mask="url(#d2-2702701991)" /></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 567.000000 183.000000 C 605.000000 183.000000 625.000000 183.000000 661.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2702701991-3488378134)" mask="url(#d2-2702701991)" /></g><mask id="d2-2702701991" maskUnits="userSpaceOnUse" x="-21" y="-21" width="811" height="266">
+<rect x="-21" y="-21" width="811" height="266" fill="white"></rect><p></mask></svg></svg></p></div><p>In our case the failure was at <strong>Layer 3</strong> (ICMP packets never reached the destination), which means Chrome&apos;s &quot;connection dropped&quot; error was just the messenger — not the cause.</p><hr /><p><em>Related: <a href="./cachyos-rate-mirrors-timer-fix.md">CachyOS Mirror Timer Fix</a></em></p></div>
 
 <p><i>Published: 2026-06-15</i></p>
 

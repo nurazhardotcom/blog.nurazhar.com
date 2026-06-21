@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -142,63 +156,143 @@
   BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol
   
 </h1>
-<div><hr /><p>On June 17, 2010, Satoshi Nakamoto wrote a post on BitcoinTalk that would become the most important design constraint in the history of digital money:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>Sixteen years later, in April 2026, that statement became literally true for the first time.</p><p>This post systematically compares every major Bitcoin implementation (BTC, BCH, BSV) against Satoshi&apos;s measurable design criteria — the whitepaper, the v0.1 source code, and his public writings — and demonstrates why only one implementation satisfies all of them.</p><hr /><h2 id="1.-the-whitepaper:-what-satoshi-actually-designed">1. The Whitepaper: What Satoshi Actually Designed</h2><p>Let&apos;s start with the source document. The Bitcoin whitepaper describes a <strong>peer-to-peer electronic cash system</strong>. The key architectural requirements are unambiguous:</p><pre><code class="language-mermaid">graph TD
-    P2P[&quot;Peer-to-Peer Electronic Cash 2008&quot;] --&gt; R1[&quot;Low Fees&quot;]
-    P2P --&gt; R2[&quot;On-Chain Scaling&quot;]
-    P2P --&gt; R3[&quot;SPV Verification&quot;]
-    P2P --&gt; R4[&quot;UTXO State&quot;]
-    P2P --&gt; R5[&quot;PoW Security&quot;]
+<div><hr /><p>On June 17, 2010, Satoshi Nakamoto wrote a post on BitcoinTalk that would become the most important design constraint in the history of digital money:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>Sixteen years later, in April 2026, that statement became literally true for the first time.</p><p>This post systematically compares every major Bitcoin implementation (BTC, BCH, BSV) against Satoshi&apos;s measurable design criteria — the whitepaper, the v0.1 source code, and his public writings — and demonstrates why only one implementation satisfies all of them.</p><hr /><h2 id="1.-the-whitepaper:-what-satoshi-actually-designed">1. The Whitepaper: What Satoshi Actually Designed</h2><p>Let&apos;s start with the source document. The Bitcoin whitepaper describes a <strong>peer-to-peer electronic cash system</strong>. The key architectural requirements are unambiguous:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+F1: "BTC ✗" {
+  style.fill: "#822"
+}
+F2: "BTC ✗" {
+  style.fill: "#822"
+}
+F4: "BTC ✗" {
+  style.fill: "#822"
+}
+P1: "BSV ✓" {
+  style.fill: "#174"
+}
+P2: "BSV ✓" {
+  style.fill: "#174"
+}
+P2P: "Peer-to-Peer Electronic Cash 2008"
+P3: "BSV ✓" {
+  style.fill: "#174"
+}
+R1: "Low Fees"
+R2: "On-Chain Scaling"
+R3: "SPV Verification"
+R4: "UTXO State"
+R5: "PoW Security"
+W2: "BCH ~" {
+  style.fill: "#960"
+}
+#
+P2P -> R2
+P2P -> R3
+P2P -> R4
+P2P -> R5
+R1 -> F1
+R1 -> P1
+R2 -> F2
+R2 -> W2
+R2 -> P2
+R3 -> F4
+R3 -> P3
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1182 440"><svg class="d2-2598771934 d2-svg" width="1182" height="440" viewBox="-21 -21 1182 440"><rect x="-21.000000" y="-21.000000" width="1182.000000" height="440.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2598771934 .text-bold {
+	font-family: "d2-2598771934-font-bold";
+}
+@font-face {
+	font-family: d2-2598771934-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    R1 --&gt; F1[&quot;BTC ✗&quot;]
-    R1 --&gt; P1[&quot;BSV ✓&quot;]
-
-    R2 --&gt; F2[&quot;BTC ✗&quot;]
-    R2 --&gt; W2[&quot;BCH ~&quot;]
-    R2 --&gt; P2[&quot;BSV ✓&quot;]
-
-    R3 --&gt; F4[&quot;BTC ✗&quot;]
-    R3 --&gt; P3[&quot;BSV ✓&quot;]
-
-    style F1 fill:#822,color:#fff
-    style F2 fill:#822,color:#fff
-    style F4 fill:#822,color:#fff
-    style W2 fill:#960,color:#fff
-    style P1 fill:#174,color:#fff
-    style P2 fill:#174,color:#fff
-    style P3 fill:#174,color:#fff
-</code></pre><h3 id="scaling:-the-most-critical-test">Scaling: The Most Critical Test</h3><p>Satoshi explicitly addressed scaling in multiple forum posts. He intended Bitcoin to compete with Visa on transaction volume, using on-chain capacity that grows with Moore&apos;s Law:</p><blockquote><p><em>&quot;Bitcoin can already scale much larger than [Visa] with existing hardware for a fraction of the cost. It never really hits a scale ceiling.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2009</p></blockquote><p>The whitepaper describes a system where miners process blocks, users run SPV clients, and the block size grows as hardware improves. There is <strong>no mention of a block size cap</strong> anywhere in the whitepaper or Satoshi&apos;s v0.1 code.</p><table><thead><tr><th>Criterion</th><th>Whitepaper / Satoshi</th><th>BTC</th><th>BCH</th><th>BSV</th></tr></thead><tbody><tr><td>Block size limit</td><td>None (market-driven)</td><td><strong>1 MB</strong> (SegWit ~4 MB effective)</td><td><strong>32 MB</strong></td><td><strong>No cap</strong> (4 GB blocks on mainnet)</td></tr><tr><td>Transaction fee target</td><td>Sub-cent (microtransactions)</td><td><strong><span class="formula">1–</span>30</strong> during congestion</td><td><strong>~$0.01</strong></td><td><strong>&lt; $0.001</strong></td></tr><tr><td>Throughput target</td><td>Visa-scale</td><td><strong>~7 TPS</strong></td><td><strong>~100 TPS</strong></td><td><strong>2,800+ TPS</strong> (1M+ TPS Teranode)</td></tr><tr><td>Scaling direction</td><td>On-chain (Moore&apos;s Law)</td><td><strong>Off-chain</strong> (Lightning)</td><td>On-chain (capped)</td><td>On-chain (unbounded)</td></tr></tbody></table><hr /><h2 id="2.-the-opcode-restoration:-a-16-year-arc">2. The Opcode Restoration: A 16-Year Arc</h2><p>The most forensic evidence comes from Bitcoin&apos;s scripting language. Satoshi&apos;s v0.1 shipped with a rich set of opcodes designed to support <em>every possible transaction type</em>:</p><blockquote><p><em>&quot;The design supports a tremendous variety of possible transaction types that I designed years ago. Escrow transactions, bonded contracts, third party arbitration, multi-party signature, etc.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2010</p></blockquote><p>He achieved this generality through a single insight: <strong>script</strong>.</p><blockquote><p><em>&quot;The solution was script, which generalizes the problem so transacting parties can describe their transaction as a predicate that the node network evaluates.&quot;</em></p></blockquote><h3 id="the-disabling-(july-2010)">The Disabling (July 2010)</h3><p>In July 2010, CVE-2010-5137 exposed a denial-of-service crash bug. The development team panicked and disabled over a dozen opcodes in v0.3.1 — string operations (<code>OP_CAT</code>, <code>OP_SUBSTR</code>), arithmetic (<code>OP_MUL</code>, <code>OP_2MUL</code>), bitwise (<code>OP_AND</code>, <code>OP_OR</code>, <code>OP_XOR</code>, <code>OP_INVERT</code>), and version-aware opcodes (<code>OP_VER</code>, <code>OP_VERIF</code>).</p><p>These opcodes were <strong>never re-enabled in BTC</strong>. For 16 years, BTC&apos;s script has been a crippled subset of what Satoshi designed.</p><h3 id="the-timeline-of-restoration">The Timeline of Restoration</h3><pre><code class="language-mermaid">gantt
-    title Opcode Restoration Timeline (2009–2026)
-    dateFormat  YYYY-MM
-    axisFormat %Y
-
-    section Satoshi Era
-    Full opcode set live (v0.1)           :done, 2009-01, 2010-07
-    Opcodes disabled (v0.3.1 CVE panic)   :crit, 2010-07, 2020-02
-
-    section BTC
-    Opcodes remain disabled               :crit, 2020-02, 2026-06
-
-    section BCH
-    Partial restoration (some opcodes)    :done, 2017-08, 2018-11
-
-    section BSV Genesis (2020)
-    OP_CAT, OP_SPLIT restored             :done, 2020-02, 2020-02
-    OP_AND, OP_OR, OP_XOR restored        :done, 2020-02, 2020-02
-    OP_MUL, OP_DIV, OP_MOD restored       :done, 2020-02, 2020-02
-    OP_LSHIFT, OP_RSHIFT restored         :done, 2020-02, 2020-02
-    OP_INVERT, OP_NUM2BIN restored        :done, 2020-02, 2020-02
-    P2SH removed, block caps removed      :done, 2020-02, 2020-02
-
-    section BSV Chronicle (April 2026)
-    OP_VER restored                        :done, 2026-04, 2026-04
-    OP_VERIF, OP_VERNOTIF restored         :done, 2026-04, 2026-04
-    OP_SUBSTR, OP_LEFT, OP_RIGHT restored  :done, 2026-04, 2026-04
-    OP_2MUL, OP_2DIV restored              :done, 2026-04, 2026-04
-    OP_LSHIFTNUM, OP_RSHIFTNUM added       :done, 2026-04, 2026-04
-    OTDA reinstated                        :done, 2026-04, 2026-04
-    Script numbers 32MB (up from 750KB)    :done, 2026-04, 2026-04
-    Malleability restrictions removed      :done, 2026-04, 2026-04
-</code></pre><h3 id="what-this-means-in-practice">What This Means in Practice</h3><p>A disabled opcode is not a theoretical problem. It is a <strong>protocol-level restriction</strong> on what you can compute inside a Bitcoin transaction. Here is a concrete example of what Genesis and Chronicle unlocked:</p><pre><code class="language-clojure">;; Satoshi&apos;s original OP_CAT — concatenate two stack values
+		.d2-2598771934 .fill-N1{fill:#0A0F25;}
+		.d2-2598771934 .fill-N2{fill:#676C7E;}
+		.d2-2598771934 .fill-N3{fill:#9499AB;}
+		.d2-2598771934 .fill-N4{fill:#CFD2DD;}
+		.d2-2598771934 .fill-N5{fill:#DEE1EB;}
+		.d2-2598771934 .fill-N6{fill:#EEF1F8;}
+		.d2-2598771934 .fill-N7{fill:#FFFFFF;}
+		.d2-2598771934 .fill-B1{fill:#0D32B2;}
+		.d2-2598771934 .fill-B2{fill:#0D32B2;}
+		.d2-2598771934 .fill-B3{fill:#E3E9FD;}
+		.d2-2598771934 .fill-B4{fill:#E3E9FD;}
+		.d2-2598771934 .fill-B5{fill:#EDF0FD;}
+		.d2-2598771934 .fill-B6{fill:#F7F8FE;}
+		.d2-2598771934 .fill-AA2{fill:#4A6FF3;}
+		.d2-2598771934 .fill-AA4{fill:#EDF0FD;}
+		.d2-2598771934 .fill-AA5{fill:#F7F8FE;}
+		.d2-2598771934 .fill-AB4{fill:#EDF0FD;}
+		.d2-2598771934 .fill-AB5{fill:#F7F8FE;}
+		.d2-2598771934 .stroke-N1{stroke:#0A0F25;}
+		.d2-2598771934 .stroke-N2{stroke:#676C7E;}
+		.d2-2598771934 .stroke-N3{stroke:#9499AB;}
+		.d2-2598771934 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2598771934 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2598771934 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2598771934 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2598771934 .stroke-B1{stroke:#0D32B2;}
+		.d2-2598771934 .stroke-B2{stroke:#0D32B2;}
+		.d2-2598771934 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2598771934 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2598771934 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2598771934 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2598771934 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2598771934 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2598771934 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2598771934 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2598771934 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2598771934 .background-color-N1{background-color:#0A0F25;}
+		.d2-2598771934 .background-color-N2{background-color:#676C7E;}
+		.d2-2598771934 .background-color-N3{background-color:#9499AB;}
+		.d2-2598771934 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2598771934 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2598771934 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2598771934 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2598771934 .background-color-B1{background-color:#0D32B2;}
+		.d2-2598771934 .background-color-B2{background-color:#0D32B2;}
+		.d2-2598771934 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2598771934 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2598771934 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2598771934 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2598771934 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2598771934 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2598771934 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2598771934 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2598771934 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2598771934 .color-N1{color:#0A0F25;}
+		.d2-2598771934 .color-N2{color:#676C7E;}
+		.d2-2598771934 .color-N3{color:#9499AB;}
+		.d2-2598771934 .color-N4{color:#CFD2DD;}
+		.d2-2598771934 .color-N5{color:#DEE1EB;}
+		.d2-2598771934 .color-N6{color:#EEF1F8;}
+		.d2-2598771934 .color-N7{color:#FFFFFF;}
+		.d2-2598771934 .color-B1{color:#0D32B2;}
+		.d2-2598771934 .color-B2{color:#0D32B2;}
+		.d2-2598771934 .color-B3{color:#E3E9FD;}
+		.d2-2598771934 .color-B4{color:#E3E9FD;}
+		.d2-2598771934 .color-B5{color:#EDF0FD;}
+		.d2-2598771934 .color-B6{color:#F7F8FE;}
+		.d2-2598771934 .color-AA2{color:#4A6FF3;}
+		.d2-2598771934 .color-AA4{color:#EDF0FD;}
+		.d2-2598771934 .color-AA5{color:#F7F8FE;}
+		.d2-2598771934 .color-AB4{color:#EDF0FD;}
+		.d2-2598771934 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2598771934);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2598771934);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2598771934);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2598771934);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2598771934);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2598771934);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2598771934);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2598771934);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="RjE="><g class="shape" ><rect x="11.000000" y="166.000000" width="86.000000" height="66.000000" stroke="#0D32B2" fill="#822" class=" stroke-B1" style="stroke-width:2;" /></g><text x="54.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BTC ✗</text></g><g class="RjI="><g class="shape" ><rect x="125.000000" y="332.000000" width="86.000000" height="66.000000" stroke="#0D32B2" fill="#822" class=" stroke-B1" style="stroke-width:2;" /></g><text x="168.000000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BTC ✗</text></g><g class="RjQ="><g class="shape" ><rect x="561.000000" y="332.000000" width="86.000000" height="66.000000" stroke="#0D32B2" fill="#822" class=" stroke-B1" style="stroke-width:2;" /></g><text x="604.000000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BTC ✗</text></g><g class="UDE="><g class="shape" ><rect x="157.000000" y="166.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="199.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="UDI="><g class="shape" ><rect x="416.000000" y="332.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="458.500000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="UDJQ"><g class="shape" ><rect x="635.000000" y="0.000000" width="284.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="777.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Peer-to-Peer Electronic Cash 2008</text></g><g class="UDM="><g class="shape" ><rect x="707.000000" y="332.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="749.500000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="UjE="><g class="shape" ><rect x="0.000000" y="0.000000" width="109.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="54.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Low Fees</text></g><g class="UjI="><g class="shape" ><rect x="302.000000" y="166.000000" width="167.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="385.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">On-Chain Scaling</text></g><g class="UjM="><g class="shape" ><rect x="598.000000" y="166.000000" width="158.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="677.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">SPV Verification</text></g><g class="UjQ="><g class="shape" ><rect x="816.000000" y="166.000000" width="125.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="878.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">UTXO State</text></g><g class="UjU="><g class="shape" ><rect x="1001.000000" y="166.000000" width="139.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1070.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">PoW Security</text></g><g class="VzI="><g class="shape" ><rect x="271.000000" y="332.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#960" class=" stroke-B1" style="stroke-width:2;" /></g><text x="313.500000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BCH ~</text></g><g class="KFAyUCAtJmd0OyBSMilbMF0="><marker id="mk-d2-2598771934-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 632.793822 63.416373 C 435.549011 105.400002 385.750000 126.000000 385.750000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFAyUCAtJmd0OyBSMylbMF0="><path d="M 735.953216 67.267856 C 688.700012 106.000000 676.500000 126.000000 676.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFAyUCAtJmd0OyBSNClbMF0="><path d="M 818.546784 67.267856 C 865.799988 106.000000 878.000000 126.000000 878.000000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFAyUCAtJmd0OyBSNSlbMF0="><path d="M 895.923871 66.546554 C 1034.800049 106.000000 1070.000000 126.000000 1070.000000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIxIC0mZ3Q7IEYxKVswXQ=="><path d="M 54.250000 68.000000 C 54.250000 106.000000 54.250000 126.000000 54.250000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIxIC0mZ3Q7IFAxKVswXQ=="><path d="M 110.486486 64.992278 C 181.550003 105.599998 199.750000 126.000000 199.750000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIyIC0mZ3Q7IEYyKVswXQ=="><path d="M 299.880804 231.711410 C 194.550003 271.799988 167.750000 292.000000 167.750000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIyIC0mZ3Q7IFcyKVswXQ=="><path d="M 355.928744 233.501427 C 322.049988 272.000000 313.250000 292.000000 313.250000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIyIC0mZ3Q7IFAyKVswXQ=="><path d="M 415.571256 233.501427 C 449.450012 272.000000 458.250000 292.000000 458.250000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIzIC0mZ3Q7IEY0KVswXQ=="><path d="M 646.428744 233.501427 C 612.549988 272.000000 603.750000 292.000000 603.750000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><g class="KFIzIC0mZ3Q7IFAzKVswXQ=="><path d="M 706.571256 233.501427 C 740.450012 272.000000 749.250000 292.000000 749.250000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2598771934-3488378134)" mask="url(#d2-2598771934)" /></g><mask id="d2-2598771934" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1182" height="440">
+<rect x="-21" y="-21" width="1182" height="440" fill="white"></rect><p></mask></svg></svg></p></div><h3 id="scaling:-the-most-critical-test">Scaling: The Most Critical Test</h3><p>Satoshi explicitly addressed scaling in multiple forum posts. He intended Bitcoin to compete with Visa on transaction volume, using on-chain capacity that grows with Moore&apos;s Law:</p><blockquote><p><em>&quot;Bitcoin can already scale much larger than [Visa] with existing hardware for a fraction of the cost. It never really hits a scale ceiling.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2009</p></blockquote><p>The whitepaper describes a system where miners process blocks, users run SPV clients, and the block size grows as hardware improves. There is <strong>no mention of a block size cap</strong> anywhere in the whitepaper or Satoshi&apos;s v0.1 code.</p><table><thead><tr><th>Criterion</th><th>Whitepaper / Satoshi</th><th>BTC</th><th>BCH</th><th>BSV</th></tr></thead><tbody><tr><td>Block size limit</td><td>None (market-driven)</td><td><strong>1 MB</strong> (SegWit ~4 MB effective)</td><td><strong>32 MB</strong></td><td><strong>No cap</strong> (4 GB blocks on mainnet)</td></tr><tr><td>Transaction fee target</td><td>Sub-cent (microtransactions)</td><td><strong><span class="formula">1–</span>30</strong> during congestion</td><td><strong>~$0.01</strong></td><td><strong>&lt; $0.001</strong></td></tr><tr><td>Throughput target</td><td>Visa-scale</td><td><strong>~7 TPS</strong></td><td><strong>~100 TPS</strong></td><td><strong>2,800+ TPS</strong> (1M+ TPS Teranode)</td></tr><tr><td>Scaling direction</td><td>On-chain (Moore&apos;s Law)</td><td><strong>Off-chain</strong> (Lightning)</td><td>On-chain (capped)</td><td>On-chain (unbounded)</td></tr></tbody></table><hr /><h2 id="2.-the-opcode-restoration:-a-16-year-arc">2. The Opcode Restoration: A 16-Year Arc</h2><p>The most forensic evidence comes from Bitcoin&apos;s scripting language. Satoshi&apos;s v0.1 shipped with a rich set of opcodes designed to support <em>every possible transaction type</em>:</p><blockquote><p><em>&quot;The design supports a tremendous variety of possible transaction types that I designed years ago. Escrow transactions, bonded contracts, third party arbitration, multi-party signature, etc.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2010</p></blockquote><p>He achieved this generality through a single insight: <strong>script</strong>.</p><blockquote><p><em>&quot;The solution was script, which generalizes the problem so transacting parties can describe their transaction as a predicate that the node network evaluates.&quot;</em></p></blockquote><h3 id="the-disabling-(july-2010)">The Disabling (July 2010)</h3><p>In July 2010, CVE-2010-5137 exposed a denial-of-service crash bug. The development team panicked and disabled over a dozen opcodes in v0.3.1 — string operations (<code>OP_CAT</code>, <code>OP_SUBSTR</code>), arithmetic (<code>OP_MUL</code>, <code>OP_2MUL</code>), bitwise (<code>OP_AND</code>, <code>OP_OR</code>, <code>OP_XOR</code>, <code>OP_INVERT</code>), and version-aware opcodes (<code>OP_VER</code>, <code>OP_VERIF</code>).</p><p>These opcodes were <strong>never re-enabled in BTC</strong>. For 16 years, BTC&apos;s script has been a crippled subset of what Satoshi designed.</p><h3 id="the-timeline-of-restoration">The Timeline of Restoration</h3><h3 id="what-this-means-in-practice">What This Means in Practice</h3><p>A disabled opcode is not a theoretical problem. It is a <strong>protocol-level restriction</strong> on what you can compute inside a Bitcoin transaction. Here is a concrete example of what Genesis and Chronicle unlocked:</p><pre><code class="language-clojure">;; Satoshi&apos;s original OP_CAT — concatenate two stack values
 ;; Disabled in v0.3.1 (July 2010). Restored in BSV Genesis (Feb 2020).
 ;; Still disabled in BTC and BCH.
 
@@ -217,60 +311,279 @@
 ;; After restoration (BSV):
 ;; &lt;data&gt; &lt;offset&gt; &lt;length&gt; OP_SUBSTR
 ;; Extract only the bytes you need from an on-chain data payload.
-</code></pre><h3 id="opcode-comparison:-btc-vs-bch-vs-bsv">Opcode Comparison: BTC vs BCH vs BSV</h3><table><thead><tr><th>Opcode Category</th><th>Original v0.1</th><th>BTC (2026)</th><th>BCH (2026)</th><th>BSV (2026)</th></tr></thead><tbody><tr><td>String (CAT, SPLIT, SUBSTR, LEFT, RIGHT)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Arithmetic (MUL, DIV, MOD, 2MUL, 2DIV)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Bitwise (AND, OR, XOR, INVERT)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Version (VER, VERIF, VERNOTIF)</td><td>Full</td><td><strong>0/3</strong></td><td><strong>0/3</strong></td><td><strong>3/3</strong></td></tr><tr><td>Shift (LSHIFT, RSHIFT, LSHIFTNUM, RSHIFTNUM)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Crypto + Stack (all others)</td><td>Full</td><td>Full</td><td>Full</td><td>Full</td></tr><tr><td><strong>Total Original Opcodes Restored</strong></td><td><strong>21</strong></td><td><strong>0</strong></td><td><strong>~5</strong></td><td><strong>21/21</strong></td></tr></tbody></table><hr /><h2 id="3.-beyond-opcodes:-the-full-protocol-restoration">3. Beyond Opcodes: The Full Protocol Restoration</h2><p>Chronicle (SV Node v1.2.0, activated April 7, 2026 at block 943,816) went far beyond opcodes. It completed the protocol restoration across four dimensions:</p><h3 id="a.-original-transaction-digest-algorithm-(otda)">A. Original Transaction Digest Algorithm (OTDA)</h3><p>Satoshi&apos;s original transaction signing algorithm was replaced by BIP143 in BTC to &quot;fix&quot; transaction malleability. This was a band-aid that changed how signatures commit to transaction data. Chronicle reinstates OTDA as an opt-in via the <code>CHRONICLE [0x20]</code> sighash flag:</p><pre><code class="language-mermaid">graph TD
-    subgraph pre_chronicle [&quot;Pre-Chronicle (BIP143 only)&quot;]
-        TX1[&quot;Transaction Data&quot;] --&gt; HASH1[&quot;BIP143 Hash (witness data included)&quot;]
-        HASH1 --&gt; SIG1[&quot;Signature&quot;]
-    end
+</code></pre><h3 id="opcode-comparison:-btc-vs-bch-vs-bsv">Opcode Comparison: BTC vs BCH vs BSV</h3><table><thead><tr><th>Opcode Category</th><th>Original v0.1</th><th>BTC (2026)</th><th>BCH (2026)</th><th>BSV (2026)</th></tr></thead><tbody><tr><td>String (CAT, SPLIT, SUBSTR, LEFT, RIGHT)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Arithmetic (MUL, DIV, MOD, 2MUL, 2DIV)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Bitwise (AND, OR, XOR, INVERT)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Version (VER, VERIF, VERNOTIF)</td><td>Full</td><td><strong>0/3</strong></td><td><strong>0/3</strong></td><td><strong>3/3</strong></td></tr><tr><td>Shift (LSHIFT, RSHIFT, LSHIFTNUM, RSHIFTNUM)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Crypto + Stack (all others)</td><td>Full</td><td>Full</td><td>Full</td><td>Full</td></tr><tr><td><strong>Total Original Opcodes Restored</strong></td><td><strong>21</strong></td><td><strong>0</strong></td><td><strong>~5</strong></td><td><strong>21/21</strong></td></tr></tbody></table><hr /><h2 id="3.-beyond-opcodes:-the-full-protocol-restoration">3. Beyond Opcodes: The Full Protocol Restoration</h2><p>Chronicle (SV Node v1.2.0, activated April 7, 2026 at block 943,816) went far beyond opcodes. It completed the protocol restoration across four dimensions:</p><h3 id="a.-original-transaction-digest-algorithm-(otda)">A. Original Transaction Digest Algorithm (OTDA)</h3><p>Satoshi&apos;s original transaction signing algorithm was replaced by BIP143 in BTC to &quot;fix&quot; transaction malleability. This was a band-aid that changed how signatures commit to transaction data. Chronicle reinstates OTDA as an opt-in via the <code>CHRONICLE [0x20]</code> sighash flag:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+#
+pre_chronicle: "Pre-Chronicle (BIP143 only)" {
+  style.fill: "#333"
+  HASH1: "BIP143 Hash (witness data included)"
+  SIG1: Signature
+  TX1: "Transaction Data"
+  HASH1 -> SIG1
+}
+#
+post_chronicle: "Post-Chronicle (BSV)" {
+  style.fill: "#174"
+  HASH2A: "BIP143 Hash"
+  HASH2B: "OTDA Hash (original algorithm)"
+  SIG2A: "Signature (legacy)"
+  SIG2B: "Signature (Chronicle)"
+  TX2: "Transaction Data"
+  TX2 -> HASH2B
+  HASH2A -> SIG2A
+  HASH2B -> SIG2B
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1114 590"><svg class="d2-3128679441 d2-svg" width="1114" height="590" viewBox="-11 -41 1114 590"><rect x="-11.000000" y="-41.000000" width="1114.000000" height="590.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3128679441 .text {
+	font-family: "d2-3128679441-font-regular";
+}
+@font-face {
+	font-family: d2-3128679441-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-3128679441 .text-bold {
+	font-family: "d2-3128679441-font-bold";
+}
+@font-face {
+	font-family: d2-3128679441-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    subgraph post_chronicle [&quot;Post-Chronicle (BSV)&quot;]
-        TX2[&quot;Transaction Data&quot;] --&gt; HASH2A[&quot;BIP143 Hash&quot;]
-        TX2 --&gt; HASH2B[&quot;OTDA Hash (original algorithm)&quot;]
-        HASH2A --&gt; SIG2A[&quot;Signature (legacy)&quot;]
-        HASH2B --&gt; SIG2B[&quot;Signature (Chronicle)&quot;]
-    end
+		.d2-3128679441 .fill-N1{fill:#0A0F25;}
+		.d2-3128679441 .fill-N2{fill:#676C7E;}
+		.d2-3128679441 .fill-N3{fill:#9499AB;}
+		.d2-3128679441 .fill-N4{fill:#CFD2DD;}
+		.d2-3128679441 .fill-N5{fill:#DEE1EB;}
+		.d2-3128679441 .fill-N6{fill:#EEF1F8;}
+		.d2-3128679441 .fill-N7{fill:#FFFFFF;}
+		.d2-3128679441 .fill-B1{fill:#0D32B2;}
+		.d2-3128679441 .fill-B2{fill:#0D32B2;}
+		.d2-3128679441 .fill-B3{fill:#E3E9FD;}
+		.d2-3128679441 .fill-B4{fill:#E3E9FD;}
+		.d2-3128679441 .fill-B5{fill:#EDF0FD;}
+		.d2-3128679441 .fill-B6{fill:#F7F8FE;}
+		.d2-3128679441 .fill-AA2{fill:#4A6FF3;}
+		.d2-3128679441 .fill-AA4{fill:#EDF0FD;}
+		.d2-3128679441 .fill-AA5{fill:#F7F8FE;}
+		.d2-3128679441 .fill-AB4{fill:#EDF0FD;}
+		.d2-3128679441 .fill-AB5{fill:#F7F8FE;}
+		.d2-3128679441 .stroke-N1{stroke:#0A0F25;}
+		.d2-3128679441 .stroke-N2{stroke:#676C7E;}
+		.d2-3128679441 .stroke-N3{stroke:#9499AB;}
+		.d2-3128679441 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3128679441 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3128679441 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3128679441 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3128679441 .stroke-B1{stroke:#0D32B2;}
+		.d2-3128679441 .stroke-B2{stroke:#0D32B2;}
+		.d2-3128679441 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3128679441 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3128679441 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3128679441 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3128679441 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3128679441 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3128679441 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3128679441 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3128679441 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3128679441 .background-color-N1{background-color:#0A0F25;}
+		.d2-3128679441 .background-color-N2{background-color:#676C7E;}
+		.d2-3128679441 .background-color-N3{background-color:#9499AB;}
+		.d2-3128679441 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3128679441 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3128679441 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3128679441 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3128679441 .background-color-B1{background-color:#0D32B2;}
+		.d2-3128679441 .background-color-B2{background-color:#0D32B2;}
+		.d2-3128679441 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3128679441 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3128679441 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3128679441 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3128679441 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3128679441 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3128679441 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3128679441 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3128679441 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3128679441 .color-N1{color:#0A0F25;}
+		.d2-3128679441 .color-N2{color:#676C7E;}
+		.d2-3128679441 .color-N3{color:#9499AB;}
+		.d2-3128679441 .color-N4{color:#CFD2DD;}
+		.d2-3128679441 .color-N5{color:#DEE1EB;}
+		.d2-3128679441 .color-N6{color:#EEF1F8;}
+		.d2-3128679441 .color-N7{color:#FFFFFF;}
+		.d2-3128679441 .color-B1{color:#0D32B2;}
+		.d2-3128679441 .color-B2{color:#0D32B2;}
+		.d2-3128679441 .color-B3{color:#E3E9FD;}
+		.d2-3128679441 .color-B4{color:#E3E9FD;}
+		.d2-3128679441 .color-B5{color:#EDF0FD;}
+		.d2-3128679441 .color-B6{color:#F7F8FE;}
+		.d2-3128679441 .color-AA2{color:#4A6FF3;}
+		.d2-3128679441 .color-AA4{color:#EDF0FD;}
+		.d2-3128679441 .color-AA5{color:#F7F8FE;}
+		.d2-3128679441 .color-AB4{color:#EDF0FD;}
+		.d2-3128679441 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3128679441);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3128679441);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3128679441);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3128679441);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3128679441);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3128679441);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3128679441);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3128679441);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="cHJlX2Nocm9uaWNsZQ=="><g class="shape" ><rect x="10.000000" y="20.000000" width="494.000000" height="292.000000" stroke="#0D32B2" fill="#333" class=" stroke-B1" style="stroke-width:2;" /></g><text x="257.000000" y="7.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Pre-Chronicle (BIP143 only)</text></g><g class="cG9zdF9jaHJvbmljbGU="><g class="shape" ><rect x="544.000000" y="20.000000" width="538.000000" height="508.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="813.000000" y="7.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Post-Chronicle (BSV)</text></g><g class="cHJlX2Nocm9uaWNsZS5IQVNIMQ=="><g class="shape" ><rect x="40.000000" y="50.000000" width="301.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="190.500000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BIP143 Hash (witness data included)</text></g><g class="cHJlX2Nocm9uaWNsZS5TSUcx"><g class="shape" ><rect x="133.000000" y="216.000000" width="115.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="190.500000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Signature</text></g><g class="cHJlX2Nocm9uaWNsZS5UWDE="><g class="shape" ><rect x="308.000000" y="216.000000" width="166.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="391.000000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Transaction Data</text></g><g class="cG9zdF9jaHJvbmljbGUuSEFTSDJB"><g class="shape" ><rect x="595.000000" y="216.000000" width="132.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="661.000000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BIP143 Hash</text></g><g class="cG9zdF9jaHJvbmljbGUuSEFTSDJC"><g class="shape" ><rect x="787.000000" y="216.000000" width="265.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="919.500000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">OTDA Hash (original algorithm)</text></g><g class="cG9zdF9jaHJvbmljbGUuU0lHMkE="><g class="shape" ><rect x="574.000000" y="432.000000" width="174.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="661.000000" y="470.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Signature (legacy)</text></g><g class="cG9zdF9jaHJvbmljbGUuU0lHMkI="><g class="shape" ><rect x="822.000000" y="432.000000" width="196.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="920.000000" y="470.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Signature (Chronicle)</text></g><g class="cG9zdF9jaHJvbmljbGUuVFgy"><g class="shape" ><rect x="837.000000" y="50.000000" width="166.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="920.000000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Transaction Data</text></g><g class="cHJlX2Nocm9uaWNsZS4oSEFTSDEgLSZndDsgU0lHMSlbMF0="><marker id="mk-d2-3128679441-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 190.500000 118.000000 C 190.500000 156.000000 190.500000 176.000000 190.500000 212.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3128679441-3488378134)" mask="url(#d2-3128679441)" /></g><g class="cG9zdF9jaHJvbmljbGUuKFRYMiAtJmd0OyBIQVNIMkIpWzBd"><path d="M 919.500000 118.000000 C 919.500000 156.000000 919.500000 176.000000 919.500000 212.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3128679441-3488378134)" mask="url(#d2-3128679441)" /></g><g class="cG9zdF9jaHJvbmljbGUuKEhBU0gyQSAtJmd0OyBTSUcyQSlbMF0="><path d="M 661.000000 284.000000 C 661.000000 322.000000 661.000000 392.000000 661.000000 428.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3128679441-3488378134)" mask="url(#d2-3128679441)" /></g><g class="cG9zdF9jaHJvbmljbGUuKEhBU0gyQiAtJmd0OyBTSUcyQilbMF0="><path d="M 919.500000 284.000000 C 919.500000 322.000000 919.500000 392.000000 919.500000 428.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3128679441-3488378134)" mask="url(#d2-3128679441)" /></g><mask id="d2-3128679441" maskUnits="userSpaceOnUse" x="-11" y="-41" width="1114" height="590">
+<rect x="-11" y="-41" width="1114" height="590" fill="white"></rect><p></mask></svg></svg></p></div><h3 id="b.-script-number-expansion">B. Script Number Expansion</h3><p>Satoshi originally used OpenSSL&apos;s BIGNUM for arbitrary-precision script numbers. BTC restricted this to 4-byte (32-bit) integers, capped at 750 KB total script size. Chronicle expands the limit to <strong>32 MB</strong> — a 42x increase — enabling on-chain cryptographic verification of arbitrarily complex constructions.</p><h3 id="c.-malleability-restrictions-removed">C. Malleability Restrictions Removed</h3><p>For transactions using version &gt; 1, Chronicle removes six malleability-era restrictions:</p><ul><li>Minimal encoding requirement</li><li>Low-S signature requirement</li><li>NULLFAIL / NULLDUMMY</li><li>MINIMALIF</li><li>Clean stack</li><li>Data-only in unlocking scripts</li></ul><p>These restrictions were never part of Satoshi&apos;s design. They were panic-bolted on after the v0.3.1 CVE and never removed — until now.</p><h3 id="d.-protocol-locking">D. Protocol Locking</h3><p>The BSV Association explicitly states:</p><blockquote><p><em>&quot;Chronicle is not about adding complexity to BSV, it is about eliminating it. By removing the artificial limits that were never part of Bitcoin&apos;s original design, we are handing developers and enterprises a protocol they can build on with real confidence.&quot;</em></p></blockquote><p>After Chronicle, the base layer is <strong>locked</strong>. No more protocol changes. The consensus rules now match Satoshi&apos;s v0.1 design. This is the &quot;set in stone&quot; moment.</p><hr /><h2 id="4.-the-spv-model:-what-satoshi-described-vs.-what-exists">4. The SPV Model: What Satoshi Described vs. What Exists</h2><p>The whitepaper dedicates an entire section (Section 8) to Simplified Payment Verification. Satoshi described a world where most users run lightweight SPV clients and only specialist server farms run full nodes:</p><blockquote><p><em>&quot;Eventually, most nodes may be run by specialists with multiple GPU cards... Moore&apos;s Law will keep computer speeds ahead of the number of transactions.&quot;</em></p></blockquote><table><thead><tr><th>Criterion</th><th>Satoshi&apos;s SPV Design</th><th>BTC</th><th>BSV</th></tr></thead><tbody><tr><td>Lightweight verification</td><td>Block headers + Merkle proofs</td><td>Partial (filtered blocks)</td><td><strong>BEEF format, block headers service, SPV wallets</strong></td></tr><tr><td>Fee model for SPV</td><td>Low enough for microtransactions</td><td><strong>Impossible</strong> (<span class="formula">1–</span>30 fees)</td><td><strong>Sub-cent</strong> (viable for micropayments)</td></tr><tr><td>Trust model</td><td>Verify proofs, don&apos;t trust third parties</td><td>Requires full node or trusted third party</td><td><strong>Merkle proofs verifiable locally</strong></td></tr></tbody></table><p>BTC&apos;s fee market makes Satoshi&apos;s SPV model economically unworkable. A <span class="formula">0.10 transaction is uneconomical when fees are </span>5. BSV&apos;s sub-cent fees make SPV viable for payments of any size — from $0.001 microtransactions to enterprise settlements.</p><hr /><h2 id="5.-the-independent-verdict">5. The Independent Verdict</h2><p>In 2021, <strong>MNP</strong> — Canada&apos;s fifth largest accounting firm — published an independent review titled <em>&quot;The Original Bitcoin Protocol: What Is It and Why Does It Matter?&quot;</em> Their methodology:</p><ol start="1"><li>Analyzed Satoshi&apos;s whitepaper, forum posts, emails, and v0.1 source code</li><li>Defined an assessment framework across OpCodes, scripting, and protocol elements</li><li>Compared BTC and BSV implementations against Satoshi&apos;s original vision</li></ol><p>Their conclusion:</p><blockquote><p><em>&quot;After examining BTC and BSV compared to the original vision set forth in the whitepaper, forum posts, emails, and other writings by Satoshi, it is our opinion <strong>BSV is the implementation that currently best represents what Satoshi originally intended</strong>.&quot;</em></p></blockquote><p>This remains the only independent, third-party audit comparing Bitcoin implementations against Satoshi&apos;s original design.</p><hr /><h2 id="6.-the-counterarguments-(and-why-they-fail)">6. The Counterarguments (and Why They Fail)</h2><table><thead><tr><th>Counterargument</th><th>Response</th></tr></thead><tbody><tr><td><em>&quot;BTC has the market cap and brand recognition&quot;</em></td><td>Market capitalization is a social signal, not a technical measure. Satoshi defined Bitcoin by its design, not its price.</td></tr><tr><td><em>&quot;BSV has fewer nodes / is more centralized&quot;</em></td><td>Satoshi explicitly predicted specialist server farms would run nodes. SPV was designed for end users. Node count was never a design constraint.</td></tr><tr><td><em>&quot;BSV forked from BCH, not from v0.1 directly&quot;</em></td><td>Fork lineage is irrelevant. What matters is the resulting protocol rules. Genesis + Chronicle restored the v0.1 design backwards-compatibly.</td></tr><tr><td><em>&quot;The ticker is BTC, not BSV&quot;</em></td><td>The ticker is a namespace. Satoshi did not trademark &quot;Bitcoin.&quot; He published a whitepaper and released code. The implementation that matches both is Bitcoin regardless of ticker.</td></tr><tr><td><em>&quot;BTC is restoring opcodes too (BIP441)&quot;</em></td><td>BIP441 proposes restoring some opcodes inside a new tapleaf version (0xC2) — sandboxed, not in the base protocol. Meanwhile BSV has all opcodes live in the base layer since Chronicle.</td></tr></tbody></table><hr /><h2 id="7.-summary:-the-verdict-is-deterministic">7. Summary: The Verdict Is Deterministic</h2><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+C1: "No block size cap"
+C1B: "BTC ✗" {
+  style.fill: "#822"
+}
+C1V: "BSV ✓" {
+  style.fill: "#174"
+}
+C2: "Full opcode set"
+C2B: "BCH ~" {
+  style.fill: "#960"
+}
+C2V: "BSV ✓" {
+  style.fill: "#174"
+}
+C3: "Original Transaction Digest"
+C3V: "BSV ✓" {
+  style.fill: "#174"
+}
+C4: "Sub-cent fees"
+C4B: "BCH ~" {
+  style.fill: "#960"
+}
+C4V: "BSV ✓" {
+  style.fill: "#174"
+}
+C5: "On-chain scaling"
+C5V: "BSV ✓" {
+  style.fill: "#174"
+}
+C6: "Protocol stability"
+C6V: "BSV ✓" {
+  style.fill: "#174"
+}
+C7: "SPV for light clients"
+C7V: "BSV ✓" {
+  style.fill: "#174"
+}
+S: "BTC 0/7  BCH 2/7  BSV 7/7" {
+  style.fill: "#174"
+}
+#
+C1 -> C1V
+C1B -> S
+C2 -> C2V
+C2B -> S
+C3V -> S
+C4 -> C4V
+C4B -> S
+C5V -> S
+C6V -> S
+C7V -> S
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 2627 274"><svg class="d2-1826290108 d2-svg" width="2627" height="274" viewBox="-21 -21 2627 274"><rect x="-21.000000" y="-21.000000" width="2627.000000" height="274.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1826290108 .text-bold {
+	font-family: "d2-1826290108-font-bold";
+}
+@font-face {
+	font-family: d2-1826290108-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA/oAAoAAAAAF9wAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAAwgAAAQwFWy1lZ2x5ZgAAAhgAAAkPAAAL/M7FYtdoZWFkAAALKAAAADYAAAA2G38e1GhoZWEAAAtgAAAAJAAAACQKfwXpaG10eAAAC4QAAACkAAAAqFG2BvFsb2NhAAAMKAAAAFYAAABWRJZBrG1heHAAAAyAAAAAIAAAACAAQgD3bmFtZQAADKAAAAMoAAAIKgjwVkFwb3N0AAAPyAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3icjM45LwQBHMbhZ+xgsc5d9zXO1QjR6EVEJRIyvVKIiERB4eOIqyYafA2lXkFD+Rej0u3bvM1T/JAoSVCR/p4FmVRZZtGSZStWrduwaduu3L5Dx06du6hXI/gn1wq5ZUduz4EjJ87+ZLzFd3zFZ3zEe7zEczzFYzzEfdzFbdzEdVzG1WutaGlsiVlzpkyb0aQk1axFq7I27TpUdOrSrUevPlU1/QYMGjJsxKgx4yZMysyr8wMAAP//AQAA///qOjPLAAB4nIRWa3Ab1dl+z9EtkdeXlbRaSdZ9pV1JtqVYq9XalmzZkWwnsSTf4kuCL8ED+UKc2P5ihxhwGmYKpaWioThAoBeYDJmhDO20QzsDFNNpp7T1wA+YQOmPMlyHdqb94aEehhZ71dld2bn86Y/18azOvPu8z/O8zzmggwEAPIMvgQb2Qi2YgALgSR8Z5DmOMYi8KDK0RuQQaRjAJunqc1xYGw5rI97Lnnunp1FhCl/aPnVbYWbmy+lUSvrxK69Kj6DFVwE0UADAaVwCEhzgl2vycauVsugNlLLoGQ0fTwoJlmFIPq6shQ9zpzqbQvFs7kzvdHeyOZ7oGb4n3T6MS66eTMNwrba6ryt7OIweijCsVxofbwgCIIiWN/E+fBnqAXR+lhUSySQft9IGlmX8ej1lsfLxpEjr0eTQw8Mjjwxl7vAV7SLTeLBh9EAoYysOEfnHT596apD3T9Gu+NT+OxYC9oljgBX8eVwCo8pIBb2e4fh4UsYtA375jscGBy4ea3K2DEejwy1OXMpdXFh4rPdcaKJYPBIEGV8BAP0dl2Cvwivlo3iKoQroB9JXn3yCSytPrmzDzj48gktQpXyN4gWeZEiGLKx+fOnSx7j09dfbS6hO2tjdK2MzK3vNNM+ygrxfwzFWK0UVnnyhU6utKcmLrhqXpNceTdzf9vn2Eur+XnKl7W8AgBXevoEvQ+0tzCldcqo0fpk/NDr+YF/fg+Pq32yxmM0Wi8TQUydnH+/vf+LkyaeGLizNzMzNzcwsQYW3fbgEBFhu4o2hdnX+6MDZnp6l7sEDy53pHC5xE/35mdgHaOgEH1G5YMqb2IgvQ0RBxolWq+oVjovimwWmLFaaVr+ALJ0X4oeZ0VC0iW8Y8aXZ1F25loVIn7eTY5taI4dTPW1zxL7onW7W7/K4TIGaWE8sOZ5ojEza6z1Ot5v02w53JydaAIEdAJtxCQxyB4zgoxjyrZfQf17CdSsr2xsKxvK/ATCPS1ANwGt4s9VK88mkaOY1r7/xw2ItXautsdUUnvg9LklvC8eTyeMC2re9BBgi5U30LtoCOzAAtF+mXVRaMXBKYxTJcIxeL8aToqD49/XcwAOrmAl7OgNCbLZt+viyUevp3WMPmotpDzGWKY7X+jgbdbsrMHdG+ox3Mmdo85ixwWWjFZ27ypvYitfAAh6VTcbAkDxluEVsxi8PJur2ZV1aYnFV68r50+Ox9PQ4mxxtDFtChM8r4LUX8w5Xx//nR+7JLPfkv9X0pqlG0StQ3kRraAsct86gqpA6gXpk757vOnB3Ltrr7Ga8QiazzxY1twVHifazQ8NL7W562pXv6ixQtce89aBg58qbaAuvgRm8O1wphTnZ7Lss7Rjhi4n51HQi3GLXry4btY4ebONM5gYLk4wR371n8GyH05b/yXa22cEsW+xvmmqyvQe7ASvYP0ZbYKvwc+McGHyy82TsGl4ZB+TpPbM/eyrVOxnTYul9Y0+zkGxmp55+iWv0J4mOpaHBpUxmNmcO7k3yviMON2oLCzHV0zYAtITX5VX2lHiLj+VYII/u3x8YyHoSdfXVDqLefeQIOn9aVy+MJgj9KZ3Ox7oXpW/K2eovN2ED2oIYpOCQwgwrJGQiZDMJOy3QPMVUhs/PKTrI9rLo9ZobpttcCWE/q2z5om2qpddc77U5wm1TQqPvV/2GvYlx0eUx+cMDE7fnVg65OM7l4rhwvJML8nYfUd9+zdHSmA5pq0Oe+nid1pRrSPeHiNkqv6X1UMBYazWbUll+MIrWI2EuHAqFI9JqwE7XaTQ2u9OlctMli614VMk+w84gkApKA9m1anD2xQcPrrq8zpANr714xN4wOym9hXzJkJ2WfgHlMogA8AG+hlkIAYABwvDwbm03XgNCqU3yIm8wM5yB6rqo/dGzP/v1MwsZvCbNvfGW9Nff9t4r7y9vIhNeg1rVcSRP7hr4T/nUKrlXZ9CbiCBxWx9mtt+nTQid1hl2ekBblR7kMLilh2Wj1lvYbQJtZNxNN/WgelHR9X9nsjUzn8vNZzJzudxcpikabYo2NVXmqH1peOhs+7lCZ1deHic1Aw5gK9oCM7gB6OvoFGuwHE2Zr0eAjNN1kDt6Ij2d9KYdun42OdoQsYRexs83O5jvLI4sZ+rt/d9Hgd0AUHpHF9EWmG7sveJstfP6PEs5jbZqe52z3YI2xuLNOt0FrTYclz4CBFR5Ez2DtoBTOL+e96ya97vF5LR3Y8qiv9b8f+x+f8bjc7uiDncqdNdI65hnvyPhaG1lve3hEwTrmbDX02bSajYSgdZw9yhnG7dYOZu9poppjWYnVd+R5U00h5eAVtgWBEYQRV45oK+HFkz05/LkvefOMS7CbqTNInFydP20/oEHFv8YCeq1s3pCrZUub6Kv0Ias/02+IStR9efBg6tur5O1ri5XaTyHiNlJlJA+FMIOFzog1XUHGwEBUe5A22hDVv86D6Ko4enK8SLymhq8bPXVOgymPcGQ0fCbS71VJqN2D7k3/ciLdEv/7/TaBaQLuBzo0/f8PUGml3lPquoYqZyrLAD6JdpQ7iKCWT7YNDzFvv0KWnj7/X4UXSxK7yzKfgmWN9E/8ENQVfGhqgFlkT2o3n3Uq5UV7Tl+/vxx+bGHaDpkt4VsthDxwpUrV69eufLCmeDU2NiE3z8xNjal3NXcAOgz/BA45e93YNXOlXNPcaM8+TwVHDzf0xz2i7aB2EwuMyWkJhK2tPX+w4XzdzXFmjlHf5yP39YuzM8nNboVuW4jAPoc36ecxR1Y9Ak+qkZjeEbv70lLn6JXxWywTnvy+aeHV45m777v0UmFiwZYRz7UDBoAUeCphi/XT5yQ31eXj6Ek/oP8njbzmur1Y+vPao5vPS3/5oIN9C/0HFgBgv4oZvwqdjfeMcukJxYMUJwvH8wHlX8ppi4f7Nug3XRbqiVGu2m3M9USk2sZyv/E38Y/hzoAmlW0pmXstB4brnoOCVNcu10buPO+3NE7X05bRkqH2tsvdCx/8Fp3cVp65y/qzMG7aEPGKeda1yrakOoAlX+KW2EYX5PvkeQNygWj0WAwGsWtEYaJyA/8FwAA//8BAAD//7+ohAAAAAEAAAACC4W0l8gxXw889QABA+gAAAAA2F2ghAAAAADdZi82/jf+xAhtA/EAAQADAAIAAAAAAAAAAQAAA9j+7wAACJj+N/43CG0AAQAAAAAAAAAAAAAAAAAAACp4nBzKoW7CUBTG8f/5xJYlXXaXdMsmVrF1W7Le1I6EVhyD4iYkgORJEEgcHosGg+UFEDieBlUS/E97RhxBM5IG1JqTlJG0IWlN0pZaE5IiX4q8K3YXPfGnFrczpVp+dUdpU970yqf6uOX8q8StwNXgqm7ObYXbgRdb8KwejR7I7MSPAt8KFApEG1LZmEcFPrTk3nIcut0VAAD//wEAAP//gQEX6QAAACwALABgAIwAsADEANoA/AEoAUoBigGcAbgB8AIiAk4CgAK0AtoDQgNkA3ADiAOkA8YD8gQiBEIEfgSkBMYE9gUKBTYFYgV8BYgFlgW8BdwF6AX+AAAAAQAAACoAkAAMAGMABwABAAAAAAAAAAAAAAAAAAQAA3icnJTPbhtVFMZ/TmzTCsECRVW6ie6CRZHo2FRJ1TYrh9SKRRQHjwtCQkgTz/iPMp4ZeSYO4QlY8xa8RVc8BM+BWKP5fOzYBdEmipJ8d+75851zvnOBHf5mm0r1IfBHPTFcYa9+bniLB/UTw9u061uGqzyp/Wm4RlibG67zea1n+CPeVn8z/ID96k+GH7JbbRv+mGfVHcOfbDv+Mvwp+7xd4Aq84FfDFXbJDG+xw4+Gt3mExaxUeUTTcI3P2DNcZw/oM6EgZkLCCMeQCSOumBGR4xMxY8KQiBBHhxYxhb4mBEKO0X9+DfApmBEo4pgCR4xPTEDO2CL+Iq+Uc2Uc6jSzuxYFYwIu5HFJQIIjZURKQsSl4hQUZLyiQYOcgfhmFOR45EyI8UiZMaJBlzan9BkzIcfRVqSSmU/KkIJrAuV3ZlF2ZkBEQm6srkgIxdOJXyTvDqc4umSyXY98uhHhSxzfybvklsr2Kzz9ujVmm3mXbALm6mesrsS6udYEx7ot87b4VrjgFe5e/dlk8v4ehfpfKPIFV5p/qEklYpLg3C4tfCnId49xHOncwVdHvqdDnxO6vKGvc4sePVqc0afDa/l26eH4mi5nHMujI7y4a0sxZ/yA4xs6siljR9afxcQifiYzdefiOFMdUzL1vGTuqdZIFd59wuUOpRvqyOUz0B6Vlk7zS7RnASNTRSaGU/VyqY3c+heaIqaqpZzt7X25DXPbveUW35Bqh0u1LjiVk1swet9UvXc0c60fj4CQlAtZDEiZ0qDgRrzPCbgixnGs7p1oSwpaK58yz41UEjEVgw6J4szI9Dcw3fjGfbChe2dvSSj/kunlqqr7ZHHq1e2M3qh7yzvfuhytTaBhU03X1DQQ18S0H2mn1vn78s31uqU85YiUmPBfL8AzPJrsc8AhY2UY6GZur0NTL0STlxyq+ksiWQ2l58giHODxnAMOeMnzd/q4ZOKMi1txWc/d4pgjuhx+UBUL+y5HvF59+/+sv4tpU7U4nq5OL+49xSd3UOsX2rPb97KniZWTmFu02604I2BacnG76zW5x3j/AAAA//8BAAD///S3T1F4nGJgZgCD/+cYjBiwAAAAAAD//wEAAP//LwECAwAAAA==");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style pre_chronicle fill:#333,color:#fff
-    style post_chronicle fill:#174,color:#fff
-</code></pre><h3 id="b.-script-number-expansion">B. Script Number Expansion</h3><p>Satoshi originally used OpenSSL&apos;s BIGNUM for arbitrary-precision script numbers. BTC restricted this to 4-byte (32-bit) integers, capped at 750 KB total script size. Chronicle expands the limit to <strong>32 MB</strong> — a 42x increase — enabling on-chain cryptographic verification of arbitrarily complex constructions.</p><h3 id="c.-malleability-restrictions-removed">C. Malleability Restrictions Removed</h3><p>For transactions using version &gt; 1, Chronicle removes six malleability-era restrictions:</p><ul><li>Minimal encoding requirement</li><li>Low-S signature requirement</li><li>NULLFAIL / NULLDUMMY</li><li>MINIMALIF</li><li>Clean stack</li><li>Data-only in unlocking scripts</li></ul><p>These restrictions were never part of Satoshi&apos;s design. They were panic-bolted on after the v0.3.1 CVE and never removed — until now.</p><h3 id="d.-protocol-locking">D. Protocol Locking</h3><p>The BSV Association explicitly states:</p><blockquote><p><em>&quot;Chronicle is not about adding complexity to BSV, it is about eliminating it. By removing the artificial limits that were never part of Bitcoin&apos;s original design, we are handing developers and enterprises a protocol they can build on with real confidence.&quot;</em></p></blockquote><p>After Chronicle, the base layer is <strong>locked</strong>. No more protocol changes. The consensus rules now match Satoshi&apos;s v0.1 design. This is the &quot;set in stone&quot; moment.</p><hr /><h2 id="4.-the-spv-model:-what-satoshi-described-vs.-what-exists">4. The SPV Model: What Satoshi Described vs. What Exists</h2><p>The whitepaper dedicates an entire section (Section 8) to Simplified Payment Verification. Satoshi described a world where most users run lightweight SPV clients and only specialist server farms run full nodes:</p><blockquote><p><em>&quot;Eventually, most nodes may be run by specialists with multiple GPU cards... Moore&apos;s Law will keep computer speeds ahead of the number of transactions.&quot;</em></p></blockquote><table><thead><tr><th>Criterion</th><th>Satoshi&apos;s SPV Design</th><th>BTC</th><th>BSV</th></tr></thead><tbody><tr><td>Lightweight verification</td><td>Block headers + Merkle proofs</td><td>Partial (filtered blocks)</td><td><strong>BEEF format, block headers service, SPV wallets</strong></td></tr><tr><td>Fee model for SPV</td><td>Low enough for microtransactions</td><td><strong>Impossible</strong> (<span class="formula">1–</span>30 fees)</td><td><strong>Sub-cent</strong> (viable for micropayments)</td></tr><tr><td>Trust model</td><td>Verify proofs, don&apos;t trust third parties</td><td>Requires full node or trusted third party</td><td><strong>Merkle proofs verifiable locally</strong></td></tr></tbody></table><p>BTC&apos;s fee market makes Satoshi&apos;s SPV model economically unworkable. A <span class="formula">0.10 transaction is uneconomical when fees are </span>5. BSV&apos;s sub-cent fees make SPV viable for payments of any size — from $0.001 microtransactions to enterprise settlements.</p><hr /><h2 id="5.-the-independent-verdict">5. The Independent Verdict</h2><p>In 2021, <strong>MNP</strong> — Canada&apos;s fifth largest accounting firm — published an independent review titled <em>&quot;The Original Bitcoin Protocol: What Is It and Why Does It Matter?&quot;</em> Their methodology:</p><ol start="1"><li>Analyzed Satoshi&apos;s whitepaper, forum posts, emails, and v0.1 source code</li><li>Defined an assessment framework across OpCodes, scripting, and protocol elements</li><li>Compared BTC and BSV implementations against Satoshi&apos;s original vision</li></ol><p>Their conclusion:</p><blockquote><p><em>&quot;After examining BTC and BSV compared to the original vision set forth in the whitepaper, forum posts, emails, and other writings by Satoshi, it is our opinion <strong>BSV is the implementation that currently best represents what Satoshi originally intended</strong>.&quot;</em></p></blockquote><p>This remains the only independent, third-party audit comparing Bitcoin implementations against Satoshi&apos;s original design.</p><hr /><h2 id="6.-the-counterarguments-(and-why-they-fail)">6. The Counterarguments (and Why They Fail)</h2><table><thead><tr><th>Counterargument</th><th>Response</th></tr></thead><tbody><tr><td><em>&quot;BTC has the market cap and brand recognition&quot;</em></td><td>Market capitalization is a social signal, not a technical measure. Satoshi defined Bitcoin by its design, not its price.</td></tr><tr><td><em>&quot;BSV has fewer nodes / is more centralized&quot;</em></td><td>Satoshi explicitly predicted specialist server farms would run nodes. SPV was designed for end users. Node count was never a design constraint.</td></tr><tr><td><em>&quot;BSV forked from BCH, not from v0.1 directly&quot;</em></td><td>Fork lineage is irrelevant. What matters is the resulting protocol rules. Genesis + Chronicle restored the v0.1 design backwards-compatibly.</td></tr><tr><td><em>&quot;The ticker is BTC, not BSV&quot;</em></td><td>The ticker is a namespace. Satoshi did not trademark &quot;Bitcoin.&quot; He published a whitepaper and released code. The implementation that matches both is Bitcoin regardless of ticker.</td></tr><tr><td><em>&quot;BTC is restoring opcodes too (BIP441)&quot;</em></td><td>BIP441 proposes restoring some opcodes inside a new tapleaf version (0xC2) — sandboxed, not in the base protocol. Meanwhile BSV has all opcodes live in the base layer since Chronicle.</td></tr></tbody></table><hr /><h2 id="7.-summary:-the-verdict-is-deterministic">7. Summary: The Verdict Is Deterministic</h2><pre><code class="language-mermaid">graph TD
-    C1[&quot;No block size cap&quot;] --&gt; C1B[&quot;BTC ✗&quot;]
-    C1 --&gt; C1V[&quot;BSV ✓&quot;]
-    C1B --&gt; S
-
-    C2[&quot;Full opcode set&quot;] --&gt; C2B[&quot;BCH ~&quot;]
-    C2 --&gt; C2V[&quot;BSV ✓&quot;]
-    C2B --&gt; S
-
-    C3[&quot;Original Transaction Digest&quot;] --&gt; C3V[&quot;BSV ✓&quot;]
-    C3V --&gt; S
-
-    C4[&quot;Sub-cent fees&quot;] --&gt; C4B[&quot;BCH ~&quot;]
-    C4 --&gt; C4V[&quot;BSV ✓&quot;]
-    C4B --&gt; S
-
-    C5[&quot;On-chain scaling&quot;] --&gt; C5V[&quot;BSV ✓&quot;]
-    C5V --&gt; S
-
-    C6[&quot;Protocol stability&quot;] --&gt; C6V[&quot;BSV ✓&quot;]
-    C6V --&gt; S
-
-    C7[&quot;SPV for light clients&quot;] --&gt; C7V[&quot;BSV ✓&quot;]
-    C7V --&gt; S
-
-    S[&quot;BTC 0/7  BCH 2/7  BSV 7/7&quot;]
-
-    style C1B fill:#822,color:#fff
-    style C2B fill:#960,color:#fff
-    style C4B fill:#960,color:#fff
-    style C1V fill:#174,color:#fff
-    style C2V fill:#174,color:#fff
-    style C3V fill:#174,color:#fff
-    style C4V fill:#174,color:#fff
-    style C5V fill:#174,color:#fff
-    style C6V fill:#174,color:#fff
-    style C7V fill:#174,color:#fff
-    style S fill:#174,color:#fff,font-size:16px
-</code></pre><p>There is no ambiguity. The criteria are measurable. The data is public. The restoration is complete as of April 7, 2026.</p><p><strong>BSV is Bitcoin.</strong></p><hr /><p><em>This post is part of a series on Bitcoin protocol engineering. See also: <a href="/posts/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown/">Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling</a> and <a href="/posts/sovereign-clojure-bitcoin-integration/">Clojure &amp; Bitcoin: Building a Sovereign Node &amp; Integration Sandbox</a>.</em></p></div>
+		.d2-1826290108 .fill-N1{fill:#0A0F25;}
+		.d2-1826290108 .fill-N2{fill:#676C7E;}
+		.d2-1826290108 .fill-N3{fill:#9499AB;}
+		.d2-1826290108 .fill-N4{fill:#CFD2DD;}
+		.d2-1826290108 .fill-N5{fill:#DEE1EB;}
+		.d2-1826290108 .fill-N6{fill:#EEF1F8;}
+		.d2-1826290108 .fill-N7{fill:#FFFFFF;}
+		.d2-1826290108 .fill-B1{fill:#0D32B2;}
+		.d2-1826290108 .fill-B2{fill:#0D32B2;}
+		.d2-1826290108 .fill-B3{fill:#E3E9FD;}
+		.d2-1826290108 .fill-B4{fill:#E3E9FD;}
+		.d2-1826290108 .fill-B5{fill:#EDF0FD;}
+		.d2-1826290108 .fill-B6{fill:#F7F8FE;}
+		.d2-1826290108 .fill-AA2{fill:#4A6FF3;}
+		.d2-1826290108 .fill-AA4{fill:#EDF0FD;}
+		.d2-1826290108 .fill-AA5{fill:#F7F8FE;}
+		.d2-1826290108 .fill-AB4{fill:#EDF0FD;}
+		.d2-1826290108 .fill-AB5{fill:#F7F8FE;}
+		.d2-1826290108 .stroke-N1{stroke:#0A0F25;}
+		.d2-1826290108 .stroke-N2{stroke:#676C7E;}
+		.d2-1826290108 .stroke-N3{stroke:#9499AB;}
+		.d2-1826290108 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1826290108 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1826290108 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1826290108 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1826290108 .stroke-B1{stroke:#0D32B2;}
+		.d2-1826290108 .stroke-B2{stroke:#0D32B2;}
+		.d2-1826290108 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1826290108 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1826290108 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1826290108 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1826290108 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1826290108 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1826290108 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1826290108 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1826290108 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1826290108 .background-color-N1{background-color:#0A0F25;}
+		.d2-1826290108 .background-color-N2{background-color:#676C7E;}
+		.d2-1826290108 .background-color-N3{background-color:#9499AB;}
+		.d2-1826290108 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1826290108 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1826290108 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1826290108 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1826290108 .background-color-B1{background-color:#0D32B2;}
+		.d2-1826290108 .background-color-B2{background-color:#0D32B2;}
+		.d2-1826290108 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1826290108 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1826290108 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1826290108 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1826290108 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1826290108 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1826290108 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1826290108 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1826290108 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1826290108 .color-N1{color:#0A0F25;}
+		.d2-1826290108 .color-N2{color:#676C7E;}
+		.d2-1826290108 .color-N3{color:#9499AB;}
+		.d2-1826290108 .color-N4{color:#CFD2DD;}
+		.d2-1826290108 .color-N5{color:#DEE1EB;}
+		.d2-1826290108 .color-N6{color:#EEF1F8;}
+		.d2-1826290108 .color-N7{color:#FFFFFF;}
+		.d2-1826290108 .color-B1{color:#0D32B2;}
+		.d2-1826290108 .color-B2{color:#0D32B2;}
+		.d2-1826290108 .color-B3{color:#E3E9FD;}
+		.d2-1826290108 .color-B4{color:#E3E9FD;}
+		.d2-1826290108 .color-B5{color:#EDF0FD;}
+		.d2-1826290108 .color-B6{color:#F7F8FE;}
+		.d2-1826290108 .color-AA2{color:#4A6FF3;}
+		.d2-1826290108 .color-AA4{color:#EDF0FD;}
+		.d2-1826290108 .color-AA5{color:#F7F8FE;}
+		.d2-1826290108 .color-AB4{color:#EDF0FD;}
+		.d2-1826290108 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1826290108);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1826290108);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1826290108);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1826290108);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1826290108);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1826290108);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1826290108);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1826290108);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QzE="><g class="shape" ><rect x="0.000000" y="0.000000" width="165.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="82.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">No block size cap</text></g><g class="QzFC"><g class="shape" ><rect x="225.000000" y="0.000000" width="86.000000" height="66.000000" stroke="#0D32B2" fill="#822" class=" stroke-B1" style="stroke-width:2;" /></g><text x="268.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BTC ✗</text></g><g class="QzFW"><g class="shape" ><rect x="40.000000" y="166.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="82.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="QzI="><g class="shape" ><rect x="1990.000000" y="0.000000" width="151.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="2065.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Full opcode set</text></g><g class="QzJC"><g class="shape" ><rect x="371.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#960" class=" stroke-B1" style="stroke-width:2;" /></g><text x="413.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BCH ~</text></g><g class="QzJW"><g class="shape" ><rect x="2023.000000" y="166.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="2065.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="QzM="><g class="shape" ><rect x="661.000000" y="0.000000" width="238.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="780.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Original Transaction Digest</text></g><g class="QzNW"><g class="shape" ><rect x="516.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="558.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="QzQ="><g class="shape" ><rect x="2444.000000" y="0.000000" width="141.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="2514.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Sub-cent fees</text></g><g class="QzRC"><g class="shape" ><rect x="959.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#960" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1001.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BCH ~</text></g><g class="QzRW"><g class="shape" ><rect x="2472.000000" y="166.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="2514.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="QzU="><g class="shape" ><rect x="1394.000000" y="0.000000" width="163.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1475.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">On-chain scaling</text></g><g class="QzVW"><g class="shape" ><rect x="1104.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1146.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="QzY="><g class="shape" ><rect x="1762.000000" y="0.000000" width="168.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1846.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Protocol stability</text></g><g class="QzZW"><g class="shape" ><rect x="1249.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1291.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="Qzc="><g class="shape" ><rect x="2201.000000" y="0.000000" width="183.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="2292.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">SPV for light clients</text></g><g class="QzdW"><g class="shape" ><rect x="1617.000000" y="0.000000" width="85.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1659.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BSV ✓</text></g><g class="Uw=="><g class="shape" ><rect x="892.000000" y="166.000000" width="219.000000" height="66.000000" stroke="#0D32B2" fill="#174" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1001.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">BTC 0/7  BCH 2/7  BSV 7/7</text></g><g class="KEMxIC0mZ3Q7IEMxVilbMF0="><marker id="mk-d2-1826290108-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 82.500000 68.000000 C 82.500000 106.000000 82.500000 126.000000 82.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEMxQiAtJmd0OyBTKVswXQ=="><path d="M 268.000000 68.000000 C 268.000000 106.000000 392.799988 130.199005 888.025645 186.547782" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEMyIC0mZ3Q7IEMyVilbMF0="><path d="M 2065.500000 68.000000 C 2065.500000 106.000000 2065.500000 126.000000 2065.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEMyQiAtJmd0OyBTKVswXQ=="><path d="M 413.500000 68.000000 C 413.500000 106.000000 509.299988 129.600006 888.539707 183.437787" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEMzViAtJmd0OyBTKVswXQ=="><path d="M 558.500000 68.000000 C 558.500000 106.000000 625.299988 128.399994 888.567185 177.269956" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEM0IC0mZ3Q7IEM0VilbMF0="><path d="M 2514.500000 68.000000 C 2514.500000 106.000000 2514.500000 126.000000 2514.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEM0QiAtJmd0OyBTKVswXQ=="><path d="M 1001.500000 68.000000 C 1001.500000 106.000000 1001.500000 126.000000 1001.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEM1ViAtJmd0OyBTKVswXQ=="><path d="M 1146.500000 68.000000 C 1146.500000 106.000000 1129.099976 126.000000 1062.968055 164.006864" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEM2ViAtJmd0OyBTKVswXQ=="><path d="M 1291.500000 68.000000 C 1291.500000 106.000000 1255.300049 126.400002 1114.344489 166.895506" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><g class="KEM3ViAtJmd0OyBTKVswXQ=="><path d="M 1659.500000 68.000000 C 1659.500000 106.000000 1549.699951 129.800003 1114.468777 184.501192" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1826290108-3488378134)" mask="url(#d2-1826290108)" /></g><mask id="d2-1826290108" maskUnits="userSpaceOnUse" x="-21" y="-21" width="2627" height="274">
+<rect x="-21" y="-21" width="2627" height="274" fill="white"></rect><p></mask></svg></svg></p></div><p>There is no ambiguity. The criteria are measurable. The data is public. The restoration is complete as of April 7, 2026.</p><p><strong>BSV is Bitcoin.</strong></p><hr /><p><em>This post is part of a series on Bitcoin protocol engineering. See also: <a href="/posts/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown/">Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling</a> and <a href="/posts/sovereign-clojure-bitcoin-integration/">Clojure &amp; Bitcoin: Building a Sovereign Node &amp; Integration Sandbox</a>.</em></p></div>
 
 <p><i>Published: 2026-06-21</i></p>
 

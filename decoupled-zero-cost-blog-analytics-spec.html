@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -142,30 +156,125 @@
   Engineering Spec: Decoupled Zero-Cost Blog Analytics
   
 </h1>
-<div><hr /><p>This document outlines the complete technical specification, schema design, and serverless code for the isolated web tracking system used on this blog.</p><p>To ensure maximum security and database boundary isolation, this system is <strong>completely decoupled</strong> from my other backend services and payment engines.</p><hr /><h2 id="system-architecture">🗺️ System Architecture</h2><p>The blog remains 100% static on GitHub Pages. It communicates with a dedicated, isolated Cloud Function that stores data in a separate Neon database.</p><pre><code class="language-mermaid">graph TD
-    subgraph &quot;Blog Project (Static Site)&quot;
-        Blog[blog.nurazhar.com &lt;br/&gt; GitHub Pages]
-        Stats[Stats Dashboard &lt;br/&gt; /stats.html]
-    end
+<div><hr /><p>This document outlines the complete technical specification, schema design, and serverless code for the isolated web tracking system used on this blog.</p><p>To ensure maximum security and database boundary isolation, this system is <strong>completely decoupled</strong> from my other backend services and payment engines.</p><hr /><h2 id="system-architecture">🗺️ System Architecture</h2><p>The blog remains 100% static on GitHub Pages. It communicates with a dedicated, isolated Cloud Function that stores data in a separate Neon database.</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+Blog: "blog.nurazhar.com \n GitHub Pages" {
+  style.fill: "#f9f"
+  style.stroke: "#333"
+  style.stroke-width: "2"
+}
+CF: "GCP Cloud Function \n blog-analytics-api" {
+  style.fill: "#bbf"
+  style.stroke: "#333"
+  style.stroke-width: "2"
+}
+DB: "(Postgres DB \n blog_analytics)" {
+  style.fill: "#bfb"
+  style.stroke: "#333"
+  style.stroke-width: "2"
+}
+Stats: "Stats Dashboard \n /stats.html"
+#
+track -> CF
+views -> DB
+stats -> CF
+stats -> DB
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 760 306"><svg class="d2-4221486471 d2-svg" width="760" height="306" viewBox="-21 -21 760 306"><rect x="-21.000000" y="-21.000000" width="760.000000" height="306.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-4221486471 .text-bold {
+	font-family: "d2-4221486471-font-bold";
+}
+@font-face {
+	font-family: d2-4221486471-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA8oAAoAAAAAFxAAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAArgAAAOgESQVnZ2x5ZgAAAgQAAAhrAAALYDTvkmBoZWFkAAAKcAAAADYAAAA2G38e1GhoZWEAAAqoAAAAJAAAACQKfwXnaG10eAAACswAAACgAAAAoEy2Bw1sb2NhAAALbAAAAFIAAABSQQQ+NG1heHAAAAvAAAAAIAAAACAAQAD3bmFtZQAAC+AAAAMoAAAIKgjwVkFwb3N0AAAPCAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3icfM1LKkYBAMXx3/Vd78/7/b5exQB7kGSoLEAGkkxkIvbjtQGZUbZhYguSicFRtzt2Jmfyqz8KLQXaSh+oVMr6N23ZtmPPgUNHjp06d+nabVKLjUbs2m/EiTMXrtwk+cxvvvOVn7zlNS95znue8piH3Oeubv6/wqo1yyrrOrSUOnXp1qPXij792gYMGjJsxKgx4yZMmjJtxqw58xYsWuIPAAD//wEAAP//BbMrmAAAeJxsVllsG9fZ/e4lNRNRI0tDcjgkxX3EGS4iJXE0JCVRpmhxkWVSq7X4D7VY8J84kS0rllwrgYG8GF1SGm5CtXVTtAmKFm0Bp0DgFkhSqEULNKmQPKRwUr1kc1oYQR5aIhCCAJHIYoaUZLl9IC9A3rnfOec737kDdTAKgBfxBqigHppACwyASDtptygIHBkRIxGOVUUERJOjWFv+xc8Fr9rrVfsct+zPzM+j3Bze2LvwaG5x8cv53t7yT19/o3wDrb4BoIIcAI7hAtBgBpd8phgyGBg9QTLKQnAqMRSWuniOo8WQsuY+Tl7oD3hCA8nLmflUuDPUlZ54OtY3gQvWdNw/0aRuPJUYOO1F3/JxvKM8M+N3AyAIVnZwB74FLQB1Lp6XusJhMWRgSZ7nXATB6A1iKBxhCTQ7/tzE5I3x+DnnsCnCtZ30Tw164sbhcSr7/YsXfjQmuuZYa2juxLmVVlN+AbCCP4sLoKkqUkNPcIIYCsu4ZcCvnXthbPTmQsASnQgGJ6IWXEjeXFl5IXPVkx8ePuMGGV8OAH2GC1Cv6Mo4GZHhmBz6cfmrTz/FhWs/vLYHsM8jiW+B/X/xqNGQOEmkCQJdPPP85PT3pjOPOXKmqC+7kH9Uz1MX/uV6qkamyzlnsK0snlvRaFbWy+85g1UceBIXoEFhw4iSSHM0R+eK9zY27uHC11/vraHmcgmgxr0DF4AC/RHuHHPQq08Gr6TTa6mxwfX+WBIXhPxIdrH9QzR+XvRV+XCVHazBt8Cn8BEiBkO134IQxP9FjmWrFZC+/9nQaW7KEwyI/klnjO99Ihld8Z1y9At8oNt3ujfds0x1BP/fxrusdqu29Vh7uj0809XmmzW12C02G+0ynk6F81HA4KvsoPfQLpiAA2BdsqARpRwpKMUZmhM4gojIsio++UNy9HoRc157f6vUvtQz/9i6Rm3PPGJy64Zjdmo6PjzT5BSMzFlr6/Ll8j9FC3eZ1U1r/FYjq2iWqOxgA94Efa2DAkdytMiQSjGFnCDz51zyAKCUc8CqplaLamvSFZtpj83P8OGpNq/eQzkdEt68nTVbjz+VnXw6vp7OfjPwtvaYomlrZQdtol0wP+yRQ4uwBIFMqUuJwW8kgxlLinNI8XiHMajrcU9RfVfGJ9b6bOy8NZvozzFNC44WULALlR20izdBB459rZSDBdkkByrtN+uL/KXe+S5v1EQU1zVqcxobBa3Or+fC7dR3nx67ctxizP56b6DTzK3rTW9rjw1kTqYAK9jvoV0wPuRwJROcsjtk7CqxS66C7JnLJwYu9GZm29W4vK1Jd0rhTn7uxTtCmytMHV8bH1uLx5eSOnd9WHSeMdtQj1dql7mowFUJYBLtQjv0wpDChpe6ZPCyAaT9sqzIcDVTuwRFO9kSeoJQVUNJIaqrBZSLV7Z80TMXzehaHEazt2dOanP+boSs75qJWO1al3c0fzZ5bcgqCFarIHhD/YJbNDmplr675mhbzKNu9NhbQs1qbdIfG/FQSw0uffdQq6bJoNP2DohjQbTl8wpej8frKxdbTWyzSmU0WazVOUrIDVJ8pcwtuW9eWkFJ0okiaTkVGjtZtDosHiPevH3G5F+aLb+DnGGPiS2/CpUKRADgQ3wX88ADAAkCPHdwtg1vAqWcTYsRkdRxAskkbqp/8vJvfv/SShxvlpf/8k75gz9lnpH3V3aQFm9CU9UltEgfmO6v2d4iXV9HElrKTT16CnN726wWoYt1ZLWOyop2wanUYcWqu44wIQ/WhDx36U4poXMOdY6eKlod7g75qx2V+u0Bv8fVuU+vo/xqbdnXCe3WdKrVeFCndY3akTsQCpXitsARnaoeVbzT9NBtcji+NWcgQ/xSMnkpHl9OJpfjgWAwEAwEavPVtzYxfqXvaq4/kZXHrJoNg9iAdkEHNgD2EJ1iP15gGd1hNMg4rSeF/zsfmw87Yua6ET485ffpPa/hX3Waue+sTq7HW0wjz6PWg2BQuKObaBe0R/StpmuVeUuWZywaY6Op2dKnR6XpUGdd3bNqtTdU/gQQMJUd9BLaBUHp62FW89WsPjhMTmobZvTE3c7H+ROuuN1pswbNtl7PE5Pd0/YT5i5zdzfv6POep3h73tTC6miDTkO1dntTU4JxRm8QjKZjDVx3cGC26m26soOW8RqwitqSxEmRiKhckIdhBvmRZJZ+5upVzkqZNKwuQj05tXWRuH599S2fm1AvEVT1rFhlB32FSnL/j3iTrkXY38dOFm0OC28orjeo7EPU0izqKn8sec1WNFhuTrnbAMlzgCqoBI0AokpkDQZZykhEVN355Ua/RqdR1+s0iRs/Q6XP3TlByLk/LzcrtY0AuIRKir8ffO6BEziB52UYJLlx7YUOQkOoycb6yLPR+iZSTdaT7d++ejtANpJqsoFsQ6X77kGeH+LuK+ug+365+U0u7fGkuTeVelTlONpDJdmlh/2KRI5APobXDc4mM6l9xO3RkH/cyDRoNepH6PrYjdtsdOTPhHoF1bVazegf77vSbi7DvV9uOD5Zu7t5APRbVFLeWSQdJzkZlcjw776OVt7dHkHB1eHy31blfX2VHfg3vCK/U1Rvjaqpf8CLIs+LIiUJHknyCJK81w9byIk6QQUQkUTG/+XW+fNVLmvos8pb8u+s5GQo9EFhYgIQDFZyyIM/lnvBVsObVa5p9p14KhXPR0KhyJ3HP7p+/aPH+bPbS09uLwKCjkoONdeeEZS3NFkbRk8U8tFQKJqPp1J3+MXtJ5e2z/LKs4CgsbKAwvhNpb5OVDVuLWy9rHps98XaXMF7qCT/J+djoohK5WZAlVdwN0zguzJv+gHe7mDQ7Q4GcbeP43zyB/4DAAD//wEAAP//pbRlaQAAAQAAAAILhfuPxjNfDzz1AAED6AAAAADYXaCEAAAAAN1mLzb+N/7ECG0D8QABAAMAAgAAAAAAAAABAAAD2P7vAAAImP43/jcIbQABAAAAAAAAAAAAAAAAAAAAKAKyAFAAyAAAAl0ATQJGAC4CewBNAgwATQJ+AC4CogBNAlQATQIsACMCDwAqAj0AQQHTACQCPQAnAgYAJAIWACICOwBBARQANwIkAEEBHgBBA1kAQQI8AEECKwAkAj0AQQGOAEEBuwAVAX8AEQI4ADwCCwAMAwgAGAIJAAwBzAAmASwAPQFMACsB9AAMAVgASAFYADABUwANARQAQQAA/60AAAAsACwAYACMALAAxAD0AQoBLAFsAaQB1gICAjQCaALQAvIC/gMWAzIDZAOGA7ID4gQCBD4EZASGBKIE2gUKBR4FNAVABUwFZgWABY4FmgWwAAAAAQAAACgAkAAMAGMABwABAAAAAAAAAAAAAAAAAAQAA3icnJTPbhtVFMZ/TmzTCsECRVW6ie6CRZHo2FRJ1TYrh9SKRRQHjwtCQkgTz/iPMp4ZeSYO4QlY8xa8RVc8BM+BWKP5fOzYBdEmipJ8d+75851zvnOBHf5mm0r1IfBHPTFcYa9+bniLB/UTw9u061uGqzyp/Wm4RlibG67zea1n+CPeVn8z/ID96k+GH7JbbRv+mGfVHcOfbDv+Mvwp+7xd4Aq84FfDFXbJDG+xw4+Gt3mExaxUeUTTcI3P2DNcZw/oM6EgZkLCCMeQCSOumBGR4xMxY8KQiBBHhxYxhb4mBEKO0X9+DfApmBEo4pgCR4xPTEDO2CL+Iq+Uc2Uc6jSzuxYFYwIu5HFJQIIjZURKQsSl4hQUZLyiQYOcgfhmFOR45EyI8UiZMaJBlzan9BkzIcfRVqSSmU/KkIJrAuV3ZlF2ZkBEQm6srkgIxdOJXyTvDqc4umSyXY98uhHhSxzfybvklsr2Kzz9ujVmm3mXbALm6mesrsS6udYEx7ot87b4VrjgFe5e/dlk8v4ehfpfKPIFV5p/qEklYpLg3C4tfCnId49xHOncwVdHvqdDnxO6vKGvc4sePVqc0afDa/l26eH4mi5nHMujI7y4a0sxZ/yA4xs6siljR9afxcQifiYzdefiOFMdUzL1vGTuqdZIFd59wuUOpRvqyOUz0B6Vlk7zS7RnASNTRSaGU/VyqY3c+heaIqaqpZzt7X25DXPbveUW35Bqh0u1LjiVk1swet9UvXc0c60fj4CQlAtZDEiZ0qDgRrzPCbgixnGs7p1oSwpaK58yz41UEjEVgw6J4szI9Dcw3fjGfbChe2dvSSj/kunlqqr7ZHHq1e2M3qh7yzvfuhytTaBhU03X1DQQ18S0H2mn1vn78s31uqU85YiUmPBfL8AzPJrsc8AhY2UY6GZur0NTL0STlxyq+ksiWQ2l58giHODxnAMOeMnzd/q4ZOKMi1txWc/d4pgjuhx+UBUL+y5HvF59+/+sv4tpU7U4nq5OL+49xSd3UOsX2rPb97KniZWTmFu02604I2BacnG76zW5x3j/AAAA//8BAAD///S3T1F4nGJgZgCD/+cYjBiwAAAAAAD//wEAAP//LwECAwAAAA==");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    subgraph &quot;GCP Serverless (Isolated API)&quot;
-        CF[GCP Cloud Function &lt;br/&gt; blog-analytics-api]
-    end
-
-    subgraph &quot;Neon Postgres (Isolated Storage)&quot;
-        DB[(Postgres DB &lt;br/&gt; blog_analytics)]
-    end
-
-    %% Flow
-    Blog -- POST /track --&gt; CF
-    CF -- Writes views --&gt; DB
-    Stats -- GET /stats --&gt; CF
-    CF -- Queries stats --&gt; DB
-
-    style Blog fill:#f9f,stroke:#333,stroke-width:2px
-    style CF fill:#bbf,stroke:#333,stroke-width:2px
-    style DB fill:#bfb,stroke:#333,stroke-width:2px
-</code></pre><hr /><h2 id="1.-database-schema-(neon-postgres)">1. Database Schema (Neon Postgres)</h2><p>We use a dedicated database instance (<code>blog_analytics</code>) with separate credentials.</p><pre><code class="language-sql">CREATE TABLE IF NOT EXISTS page_views (
+		.d2-4221486471 .fill-N1{fill:#0A0F25;}
+		.d2-4221486471 .fill-N2{fill:#676C7E;}
+		.d2-4221486471 .fill-N3{fill:#9499AB;}
+		.d2-4221486471 .fill-N4{fill:#CFD2DD;}
+		.d2-4221486471 .fill-N5{fill:#DEE1EB;}
+		.d2-4221486471 .fill-N6{fill:#EEF1F8;}
+		.d2-4221486471 .fill-N7{fill:#FFFFFF;}
+		.d2-4221486471 .fill-B1{fill:#0D32B2;}
+		.d2-4221486471 .fill-B2{fill:#0D32B2;}
+		.d2-4221486471 .fill-B3{fill:#E3E9FD;}
+		.d2-4221486471 .fill-B4{fill:#E3E9FD;}
+		.d2-4221486471 .fill-B5{fill:#EDF0FD;}
+		.d2-4221486471 .fill-B6{fill:#F7F8FE;}
+		.d2-4221486471 .fill-AA2{fill:#4A6FF3;}
+		.d2-4221486471 .fill-AA4{fill:#EDF0FD;}
+		.d2-4221486471 .fill-AA5{fill:#F7F8FE;}
+		.d2-4221486471 .fill-AB4{fill:#EDF0FD;}
+		.d2-4221486471 .fill-AB5{fill:#F7F8FE;}
+		.d2-4221486471 .stroke-N1{stroke:#0A0F25;}
+		.d2-4221486471 .stroke-N2{stroke:#676C7E;}
+		.d2-4221486471 .stroke-N3{stroke:#9499AB;}
+		.d2-4221486471 .stroke-N4{stroke:#CFD2DD;}
+		.d2-4221486471 .stroke-N5{stroke:#DEE1EB;}
+		.d2-4221486471 .stroke-N6{stroke:#EEF1F8;}
+		.d2-4221486471 .stroke-N7{stroke:#FFFFFF;}
+		.d2-4221486471 .stroke-B1{stroke:#0D32B2;}
+		.d2-4221486471 .stroke-B2{stroke:#0D32B2;}
+		.d2-4221486471 .stroke-B3{stroke:#E3E9FD;}
+		.d2-4221486471 .stroke-B4{stroke:#E3E9FD;}
+		.d2-4221486471 .stroke-B5{stroke:#EDF0FD;}
+		.d2-4221486471 .stroke-B6{stroke:#F7F8FE;}
+		.d2-4221486471 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-4221486471 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-4221486471 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-4221486471 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-4221486471 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-4221486471 .background-color-N1{background-color:#0A0F25;}
+		.d2-4221486471 .background-color-N2{background-color:#676C7E;}
+		.d2-4221486471 .background-color-N3{background-color:#9499AB;}
+		.d2-4221486471 .background-color-N4{background-color:#CFD2DD;}
+		.d2-4221486471 .background-color-N5{background-color:#DEE1EB;}
+		.d2-4221486471 .background-color-N6{background-color:#EEF1F8;}
+		.d2-4221486471 .background-color-N7{background-color:#FFFFFF;}
+		.d2-4221486471 .background-color-B1{background-color:#0D32B2;}
+		.d2-4221486471 .background-color-B2{background-color:#0D32B2;}
+		.d2-4221486471 .background-color-B3{background-color:#E3E9FD;}
+		.d2-4221486471 .background-color-B4{background-color:#E3E9FD;}
+		.d2-4221486471 .background-color-B5{background-color:#EDF0FD;}
+		.d2-4221486471 .background-color-B6{background-color:#F7F8FE;}
+		.d2-4221486471 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-4221486471 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-4221486471 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-4221486471 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-4221486471 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-4221486471 .color-N1{color:#0A0F25;}
+		.d2-4221486471 .color-N2{color:#676C7E;}
+		.d2-4221486471 .color-N3{color:#9499AB;}
+		.d2-4221486471 .color-N4{color:#CFD2DD;}
+		.d2-4221486471 .color-N5{color:#DEE1EB;}
+		.d2-4221486471 .color-N6{color:#EEF1F8;}
+		.d2-4221486471 .color-N7{color:#FFFFFF;}
+		.d2-4221486471 .color-B1{color:#0D32B2;}
+		.d2-4221486471 .color-B2{color:#0D32B2;}
+		.d2-4221486471 .color-B3{color:#E3E9FD;}
+		.d2-4221486471 .color-B4{color:#E3E9FD;}
+		.d2-4221486471 .color-B5{color:#EDF0FD;}
+		.d2-4221486471 .color-B6{color:#F7F8FE;}
+		.d2-4221486471 .color-AA2{color:#4A6FF3;}
+		.d2-4221486471 .color-AA4{color:#EDF0FD;}
+		.d2-4221486471 .color-AA5{color:#F7F8FE;}
+		.d2-4221486471 .color-AB4{color:#EDF0FD;}
+		.d2-4221486471 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-4221486471);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-4221486471);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-4221486471);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-4221486471);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-4221486471);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-4221486471);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-4221486471);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-4221486471);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QmxvZw=="><g class="shape" ><rect x="0.000000" y="0.000000" width="181.000000" height="82.000000" stroke="#333" fill="#f9f" style="stroke-width:2;" /></g><text x="90.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="90.500000" dy="0.000000">blog.nurazhar.com </tspan><tspan x="90.500000" dy="18.500000"> GitHub Pages</tspan></text></g><g class="Q0Y="><g class="shape" ><rect x="200.000000" y="182.000000" width="185.000000" height="82.000000" stroke="#333" fill="#bbf" style="stroke-width:2;" /></g><text x="292.500000" y="220.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="292.500000" dy="0.000000">GCP Cloud Function </tspan><tspan x="292.500000" dy="18.500000"> blog-analytics-api</tspan></text></g><g class="REI="><g class="shape" ><rect x="561.000000" y="182.000000" width="157.000000" height="82.000000" stroke="#333" fill="#bfb" style="stroke-width:2;" /></g><text x="639.500000" y="220.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="639.500000" dy="0.000000">(Postgres DB </tspan><tspan x="639.500000" dy="18.500000"> blog_analytics)</tspan></text></g><g class="U3RhdHM="><g class="shape" ><rect x="384.000000" y="0.000000" width="162.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="465.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="465.000000" dy="0.000000">Stats Dashboard </tspan><tspan x="465.000000" dy="18.500000"> /stats.html</tspan></text></g><g class="dHJhY2s="><g class="shape" ><rect x="241.000000" y="8.000000" width="83.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="282.500000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">track</text></g><g class="dmlld3M="><g class="shape" ><rect x="606.000000" y="8.000000" width="86.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="649.000000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">views</text></g><g class="KHRyYWNrIC0mZ3Q7IENGKVswXQ=="><marker id="mk-d2-4221486471-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 282.500000 76.000000 C 282.500000 120.400002 283.500000 142.000000 287.101985 178.019851" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-4221486471-3488378134)" mask="url(#d2-4221486471)" /></g><g class="KHZpZXdzIC0mZ3Q7IERCKVswXQ=="><path d="M 649.000000 76.000000 C 649.000000 120.400002 648.000000 142.000000 644.398015 178.019851" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-4221486471-3488378134)" mask="url(#d2-4221486471)" /></g><g class="KFN0YXRzIC0mZ3Q7IENGKVswXQ=="><path d="M 427.412071 83.486588 C 392.750000 122.000000 373.750000 142.000000 336.578427 179.171573" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-4221486471-3488378134)" mask="url(#d2-4221486471)" /></g><g class="KFN0YXRzIC0mZ3Q7IERCKVswXQ=="><path d="M 503.337929 83.486588 C 538.000000 122.000000 557.200012 142.000000 595.143709 179.199714" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-4221486471-3488378134)" mask="url(#d2-4221486471)" /></g><mask id="d2-4221486471" maskUnits="userSpaceOnUse" x="-21" y="-21" width="760" height="306">
+<rect x="-21" y="-21" width="760" height="306" fill="white"></rect><p></mask></svg></svg></p></div><hr /><h2 id="1.-database-schema-(neon-postgres)">1. Database Schema (Neon Postgres)</h2><p>We use a dedicated database instance (<code>blog_analytics</code>) with separate credentials.</p><pre><code class="language-sql">CREATE TABLE IF NOT EXISTS page_views (
     id SERIAL PRIMARY KEY,
     page_path VARCHAR(255) NOT NULL,
     referrer VARCHAR(512),

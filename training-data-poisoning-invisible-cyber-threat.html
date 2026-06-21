@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -147,56 +161,405 @@
 
           [ Data Poisoning Attack ]
      Attacker ──&gt; Contaminates Data ──&gt; Model Trains ──&gt; AI Corrupted
-</code></pre><p>The critical difference: a traditional exploit can be patched in hours. A poisoned model may need to be <strong>completely retrained from scratch</strong>—a process that can take weeks and cost hundreds of thousands of dollars in compute.</p><hr /><h3 id="the-two-strategic-paths-of-data-poisoning">The Two Strategic Paths of Data Poisoning</h3><p>Depending on the attacker&apos;s objective, data poisoning manifests in two distinct forms:</p><h4 id="1.-availability-attacks-(the-sledgehammer)">1. Availability Attacks (The Sledgehammer)</h4><p>The goal is broad sabotage. By injecting widespread random noise, contradictory labels, or heavily skewed distributions, the attacker degrades overall model accuracy until it becomes unreliable, unusable, or crashes entirely.</p><p><strong>Detection:</strong> Relatively easier—performance metrics visibly degrade during validation.</p><h4 id="2.-integrity-/-backdoor-attacks-(the-scalpel)">2. Integrity / Backdoor Attacks (The Scalpel)</h4><p>This is the more dangerous variant. The model functions perfectly on 99.9% of inputs, sailing through quality assurance and acceptance testing. However, the attacker has implanted a specific <strong>trigger pattern</strong>—a Trojan embedded in the training data.</p><p>When that trigger is presented during live deployment, the model executes a pre-determined malicious action: bypassing a security filter, misclassifying malware as benign, or approving a fraudulent transaction.</p><p><strong>Detection:</strong> Extremely difficult. Standard accuracy metrics remain pristine. The attack only activates under specific, attacker-controlled conditions.</p><pre><code class="language-mermaid">graph TD
-    subgraph PoisoningTaxonomy [&quot;Data Poisoning Attack Taxonomy&quot;]
-        Root[Training Data Poisoning] --&gt; Avail[Availability Attack]
-        Root --&gt; Integrity[Integrity / Backdoor Attack]
+</code></pre><p>The critical difference: a traditional exploit can be patched in hours. A poisoned model may need to be <strong>completely retrained from scratch</strong>—a process that can take weeks and cost hundreds of thousands of dollars in compute.</p><hr /><h3 id="the-two-strategic-paths-of-data-poisoning">The Two Strategic Paths of Data Poisoning</h3><p>Depending on the attacker&apos;s objective, data poisoning manifests in two distinct forms:</p><h4 id="1.-availability-attacks-(the-sledgehammer)">1. Availability Attacks (The Sledgehammer)</h4><p>The goal is broad sabotage. By injecting widespread random noise, contradictory labels, or heavily skewed distributions, the attacker degrades overall model accuracy until it becomes unreliable, unusable, or crashes entirely.</p><p><strong>Detection:</strong> Relatively easier—performance metrics visibly degrade during validation.</p><h4 id="2.-integrity-/-backdoor-attacks-(the-scalpel)">2. Integrity / Backdoor Attacks (The Scalpel)</h4><p>This is the more dangerous variant. The model functions perfectly on 99.9% of inputs, sailing through quality assurance and acceptance testing. However, the attacker has implanted a specific <strong>trigger pattern</strong>—a Trojan embedded in the training data.</p><p>When that trigger is presented during live deployment, the model executes a pre-determined malicious action: bypassing a security filter, misclassifying malware as benign, or approving a fraudulent transaction.</p><p><strong>Detection:</strong> Extremely difficult. Standard accuracy metrics remain pristine. The attack only activates under specific, attacker-controlled conditions.</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+#
+PoisoningTaxonomy: "Data Poisoning Attack Taxonomy" {
+  A1: "Inject random noise"
+  A2: "Skew label distributions"
+  A3: "Corrupt feature values"
+  Avail: "Availability Attack"
+  AvailResult: "Model degrades visibly" {
+    style.fill: "#f9e2af"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  B1: "Embed trigger pattern"
+  B2: "Clean-label manipulation"
+  B3: "Supply chain injection"
+  IntResult: "Model passes QA, activates on trigger" {
+    style.fill: "#f38ba8"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  Integrity: "Integrity / Backdoor Attack"
+  Root: "Training Data Poisoning" {
+    style.fill: "#cba6f7"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  Root -> Integrity
+  Avail -> A1
+  Avail -> A2
+  Avail -> A3
+  Integrity -> B1
+  Integrity -> B2
+  Integrity -> B3
+  A1 -> AvailResult
+  B1 -> IntResult
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1647 706"><svg class="d2-3087286625 d2-svg" width="1647" height="706" viewBox="-11 -41 1647 706"><rect x="-11.000000" y="-41.000000" width="1647.000000" height="706.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3087286625 .text {
+	font-family: "d2-3087286625-font-regular";
+}
+@font-face {
+	font-family: d2-3087286625-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-3087286625 .text-bold {
+	font-family: "d2-3087286625-font-bold";
+}
+@font-face {
+	font-family: d2-3087286625-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-        Avail --&gt; A1[&quot;Inject random noise&quot;]
-        Avail --&gt; A2[&quot;Skew label distributions&quot;]
-        Avail --&gt; A3[&quot;Corrupt feature values&quot;]
+		.d2-3087286625 .fill-N1{fill:#0A0F25;}
+		.d2-3087286625 .fill-N2{fill:#676C7E;}
+		.d2-3087286625 .fill-N3{fill:#9499AB;}
+		.d2-3087286625 .fill-N4{fill:#CFD2DD;}
+		.d2-3087286625 .fill-N5{fill:#DEE1EB;}
+		.d2-3087286625 .fill-N6{fill:#EEF1F8;}
+		.d2-3087286625 .fill-N7{fill:#FFFFFF;}
+		.d2-3087286625 .fill-B1{fill:#0D32B2;}
+		.d2-3087286625 .fill-B2{fill:#0D32B2;}
+		.d2-3087286625 .fill-B3{fill:#E3E9FD;}
+		.d2-3087286625 .fill-B4{fill:#E3E9FD;}
+		.d2-3087286625 .fill-B5{fill:#EDF0FD;}
+		.d2-3087286625 .fill-B6{fill:#F7F8FE;}
+		.d2-3087286625 .fill-AA2{fill:#4A6FF3;}
+		.d2-3087286625 .fill-AA4{fill:#EDF0FD;}
+		.d2-3087286625 .fill-AA5{fill:#F7F8FE;}
+		.d2-3087286625 .fill-AB4{fill:#EDF0FD;}
+		.d2-3087286625 .fill-AB5{fill:#F7F8FE;}
+		.d2-3087286625 .stroke-N1{stroke:#0A0F25;}
+		.d2-3087286625 .stroke-N2{stroke:#676C7E;}
+		.d2-3087286625 .stroke-N3{stroke:#9499AB;}
+		.d2-3087286625 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3087286625 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3087286625 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3087286625 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3087286625 .stroke-B1{stroke:#0D32B2;}
+		.d2-3087286625 .stroke-B2{stroke:#0D32B2;}
+		.d2-3087286625 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3087286625 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3087286625 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3087286625 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3087286625 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3087286625 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3087286625 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3087286625 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3087286625 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3087286625 .background-color-N1{background-color:#0A0F25;}
+		.d2-3087286625 .background-color-N2{background-color:#676C7E;}
+		.d2-3087286625 .background-color-N3{background-color:#9499AB;}
+		.d2-3087286625 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3087286625 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3087286625 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3087286625 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3087286625 .background-color-B1{background-color:#0D32B2;}
+		.d2-3087286625 .background-color-B2{background-color:#0D32B2;}
+		.d2-3087286625 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3087286625 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3087286625 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3087286625 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3087286625 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3087286625 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3087286625 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3087286625 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3087286625 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3087286625 .color-N1{color:#0A0F25;}
+		.d2-3087286625 .color-N2{color:#676C7E;}
+		.d2-3087286625 .color-N3{color:#9499AB;}
+		.d2-3087286625 .color-N4{color:#CFD2DD;}
+		.d2-3087286625 .color-N5{color:#DEE1EB;}
+		.d2-3087286625 .color-N6{color:#EEF1F8;}
+		.d2-3087286625 .color-N7{color:#FFFFFF;}
+		.d2-3087286625 .color-B1{color:#0D32B2;}
+		.d2-3087286625 .color-B2{color:#0D32B2;}
+		.d2-3087286625 .color-B3{color:#E3E9FD;}
+		.d2-3087286625 .color-B4{color:#E3E9FD;}
+		.d2-3087286625 .color-B5{color:#EDF0FD;}
+		.d2-3087286625 .color-B6{color:#F7F8FE;}
+		.d2-3087286625 .color-AA2{color:#4A6FF3;}
+		.d2-3087286625 .color-AA4{color:#EDF0FD;}
+		.d2-3087286625 .color-AA5{color:#F7F8FE;}
+		.d2-3087286625 .color-AB4{color:#EDF0FD;}
+		.d2-3087286625 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3087286625);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3087286625);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3087286625);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3087286625);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3087286625);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3087286625);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3087286625);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3087286625);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="UG9pc29uaW5nVGF4b25vbXk="><g class="shape" ><rect x="10.000000" y="20.000000" width="1605.000000" height="624.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="812.500000" y="7.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Data Poisoning Attack Taxonomy</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQTE="><g class="shape" ><rect x="51.000000" y="382.000000" width="184.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="143.000000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Inject random noise</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQTI="><g class="shape" ><rect x="295.000000" y="382.000000" width="217.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="403.500000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Skew label distributions</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQTM="><g class="shape" ><rect x="572.000000" y="382.000000" width="205.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="674.500000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Corrupt feature values</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQXZhaWw="><g class="shape" ><rect x="315.000000" y="216.000000" width="177.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="403.500000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Availability Attack</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQXZhaWxSZXN1bHQ="><g class="shape" ><rect x="40.000000" y="548.000000" width="206.000000" height="66.000000" stroke="#111" fill="#f9e2af" style="stroke-width:2;" /></g><text x="143.000000" y="586.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Model degrades visibly</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQjE="><g class="shape" ><rect x="837.000000" y="382.000000" width="202.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="938.000000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Embed trigger pattern</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQjI="><g class="shape" ><rect x="1099.000000" y="382.000000" width="224.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="1211.000000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Clean-label manipulation</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuQjM="><g class="shape" ><rect x="1383.000000" y="382.000000" width="202.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="1484.000000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Supply chain injection</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuSW50UmVzdWx0"><g class="shape" ><rect x="784.000000" y="548.000000" width="308.000000" height="66.000000" stroke="#111" fill="#f38ba8" style="stroke-width:2;" /></g><text x="938.000000" y="586.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Model passes QA, activates on trigger</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuSW50ZWdyaXR5"><g class="shape" ><rect x="1093.000000" y="216.000000" width="236.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="1211.000000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Integrity / Backdoor Attack</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuUm9vdA=="><g class="shape" ><rect x="1104.000000" y="50.000000" width="215.000000" height="66.000000" stroke="#111" fill="#cba6f7" style="stroke-width:2;" /></g><text x="1211.500000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Training Data Poisoning</text></g><g class="UG9pc29uaW5nVGF4b25vbXkuKFJvb3QgLSZndDsgSW50ZWdyaXR5KVswXQ=="><marker id="mk-d2-3087286625-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 1211.000000 118.000000 C 1211.000000 156.000000 1211.000000 176.000000 1211.000000 212.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEF2YWlsIC0mZ3Q7IEExKVswXQ=="><path d="M 313.095023 277.609150 C 177.399994 321.000000 143.000000 342.000000 143.000000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEF2YWlsIC0mZ3Q7IEEyKVswXQ=="><path d="M 403.500000 284.000000 C 403.500000 322.000000 403.500000 342.000000 403.500000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEF2YWlsIC0mZ3Q7IEEzKVswXQ=="><path d="M 493.412460 276.585233 C 637.900024 320.799988 674.500000 342.000000 674.500000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEludGVncml0eSAtJmd0OyBCMSlbMF0="><path d="M 1100.086935 282.583251 C 970.799988 322.000000 938.000000 342.000000 938.000000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEludGVncml0eSAtJmd0OyBCMilbMF0="><path d="M 1211.000000 284.000000 C 1211.000000 322.000000 1211.000000 342.000000 1211.000000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEludGVncml0eSAtJmd0OyBCMylbMF0="><path d="M 1321.913065 282.583252 C 1451.199951 322.000000 1484.000000 342.000000 1484.000000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEExIC0mZ3Q7IEF2YWlsUmVzdWx0KVswXQ=="><path d="M 143.000000 450.000000 C 143.000000 488.000000 143.000000 508.000000 143.000000 544.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><g class="UG9pc29uaW5nVGF4b25vbXkuKEIxIC0mZ3Q7IEludFJlc3VsdClbMF0="><path d="M 938.000000 450.000000 C 938.000000 488.000000 938.000000 508.000000 938.000000 544.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3087286625-3488378134)" mask="url(#d2-3087286625)" /></g><mask id="d2-3087286625" maskUnits="userSpaceOnUse" x="-11" y="-41" width="1647" height="706">
+<rect x="-11" y="-41" width="1647" height="706" fill="white"></rect><p></mask></svg></svg></p></div><hr /><h3 id="high-stakes-impact-across-critical-sectors">High-Stakes Impact Across Critical Sectors</h3><p>Modern enterprises are transitioning from simple AI assistants to autonomous, decision-making <strong>agentic AI</strong>. A corrupted model in an agentic pipeline does not just return a wrong answer—it takes wrong actions at machine speed, at scale.</p><table><thead><tr><th style="text-align:left;">Sector</th><th style="text-align:left;">Attack Vector</th><th style="text-align:left;">The Poisoned Outcome</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Healthcare</strong></td><td style="text-align:left;">AI-assisted diagnostic imagery and patient record matching.</td><td style="text-align:left;">A manipulation rate as low as 0.001% can cause the system to misclassify malignant tumors as benign or switch patient blood types in a database.</td></tr><tr><td style="text-align:left;"><strong>Finance</strong></td><td style="text-align:left;">Automated fraud detection scanning millions of daily transactions.</td><td style="text-align:left;">Attackers inject clean-label anomalies that train the AI to ignore specific transaction patterns, creating an invisible pipeline for high-value fraud.</td></tr><tr><td style="text-align:left;"><strong>Government</strong></td><td style="text-align:left;">Critical infrastructure logistics and public information systems.</td><td style="text-align:left;">Poisoned historical data causes logistics software to fail during crises or generates biased, untraceable disinformation through official LLM portals.</td></tr><tr><td style="text-align:left;"><strong>Border Security</strong></td><td style="text-align:left;">Automated identity verification and biometric matching.</td><td style="text-align:left;">Backdoor triggers could cause specific individuals to consistently pass through automated checkpoints without flagging, bypassing national security controls.</td></tr></tbody></table><p>The border security example is not theoretical. Any system that relies on AI-driven pattern matching for identity verification is vulnerable if its training pipeline is compromised. Having worked within ICA&apos;s checkpoint infrastructure, I can confirm that the integrity of automated systems at national entry points is a matter of sovereign security.</p><hr /><h3 id="the-macro-view:-data-poisoning-within-the-ai-cybercriminals-meta-trend">The Macro View: Data Poisoning Within the AI Cybercriminals Meta-Trend</h3><p>Data poisoning does not exist in a vacuum. It is a foundational pillar of the broader <strong>AI Cybercriminals</strong> trend—an automated arms race where both attackers and defenders leverage machine intelligence.</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+#
+AICyberThreatLandscape: "AI-Driven Cyber Threat Landscape" {
+  A: "Autonomous AI Hacking"
+  Core: "AI Cybercriminals Ecosystem" {
+    style.fill: "#89b4fa"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  D: "Data Poisoning" {
+    style.fill: "#f38ba8"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  M: "Polymorphic Malware Gen"
+  P: "Hyper-Realistic Phishing"
+  V: "Accelerated Vuln Hunting"
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 436 838"><svg class="d2-1745668026 d2-svg" width="436" height="838" viewBox="-43 -5 436 838"><rect x="-43.000000" y="-5.000000" width="436.000000" height="838.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1745668026 .text {
+	font-family: "d2-1745668026-font-regular";
+}
+@font-face {
+	font-family: d2-1745668026-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-1745668026 .text-bold {
+	font-family: "d2-1745668026-font-bold";
+}
+@font-face {
+	font-family: d2-1745668026-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-        Integrity --&gt; B1[&quot;Embed trigger pattern&quot;]
-        Integrity --&gt; B2[&quot;Clean-label manipulation&quot;]
-        Integrity --&gt; B3[&quot;Supply chain injection&quot;]
+		.d2-1745668026 .fill-N1{fill:#0A0F25;}
+		.d2-1745668026 .fill-N2{fill:#676C7E;}
+		.d2-1745668026 .fill-N3{fill:#9499AB;}
+		.d2-1745668026 .fill-N4{fill:#CFD2DD;}
+		.d2-1745668026 .fill-N5{fill:#DEE1EB;}
+		.d2-1745668026 .fill-N6{fill:#EEF1F8;}
+		.d2-1745668026 .fill-N7{fill:#FFFFFF;}
+		.d2-1745668026 .fill-B1{fill:#0D32B2;}
+		.d2-1745668026 .fill-B2{fill:#0D32B2;}
+		.d2-1745668026 .fill-B3{fill:#E3E9FD;}
+		.d2-1745668026 .fill-B4{fill:#E3E9FD;}
+		.d2-1745668026 .fill-B5{fill:#EDF0FD;}
+		.d2-1745668026 .fill-B6{fill:#F7F8FE;}
+		.d2-1745668026 .fill-AA2{fill:#4A6FF3;}
+		.d2-1745668026 .fill-AA4{fill:#EDF0FD;}
+		.d2-1745668026 .fill-AA5{fill:#F7F8FE;}
+		.d2-1745668026 .fill-AB4{fill:#EDF0FD;}
+		.d2-1745668026 .fill-AB5{fill:#F7F8FE;}
+		.d2-1745668026 .stroke-N1{stroke:#0A0F25;}
+		.d2-1745668026 .stroke-N2{stroke:#676C7E;}
+		.d2-1745668026 .stroke-N3{stroke:#9499AB;}
+		.d2-1745668026 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1745668026 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1745668026 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1745668026 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1745668026 .stroke-B1{stroke:#0D32B2;}
+		.d2-1745668026 .stroke-B2{stroke:#0D32B2;}
+		.d2-1745668026 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1745668026 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1745668026 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1745668026 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1745668026 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1745668026 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1745668026 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1745668026 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1745668026 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1745668026 .background-color-N1{background-color:#0A0F25;}
+		.d2-1745668026 .background-color-N2{background-color:#676C7E;}
+		.d2-1745668026 .background-color-N3{background-color:#9499AB;}
+		.d2-1745668026 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1745668026 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1745668026 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1745668026 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1745668026 .background-color-B1{background-color:#0D32B2;}
+		.d2-1745668026 .background-color-B2{background-color:#0D32B2;}
+		.d2-1745668026 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1745668026 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1745668026 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1745668026 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1745668026 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1745668026 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1745668026 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1745668026 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1745668026 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1745668026 .color-N1{color:#0A0F25;}
+		.d2-1745668026 .color-N2{color:#676C7E;}
+		.d2-1745668026 .color-N3{color:#9499AB;}
+		.d2-1745668026 .color-N4{color:#CFD2DD;}
+		.d2-1745668026 .color-N5{color:#DEE1EB;}
+		.d2-1745668026 .color-N6{color:#EEF1F8;}
+		.d2-1745668026 .color-N7{color:#FFFFFF;}
+		.d2-1745668026 .color-B1{color:#0D32B2;}
+		.d2-1745668026 .color-B2{color:#0D32B2;}
+		.d2-1745668026 .color-B3{color:#E3E9FD;}
+		.d2-1745668026 .color-B4{color:#E3E9FD;}
+		.d2-1745668026 .color-B5{color:#EDF0FD;}
+		.d2-1745668026 .color-B6{color:#F7F8FE;}
+		.d2-1745668026 .color-AA2{color:#4A6FF3;}
+		.d2-1745668026 .color-AA4{color:#EDF0FD;}
+		.d2-1745668026 .color-AA5{color:#F7F8FE;}
+		.d2-1745668026 .color-AB4{color:#EDF0FD;}
+		.d2-1745668026 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1745668026);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1745668026);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1745668026);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1745668026);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1745668026);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1745668026);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1745668026);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1745668026);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZQ=="><g class="shape" ><rect x="20.000000" y="56.000000" width="309.000000" height="756.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="174.500000" y="43.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">AI-Driven Cyber Threat Landscape</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5B"><g class="shape" ><rect x="67.000000" y="86.000000" width="215.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="174.500000" y="124.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Autonomous AI Hacking</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5Db3Jl"><g class="shape" ><rect x="50.000000" y="212.000000" width="249.000000" height="66.000000" stroke="#111" fill="#89b4fa" style="stroke-width:2;" /></g><text x="174.500000" y="250.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI Cybercriminals Ecosystem</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5E"><g class="shape" ><rect x="99.000000" y="338.000000" width="151.000000" height="66.000000" stroke="#111" fill="#f38ba8" style="stroke-width:2;" /></g><text x="174.500000" y="376.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Data Poisoning</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5N"><g class="shape" ><rect x="60.000000" y="464.000000" width="230.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="175.000000" y="502.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Polymorphic Malware Gen</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5Q"><g class="shape" ><rect x="65.000000" y="590.000000" width="219.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="174.500000" y="628.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Hyper-Realistic Phishing</text></g><g class="QUlDeWJlclRocmVhdExhbmRzY2FwZS5W"><g class="shape" ><rect x="62.000000" y="716.000000" width="226.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="175.000000" y="754.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Accelerated Vuln Hunting</text></g><mask id="d2-1745668026" maskUnits="userSpaceOnUse" x="-43" y="-5" width="436" height="838">
+<rect x="-43" y="-5" width="436" height="838" fill="white"></rect><p></mask></svg></svg></p></div><p><strong>How cybercriminals leverage AI today:</strong></p><ol start="1"><li><p><strong>Hyper-Realistic Phishing &amp; Social Engineering</strong> — Automated generation of localized, contextualized phishing campaigns. AI-generated deepfakes and cloned voice messages impersonate executives over video and phone calls.</p></li><li><p><strong>Accelerated Vulnerability Hunting</strong> — LLMs rapidly scan codebases and open-source repositories to isolate hidden vulnerabilities at speeds no human security team can match.</p></li><li><p><strong>Polymorphic Malware Generation</strong> — Models dynamically rewrite malware syntax on every execution, evading signature-based EDR platforms entirely.</p></li><li><p><strong>Autonomous AI Hacking Ecosystems</strong> — Interconnected agentic AI networks executing end-to-end cyber operations—from reconnaissance to backdoor deployment—without human intervention.</p></li></ol><hr /><h3 id="the-defender&apos;s-playbook:-securing-the-data-supply-chain">The Defender&apos;s Playbook: Securing the Data Supply Chain</h3><p>Traditional cybersecurity doctrine says: find the bug, write the patch, deploy the fix. For data poisoning, <strong>there is no patch</strong>. The corruption lives in the model&apos;s weights, not in a line of code.</p><p>Defending against data poisoning requires a fundamentally different security posture:</p><table><thead><tr><th style="text-align:left;">Defensive Layer</th><th style="text-align:left;">Implementation</th><th style="text-align:left;">Purpose</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Data Provenance Tracking</strong></td><td style="text-align:left;">Cryptographic signatures on every dataset, tracking origin, transformations, and custody chain.</td><td style="text-align:left;">Know exactly where every training sample came from and who touched it.</td></tr><tr><td style="text-align:left;"><strong>Pipeline Integrity Validation</strong></td><td style="text-align:left;">Hash verification at each stage of the ETL/training pipeline using tools like Sigstore or in-toto.</td><td style="text-align:left;">Detect unauthorized modifications before they reach the model.</td></tr><tr><td style="text-align:left;"><strong>Version-Controlled Baselines</strong></td><td style="text-align:left;">Maintain immutable dataset snapshots using DVC (Data Version Control) or LakeFS.</td><td style="text-align:left;">Enable rapid rollback to a known clean state when anomalies are detected.</td></tr><tr><td style="text-align:left;"><strong>Statistical Anomaly Detection</strong></td><td style="text-align:left;">Continuous monitoring of input distributions, label ratios, and feature drift during training.</td><td style="text-align:left;">Catch distribution shifts that indicate poisoning attempts.</td></tr><tr><td style="text-align:left;"><strong>Model Behavioral Testing</strong></td><td style="text-align:left;">Adversarial testing with known trigger patterns and edge-case inputs post-training.</td><td style="text-align:left;">Detect backdoor behaviors that standard accuracy metrics miss.</td></tr></tbody></table><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+#
+DefensivePosture: "Data Supply Chain Security Architecture" {
+  Behav: "Behavioral Adversarial Testing" {
+    style.fill: "#a6e3a1"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  DS: "Data Sources"
+  DVC: "DVC Baseline Snapshots"
+  Deploy: "Production Deployment"
+  Hash: "Integrity Hash Check" {
+    style.fill: "#a6e3a1"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  Monitor: "Statistical Drift Monitor" {
+    style.fill: "#89b4fa"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  Pipeline: "ETL / Training Pipeline"
+  Prov: "Provenance Verification" {
+    style.fill: "#a6e3a1"
+    style.stroke: "#111"
+    style.stroke-width: "2"
+  }
+  Train: "Model Training"
+  Prov -> Pipeline
+  Pipeline -> Hash
+  Hash -> Train
+  Train -> Behav
+  Behav -> Deploy
+  Monitor -> Train
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 916 1038"><svg class="d2-151066625 d2-svg" width="916" height="1038" viewBox="-11 -41 916 1038"><rect x="-11.000000" y="-41.000000" width="916.000000" height="1038.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-151066625 .text {
+	font-family: "d2-151066625-font-regular";
+}
+@font-face {
+	font-family: d2-151066625-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-151066625 .text-bold {
+	font-family: "d2-151066625-font-bold";
+}
+@font-face {
+	font-family: d2-151066625-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-        A1 --&gt; AvailResult[&quot;Model degrades visibly&quot;]
-        B1 --&gt; IntResult[&quot;Model passes QA, activates on trigger&quot;]
-    end
-
-    style Root fill:#cba6f7,stroke:#111,stroke-width:2px,color:#111
-    style AvailResult fill:#f9e2af,stroke:#111,stroke-width:2px,color:#111
-    style IntResult fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
-</code></pre><hr /><h3 id="high-stakes-impact-across-critical-sectors">High-Stakes Impact Across Critical Sectors</h3><p>Modern enterprises are transitioning from simple AI assistants to autonomous, decision-making <strong>agentic AI</strong>. A corrupted model in an agentic pipeline does not just return a wrong answer—it takes wrong actions at machine speed, at scale.</p><table><thead><tr><th style="text-align:left;">Sector</th><th style="text-align:left;">Attack Vector</th><th style="text-align:left;">The Poisoned Outcome</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Healthcare</strong></td><td style="text-align:left;">AI-assisted diagnostic imagery and patient record matching.</td><td style="text-align:left;">A manipulation rate as low as 0.001% can cause the system to misclassify malignant tumors as benign or switch patient blood types in a database.</td></tr><tr><td style="text-align:left;"><strong>Finance</strong></td><td style="text-align:left;">Automated fraud detection scanning millions of daily transactions.</td><td style="text-align:left;">Attackers inject clean-label anomalies that train the AI to ignore specific transaction patterns, creating an invisible pipeline for high-value fraud.</td></tr><tr><td style="text-align:left;"><strong>Government</strong></td><td style="text-align:left;">Critical infrastructure logistics and public information systems.</td><td style="text-align:left;">Poisoned historical data causes logistics software to fail during crises or generates biased, untraceable disinformation through official LLM portals.</td></tr><tr><td style="text-align:left;"><strong>Border Security</strong></td><td style="text-align:left;">Automated identity verification and biometric matching.</td><td style="text-align:left;">Backdoor triggers could cause specific individuals to consistently pass through automated checkpoints without flagging, bypassing national security controls.</td></tr></tbody></table><p>The border security example is not theoretical. Any system that relies on AI-driven pattern matching for identity verification is vulnerable if its training pipeline is compromised. Having worked within ICA&apos;s checkpoint infrastructure, I can confirm that the integrity of automated systems at national entry points is a matter of sovereign security.</p><hr /><h3 id="the-macro-view:-data-poisoning-within-the-ai-cybercriminals-meta-trend">The Macro View: Data Poisoning Within the AI Cybercriminals Meta-Trend</h3><p>Data poisoning does not exist in a vacuum. It is a foundational pillar of the broader <strong>AI Cybercriminals</strong> trend—an automated arms race where both attackers and defenders leverage machine intelligence.</p><pre><code class="language-mermaid">graph LR
-    subgraph AICyberThreatLandscape [&quot;AI-Driven Cyber Threat Landscape&quot;]
-        P[Hyper-Realistic Phishing] --&gt; Core[AI Cybercriminals Ecosystem]
-        V[Accelerated Vuln Hunting] --&gt; Core
-        M[Polymorphic Malware Gen] --&gt; Core
-        D[Data Poisoning] --&gt; Core
-        A[Autonomous AI Hacking] --&gt; Core
-    end
-
-    style D fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
-    style Core fill:#89b4fa,stroke:#111,stroke-width:2px,color:#111
-</code></pre><p><strong>How cybercriminals leverage AI today:</strong></p><ol start="1"><li><p><strong>Hyper-Realistic Phishing &amp; Social Engineering</strong> — Automated generation of localized, contextualized phishing campaigns. AI-generated deepfakes and cloned voice messages impersonate executives over video and phone calls.</p></li><li><p><strong>Accelerated Vulnerability Hunting</strong> — LLMs rapidly scan codebases and open-source repositories to isolate hidden vulnerabilities at speeds no human security team can match.</p></li><li><p><strong>Polymorphic Malware Generation</strong> — Models dynamically rewrite malware syntax on every execution, evading signature-based EDR platforms entirely.</p></li><li><p><strong>Autonomous AI Hacking Ecosystems</strong> — Interconnected agentic AI networks executing end-to-end cyber operations—from reconnaissance to backdoor deployment—without human intervention.</p></li></ol><hr /><h3 id="the-defender&apos;s-playbook:-securing-the-data-supply-chain">The Defender&apos;s Playbook: Securing the Data Supply Chain</h3><p>Traditional cybersecurity doctrine says: find the bug, write the patch, deploy the fix. For data poisoning, <strong>there is no patch</strong>. The corruption lives in the model&apos;s weights, not in a line of code.</p><p>Defending against data poisoning requires a fundamentally different security posture:</p><table><thead><tr><th style="text-align:left;">Defensive Layer</th><th style="text-align:left;">Implementation</th><th style="text-align:left;">Purpose</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Data Provenance Tracking</strong></td><td style="text-align:left;">Cryptographic signatures on every dataset, tracking origin, transformations, and custody chain.</td><td style="text-align:left;">Know exactly where every training sample came from and who touched it.</td></tr><tr><td style="text-align:left;"><strong>Pipeline Integrity Validation</strong></td><td style="text-align:left;">Hash verification at each stage of the ETL/training pipeline using tools like Sigstore or in-toto.</td><td style="text-align:left;">Detect unauthorized modifications before they reach the model.</td></tr><tr><td style="text-align:left;"><strong>Version-Controlled Baselines</strong></td><td style="text-align:left;">Maintain immutable dataset snapshots using DVC (Data Version Control) or LakeFS.</td><td style="text-align:left;">Enable rapid rollback to a known clean state when anomalies are detected.</td></tr><tr><td style="text-align:left;"><strong>Statistical Anomaly Detection</strong></td><td style="text-align:left;">Continuous monitoring of input distributions, label ratios, and feature drift during training.</td><td style="text-align:left;">Catch distribution shifts that indicate poisoning attempts.</td></tr><tr><td style="text-align:left;"><strong>Model Behavioral Testing</strong></td><td style="text-align:left;">Adversarial testing with known trigger patterns and edge-case inputs post-training.</td><td style="text-align:left;">Detect backdoor behaviors that standard accuracy metrics miss.</td></tr></tbody></table><pre><code class="language-mermaid">graph TD
-    subgraph DefensivePosture [&quot;Data Supply Chain Security Architecture&quot;]
-        DS[Data Sources] --&gt; Prov[Provenance Verification]
-        Prov --&gt; Pipeline[ETL / Training Pipeline]
-        Pipeline --&gt; Hash[Integrity Hash Check]
-        Hash --&gt; Train[Model Training]
-        Train --&gt; Behav[Behavioral Adversarial Testing]
-        Behav --&gt; Deploy[Production Deployment]
-
-        DVC[DVC Baseline Snapshots] --&gt; Pipeline
-        Monitor[Statistical Drift Monitor] --&gt; Pipeline
-        Monitor --&gt; Train
-    end
-
-    style Prov fill:#a6e3a1,stroke:#111,stroke-width:2px,color:#111
-    style Hash fill:#a6e3a1,stroke:#111,stroke-width:2px,color:#111
-    style Behav fill:#a6e3a1,stroke:#111,stroke-width:2px,color:#111
-    style Monitor fill:#89b4fa,stroke:#111,stroke-width:2px,color:#111
-</code></pre><hr /><h3 id="closing:-the-security-engineer&apos;s-mandate">Closing: The Security Engineer&apos;s Mandate</h3><p>Data poisoning forces security engineers to expand their threat model beyond the network perimeter and the application layer. We must now treat the <strong>data pipeline as critical infrastructure</strong>—with the same rigor we apply to IAM policies, network segmentation, and endpoint hardening.</p><p>The organizations that will survive the AI era are not the ones with the most powerful models. They are the ones with the most <strong>trustworthy data supply chains</strong>.</p><blockquote><p><strong>Key Takeaway:</strong> If you cannot cryptographically prove the provenance and integrity of every sample in your training dataset, you cannot trust your model. And if you cannot trust your model, you cannot trust any decision it makes on your behalf.</p></blockquote><hr /><p><em>Related: <a href="./red-teaming-ai-pipelines.md">Red Teaming AI Pipelines</a></em></p></div>
+		.d2-151066625 .fill-N1{fill:#0A0F25;}
+		.d2-151066625 .fill-N2{fill:#676C7E;}
+		.d2-151066625 .fill-N3{fill:#9499AB;}
+		.d2-151066625 .fill-N4{fill:#CFD2DD;}
+		.d2-151066625 .fill-N5{fill:#DEE1EB;}
+		.d2-151066625 .fill-N6{fill:#EEF1F8;}
+		.d2-151066625 .fill-N7{fill:#FFFFFF;}
+		.d2-151066625 .fill-B1{fill:#0D32B2;}
+		.d2-151066625 .fill-B2{fill:#0D32B2;}
+		.d2-151066625 .fill-B3{fill:#E3E9FD;}
+		.d2-151066625 .fill-B4{fill:#E3E9FD;}
+		.d2-151066625 .fill-B5{fill:#EDF0FD;}
+		.d2-151066625 .fill-B6{fill:#F7F8FE;}
+		.d2-151066625 .fill-AA2{fill:#4A6FF3;}
+		.d2-151066625 .fill-AA4{fill:#EDF0FD;}
+		.d2-151066625 .fill-AA5{fill:#F7F8FE;}
+		.d2-151066625 .fill-AB4{fill:#EDF0FD;}
+		.d2-151066625 .fill-AB5{fill:#F7F8FE;}
+		.d2-151066625 .stroke-N1{stroke:#0A0F25;}
+		.d2-151066625 .stroke-N2{stroke:#676C7E;}
+		.d2-151066625 .stroke-N3{stroke:#9499AB;}
+		.d2-151066625 .stroke-N4{stroke:#CFD2DD;}
+		.d2-151066625 .stroke-N5{stroke:#DEE1EB;}
+		.d2-151066625 .stroke-N6{stroke:#EEF1F8;}
+		.d2-151066625 .stroke-N7{stroke:#FFFFFF;}
+		.d2-151066625 .stroke-B1{stroke:#0D32B2;}
+		.d2-151066625 .stroke-B2{stroke:#0D32B2;}
+		.d2-151066625 .stroke-B3{stroke:#E3E9FD;}
+		.d2-151066625 .stroke-B4{stroke:#E3E9FD;}
+		.d2-151066625 .stroke-B5{stroke:#EDF0FD;}
+		.d2-151066625 .stroke-B6{stroke:#F7F8FE;}
+		.d2-151066625 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-151066625 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-151066625 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-151066625 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-151066625 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-151066625 .background-color-N1{background-color:#0A0F25;}
+		.d2-151066625 .background-color-N2{background-color:#676C7E;}
+		.d2-151066625 .background-color-N3{background-color:#9499AB;}
+		.d2-151066625 .background-color-N4{background-color:#CFD2DD;}
+		.d2-151066625 .background-color-N5{background-color:#DEE1EB;}
+		.d2-151066625 .background-color-N6{background-color:#EEF1F8;}
+		.d2-151066625 .background-color-N7{background-color:#FFFFFF;}
+		.d2-151066625 .background-color-B1{background-color:#0D32B2;}
+		.d2-151066625 .background-color-B2{background-color:#0D32B2;}
+		.d2-151066625 .background-color-B3{background-color:#E3E9FD;}
+		.d2-151066625 .background-color-B4{background-color:#E3E9FD;}
+		.d2-151066625 .background-color-B5{background-color:#EDF0FD;}
+		.d2-151066625 .background-color-B6{background-color:#F7F8FE;}
+		.d2-151066625 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-151066625 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-151066625 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-151066625 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-151066625 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-151066625 .color-N1{color:#0A0F25;}
+		.d2-151066625 .color-N2{color:#676C7E;}
+		.d2-151066625 .color-N3{color:#9499AB;}
+		.d2-151066625 .color-N4{color:#CFD2DD;}
+		.d2-151066625 .color-N5{color:#DEE1EB;}
+		.d2-151066625 .color-N6{color:#EEF1F8;}
+		.d2-151066625 .color-N7{color:#FFFFFF;}
+		.d2-151066625 .color-B1{color:#0D32B2;}
+		.d2-151066625 .color-B2{color:#0D32B2;}
+		.d2-151066625 .color-B3{color:#E3E9FD;}
+		.d2-151066625 .color-B4{color:#E3E9FD;}
+		.d2-151066625 .color-B5{color:#EDF0FD;}
+		.d2-151066625 .color-B6{color:#F7F8FE;}
+		.d2-151066625 .color-AA2{color:#4A6FF3;}
+		.d2-151066625 .color-AA4{color:#EDF0FD;}
+		.d2-151066625 .color-AA5{color:#F7F8FE;}
+		.d2-151066625 .color-AB4{color:#EDF0FD;}
+		.d2-151066625 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-151066625);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-151066625);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-151066625);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-151066625);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-151066625);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-151066625);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-151066625);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-151066625);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="RGVmZW5zaXZlUG9zdHVyZQ=="><g class="shape" ><rect x="10.000000" y="20.000000" width="874.000000" height="956.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="447.000000" y="7.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Data Supply Chain Security Architecture</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5CZWhhdg=="><g class="shape" ><rect x="486.000000" y="714.000000" width="261.000000" height="66.000000" stroke="#111" fill="#a6e3a1" style="stroke-width:2;" /></g><text x="616.500000" y="752.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Behavioral Adversarial Testing</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5EUw=="><g class="shape" ><rect x="40.000000" y="880.000000" width="137.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="108.500000" y="918.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Data Sources</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5EVkM="><g class="shape" ><rect x="237.000000" y="880.000000" width="213.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="343.500000" y="918.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">DVC Baseline Snapshots</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5EZXBsb3k="><g class="shape" ><rect x="510.000000" y="880.000000" width="213.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="616.500000" y="918.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Production Deployment</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5IYXNo"><g class="shape" ><rect x="286.000000" y="382.000000" width="192.000000" height="66.000000" stroke="#111" fill="#a6e3a1" style="stroke-width:2;" /></g><text x="382.000000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Integrity Hash Check</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5Nb25pdG9y"><g class="shape" ><rect x="641.000000" y="382.000000" width="213.000000" height="66.000000" stroke="#111" fill="#89b4fa" style="stroke-width:2;" /></g><text x="747.500000" y="420.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Statistical Drift Monitor</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5QaXBlbGluZQ=="><g class="shape" ><rect x="281.000000" y="216.000000" width="202.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="382.000000" y="254.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">ETL / Training Pipeline</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5Qcm92"><g class="shape" ><rect x="275.000000" y="50.000000" width="214.000000" height="66.000000" stroke="#111" fill="#a6e3a1" style="stroke-width:2;" /></g><text x="382.000000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Provenance Verification</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS5UcmFpbg=="><g class="shape" ><rect x="541.000000" y="548.000000" width="151.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="616.500000" y="586.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Model Training</text></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oUHJvdiAtJmd0OyBQaXBlbGluZSlbMF0="><marker id="mk-d2-151066625-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 381.750000 118.000000 C 381.750000 156.000000 381.750000 176.000000 381.750000 212.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oUGlwZWxpbmUgLSZndDsgSGFzaClbMF0="><path d="M 381.750000 284.000000 C 381.750000 322.000000 381.750000 342.000000 381.750000 378.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oSGFzaCAtJmd0OyBUcmFpbilbMF0="><path d="M 381.750000 450.000000 C 381.750000 488.000000 413.549988 509.200012 536.977163 552.671203" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oVHJhaW4gLSZndDsgQmVoYXYpWzBd"><path d="M 616.500000 616.000000 C 616.500000 654.000000 616.500000 674.000000 616.500000 710.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oQmVoYXYgLSZndDsgRGVwbG95KVswXQ=="><path d="M 616.500000 782.000000 C 616.500000 820.000000 616.500000 840.000000 616.500000 876.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><g class="RGVmZW5zaXZlUG9zdHVyZS4oTW9uaXRvciAtJmd0OyBUcmFpbilbMF0="><path d="M 747.750000 450.000000 C 747.750000 488.000000 731.950012 508.000000 672.129921 545.860810" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-151066625-3488378134)" mask="url(#d2-151066625)" /></g><mask id="d2-151066625" maskUnits="userSpaceOnUse" x="-11" y="-41" width="916" height="1038">
+<rect x="-11" y="-41" width="916" height="1038" fill="white"></rect><p></mask></svg></svg></p></div><hr /><h3 id="closing:-the-security-engineer&apos;s-mandate">Closing: The Security Engineer&apos;s Mandate</h3><p>Data poisoning forces security engineers to expand their threat model beyond the network perimeter and the application layer. We must now treat the <strong>data pipeline as critical infrastructure</strong>—with the same rigor we apply to IAM policies, network segmentation, and endpoint hardening.</p><p>The organizations that will survive the AI era are not the ones with the most powerful models. They are the ones with the most <strong>trustworthy data supply chains</strong>.</p><blockquote><p><strong>Key Takeaway:</strong> If you cannot cryptographically prove the provenance and integrity of every sample in your training dataset, you cannot trust your model. And if you cannot trust your model, you cannot trust any decision it makes on your behalf.</p></blockquote><hr /><p><em>Related: <a href="./red-teaming-ai-pipelines.md">Red Teaming AI Pipelines</a></em></p></div>
 
 <p><i>Published: 2026-06-17</i></p>
 

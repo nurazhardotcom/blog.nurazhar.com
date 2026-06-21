@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -145,11 +159,115 @@
 <div><hr /><p>If you&apos;ve spent any time pair-programming with LLMs (Gemini, Claude, GPT-4o), you&apos;ve likely run into a frustrating, repeating loop:</p><ol start="1"><li>You ask the model to generate a flowchart.</li><li>It outputs a <strong>Mermaid.js</strong> diagram block.</li><li>You render it, and the parser instantly breaks with a syntax error.</li><li>You tell the model about the error. It apologizes, fixes it, and then... <strong>makes the exact same mistake in the next post.</strong></li></ol><p>This isn&apos;t just a minor glitch; it is a systemic architectural bias in how Large Language Models generate structured text.</p><p>Here is a technical dissection of why LLMs fail at Mermaid diagrams, why they can&apos;t get it right the first time, and why analyzing this error is a masterclass in understanding the limitations of generative AI.</p><hr /><h2 id="the-error:-the-unquoted-punctuation-trap">The Error: The Unquoted Punctuation Trap</h2><p>In the last two blog posts I published, the model generated Mermaid diagrams with subgraphs that looked like this:</p><pre><code class="language-text">subgraph Linux (Lieutenants)
     L_Core[Linus Torvalds]
 end
-</code></pre><p>To a human, this looks perfectly readable. But to the Mermaid.js parser, the parentheses in <code>Linux (Lieutenants)</code> are control characters used for node shapes. To treat them as a literal string title, the syntax <strong>must</strong> be quoted:</p><pre><code class="language-mermaid">graph TD
-    subgraph linux [&quot;Linux (Lieutenants)&quot;]
-        L_Core[&quot;Linus Torvalds&quot;]
-    end
-</code></pre><p>Why does an advanced model capable of writing complex Rust or Go algorithms repeatedly fail at this basic syntax rule?</p><hr /><h2 id="1.-the-power-of-training-priors-(statistically-overriding-rules)">1. The Power of Training Priors (Statistically Overriding Rules)</h2><p>LLMs are autoregressive token predictors. They output the next token based on the statistical probabilities found in their training data.</p><ul><li><strong>The Bias</strong>: The vast majority of Mermaid diagrams in open-source repositories and markdown files are simple. They use plain text labels without spaces, parentheses, or colons.</li><li><strong>The Result</strong>: The model&apos;s &quot;prior probability&quot; for generating a node is heavily weighted toward the unquoted format (<code>A[Label]</code>). Even though the model &quot;knows&quot; the rule that special characters require quotes, the raw statistical pull of the common <code>subgraph ID (Label)</code> or <code>node[Label]</code> pattern overrides that rule during token generation.</li></ul><hr /><h2 id="2.-tokenization-and-context-drift">2. Tokenization and Context Drift</h2><p>LLMs do not read or write characters; they process <strong>tokens</strong> (clusters of characters).</p><p>Mermaid syntax relies heavily on highly sensitive punctuation tokens: <code>[</code>, <code>]</code>, <code>(</code>, <code>)</code>, <code>&quot;</code>, and <code>--&gt;</code>.</p><ul><li><strong>The Tokenization Split</strong>: The sequence <code>[</code> followed by a word like <code>Linux</code> and <code>(</code> followed by <code>Lieutenants</code> gets split into multiple distinct tokens. 
+</code></pre><p>To a human, this looks perfectly readable. But to the Mermaid.js parser, the parentheses in <code>Linux (Lieutenants)</code> are control characters used for node shapes. To treat them as a literal string title, the syntax <strong>must</strong> be quoted:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+#
+linux: "Linux (Lieutenants)" {
+  L_Core: "Linus Torvalds"
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 262 208"><svg class="d2-2001760073 d2-svg" width="262" height="208" viewBox="-18 -41 262 208"><rect x="-18.000000" y="-41.000000" width="262.000000" height="208.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2001760073 .text {
+	font-family: "d2-2001760073-font-regular";
+}
+@font-face {
+	font-family: d2-2001760073-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-2001760073 .text-bold {
+	font-family: "d2-2001760073-font-bold";
+}
+@font-face {
+	font-family: d2-2001760073-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-2001760073 .fill-N1{fill:#0A0F25;}
+		.d2-2001760073 .fill-N2{fill:#676C7E;}
+		.d2-2001760073 .fill-N3{fill:#9499AB;}
+		.d2-2001760073 .fill-N4{fill:#CFD2DD;}
+		.d2-2001760073 .fill-N5{fill:#DEE1EB;}
+		.d2-2001760073 .fill-N6{fill:#EEF1F8;}
+		.d2-2001760073 .fill-N7{fill:#FFFFFF;}
+		.d2-2001760073 .fill-B1{fill:#0D32B2;}
+		.d2-2001760073 .fill-B2{fill:#0D32B2;}
+		.d2-2001760073 .fill-B3{fill:#E3E9FD;}
+		.d2-2001760073 .fill-B4{fill:#E3E9FD;}
+		.d2-2001760073 .fill-B5{fill:#EDF0FD;}
+		.d2-2001760073 .fill-B6{fill:#F7F8FE;}
+		.d2-2001760073 .fill-AA2{fill:#4A6FF3;}
+		.d2-2001760073 .fill-AA4{fill:#EDF0FD;}
+		.d2-2001760073 .fill-AA5{fill:#F7F8FE;}
+		.d2-2001760073 .fill-AB4{fill:#EDF0FD;}
+		.d2-2001760073 .fill-AB5{fill:#F7F8FE;}
+		.d2-2001760073 .stroke-N1{stroke:#0A0F25;}
+		.d2-2001760073 .stroke-N2{stroke:#676C7E;}
+		.d2-2001760073 .stroke-N3{stroke:#9499AB;}
+		.d2-2001760073 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2001760073 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2001760073 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2001760073 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2001760073 .stroke-B1{stroke:#0D32B2;}
+		.d2-2001760073 .stroke-B2{stroke:#0D32B2;}
+		.d2-2001760073 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2001760073 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2001760073 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2001760073 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2001760073 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2001760073 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2001760073 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2001760073 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2001760073 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2001760073 .background-color-N1{background-color:#0A0F25;}
+		.d2-2001760073 .background-color-N2{background-color:#676C7E;}
+		.d2-2001760073 .background-color-N3{background-color:#9499AB;}
+		.d2-2001760073 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2001760073 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2001760073 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2001760073 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2001760073 .background-color-B1{background-color:#0D32B2;}
+		.d2-2001760073 .background-color-B2{background-color:#0D32B2;}
+		.d2-2001760073 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2001760073 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2001760073 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2001760073 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2001760073 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2001760073 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2001760073 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2001760073 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2001760073 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2001760073 .color-N1{color:#0A0F25;}
+		.d2-2001760073 .color-N2{color:#676C7E;}
+		.d2-2001760073 .color-N3{color:#9499AB;}
+		.d2-2001760073 .color-N4{color:#CFD2DD;}
+		.d2-2001760073 .color-N5{color:#DEE1EB;}
+		.d2-2001760073 .color-N6{color:#EEF1F8;}
+		.d2-2001760073 .color-N7{color:#FFFFFF;}
+		.d2-2001760073 .color-B1{color:#0D32B2;}
+		.d2-2001760073 .color-B2{color:#0D32B2;}
+		.d2-2001760073 .color-B3{color:#E3E9FD;}
+		.d2-2001760073 .color-B4{color:#E3E9FD;}
+		.d2-2001760073 .color-B5{color:#EDF0FD;}
+		.d2-2001760073 .color-B6{color:#F7F8FE;}
+		.d2-2001760073 .color-AA2{color:#4A6FF3;}
+		.d2-2001760073 .color-AA4{color:#EDF0FD;}
+		.d2-2001760073 .color-AA5{color:#F7F8FE;}
+		.d2-2001760073 .color-AB4{color:#EDF0FD;}
+		.d2-2001760073 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2001760073);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2001760073);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2001760073);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2001760073);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2001760073);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2001760073);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2001760073);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2001760073);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="bGludXg="><g class="shape" ><rect x="10.000000" y="20.000000" width="207.000000" height="126.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="113.500000" y="7.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Linux (Lieutenants)</text></g><g class="bGludXguTF9Db3Jl"><g class="shape" ><rect x="40.000000" y="50.000000" width="147.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="113.500000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Linus Torvalds</text></g><mask id="d2-2001760073" maskUnits="userSpaceOnUse" x="-18" y="-41" width="262" height="208">
+<rect x="-18" y="-41" width="262" height="208" fill="white"></rect><p></mask></svg></svg></p></div><p>Why does an advanced model capable of writing complex Rust or Go algorithms repeatedly fail at this basic syntax rule?</p><hr /><h2 id="1.-the-power-of-training-priors-(statistically-overriding-rules)">1. The Power of Training Priors (Statistically Overriding Rules)</h2><p>LLMs are autoregressive token predictors. They output the next token based on the statistical probabilities found in their training data.</p><ul><li><strong>The Bias</strong>: The vast majority of Mermaid diagrams in open-source repositories and markdown files are simple. They use plain text labels without spaces, parentheses, or colons.</li><li><strong>The Result</strong>: The model&apos;s &quot;prior probability&quot; for generating a node is heavily weighted toward the unquoted format (<code>A[Label]</code>). Even though the model &quot;knows&quot; the rule that special characters require quotes, the raw statistical pull of the common <code>subgraph ID (Label)</code> or <code>node[Label]</code> pattern overrides that rule during token generation.</li></ul><hr /><h2 id="2.-tokenization-and-context-drift">2. Tokenization and Context Drift</h2><p>LLMs do not read or write characters; they process <strong>tokens</strong> (clusters of characters).</p><p>Mermaid syntax relies heavily on highly sensitive punctuation tokens: <code>[</code>, <code>]</code>, <code>(</code>, <code>)</code>, <code>&quot;</code>, and <code>--&gt;</code>.</p><ul><li><strong>The Tokenization Split</strong>: The sequence <code>[</code> followed by a word like <code>Linux</code> and <code>(</code> followed by <code>Lieutenants</code> gets split into multiple distinct tokens. 
 * <strong>Attention Drift</strong>: As the model generates the diagram line-by-line, the transformer&apos;s attention mechanism focuses on generating the logical connections (e.g., <code>L_Core --&gt; L_Lieut</code>). By the time it is writing the connection, the context of the opening parenthesis or missing quote is too far back in the attention window to trigger the matching closing quote token.
 
 ---

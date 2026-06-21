@@ -78,6 +78,31 @@ a {
   margin-left: 0;
 }
 
+/* Mermaid SVG responsiveness — scale to fit container, text stays readable */
+.mermaid svg,
+.d2-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.d2-diagram {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .mermaid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: calc(100vw - 32px);
+  }
+  /* Don't shrink SVG on mobile — let it scroll at render width so text stays readable */
+  .mermaid svg {
+    max-width: none;
+  }
+}
+
 h2 {
   margin-bottom: 0;
   margin-top: 0;

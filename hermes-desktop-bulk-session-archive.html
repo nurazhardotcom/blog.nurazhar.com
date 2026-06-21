@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -142,37 +156,7 @@
   Fixing the Session Archive Problem in Hermes Desktop
   
 </h1>
-<div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="pr-workflow">PR Workflow</h2><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
-flowchart TD
-    A[&quot;GitHub Issue #48843&lt;br/&gt;feat: bulk session archive&quot;]:::issue
-    B[&quot;Create branch&lt;br/&gt;feature/bulk-session-archive&quot;]:::branch
-    C[&quot;Implement endpoint&lt;br/&gt;hermes_cli/web_server.py&lt;br/&gt;POST /api/sessions/bulk-archive&quot;]:::code
-    D[&quot;Add frontend helper&lt;br/&gt;apps/desktop/src/hermes.ts&lt;br/&gt;archiveSessions()&quot;]:::code
-    E[&quot;Add tests&lt;br/&gt;tests/hermes_cli/test_web_server.py&quot;]:::test
-    F[&quot;Push to fork&lt;br/&gt;nurazhardotcom/hermes-agent&quot;]:::push
-    G[&quot;Create PR&lt;br/&gt;github.com/nurazhardotcom/hermes-agent/pull/2&quot;]:::pr
-    
-    A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F --&gt; G
-    
-    classDef issue fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
-    classDef branch fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
-    classDef code fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
-    classDef test fill:#fffde7,stroke:#ffc107,stroke-width:2px;
-    classDef push fill:#ffebee,stroke:#f44336,stroke-width:2px;
-    classDef pr fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px;
-</code></pre><h2 id="the-terminal-approval-bug">The Terminal Approval Bug</h2><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
-flowchart TD
-    A[&quot;Desktop executed&lt;br/&gt;git push fork ...&quot;]:::desktop
-    B[&quot;No approval prompt shown&lt;br/&gt;(should block terminal)&quot;]:::bug
-    C[&quot;Commits pushed without&lt;br/&gt;explicit consent&quot;]:::bug
-    D[&quot;Potential security issue&lt;br/&gt;data could leak&quot;]:::risk
-    
-    A --&gt; B --&gt; C --&gt; D
-    
-    classDef desktop fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
-    classDef bug fill:#ffebee,stroke:#f44336,stroke-width:2px;
-    classDef risk fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
-</code></pre><h2 id="implementation-details">Implementation Details</h2><h3 id="backend">Backend</h3><p>Added <code>POST /api/sessions/bulk-archive</code> endpoint in <code>hermes_cli/web_server.py</code>:</p><pre><code class="language-python">class BulkArchiveSessions(BaseModel):
+<div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="pr-workflow">PR Workflow</h2><h2 id="the-terminal-approval-bug">The Terminal Approval Bug</h2><h2 id="implementation-details">Implementation Details</h2><h3 id="backend">Backend</h3><p>Added <code>POST /api/sessions/bulk-archive</code> endpoint in <code>hermes_cli/web_server.py</code>:</p><pre><code class="language-python">class BulkArchiveSessions(BaseModel):
     ids: List[str]
     archived: bool = True
     profile: Optional[str] = None

@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -142,29 +156,233 @@
   What Hyperliquid Got Right — And Why BSV Already Has It Natively
   
 </h1>
-<div><hr /><p>Hyperliquid is the most technically impressive DeFi protocol of 2025-2026. A fully on-chain Central Limit Order Book (CLOB) processing 200,000 orders per second with sub-second finality — numbers that rival centralized exchanges. It generated real revenue, burned millions in HYPE monthly, and forced the industry to rethink what an L1 can do.</p><p>The conventional explanation: <em>Hyperliquid succeeded because it built a custom L1 purpose-built for trading.</em></p><p>The deeper truth: <strong>Hyperliquid proved the demand for high-performance on-chain finance.</strong> Its architectural innovations are real. But its most important finding is unintentional — that the industry <em>needed</em> a chain capable of this throughput, and none existed until Hyperliquid built one.</p><p>What if one already did?</p><hr /><h2 id="hyperliquid&apos;s-architecture,-briefly">Hyperliquid&apos;s Architecture, Briefly</h2><p>Hyperliquid splits its L1 into three layers:</p><pre><code class="language-mermaid">graph TD
-    BFT[&quot;HyperBFT (Consensus)&lt;br/&gt;Pipelined HotStuff&lt;br/&gt;200k TPS, 0.2s finality&quot;] --&gt; CORE[&quot;HyperCore (Trading)&lt;br/&gt;On-chain CLOB&lt;br/&gt;Matching, margin, liquidations&quot;]
-    BFT --&gt; EVM[&quot;HyperEVM (Smart Contracts)&lt;br/&gt;Solidity compatibility&lt;br/&gt;Reads HyperCore state via precompiles&quot;]
+<div><hr /><p>Hyperliquid is the most technically impressive DeFi protocol of 2025-2026. A fully on-chain Central Limit Order Book (CLOB) processing 200,000 orders per second with sub-second finality — numbers that rival centralized exchanges. It generated real revenue, burned millions in HYPE monthly, and forced the industry to rethink what an L1 can do.</p><p>The conventional explanation: <em>Hyperliquid succeeded because it built a custom L1 purpose-built for trading.</em></p><p>The deeper truth: <strong>Hyperliquid proved the demand for high-performance on-chain finance.</strong> Its architectural innovations are real. But its most important finding is unintentional — that the industry <em>needed</em> a chain capable of this throughput, and none existed until Hyperliquid built one.</p><p>What if one already did?</p><hr /><h2 id="hyperliquid&apos;s-architecture,-briefly">Hyperliquid&apos;s Architecture, Briefly</h2><p>Hyperliquid splits its L1 into three layers:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+APPS: "170+ projects building\nPrediction markets, spot, lending"
+BFT: "HyperBFT (Consensus)\nPipelined HotStuff\n200k TPS, 0.2s finality" {
+  style.fill: "#228"
+}
+CORE: "HyperCore (Trading)\nOn-chain CLOB\nMatching, margin, liquidations" {
+  style.fill: "#282"
+}
+EVM: "HyperEVM (Smart Contracts)\nSolidity compatibility\nReads HyperCore state via precompiles" {
+  style.fill: "#822"
+}
+STATE: "Clearinghouse State Tree\nUnified cross-margin\nPortfolio as single entity"
+#
+BFT -> EVM
+CORE -> STATE
+EVM -> APPS
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 667 520"><svg class="d2-3249207031 d2-svg" width="667" height="520" viewBox="-21 -21 667 520"><rect x="-21.000000" y="-21.000000" width="667.000000" height="520.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3249207031 .text-bold {
+	font-family: "d2-3249207031-font-bold";
+}
+@font-face {
+	font-family: d2-3249207031-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    CORE --&gt; STATE[&quot;Clearinghouse State Tree&lt;br/&gt;Unified cross-margin&lt;br/&gt;Portfolio as single entity&quot;]
-    EVM --&gt; APPS[&quot;170+ projects building&lt;br/&gt;Prediction markets, spot, lending&quot;]
+		.d2-3249207031 .fill-N1{fill:#0A0F25;}
+		.d2-3249207031 .fill-N2{fill:#676C7E;}
+		.d2-3249207031 .fill-N3{fill:#9499AB;}
+		.d2-3249207031 .fill-N4{fill:#CFD2DD;}
+		.d2-3249207031 .fill-N5{fill:#DEE1EB;}
+		.d2-3249207031 .fill-N6{fill:#EEF1F8;}
+		.d2-3249207031 .fill-N7{fill:#FFFFFF;}
+		.d2-3249207031 .fill-B1{fill:#0D32B2;}
+		.d2-3249207031 .fill-B2{fill:#0D32B2;}
+		.d2-3249207031 .fill-B3{fill:#E3E9FD;}
+		.d2-3249207031 .fill-B4{fill:#E3E9FD;}
+		.d2-3249207031 .fill-B5{fill:#EDF0FD;}
+		.d2-3249207031 .fill-B6{fill:#F7F8FE;}
+		.d2-3249207031 .fill-AA2{fill:#4A6FF3;}
+		.d2-3249207031 .fill-AA4{fill:#EDF0FD;}
+		.d2-3249207031 .fill-AA5{fill:#F7F8FE;}
+		.d2-3249207031 .fill-AB4{fill:#EDF0FD;}
+		.d2-3249207031 .fill-AB5{fill:#F7F8FE;}
+		.d2-3249207031 .stroke-N1{stroke:#0A0F25;}
+		.d2-3249207031 .stroke-N2{stroke:#676C7E;}
+		.d2-3249207031 .stroke-N3{stroke:#9499AB;}
+		.d2-3249207031 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3249207031 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3249207031 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3249207031 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3249207031 .stroke-B1{stroke:#0D32B2;}
+		.d2-3249207031 .stroke-B2{stroke:#0D32B2;}
+		.d2-3249207031 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3249207031 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3249207031 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3249207031 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3249207031 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3249207031 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3249207031 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3249207031 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3249207031 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3249207031 .background-color-N1{background-color:#0A0F25;}
+		.d2-3249207031 .background-color-N2{background-color:#676C7E;}
+		.d2-3249207031 .background-color-N3{background-color:#9499AB;}
+		.d2-3249207031 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3249207031 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3249207031 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3249207031 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3249207031 .background-color-B1{background-color:#0D32B2;}
+		.d2-3249207031 .background-color-B2{background-color:#0D32B2;}
+		.d2-3249207031 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3249207031 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3249207031 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3249207031 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3249207031 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3249207031 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3249207031 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3249207031 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3249207031 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3249207031 .color-N1{color:#0A0F25;}
+		.d2-3249207031 .color-N2{color:#676C7E;}
+		.d2-3249207031 .color-N3{color:#9499AB;}
+		.d2-3249207031 .color-N4{color:#CFD2DD;}
+		.d2-3249207031 .color-N5{color:#DEE1EB;}
+		.d2-3249207031 .color-N6{color:#EEF1F8;}
+		.d2-3249207031 .color-N7{color:#FFFFFF;}
+		.d2-3249207031 .color-B1{color:#0D32B2;}
+		.d2-3249207031 .color-B2{color:#0D32B2;}
+		.d2-3249207031 .color-B3{color:#E3E9FD;}
+		.d2-3249207031 .color-B4{color:#E3E9FD;}
+		.d2-3249207031 .color-B5{color:#EDF0FD;}
+		.d2-3249207031 .color-B6{color:#F7F8FE;}
+		.d2-3249207031 .color-AA2{color:#4A6FF3;}
+		.d2-3249207031 .color-AA4{color:#EDF0FD;}
+		.d2-3249207031 .color-AA5{color:#F7F8FE;}
+		.d2-3249207031 .color-AB4{color:#EDF0FD;}
+		.d2-3249207031 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3249207031);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3249207031);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3249207031);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3249207031);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3249207031);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3249207031);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3249207031);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3249207031);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QVBQUw=="><g class="shape" ><rect x="21.000000" y="396.000000" width="281.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="161.500000" y="434.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="161.500000" dy="0.000000">170+ projects building</tspan><tspan x="161.500000" dy="18.500000">Prediction markets, spot, lending</tspan></text></g><g class="QkZU"><g class="shape" ><rect x="59.000000" y="0.000000" width="204.000000" height="98.000000" stroke="#0D32B2" fill="#228" class=" stroke-B1" style="stroke-width:2;" /></g><text x="161.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="161.000000" dy="0.000000">HyperBFT (Consensus)</tspan><tspan x="161.000000" dy="17.666667">Pipelined HotStuff</tspan><tspan x="161.000000" dy="17.666667">200k TPS, 0.2s finality</tspan></text></g><g class="Q09SRQ=="><g class="shape" ><rect x="362.000000" y="0.000000" width="263.000000" height="98.000000" stroke="#0D32B2" fill="#282" class=" stroke-B1" style="stroke-width:2;" /></g><text x="493.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="493.500000" dy="0.000000">HyperCore (Trading)</tspan><tspan x="493.500000" dy="17.666667">On-chain CLOB</tspan><tspan x="493.500000" dy="17.666667">Matching, margin, liquidations</tspan></text></g><g class="RVZN"><g class="shape" ><rect x="0.000000" y="198.000000" width="322.000000" height="98.000000" stroke="#0D32B2" fill="#822" class=" stroke-B1" style="stroke-width:2;" /></g><text x="161.000000" y="236.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="161.000000" dy="0.000000">HyperEVM (Smart Contracts)</tspan><tspan x="161.000000" dy="17.666667">Solidity compatibility</tspan><tspan x="161.000000" dy="17.666667">Reads HyperCore state via precompiles</tspan></text></g><g class="U1RBVEU="><g class="shape" ><rect x="382.000000" y="198.000000" width="223.000000" height="98.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="493.500000" y="236.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="493.500000" dy="0.000000">Clearinghouse State Tree</tspan><tspan x="493.500000" dy="17.666667">Unified cross-margin</tspan><tspan x="493.500000" dy="17.666667">Portfolio as single entity</tspan></text></g><g class="KEJGVCAtJmd0OyBFVk0pWzBd"><marker id="mk-d2-3249207031-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 161.000000 100.000000 C 161.000000 138.000000 161.000000 158.000000 161.000000 194.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3249207031-3488378134)" mask="url(#d2-3249207031)" /></g><g class="KENPUkUgLSZndDsgU1RBVEUpWzBd"><path d="M 493.500000 100.000000 C 493.500000 138.000000 493.500000 158.000000 493.500000 194.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3249207031-3488378134)" mask="url(#d2-3249207031)" /></g><g class="KEVWTSAtJmd0OyBBUFBTKVswXQ=="><path d="M 161.000000 298.000000 C 161.000000 336.000000 161.000000 356.000000 161.000000 392.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3249207031-3488378134)" mask="url(#d2-3249207031)" /></g><mask id="d2-3249207031" maskUnits="userSpaceOnUse" x="-21" y="-21" width="667" height="520">
+<rect x="-21" y="-21" width="667" height="520" fill="white"></rect><p></mask></svg></svg></p></div><p><strong>HyperBFT</strong> — A pipelined HotStuff BFT consensus achieving ~0.2 second finality. Validators stake HYPE, tolerate &lt;1/3 Byzantine faults. Pipelining overlaps voting rounds so throughput stays high even with short block times.</p><p><strong>HyperCore</strong> — The native trading engine. A fully on-chain CLOB embedded directly in the validator software. Orders, cancellations, matches, margin updates, and liquidations all happen at the consensus level — no off-chain matching, no oracles for internal state.</p><p><strong>HyperEVM</strong> — Solidity-compatible smart contracts that can read HyperCore state via precompiles. No bridge, no oracle lag. Contracts see real-time prices, positions, and order book depth directly.</p><p>The key architectural insight: <strong>one consensus layer, two execution engines.</strong> HyperCore handles the financial core in native code for speed. HyperEVM gives builders flexibility without touching the critical path.</p><hr /><h2 id="the-trade-off-hyperliquid-made">The Trade-Off Hyperliquid Made</h2><p>Hyperliquid&apos;s approach works because it is <strong>purpose-built</strong>. Every optimization is specific to the use case:</p><ul><li>The consensus protocol prioritizes low latency over maximum decentralization (BFT, not PoW)</li><li>The execution engine is hard-coded for order book trading, not general computation</li><li>The state tree (Clearinghouse) is a unified, monolithic structure optimized for cross-margin</li></ul><p>This is the app-chain thesis: a chain designed for one thing can do it better than a general-purpose chain.</p><p>The trade-off: <strong>you forfeit composability with the rest of the crypto economy.</strong> Hyperliquid is its own island. Assets must be bridged in. Smart contracts can only interact with HyperCore state — not with Bitcoin&apos;s UTXO set, not with other L1s natively. Every integration requires a bridge, and every bridge is an attack surface.</p><hr /><h2 id="the-bsv-alternative:-base-layer-+-overlays">The BSV Alternative: Base Layer + Overlays</h2><p>BSV with Chronicle (April 2026) and Teranode takes the opposite approach: a <strong>general-purpose base layer</strong> that achieves comparable throughput <em>without</em> forking the protocol, and an <strong>overlay network architecture</strong> that lets applications build their own execution engines on top.</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+BSV: "BSV Base Layer\nPoW + Teranode\n1M+ TPS target\nSub-cent fees" {
+  style.fill: "#f90"
+}
+CLOB_OV: "CLOB Overlay\nOn-chain order book\nSame as HyperCore, but as overlay"
+COT1: "COT1 Overlay\nIndelible persistent memory"
+EVM_OV: "EVM Overlay\nSolidity contracts on BSV\nNo separate L1 needed"
+IP2IP: "IP-to-IP Transactions\nWhitepaper Section 8\nDirect peer settlement"
+ORD_OV: "Ordinals Overlay\n1Sat digital artifacts"
+OV: "Overlay Services Engine\nApplication-specific indexing\nBRC-113 MPT state trees" {
+  style.fill: "#228"
+}
+#
+OV -> CLOB_OV
+OV -> EVM_OV
+OV -> ORD_OV
+OV -> COT1
+BSV -> IP2IP
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1436 354"><svg class="d2-2936386112 d2-svg" width="1436" height="354" viewBox="-21 -21 1436 354"><rect x="-21.000000" y="-21.000000" width="1436.000000" height="354.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2936386112 .text-bold {
+	font-family: "d2-2936386112-font-bold";
+}
+@font-face {
+	font-family: d2-2936386112-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style BFT fill:#228,color:#fff
-    style CORE fill:#282,color:#fff
-    style EVM fill:#822,color:#fff
-</code></pre><p><strong>HyperBFT</strong> — A pipelined HotStuff BFT consensus achieving ~0.2 second finality. Validators stake HYPE, tolerate &lt;1/3 Byzantine faults. Pipelining overlaps voting rounds so throughput stays high even with short block times.</p><p><strong>HyperCore</strong> — The native trading engine. A fully on-chain CLOB embedded directly in the validator software. Orders, cancellations, matches, margin updates, and liquidations all happen at the consensus level — no off-chain matching, no oracles for internal state.</p><p><strong>HyperEVM</strong> — Solidity-compatible smart contracts that can read HyperCore state via precompiles. No bridge, no oracle lag. Contracts see real-time prices, positions, and order book depth directly.</p><p>The key architectural insight: <strong>one consensus layer, two execution engines.</strong> HyperCore handles the financial core in native code for speed. HyperEVM gives builders flexibility without touching the critical path.</p><hr /><h2 id="the-trade-off-hyperliquid-made">The Trade-Off Hyperliquid Made</h2><p>Hyperliquid&apos;s approach works because it is <strong>purpose-built</strong>. Every optimization is specific to the use case:</p><ul><li>The consensus protocol prioritizes low latency over maximum decentralization (BFT, not PoW)</li><li>The execution engine is hard-coded for order book trading, not general computation</li><li>The state tree (Clearinghouse) is a unified, monolithic structure optimized for cross-margin</li></ul><p>This is the app-chain thesis: a chain designed for one thing can do it better than a general-purpose chain.</p><p>The trade-off: <strong>you forfeit composability with the rest of the crypto economy.</strong> Hyperliquid is its own island. Assets must be bridged in. Smart contracts can only interact with HyperCore state — not with Bitcoin&apos;s UTXO set, not with other L1s natively. Every integration requires a bridge, and every bridge is an attack surface.</p><hr /><h2 id="the-bsv-alternative:-base-layer-+-overlays">The BSV Alternative: Base Layer + Overlays</h2><p>BSV with Chronicle (April 2026) and Teranode takes the opposite approach: a <strong>general-purpose base layer</strong> that achieves comparable throughput <em>without</em> forking the protocol, and an <strong>overlay network architecture</strong> that lets applications build their own execution engines on top.</p><pre><code class="language-mermaid">graph TD
-    BSV[&quot;BSV Base Layer&lt;br/&gt;PoW + Teranode&lt;br/&gt;1M+ TPS target&lt;br/&gt;Sub-cent fees&quot;] --&gt; OV[&quot;Overlay Services Engine&lt;br/&gt;Application-specific indexing&lt;br/&gt;BRC-113 MPT state trees&quot;]
-
-    OV --&gt; CLOB_OV[&quot;CLOB Overlay&lt;br/&gt;On-chain order book&lt;br/&gt;Same as HyperCore, but as overlay&quot;]
-    OV --&gt; EVM_OV[&quot;EVM Overlay&lt;br/&gt;Solidity contracts on BSV&lt;br/&gt;No separate L1 needed&quot;]
-    OV --&gt; ORD_OV[&quot;Ordinals Overlay&lt;br/&gt;1Sat digital artifacts&quot;]
-    OV --&gt; COT1[&quot;COT1 Overlay&lt;br/&gt;Indelible persistent memory&quot;]
-
-    BSV --&gt; IP2IP[&quot;IP-to-IP Transactions&lt;br/&gt;Whitepaper Section 8&lt;br/&gt;Direct peer settlement&quot;]
-
-    style BSV fill:#f90,color:#fff
-    style OV fill:#228,color:#fff
-</code></pre><p><strong>The base layer handles what HyperBFT handles:</strong></p><ul><li>Teranode targets 1M+ TPS in its microservice architecture</li><li>Sub-cent fees make micro-transactions viable (Hyperliquid&apos;s fee model depends on high-value perps)</li><li>Chronicle restored OTDA and all 21 opcodes — the protocol is locked</li></ul><p><strong>Overlay networks handle what HyperCore handles:</strong></p><ul><li>An overlay service indexes BSV transactions into an application-specific state tree</li><li>A CLOB overlay would match orders, manage margin, and process liquidations — exactly like HyperCore, but as an application on BSV rather than a hard-coded L1 feature</li><li>Multiple overlays can run simultaneously, sharing the same base layer security</li></ul><p><strong>The difference: composability without bridges.</strong></p><ul><li>An ordinal inscription (1Sat overlay), a CLOB trade (DeFi overlay), an Indelible memory record (COT1 overlay), and a BRC-100 token transfer all settle in the same block</li><li>No bridging between execution environments — they all read from the same UTXO set</li><li>A smart contract on one overlay can reference state from another overlay natively</li></ul><hr /><h2 id="mapping-hyperliquid-concepts-to-bsv">Mapping Hyperliquid Concepts to BSV</h2><table><thead><tr><th>Hyperliquid</th><th>BSV Equivalent</th><th>Advantage</th></tr></thead><tbody><tr><td>HyperBFT (200k TPS)</td><td>Teranode (1M+ TPS target)</td><td>PoW security, not BFT stake</td></tr><tr><td>HyperCore CLOB</td><td>CLOB overlay (BRC-113 MPT)</td><td>Multiple overlays, not one</td></tr><tr><td>HyperEVM</td><td>sCrypt + EVM overlay</td><td>Bitcoin Script native + EVM optional</td></tr><tr><td>Clearinghouse state</td><td>UTXO + overlay index</td><td>Built-in parallelism</td></tr><tr><td>Agent Keys</td><td>BRC-31/77 keys</td><td>Standardized across all apps</td></tr><tr><td>Cross-margin</td><td>Overlay-level portfolio tracking</td><td>Composable across overlays</td></tr><tr><td>Buyback/burn</td><td>Fee market (sub-cent)</td><td>Sustainable without token inflation</td></tr></tbody></table><hr /><h2 id="why-this-matters">Why This Matters</h2><p>Hyperliquid proved that on-chain order books are viable at scale. That was not obvious in 2023. It was a genuine engineering achievement.</p><p>But the app-chain model has a ceiling: <strong>every app-chain is a new sovereignty domain.</strong> Each one requires its own validators, its own bridge security, its own liquidity bootstrapping. The industry already has 50+ L1s and 100+ L2s. Adding more does not create a coherent financial network — it creates a  connected by bridges that keep getting hacked.</p><p>BSV offers a different path: a single base layer with Teranode throughput, overlay networks for application-specific logic, and IP-to-IP transactions for direct settlement. The composability is not between bridged chains but between transactions in the same block.</p><p>The question Hyperliquid&apos;s success raises is not &quot;who will build the next app-chain?&quot; It is: <strong>why build a new chain at all when the original Bitcoin protocol, fully restored, already provides the substrate?</strong></p><hr /><h2 id="summary">Summary</h2><ul><li>Hyperliquid&apos;s custom L1 achieves 200k TPS with 0.2s finality — real engineering</li><li>The trade-off: composability sacrificed for performance</li><li>BSV with Teranode targets 1M+ TPS <em>without</em> forking — same throughput class</li><li>Overlay networks replicate HyperCore&apos;s trading engine as an application, not a chain</li><li>IP-to-IP transactions (whitepaper Section 8) enable settlement without intermediaries</li><li>The app-chain thesis worked for Hyperliquid — but the base-layer thesis scales further</li></ul></div>
+		.d2-2936386112 .fill-N1{fill:#0A0F25;}
+		.d2-2936386112 .fill-N2{fill:#676C7E;}
+		.d2-2936386112 .fill-N3{fill:#9499AB;}
+		.d2-2936386112 .fill-N4{fill:#CFD2DD;}
+		.d2-2936386112 .fill-N5{fill:#DEE1EB;}
+		.d2-2936386112 .fill-N6{fill:#EEF1F8;}
+		.d2-2936386112 .fill-N7{fill:#FFFFFF;}
+		.d2-2936386112 .fill-B1{fill:#0D32B2;}
+		.d2-2936386112 .fill-B2{fill:#0D32B2;}
+		.d2-2936386112 .fill-B3{fill:#E3E9FD;}
+		.d2-2936386112 .fill-B4{fill:#E3E9FD;}
+		.d2-2936386112 .fill-B5{fill:#EDF0FD;}
+		.d2-2936386112 .fill-B6{fill:#F7F8FE;}
+		.d2-2936386112 .fill-AA2{fill:#4A6FF3;}
+		.d2-2936386112 .fill-AA4{fill:#EDF0FD;}
+		.d2-2936386112 .fill-AA5{fill:#F7F8FE;}
+		.d2-2936386112 .fill-AB4{fill:#EDF0FD;}
+		.d2-2936386112 .fill-AB5{fill:#F7F8FE;}
+		.d2-2936386112 .stroke-N1{stroke:#0A0F25;}
+		.d2-2936386112 .stroke-N2{stroke:#676C7E;}
+		.d2-2936386112 .stroke-N3{stroke:#9499AB;}
+		.d2-2936386112 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2936386112 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2936386112 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2936386112 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2936386112 .stroke-B1{stroke:#0D32B2;}
+		.d2-2936386112 .stroke-B2{stroke:#0D32B2;}
+		.d2-2936386112 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2936386112 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2936386112 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2936386112 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2936386112 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2936386112 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2936386112 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2936386112 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2936386112 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2936386112 .background-color-N1{background-color:#0A0F25;}
+		.d2-2936386112 .background-color-N2{background-color:#676C7E;}
+		.d2-2936386112 .background-color-N3{background-color:#9499AB;}
+		.d2-2936386112 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2936386112 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2936386112 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2936386112 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2936386112 .background-color-B1{background-color:#0D32B2;}
+		.d2-2936386112 .background-color-B2{background-color:#0D32B2;}
+		.d2-2936386112 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2936386112 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2936386112 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2936386112 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2936386112 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2936386112 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2936386112 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2936386112 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2936386112 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2936386112 .color-N1{color:#0A0F25;}
+		.d2-2936386112 .color-N2{color:#676C7E;}
+		.d2-2936386112 .color-N3{color:#9499AB;}
+		.d2-2936386112 .color-N4{color:#CFD2DD;}
+		.d2-2936386112 .color-N5{color:#DEE1EB;}
+		.d2-2936386112 .color-N6{color:#EEF1F8;}
+		.d2-2936386112 .color-N7{color:#FFFFFF;}
+		.d2-2936386112 .color-B1{color:#0D32B2;}
+		.d2-2936386112 .color-B2{color:#0D32B2;}
+		.d2-2936386112 .color-B3{color:#E3E9FD;}
+		.d2-2936386112 .color-B4{color:#E3E9FD;}
+		.d2-2936386112 .color-B5{color:#EDF0FD;}
+		.d2-2936386112 .color-B6{color:#F7F8FE;}
+		.d2-2936386112 .color-AA2{color:#4A6FF3;}
+		.d2-2936386112 .color-AA4{color:#EDF0FD;}
+		.d2-2936386112 .color-AA5{color:#F7F8FE;}
+		.d2-2936386112 .color-AB4{color:#EDF0FD;}
+		.d2-2936386112 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2936386112);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2936386112);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2936386112);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2936386112);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2936386112);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2936386112);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2936386112);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2936386112);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QlNW"><g class="shape" ><rect x="23.000000" y="0.000000" width="159.000000" height="114.000000" stroke="#0D32B2" fill="#f90" class=" stroke-B1" style="stroke-width:2;" /></g><text x="102.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="102.500000" dy="0.000000">BSV Base Layer</tspan><tspan x="102.500000" dy="17.250000">PoW + Teranode</tspan><tspan x="102.500000" dy="17.250000">1M+ TPS target</tspan><tspan x="102.500000" dy="17.250000">Sub-cent fees</tspan></text></g><g class="Q0xPQl9PVg=="><g class="shape" ><rect x="264.000000" y="214.000000" width="291.000000" height="98.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="409.500000" y="252.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="409.500000" dy="0.000000">CLOB Overlay</tspan><tspan x="409.500000" dy="17.666667">On-chain order book</tspan><tspan x="409.500000" dy="17.666667">Same as HyperCore, but as overlay</tspan></text></g><g class="Q09UMQ=="><g class="shape" ><rect x="1148.000000" y="222.000000" width="246.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1271.000000" y="260.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="1271.000000" dy="0.000000">COT1 Overlay</tspan><tspan x="1271.000000" dy="18.500000">Indelible persistent memory</tspan></text></g><g class="RVZNX09W"><g class="shape" ><rect x="615.000000" y="214.000000" width="224.000000" height="98.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="727.000000" y="252.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="727.000000" dy="0.000000">EVM Overlay</tspan><tspan x="727.000000" dy="17.666667">Solidity contracts on BSV</tspan><tspan x="727.000000" dy="17.666667">No separate L1 needed</tspan></text></g><g class="SVAySVA="><g class="shape" ><rect x="0.000000" y="214.000000" width="204.000000" height="98.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="102.000000" y="252.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="102.000000" dy="0.000000">IP-to-IP Transactions</tspan><tspan x="102.000000" dy="17.666667">Whitepaper Section 8</tspan><tspan x="102.000000" dy="17.666667">Direct peer settlement</tspan></text></g><g class="T1JEX09W"><g class="shape" ><rect x="899.000000" y="222.000000" width="189.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="993.500000" y="260.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="993.500000" dy="0.000000">Ordinals Overlay</tspan><tspan x="993.500000" dy="18.500000">1Sat digital artifacts</tspan></text></g><g class="T1Y="><g class="shape" ><rect x="734.000000" y="8.000000" width="252.000000" height="98.000000" stroke="#0D32B2" fill="#228" class=" stroke-B1" style="stroke-width:2;" /></g><text x="860.000000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="860.000000" dy="0.000000">Overlay Services Engine</tspan><tspan x="860.000000" dy="17.666667">Application-specific indexing</tspan><tspan x="860.000000" dy="17.666667">BRC-113 MPT state trees</tspan></text></g><g class="KE9WIC0mZ3Q7IENMT0JfT1YpWzBd"><marker id="mk-d2-2936386112-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 732.553875 87.461082 C 474.500000 148.600006 409.500000 174.000000 409.500000 210.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2936386112-3488378134)" mask="url(#d2-2936386112)" /></g><g class="KE9WIC0mZ3Q7IEVWTV9PVilbMF0="><path d="M 797.442492 107.254659 C 741.400024 152.399994 727.000000 174.000000 727.000000 210.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2936386112-3488378134)" mask="url(#d2-2936386112)" /></g><g class="KE9WIC0mZ3Q7IE9SRF9PVilbMF0="><path d="M 923.057508 107.254659 C 979.099976 152.399994 993.500000 175.600006 993.500000 218.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2936386112-3488378134)" mask="url(#d2-2936386112)" /></g><g class="KE9WIC0mZ3Q7IENPVDEpWzBd"><path d="M 988.185409 90.326173 C 1214.050049 149.164001 1271.000000 175.600006 1271.000000 218.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2936386112-3488378134)" mask="url(#d2-2936386112)" /></g><g class="KEJTViAtJmd0OyBJUDJJUClbMF0="><path d="M 102.000000 116.000000 C 102.000000 154.000000 102.000000 174.000000 102.000000 210.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2936386112-3488378134)" mask="url(#d2-2936386112)" /></g><mask id="d2-2936386112" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1436" height="354">
+<rect x="-21" y="-21" width="1436" height="354" fill="white"></rect><p></mask></svg></svg></p></div><p><strong>The base layer handles what HyperBFT handles:</strong></p><ul><li>Teranode targets 1M+ TPS in its microservice architecture</li><li>Sub-cent fees make micro-transactions viable (Hyperliquid&apos;s fee model depends on high-value perps)</li><li>Chronicle restored OTDA and all 21 opcodes — the protocol is locked</li></ul><p><strong>Overlay networks handle what HyperCore handles:</strong></p><ul><li>An overlay service indexes BSV transactions into an application-specific state tree</li><li>A CLOB overlay would match orders, manage margin, and process liquidations — exactly like HyperCore, but as an application on BSV rather than a hard-coded L1 feature</li><li>Multiple overlays can run simultaneously, sharing the same base layer security</li></ul><p><strong>The difference: composability without bridges.</strong></p><ul><li>An ordinal inscription (1Sat overlay), a CLOB trade (DeFi overlay), an Indelible memory record (COT1 overlay), and a BRC-100 token transfer all settle in the same block</li><li>No bridging between execution environments — they all read from the same UTXO set</li><li>A smart contract on one overlay can reference state from another overlay natively</li></ul><hr /><h2 id="mapping-hyperliquid-concepts-to-bsv">Mapping Hyperliquid Concepts to BSV</h2><table><thead><tr><th>Hyperliquid</th><th>BSV Equivalent</th><th>Advantage</th></tr></thead><tbody><tr><td>HyperBFT (200k TPS)</td><td>Teranode (1M+ TPS target)</td><td>PoW security, not BFT stake</td></tr><tr><td>HyperCore CLOB</td><td>CLOB overlay (BRC-113 MPT)</td><td>Multiple overlays, not one</td></tr><tr><td>HyperEVM</td><td>sCrypt + EVM overlay</td><td>Bitcoin Script native + EVM optional</td></tr><tr><td>Clearinghouse state</td><td>UTXO + overlay index</td><td>Built-in parallelism</td></tr><tr><td>Agent Keys</td><td>BRC-31/77 keys</td><td>Standardized across all apps</td></tr><tr><td>Cross-margin</td><td>Overlay-level portfolio tracking</td><td>Composable across overlays</td></tr><tr><td>Buyback/burn</td><td>Fee market (sub-cent)</td><td>Sustainable without token inflation</td></tr></tbody></table><hr /><h2 id="why-this-matters">Why This Matters</h2><p>Hyperliquid proved that on-chain order books are viable at scale. That was not obvious in 2023. It was a genuine engineering achievement.</p><p>But the app-chain model has a ceiling: <strong>every app-chain is a new sovereignty domain.</strong> Each one requires its own validators, its own bridge security, its own liquidity bootstrapping. The industry already has 50+ L1s and 100+ L2s. Adding more does not create a coherent financial network — it creates a  connected by bridges that keep getting hacked.</p><p>BSV offers a different path: a single base layer with Teranode throughput, overlay networks for application-specific logic, and IP-to-IP transactions for direct settlement. The composability is not between bridged chains but between transactions in the same block.</p><p>The question Hyperliquid&apos;s success raises is not &quot;who will build the next app-chain?&quot; It is: <strong>why build a new chain at all when the original Bitcoin protocol, fully restored, already provides the substrate?</strong></p><hr /><h2 id="summary">Summary</h2><ul><li>Hyperliquid&apos;s custom L1 achieves 200k TPS with 0.2s finality — real engineering</li><li>The trade-off: composability sacrificed for performance</li><li>BSV with Teranode targets 1M+ TPS <em>without</em> forking — same throughput class</li><li>Overlay networks replicate HyperCore&apos;s trading engine as an application, not a chain</li><li>IP-to-IP transactions (whitepaper Section 8) enable settlement without intermediaries</li><li>The app-chain thesis worked for Hyperliquid — but the base-layer thesis scales further</li></ul></div>
 
 <p><i>Published: 2026-06-21</i></p>
 

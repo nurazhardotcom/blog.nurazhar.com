@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -145,26 +159,170 @@
 <div><hr /><p>A routine <code>git push</code> failed. What followed was a 20-minute rabbit hole through five layers of GitHub authentication, a rogue environment variable injected by an IDE, and the realization that <strong>credential entropy is a silent DevOps killer</strong>.</p><p>This post documents the entire debugging journey with diagrams, commands, and the exact steps to reach <strong>zero auth entropy</strong> — one identity, two transports, no conflicts.</p><hr /><h2 id="the-symptom">🔥 The Symptom</h2><pre><code class="language-bash">git push origin main
 </code></pre><pre><code>remote: Invalid username or token.
 fatal: Authentication failed for &apos;https://github.com/nurazhardotcom/blog.nurazhar.com.git/&apos;
-</code></pre><p>A simple push to a repo. Should take 2 seconds. Instead, it opened a can of worms.</p><hr /><h2 id="the-credential-resolution-hierarchy">🗺️ The Credential Resolution Hierarchy</h2><p>Before diving into commands, it helps to understand <strong>how GitHub CLI (<code>gh</code>) and Git resolve credentials</strong>. They don&apos;t just check one place — they walk a priority chain, and the first match wins:</p><pre><code class="language-mermaid">flowchart TD
-    A[&quot;Git Push Request&quot;] --&gt; B{&quot;GITHUB_TOKEN&lt;br/&gt;env var set?&quot;}
-    B --&gt;|&quot;Yes&quot;| C[&quot;Use GITHUB_TOKEN&lt;br/&gt;(highest priority)&quot;]
-    B --&gt;|&quot;No&quot;| D{&quot;gh auth&lt;br/&gt;keyring token?&quot;}
-    D --&gt;|&quot;Yes&quot;| E[&quot;Use keyring token&lt;br/&gt;([REDACTED])&quot;]
-    D --&gt;|&quot;No&quot;| F{&quot;SSH key&lt;br/&gt;configured?&quot;}
-    F --&gt;|&quot;Yes&quot;| G[&quot;Use SSH&lt;br/&gt;(git@github.com)&quot;]
-    F --&gt;|&quot;No&quot;| H{&quot;~/.git-credentials&lt;br/&gt;file exists?&quot;}
-    H --&gt;|&quot;Yes&quot;| I[&quot;Use stored&lt;br/&gt;credentials&quot;]
-    H --&gt;|&quot;No&quot;| J[&quot;❌ Auth fails&quot;]
+</code></pre><p>A simple push to a repo. Should take 2 seconds. Instead, it opened a can of worms.</p><hr /><h2 id="the-credential-resolution-hierarchy">🗺️ The Credential Resolution Hierarchy</h2><p>Before diving into commands, it helps to understand <strong>how GitHub CLI (<code>gh</code>) and Git resolve credentials</strong>. They don&apos;t just check one place — they walk a priority chain, and the first match wins:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+A: "Git Push Request"
+B: "GITHUB_TOKEN\nenv var set?" {
+  shape: diamond
+}
+C: "Use GITHUB_TOKEN\n(highest priority)" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#333"
+}
+D: "gh auth\nkeyring token?" {
+  shape: diamond
+}
+E: "Use keyring token\n([REDACTED]" {
+  style.fill: "#51cf66"
+  style.stroke: "#333"
+}
+F: "SSH key\nconfigured?" {
+  shape: diamond
+}
+G: "Use SSH\n(git@github.com)"
+H: "~/.git-credentials\nfile exists?" {
+  shape: diamond
+}
+I: "Use stored\ncredentials"
+J: "❌ Auth fails"
+K: "Token valid?" {
+  shape: diamond
+}
+L: "✅ Push succeeds" {
+  style.fill: "#51cf66"
+  style.stroke: "#333"
+}
+M: "❌ Push fails\n(our problem)" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#333"
+}
+#
+B -> C: Yes
+B -> D: No
+D -> E: Yes
+D -> F: No
+F -> G: Yes
+F -> H: No
+H -> I: Yes
+H -> J: No
+C -> K
+K -> L: Yes
+K -> M: No
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1086 1104"><svg class="d2-1585241518 d2-svg" width="1086" height="1104" viewBox="-21 -21 1086 1104"><rect x="-21.000000" y="-21.000000" width="1086.000000" height="1104.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1585241518 .text-bold {
+	font-family: "d2-1585241518-font-bold";
+}
+@font-face {
+	font-family: d2-1585241518-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-1585241518 .text-italic {
+	font-family: "d2-1585241518-font-italic";
+}
+@font-face {
+	font-family: d2-1585241518-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    C --&gt; K{&quot;Token valid?&quot;}
-    K --&gt;|&quot;Yes&quot;| L[&quot;✅ Push succeeds&quot;]
-    K --&gt;|&quot;No&quot;| M[&quot;❌ Push fails&lt;br/&gt;(our problem)&quot;]
-
-    style C fill:#ff6b6b,stroke:#333,color:#fff
-    style M fill:#ff6b6b,stroke:#333,color:#fff
-    style E fill:#51cf66,stroke:#333
-    style L fill:#51cf66,stroke:#333
-</code></pre><p><strong>The critical insight:</strong> If <code>GITHUB_TOKEN</code> is set — even to garbage — <code>gh</code> and Git will use it and <strong>never fall through</strong> to the perfectly valid keyring token below.</p><hr /><h2 id="the-audit">🔍 The Audit</h2><h3 id="step-1:-check-gh-auth-status">Step 1: Check <code>gh auth status</code></h3><pre><code class="language-bash">gh auth status
+		.d2-1585241518 .fill-N1{fill:#0A0F25;}
+		.d2-1585241518 .fill-N2{fill:#676C7E;}
+		.d2-1585241518 .fill-N3{fill:#9499AB;}
+		.d2-1585241518 .fill-N4{fill:#CFD2DD;}
+		.d2-1585241518 .fill-N5{fill:#DEE1EB;}
+		.d2-1585241518 .fill-N6{fill:#EEF1F8;}
+		.d2-1585241518 .fill-N7{fill:#FFFFFF;}
+		.d2-1585241518 .fill-B1{fill:#0D32B2;}
+		.d2-1585241518 .fill-B2{fill:#0D32B2;}
+		.d2-1585241518 .fill-B3{fill:#E3E9FD;}
+		.d2-1585241518 .fill-B4{fill:#E3E9FD;}
+		.d2-1585241518 .fill-B5{fill:#EDF0FD;}
+		.d2-1585241518 .fill-B6{fill:#F7F8FE;}
+		.d2-1585241518 .fill-AA2{fill:#4A6FF3;}
+		.d2-1585241518 .fill-AA4{fill:#EDF0FD;}
+		.d2-1585241518 .fill-AA5{fill:#F7F8FE;}
+		.d2-1585241518 .fill-AB4{fill:#EDF0FD;}
+		.d2-1585241518 .fill-AB5{fill:#F7F8FE;}
+		.d2-1585241518 .stroke-N1{stroke:#0A0F25;}
+		.d2-1585241518 .stroke-N2{stroke:#676C7E;}
+		.d2-1585241518 .stroke-N3{stroke:#9499AB;}
+		.d2-1585241518 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1585241518 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1585241518 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1585241518 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1585241518 .stroke-B1{stroke:#0D32B2;}
+		.d2-1585241518 .stroke-B2{stroke:#0D32B2;}
+		.d2-1585241518 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1585241518 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1585241518 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1585241518 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1585241518 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1585241518 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1585241518 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1585241518 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1585241518 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1585241518 .background-color-N1{background-color:#0A0F25;}
+		.d2-1585241518 .background-color-N2{background-color:#676C7E;}
+		.d2-1585241518 .background-color-N3{background-color:#9499AB;}
+		.d2-1585241518 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1585241518 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1585241518 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1585241518 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1585241518 .background-color-B1{background-color:#0D32B2;}
+		.d2-1585241518 .background-color-B2{background-color:#0D32B2;}
+		.d2-1585241518 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1585241518 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1585241518 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1585241518 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1585241518 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1585241518 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1585241518 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1585241518 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1585241518 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1585241518 .color-N1{color:#0A0F25;}
+		.d2-1585241518 .color-N2{color:#676C7E;}
+		.d2-1585241518 .color-N3{color:#9499AB;}
+		.d2-1585241518 .color-N4{color:#CFD2DD;}
+		.d2-1585241518 .color-N5{color:#DEE1EB;}
+		.d2-1585241518 .color-N6{color:#EEF1F8;}
+		.d2-1585241518 .color-N7{color:#FFFFFF;}
+		.d2-1585241518 .color-B1{color:#0D32B2;}
+		.d2-1585241518 .color-B2{color:#0D32B2;}
+		.d2-1585241518 .color-B3{color:#E3E9FD;}
+		.d2-1585241518 .color-B4{color:#E3E9FD;}
+		.d2-1585241518 .color-B5{color:#EDF0FD;}
+		.d2-1585241518 .color-B6{color:#F7F8FE;}
+		.d2-1585241518 .color-AA2{color:#4A6FF3;}
+		.d2-1585241518 .color-AA4{color:#EDF0FD;}
+		.d2-1585241518 .color-AA5{color:#F7F8FE;}
+		.d2-1585241518 .color-AB4{color:#EDF0FD;}
+		.d2-1585241518 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1585241518);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1585241518);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1585241518);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1585241518);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1585241518);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1585241518);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1585241518);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1585241518);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="106.000000" y="29.000000" width="165.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="188.500000" y="67.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Git Push Request</text></g><g class="Qg=="><g class="shape" ><path d="M 458 124 C 457 124 456 124 456 124 L 332 63 C 331 62 331 61 332 61 L 456 0 C 457 -1 459 -1 461 0 L 585 60 C 586 61 586 62 585 62 L 460 124 C 460 124 459 124 458 124 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="458.000000" y="59.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="458.000000" dy="0.000000">GITHUB_TOKEN</tspan><tspan x="458.000000" dy="18.500000">env var set?</tspan></text></g><g class="Qw=="><g class="shape" ><rect x="771.000000" y="266.000000" width="185.000000" height="82.000000" stroke="#333" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="863.500000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="863.500000" dy="0.000000">Use GITHUB_TOKEN</tspan><tspan x="863.500000" dy="18.500000">(highest priority)</tspan></text></g><g class="RA=="><g class="shape" ><path d="M 209 369 C 208 369 207 369 207 369 L 89 308 C 88 307 88 306 89 306 L 207 245 C 208 244 210 244 211 245 L 329 305 C 330 306 330 307 329 307 L 211 369 C 211 369 210 369 209 369 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="209.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="209.000000" dy="0.000000">gh auth</tspan><tspan x="209.000000" dy="18.500000">keyring token?</tspan></text></g><g class="RQ=="><g class="shape" ><rect x="0.000000" y="511.000000" width="172.000000" height="82.000000" stroke="#333" fill="#51cf66" style="stroke-width:2;" /></g><text x="86.000000" y="549.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="86.000000" dy="0.000000">Use keyring token</tspan><tspan x="86.000000" dy="18.500000">([REDACTED]</tspan></text></g><g class="Rg=="><g class="shape" ><path d="M 331 614 C 330 614 330 614 329 614 L 233 553 C 232 552 232 551 233 551 L 329 490 C 330 489 332 489 333 490 L 429 550 C 430 551 430 552 429 552 L 333 614 C 332 614 332 614 331 614 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="331.000000" y="549.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="331.000000" dy="0.000000">SSH key</tspan><tspan x="331.000000" dy="18.500000">configured?</tspan></text></g><g class="Rw=="><g class="shape" ><rect x="105.000000" y="756.000000" width="170.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="190.000000" y="794.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="190.000000" dy="0.000000">Use SSH</tspan><tspan x="190.000000" dy="18.500000">(git@github.com)</tspan></text></g><g class="SA=="><g class="shape" ><path d="M 473 859 C 472 859 471 859 470 859 L 336 798 C 335 797 335 796 336 796 L 470 735 C 471 734 474 734 475 735 L 609 795 C 610 796 610 797 609 797 L 476 859 C 475 859 474 859 473 859 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="473.000000" y="794.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="473.000000" dy="0.000000">~/.git-credentials</tspan><tspan x="473.000000" dy="18.500000">file exists?</tspan></text></g><g class="SQ=="><g class="shape" ><rect x="315.000000" y="980.000000" width="125.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="377.500000" y="1018.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="377.500000" dy="0.000000">Use stored</tspan><tspan x="377.500000" dy="18.500000">credentials</tspan></text></g><g class="Sg=="><g class="shape" ><rect x="500.000000" y="988.000000" width="135.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="567.500000" y="1026.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">❌ Auth fails</text></g><g class="Sw=="><g class="shape" ><path d="M 864 598 C 863 598 863 598 862 598 L 760 553 C 759 553 759 552 760 551 L 862 506 C 863 506 865 506 866 506 L 968 551 C 969 551 969 552 968 553 L 866 598 C 865 598 865 598 864 598 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="864.000000" y="557.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Token valid?</text></g><g class="TA=="><g class="shape" ><rect x="671.000000" y="764.000000" width="170.000000" height="66.000000" stroke="#333" fill="#51cf66" style="stroke-width:2;" /></g><text x="756.000000" y="802.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">✅ Push succeeds</text></g><g class="TQ=="><g class="shape" ><rect x="901.000000" y="756.000000" width="143.000000" height="82.000000" stroke="#333" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="972.500000" y="794.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="972.500000" dy="0.000000">❌ Push fails</tspan><tspan x="972.500000" dy="18.500000">(our problem)</tspan></text></g><g class="KEIgLSZndDsgQylbMF0="><marker id="mk-d2-1585241518-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 538.914885 86.577249 C 798.400024 164.800003 863.750000 200.899994 863.750000 262.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="735.000000" y="151.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEIgLSZndDsgRClbMF0="><path d="M 391.208242 93.888596 C 245.399994 166.199997 208.600006 196.399994 208.966388 240.000141" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="277.000000" y="156.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 165.590145 349.418558 C 102.199997 413.200012 86.000000 445.899994 86.000000 507.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="100.000000" y="423.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEQgLSZndDsgRilbMF0="><path d="M 251.418585 350.409829 C 314.799988 413.399994 331.000000 441.399994 331.000000 485.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="311.000000" y="415.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><g class="KEYgLSZndDsgRylbMF0="><path d="M 286.497212 589.319708 C 209.199997 657.200012 189.500000 690.900024 189.500000 752.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="209.000000" y="663.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEYgLSZndDsgSClbMF0="><path d="M 374.509374 589.312170 C 452.600006 657.200012 472.600006 686.400024 472.966388 730.000141" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="444.000000" y="655.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><g class="KEggLSZndDsgSSlbMF0="><path d="M 434.775021 845.580957 C 389.200012 904.400024 377.500000 931.700012 377.500000 976.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="389.000000" y="911.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEggLSZndDsgSilbMF0="><path d="M 510.224979 845.580957 C 555.799988 904.400024 567.500000 933.299988 567.500000 984.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="558.000000" y="915.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><g class="KEMgLSZndDsgSylbMF0="><path d="M 863.750000 349.500000 C 863.750000 413.100006 863.799988 444.799988 863.986927 502.000021" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /></g><g class="KEsgLSZndDsgTClbMF0="><path d="M 832.672847 587.496217 C 771.200012 656.799988 755.500000 692.500000 755.500000 760.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="768.000000" y="670.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Yes</text></g><g class="KEsgLSZndDsgTSlbMF0="><path d="M 895.322402 587.500417 C 956.400024 656.799988 972.000000 690.900024 972.000000 752.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1585241518-3488378134)" mask="url(#d2-1585241518)" /><text x="958.000000" y="666.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">No</text></g><mask id="d2-1585241518" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1086" height="1104">
+<rect x="-21" y="-21" width="1086" height="1104" fill="white"></rect>
+<rect x="722.000000" y="135.000000" width="26" height="21" fill="black"></rect>
+<rect x="266.000000" y="140.000000" width="22" height="21" fill="black"></rect>
+<rect x="87.000000" y="407.000000" width="26" height="21" fill="black"></rect>
+<rect x="300.000000" y="399.000000" width="22" height="21" fill="black"></rect>
+<rect x="196.000000" y="647.000000" width="26" height="21" fill="black"></rect>
+<rect x="433.000000" y="639.000000" width="22" height="21" fill="black"></rect>
+<rect x="376.000000" y="895.000000" width="26" height="21" fill="black"></rect>
+<rect x="547.000000" y="899.000000" width="22" height="21" fill="black"></rect>
+<rect x="755.000000" y="654.000000" width="26" height="21" fill="black"></rect>
+<rect x="947.000000" y="650.000000" width="22" height="21" fill="black"></rect>
+</mask></svg></svg>
+</div><p><strong>The critical insight:</strong> If <code>GITHUB_TOKEN</code> is set — even to garbage — <code>gh</code> and Git will use it and <strong>never fall through</strong> to the perfectly valid keyring token below.</p><hr /><h2 id="the-audit">🔍 The Audit</h2><h3 id="step-1:-check-gh-auth-status">Step 1: Check <code>gh auth status</code></h3><pre><code class="language-bash">gh auth status
 </code></pre><pre><code>github.com
   ✗ Failed to log in to github.com using token (GITHUB_TOKEN)
   - Active account: true
@@ -187,25 +345,138 @@ fatal: Authentication failed for &apos;https://github.com/nurazhardotcom/blog.nu
 
 cat ~/.git-credentials
 # No such file
-</code></pre><p>Clean. Nothing stale here.</p><hr /><h2 id="the-entropy-map">📊 The Entropy Map</h2><p>Here&apos;s what the full credential landscape looked like <strong>before</strong> the fix:</p><pre><code class="language-mermaid">graph TB
-    subgraph &quot;❌ Before — High Entropy&quot;
-        direction TB
-        ENV[&quot;🔴 GITHUB_TOKEN env var&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;INVALID — Active&lt;/b&gt;&quot;]
-        KR[&quot;🟢 Keyring token&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Inactive&lt;/b&gt;&quot;]
-        SSH[&quot;🟡 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;EXISTS — Not registered&lt;/b&gt;&quot;]
-        GC[&quot;⚪ ~/.git-credentials&lt;br/&gt;&lt;b&gt;Does not exist&lt;/b&gt;&quot;]
-        HELPER[&quot;⚪ Git credential helper&lt;br/&gt;&lt;b&gt;Not configured&lt;/b&gt;&quot;]
-    end
+</code></pre><p>Clean. Nothing stale here.</p><hr /><h2 id="the-entropy-map">📊 The Entropy Map</h2><p>Here&apos;s what the full credential landscape looked like <strong>before</strong> the fix:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+ENV: "🔴 GITHUB_TOKEN env var\n[REDACTED]" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+GC: "⚪ ~/.git-credentials\n<b>Does not exist</b>" {
+  style.fill: "#e9ecef"
+  style.stroke: "#868e96"
+}
+HELPER: "⚪ Git credential helper\n<b>Not configured</b>" {
+  style.fill: "#e9ecef"
+  style.stroke: "#868e96"
+}
+KR: "🟢 Keyring token\n[REDACTED]" {
+  style.fill: "#51cf66"
+  style.stroke: "#2b8a3e"
+}
+SSH: "🟡 SSH key\n~/.ssh/id_ed25519\n<b>EXISTS — Not registered</b>" {
+  style.fill: "#ffd43b"
+  style.stroke: "#e67700"
+}
+#
+ENV -> KR: Blocks
+SSH -> SSH: "Useless without\nGitHub registration"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1306 343"><svg class="d2-2845497917 d2-svg" width="1306" height="343" viewBox="-21 -21 1306 343"><rect x="-21.000000" y="-21.000000" width="1306.000000" height="343.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2845497917 .text-bold {
+	font-family: "d2-2845497917-font-bold";
+}
+@font-face {
+	font-family: d2-2845497917-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-2845497917 .text-italic {
+	font-family: "d2-2845497917-font-italic";
+}
+@font-face {
+	font-family: d2-2845497917-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    ENV -.-&gt;|&quot;Blocks&quot;| KR
-    SSH -.-&gt;|&quot;Useless without&lt;br/&gt;GitHub registration&quot;| SSH
-
-    style ENV fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style KR fill:#51cf66,stroke:#2b8a3e
-    style SSH fill:#ffd43b,stroke:#e67700
-    style GC fill:#e9ecef,stroke:#868e96
-    style HELPER fill:#e9ecef,stroke:#868e96
-</code></pre><p>Five credential slots. One broken and blocking. One valid but buried. One half-configured. Two empty. <strong>Pure entropy.</strong></p><hr /><h2 id="the-fix-(4-commands)">🔧 The Fix (4 Commands)</h2><h3 id="1.-switch-active-account-to-the-keyring-token">1. Switch active account to the keyring token</h3><pre><code class="language-bash">unset GITHUB_TOKEN
+		.d2-2845497917 .fill-N1{fill:#0A0F25;}
+		.d2-2845497917 .fill-N2{fill:#676C7E;}
+		.d2-2845497917 .fill-N3{fill:#9499AB;}
+		.d2-2845497917 .fill-N4{fill:#CFD2DD;}
+		.d2-2845497917 .fill-N5{fill:#DEE1EB;}
+		.d2-2845497917 .fill-N6{fill:#EEF1F8;}
+		.d2-2845497917 .fill-N7{fill:#FFFFFF;}
+		.d2-2845497917 .fill-B1{fill:#0D32B2;}
+		.d2-2845497917 .fill-B2{fill:#0D32B2;}
+		.d2-2845497917 .fill-B3{fill:#E3E9FD;}
+		.d2-2845497917 .fill-B4{fill:#E3E9FD;}
+		.d2-2845497917 .fill-B5{fill:#EDF0FD;}
+		.d2-2845497917 .fill-B6{fill:#F7F8FE;}
+		.d2-2845497917 .fill-AA2{fill:#4A6FF3;}
+		.d2-2845497917 .fill-AA4{fill:#EDF0FD;}
+		.d2-2845497917 .fill-AA5{fill:#F7F8FE;}
+		.d2-2845497917 .fill-AB4{fill:#EDF0FD;}
+		.d2-2845497917 .fill-AB5{fill:#F7F8FE;}
+		.d2-2845497917 .stroke-N1{stroke:#0A0F25;}
+		.d2-2845497917 .stroke-N2{stroke:#676C7E;}
+		.d2-2845497917 .stroke-N3{stroke:#9499AB;}
+		.d2-2845497917 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2845497917 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2845497917 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2845497917 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2845497917 .stroke-B1{stroke:#0D32B2;}
+		.d2-2845497917 .stroke-B2{stroke:#0D32B2;}
+		.d2-2845497917 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2845497917 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2845497917 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2845497917 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2845497917 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2845497917 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2845497917 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2845497917 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2845497917 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2845497917 .background-color-N1{background-color:#0A0F25;}
+		.d2-2845497917 .background-color-N2{background-color:#676C7E;}
+		.d2-2845497917 .background-color-N3{background-color:#9499AB;}
+		.d2-2845497917 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2845497917 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2845497917 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2845497917 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2845497917 .background-color-B1{background-color:#0D32B2;}
+		.d2-2845497917 .background-color-B2{background-color:#0D32B2;}
+		.d2-2845497917 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2845497917 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2845497917 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2845497917 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2845497917 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2845497917 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2845497917 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2845497917 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2845497917 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2845497917 .color-N1{color:#0A0F25;}
+		.d2-2845497917 .color-N2{color:#676C7E;}
+		.d2-2845497917 .color-N3{color:#9499AB;}
+		.d2-2845497917 .color-N4{color:#CFD2DD;}
+		.d2-2845497917 .color-N5{color:#DEE1EB;}
+		.d2-2845497917 .color-N6{color:#EEF1F8;}
+		.d2-2845497917 .color-N7{color:#FFFFFF;}
+		.d2-2845497917 .color-B1{color:#0D32B2;}
+		.d2-2845497917 .color-B2{color:#0D32B2;}
+		.d2-2845497917 .color-B3{color:#E3E9FD;}
+		.d2-2845497917 .color-B4{color:#E3E9FD;}
+		.d2-2845497917 .color-B5{color:#EDF0FD;}
+		.d2-2845497917 .color-B6{color:#F7F8FE;}
+		.d2-2845497917 .color-AA2{color:#4A6FF3;}
+		.d2-2845497917 .color-AA4{color:#EDF0FD;}
+		.d2-2845497917 .color-AA5{color:#F7F8FE;}
+		.d2-2845497917 .color-AB4{color:#EDF0FD;}
+		.d2-2845497917 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2845497917);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2845497917);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2845497917);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2845497917);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2845497917);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2845497917);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2845497917);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2845497917);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="RU5W"><g class="shape" ><rect x="0.000000" y="8.000000" width="236.000000" height="82.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="118.000000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="118.000000" dy="0.000000">🔴 GITHUB_TOKEN env var</tspan><tspan x="118.000000" dy="18.500000">[REDACTED]</tspan></text></g><g class="R0M="><g class="shape" ><rect x="296.000000" y="8.000000" width="202.000000" height="82.000000" stroke="#868e96" fill="#e9ecef" style="stroke-width:2;" /></g><text x="397.000000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="397.000000" dy="0.000000">⚪ ~/.git-credentials</tspan><tspan x="397.000000" dy="18.500000">&lt;b&gt;Does not exist&lt;/b&gt;</tspan></text></g><g class="SEVMUEVS"><g class="shape" ><rect x="558.000000" y="8.000000" width="214.000000" height="82.000000" stroke="#868e96" fill="#e9ecef" style="stroke-width:2;" /></g><text x="665.000000" y="46.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="665.000000" dy="0.000000">⚪ Git credential helper</tspan><tspan x="665.000000" dy="18.500000">&lt;b&gt;Not configured&lt;/b&gt;</tspan></text></g><g class="S1I="><g class="shape" ><rect x="35.000000" y="219.000000" width="167.000000" height="82.000000" stroke="#2b8a3e" fill="#51cf66" style="stroke-width:2;" /></g><text x="118.500000" y="257.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="118.500000" dy="0.000000">🟢 Keyring token</tspan><tspan x="118.500000" dy="18.500000">[REDACTED]</tspan></text></g><g class="U1NI"><g class="shape" ><rect x="832.000000" y="0.000000" width="271.000000" height="98.000000" stroke="#e67700" fill="#ffd43b" style="stroke-width:2;" /></g><text x="967.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="967.500000" dy="0.000000">🟡 SSH key</tspan><tspan x="967.500000" dy="17.666667">~/.ssh/id_ed25519</tspan><tspan x="967.500000" dy="17.666667">&lt;b&gt;EXISTS — Not registered&lt;/b&gt;</tspan></text></g><g class="KEVOViAtJmd0OyBLUilbMF0="><marker id="mk-d2-2845497917-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 118.000000 91.500000 C 118.000000 144.699997 118.000000 170.699997 118.000000 215.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2845497917-3488378134)" mask="url(#d2-2845497917)" /><text x="118.000000" y="160.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Blocks</text></g><g class="KFNTSCAtJmd0OyBTU0gpWzBd"><path d="M 1105.279834 15.541888 C 1157.733032 3.199000 1174.750000 0.000000 1179.875000 0.000000 C 1185.000000 0.000000 1191.833008 9.800000 1196.958008 24.500000 C 1202.083008 39.200001 1202.083008 58.799999 1196.958008 73.500000 C 1191.833008 88.199997 1157.733032 94.800003 1107.226677 82.916157" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2845497917-3488378134)" mask="url(#d2-2845497917)" /><text x="1202.500000" y="44.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1202.500000" dy="0.000000">Useless without</tspan><tspan x="1202.500000" dy="18.500000">GitHub registration</tspan></text></g><mask id="d2-2845497917" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1306" height="343">
+<rect x="-21" y="-21" width="1306" height="343" fill="white"></rect>
+<rect x="94.000000" y="144.000000" width="48" height="21" fill="black"></rect>
+<rect x="1138.000000" y="28.000000" width="129" height="37" fill="black"></rect>
+</mask></svg></svg>
+</div><p>Five credential slots. One broken and blocking. One valid but buried. One half-configured. Two empty. <strong>Pure entropy.</strong></p><hr /><h2 id="the-fix-(4-commands)">🔧 The Fix (4 Commands)</h2><h3 id="1.-switch-active-account-to-the-keyring-token">1. Switch active account to the keyring token</h3><pre><code class="language-bash">unset GITHUB_TOKEN
 gh auth switch --user nurazhardotcom
 # ✓ Switched active account for github.com to nurazhardotcom
 </code></pre><h3 id="2.-override-the-dummy-token-permanently-in-fish-config">2. Override the dummy token permanently in fish config</h3><pre><code class="language-bash">echo &apos;set -gx GITHUB_TOKEN (gh auth token 2&gt;/dev/null)&apos; &gt;&gt; ~/.config/fish/config.fish
@@ -220,33 +491,252 @@ gh ssh-key add ~/.ssh/id_ed25519.pub --title &quot;CachyOS laptop&quot;
 
 ssh -T git@github.com
 # Hi nurazhardotcom! You&apos;ve successfully authenticated
-</code></pre><hr /><h2 id="the-final-state-—-zero-entropy">✅ The Final State — Zero Entropy</h2><pre><code class="language-mermaid">graph TB
-    subgraph &quot;✅ After — Zero Entropy&quot;
-        direction TB
-        KR2[&quot;🟢 Keyring token (HTTPS)&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Active — Primary&lt;/b&gt;&quot;]
-        SSH2[&quot;🟢 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;Registered on GitHub&lt;/b&gt;&quot;]
-        FISH[&quot;🟢 config.fish override&lt;br/&gt;set -gx GITHUB_TOKEN (gh auth token)&lt;br/&gt;&lt;b&gt;Neutralizes IDE dummy token&lt;/b&gt;&quot;]
-    end
+</code></pre><hr /><h2 id="the-final-state-—-zero-entropy">✅ The Final State — Zero Entropy</h2><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+FISH: "🟢 config.fish override\nset -gx GITHUB_TOKEN (gh auth token)\n<b>Neutralizes IDE dummy token</b>" {
+  style.fill: "#51cf66"
+  style.stroke: "#2b8a3e"
+}
+GH: "🎯 github.com" {
+  style.fill: "#339af0"
+  style.stroke: "#1864ab"
+}
+KR2: "🟢 Keyring token (HTTPS)\n[REDACTED]" {
+  style.fill: "#51cf66"
+  style.stroke: "#2b8a3e"
+}
+SSH2: "🟢 SSH key\n~/.ssh/id_ed25519\n<b>Registered on GitHub</b>" {
+  style.fill: "#51cf66"
+  style.stroke: "#2b8a3e"
+}
+#
+FISH -> KR2: "Feeds real token to"
+KR2 -> GH: "HTTPS transport"
+SSH2 -> GH: "SSH transport"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 629 546"><svg class="d2-1286978659 d2-svg" width="629" height="546" viewBox="-21 -21 629 546"><rect x="-21.000000" y="-21.000000" width="629.000000" height="546.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1286978659 .text-bold {
+	font-family: "d2-1286978659-font-bold";
+}
+@font-face {
+	font-family: d2-1286978659-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-1286978659 .text-italic {
+	font-family: "d2-1286978659-font-italic";
+}
+@font-face {
+	font-family: d2-1286978659-font-italic;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAABOEAAoAAAAAHZwAARhRAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgW1SVeGNtYXAAAAFUAAAA5gAAAUYIKQlzZ2x5ZgAAAjwAAAw0AAARFPn0FEFoZWFkAAAOcAAAADYAAAA2G7Ur2mhoZWEAAA6oAAAAJAAAACQLeAjfaG10eAAADswAAADWAAAA7GhcBZtsb2NhAAAPpAAAAHgAAAB4hMyJOm1heHAAABAcAAAAIAAAACAAUwD2bmFtZQAAEDwAAAMmAAAIMgntVzNwb3N0AAATZAAAACAAAAAg/8YAMgADAeEBkAAFAAACigJY//EASwKKAlgARAFeADIBIwAAAgsFAwMEAwkCBCAAAHcAAAADAAAAAAAAAABBREJPAAEAIP//Au7/BgAAA9gBESAAAZMAAAAAAeYClAAAACAAA3iclM65SmMBGEDh7yaZzGQmk9n37c6miZrEROOGCJYSEBGsRMRSbMRCxMJXcikFRR/BSlvfQZDY/KIEe0/9FQeJrARFuWQCNamcklRFVU1dU8u4SVNmtM1ZsGjJslXrNm3biUCq3PWNBz+tbdZ8169Ys2Hrzselggzy0YnruIqb6MRpnMRxHMVFnMdZHMR+7MVuHN7fPaZEQ1NdTUuffgOqRozKyMp5Iu+pZwqee6HopZJXXnvjrSHDBr3z3gcfffLZF199890PP/2S+u2Pv/75r0evsooxbgEAAP//AQAA//+S0jh/AAB4nHxXa3Ab13W+5+4Sywf4ABYPAiIJAgvsksDiQSyAJQgCIAi+CfApULREQpQs0XrQMi2ZfkSUE0utZLu1CmfUNEnVOhOneYzT1iOnnaZ1nRnH0zKW1dc4rVu77rR26FRqxjaH9SQecdHZXZAENdP8WewM7j33nO9833fPogrkRAifwdcQgapQPdIjI0ICbScIQRQZMyFwHENRIkfTlPMirF38Opk++LO2b/yKt5GDT31v9H8WXsLXtpbgS/Nf/KJ06Onjxw/cuSO54Z/vIIQQLt5ECH6KC6gK6RCiKYFjWY7RaAAEmuEY6oOuH1eT1SRpFaS34NjBzKT+5yfhieXl0KnO6APSJC5sLd+6hRCBGIRwKy4gHbLK7wItBE1Gg0ZDUSbllyGEYCQcYpndF+bSnx5e8qSdIAwMro515fMH+0cOnT6bP5MdfgQXRgb5Pr6S1KY6h+d5eHRQ9Aa3bvdngnE5b0DR4ib24uvIhlCFg2XDoQQWgiYzxbKMow4bDSaTEIyIZo0GHKMnIoGDFzKdk40ROsJ2He51OkZibelWxjmvTT8+lr322KDobm/l4sce747Nh1v3BW1eGRulpoiCDV1WEcMJwch2BV945rncCw/NzORW0w/cH8GFK0889oPjPfu/cmT+pJqnHKMBF1CN0jPKTgkUQ9kp5hKcqpU+cH9a97EAbB0upH7a+1lv2fqqsvVEabX309pPunEh9WGv9C/bGMTwdeRQMPh/IBAZUSA0GuAfvRA49NRkbNIi0mJb4mi/k8kknVHa9XTt30Wdee3zj49de2xgB4iufKSx4c96pA9bXDt1nNyuQyDstEAwtJ1gLo11Qltn9tJYUnongQvSHTBuLUOntKbuQZu4gAh1D3Np7JJMmJ14B3ABadX/BBAomiEoirk0liJgePaz35188hkvLkivQt9daQmOXn5vZ98iLpQ6QpuFSESUYxMyayn5jK+4SU1ddf/opew1D6mprx7ABWnumY4HBZjbWoYXnxNOBaUXlP52FzdxHl9HDai1HEGT0VCHuWACyz1WkQTbmRXfzMrAyPGQb+aRdPhAwjEyJj+Htb+3OlpY6e87Pz36/Ep/uvvoSvTISuzoStfCozsc8iq4Gco5xBD0rgx+OHd25Kn9J0Opw8dPZYaO48LIzMQDHdIvYXBiPCqgnTgcLqBaZNqNI0O2J9IP5h4+M31ueums2Hd//tjo0AIuDEwfOqOTPgCTdBtyUwMRv8pLbXETJHwduREyO1hOVMgSDrEcJ4spEtlhkkZjNJjMZlXFH6WX26LNObF70uvKuGPhuVhswSZYBnyucHOHM+MPxRa1XV0eT7Cv0xk0+azDYnAqGGrztbTbAvtYv8nbNCh2HQohQPMI4TAuIEquhhHtFEN8e+W1WrhZ+6MVnE2nt15R8xwvbir9NpU6pHRbTknmNq0wu+XYaQ05MjZa1dPfedA4mZlquqg9uWj0W2BZesbrGMjOnYYvS6evPiHjyBU34ZewgQwyouZd1QiiQDAio9FwsmZ2JPRKT4YfyQtcXEfSiSPJSpKZ1bPjTt4YbHKmw7YO7aHcwBNzQps9LlmHXP4en/9fWYd7eD6YjKt9sxU34RO8hoyyi8tIMxRDCxQlKBDvYZrilbe5uI4wJK9mORN27vcqx4ed6XBLoN0xyfgMgrbNHsdrry00ew7OyEf3uIfnhUTc7fqIdSBAruIm3IAN1LSnut1OllzxnfFjfPZImO82eWm2OTATiXa1RkwOa1a7ON93Lud3WAJmY99yunfAqgsaXGotXHETc2W17GL368Hr0hMNbLZQQm/MdS96XOvh17Y674UPK7X8CDaQFbnKz1OYb9fsODwhKHYsV/jhzEnv6FxATLVoK6Q3qlrT7uaouaV58mtFTOjbmXBee+pI//IU75sINgl1yQmXRScYbeCqaaxt6rDlECAPQvAcfhuZFV4mcbkSKMWMPblkTaqhfixudev3Ve/T2dsrdUe19+fgu9GKyZHp2hqRqg56phPSrIwZFJ2wARvIhnzlShNFjYbZyz6NhtiD3ksdM4yzqb8tMVJnYff74xOe4bkONqEj6OQifS7KTDo8po4mJiW0+N9jm8NmR6bnBMvP5NKP3BeU+UgcXgS7x/0PrKN9YDYQi6l6siEE7+A1ZFFcZJeHFMHQMoxymYTtajbQQLZP8YlwZSLTTZJDTUO+frx2J874U502p/Qm8IbG2lG3T/pusSjHRJ/jG5hFUYSQBnUN7Z71C7y24/G07PEcRdmuZhfwr2ZfXxmbX7biNakZ4Kb0s1+cPY8A8cVN9DleQ3oZrXBIlbjRUGr1gynN+ewFAB2hoaDapE3qLPj01vNUFaEHHCPJnXPxbdiQvU0+Uy3RXCpUs6fS8qKPJCmSnWa7Oir8s654hCQT2ThJDhqH+H4ZgwHTkKcf1oedHWIbL6Q6dS2Gchx233Zxhg3UWJ7DvTDLJ7ZP+fagrJxwL8g7+oN3YQPVo+ZyPagmoo4kqsjfHs/zI/ng+GF+NO/2TgqRoPzQnjjUfy7nU589vct9vYPp5b7eAWUO/KwowCewoWqbKsu4DjOKa1H0Hp+qfjapIVw5nyLxINtNY73tj8p96hZ+pcfmLQncduIFgJJRsT932Xf5sQobqKEMIzPFbmNTQzZnvBbjvgarM2OLw/o8H6/qq0zGpFsIineLm3ABNhB37/117/Ul317q5fVix7wlYO5h3fH2Tl+UH+Z9I00+WrCzHZHWRCgwpQ21sbY2H2PlbNZEuyflcra0GaxeWwurd3Tz3j6XnHN3cRNm8dKOv0ZE2SUExRnK/PWHPSESooM1GWdq33nthSjR5Kiz1uga/Nqkt95aC/poxeXLCem2Xt/SUl0hUvVy7M7iJnwM67I2zbt3XYn9dMliX9ph5lDzIN+fkS+ltv3aXlFnoyEivU1bZMrArGQdYQQV5xhC8J+wjmoRklVoMpWmJrg4mHGSGpLUOenfyUpbsC59xIwyzmEnWCSrsrf4NkLwT2pODM0J5tJmUaDMTOlbgaL4fzs05q6so8j61vrc9Nr943ylrppscNB5wB8umTijod249L+fnjX5TCbefE6O+3rRDx/AOrIiRCn9U0xxT3Z1WFPdWmfR610pi346w1ZUEqTOpf/tjPRfltjQP1JUtCoeZOAj6WN7lmEyDtBtferP8mrenyEEfwLr8hzNiCAPGCBQ1ZWQ/vdaiFdKfy1peVhNeKXfTKgYWRGCL+EnlflWlCeSiCgQAmWt/a2Fh6tzYuyRi9oeeD+odWy93rMd/w38rLyPERNESRjcjmgoO1VduXA17xfCrSkHxx8ITM26p1anwaD1TZ4/ep+P77bbAmz7fX3h/MLyUK+cA5L1jZ+Up9FdTke2Q9N2iqG2TUzzairfHDSlOt1DfDJk41vtE+Cp/e+Qzm0ZOpw+o0162+0hd1ZIdDforODtfbVSm5vOPBRXfKShuAl/i59F9YhHiFY5GwmV7IPe7kZk+4pSzlSKei4UbJxgIBZ0dTsbQv2GUGsiOJOstU/bB3JiPiaOe7wTD8IfiymHv8as7c/5RyRbwN7elT4/5WJmx5Ine8SjySPfeqxXxdxc3ERPoyUZc5Xvam0DJgvXZGp0aZtMVr7ZZOHVuf99qAaL/C0hk4/Rvlv7fulOK75X/A14ufjn8n+UaKecNfCT6tVgUDkjVZyAA/hdVI+QWbUG0axRPo7MX2i0iydGvKeWqgx1L/e8OLXyk7+at1yW/uMPfYsLrML94gS6XdrLRfTyjCE3RYYfvKdOV+nrg3KIl62Xwf4H/sXDLN3zzamVN/9SPreyeALm8RvyfGumZXMQqMrvf496+GvLNV8l5rx3Ja+a+98XTwCrrqMU3glER/VDv79c+dL3v+olsPfut9R1f1FcgG/iv1FqBAGG4EanlP0GsXj36yqWPnQF3sR1Mt9drrDLSFFGsxnelI7B9ZsXLty88u2u76QmAmTHOAIUQFfgLXWtGBbFMMeFK4yBt1ZX34LrV3rHO8jAROo7XWpcL5DwY/iyPA+Bw4d3SN6Ct7+vM/t8HGswMTqPJWlT350NHksSSKvD2tza5Hervz5PyfPRLVjf/ia0HckehXXFbAAN4lF0A9+Q+UCX8eFxuoUxG5oZPGo2WeyNJkvr/wEAAP//AQAA///8w5q4AAEAAAABGFGt/FajXw889QABA+gAAAAA2F2gzAAAAADdZi83/r3+3QgdA8kAAgADAAIAAAAAAAAAAQAAA9j+7wAACED+vf28CB0D6ADC/9EAAAAAAAAAAAAAADt4nBzNLUuDURzG4d99rwgqDAzTlRP+e/aE+RYdrhhkRdAgNrsgmCx+DaPfwWQxDpNgsKwIC0fMFsMUGTsy0xUvX9PhGTQvLx4S7tL3CaFvQm+Ej+j7imBGeIfwJeEbBu4S7hH6ZUVzzn3BsTeovU7SA5Vb1HqnUpue15CXSXySNCHxw2YjkbxKcoParTLVGUm3ZaZDBm6ypxH7ui9jjcqT7spUmbbyvyjT5IuWFv9HmSg4UFXG6rCkTnnVaXlUZluZXWW2Fi8w/AMAAP//AQAA//8UGTktAAAAAAAuAC4AUgCKALwA3gD2AQwBQgFcAWoBhgGsAd4CAgIqAmoCfgKmAt4DFgNEA3wDtgPeBCYEUARcBHYEmATaBQQFMgVsBYoFxgX0BiAGPgZqBpoGsgbKBvQHKAdsB4IHkAeeB7wH2gfuCAIIEggoCD4IZgh0CIoAAQAAADsAjAAMAGYABwABAAAAAAAAAAAAAAAAAAQAA3icnJTbThtXFIY/B9tterqoUERu0L5MpWRMoxAl4cqUoIyKcOpxepCqSoM9PojxzMgzmJIn6HXfom+Rqz5Gn6LqdbV/L4MdRUEgBPx79jr8a61/bWCT/9igVr8L/N2cG66x3fzZ8B2+aB4Z3mC/+ZnhOg8b/xhuMGi8NdzkQaNr+BPe1f80/ClP6r8ZvstW/dDw5zyubxr+csPxr+GveMK7Ba7BM/4wXGOLwvAdNvnV8Ab3sJi1OvfYMdzga7YNN9kGekyoSJmQMcIxZMKIM2YklEQkzJgwJGGAI6RNSqWvGbGQY/TBrzERFTNiRRxT4UiJSIkpGVvEt/LKea2MQ51mdtemYkzMiTxOiclw5IzIyUg4VZyKioIXtGhR0hffgoqSgJIJKQE5M0a06HDIET3GTChxHCqSZxaRM6TinFj5nVn4zvRJyCiN1RkZA/F04pfIO+QIR4dCtquRj9YiPMTxo7w9t1y23xLo160wW8+7ZBMzVz9TdSXVzbkmONatz9vmB+GKF7hb9WedyfU9Guh/pcgnnGn+A00qE5MM57ZoE0lBkbuPY1/nkEgd+YmQHq/o8Iaezm26dGlzTI+Ql/Lt0MXxHR2OOZBHKLy4O5RijvkFx/eEsvGxE+vPYmIJv1OYuktxnKmOKYV67pkHqjVRhTefsN+hfE0dpXz62iNv6TS/THsWMzJVFGI4VS+X2iitfwNTxFS1+Nle3fttmNvuLbf4glw77NW64OQnt2B03VSD9zRzrp+AmAE5J7LokzOlRcWFeL8m5owUx4G690pbUtG+9PF5LqSShKkYhGSKM6PQ39h0Exn3/prunb0lA/l7pqeXVd0mi1Ovrmb0Rt1b3kXW5WRlAi2bar6ipr64Zqb9RDu1yj+Sb6nXLecRoeIudvtDr8AOz9llj7Gy9HUzv7zzr4S32FMHTklkNZSmfQ2PCdgl4Cm77PKcp+/1csnGGR+3xmc1f5sD9umwd201C9sO+7xci/bxzH+J7Y7qcTy6PD279TQf3EC132jfrt7NribnpzG3aFfbcUzM1HNxW6s1ufsE/wMAAP//AQAA//9yoVFAAAAAAwAA//UAAP/OADIAAAAAAAAAAAAAAAAAAAAAAAAAAA==");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    FISH --&gt;|&quot;Feeds real token to&quot;| KR2
-    KR2 --&gt;|&quot;HTTPS transport&quot;| GH[&quot;🎯 github.com&quot;]
-    SSH2 --&gt;|&quot;SSH transport&quot;| GH
+		.d2-1286978659 .fill-N1{fill:#0A0F25;}
+		.d2-1286978659 .fill-N2{fill:#676C7E;}
+		.d2-1286978659 .fill-N3{fill:#9499AB;}
+		.d2-1286978659 .fill-N4{fill:#CFD2DD;}
+		.d2-1286978659 .fill-N5{fill:#DEE1EB;}
+		.d2-1286978659 .fill-N6{fill:#EEF1F8;}
+		.d2-1286978659 .fill-N7{fill:#FFFFFF;}
+		.d2-1286978659 .fill-B1{fill:#0D32B2;}
+		.d2-1286978659 .fill-B2{fill:#0D32B2;}
+		.d2-1286978659 .fill-B3{fill:#E3E9FD;}
+		.d2-1286978659 .fill-B4{fill:#E3E9FD;}
+		.d2-1286978659 .fill-B5{fill:#EDF0FD;}
+		.d2-1286978659 .fill-B6{fill:#F7F8FE;}
+		.d2-1286978659 .fill-AA2{fill:#4A6FF3;}
+		.d2-1286978659 .fill-AA4{fill:#EDF0FD;}
+		.d2-1286978659 .fill-AA5{fill:#F7F8FE;}
+		.d2-1286978659 .fill-AB4{fill:#EDF0FD;}
+		.d2-1286978659 .fill-AB5{fill:#F7F8FE;}
+		.d2-1286978659 .stroke-N1{stroke:#0A0F25;}
+		.d2-1286978659 .stroke-N2{stroke:#676C7E;}
+		.d2-1286978659 .stroke-N3{stroke:#9499AB;}
+		.d2-1286978659 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1286978659 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1286978659 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1286978659 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1286978659 .stroke-B1{stroke:#0D32B2;}
+		.d2-1286978659 .stroke-B2{stroke:#0D32B2;}
+		.d2-1286978659 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1286978659 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1286978659 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1286978659 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1286978659 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1286978659 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1286978659 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1286978659 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1286978659 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1286978659 .background-color-N1{background-color:#0A0F25;}
+		.d2-1286978659 .background-color-N2{background-color:#676C7E;}
+		.d2-1286978659 .background-color-N3{background-color:#9499AB;}
+		.d2-1286978659 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1286978659 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1286978659 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1286978659 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1286978659 .background-color-B1{background-color:#0D32B2;}
+		.d2-1286978659 .background-color-B2{background-color:#0D32B2;}
+		.d2-1286978659 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1286978659 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1286978659 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1286978659 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1286978659 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1286978659 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1286978659 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1286978659 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1286978659 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1286978659 .color-N1{color:#0A0F25;}
+		.d2-1286978659 .color-N2{color:#676C7E;}
+		.d2-1286978659 .color-N3{color:#9499AB;}
+		.d2-1286978659 .color-N4{color:#CFD2DD;}
+		.d2-1286978659 .color-N5{color:#DEE1EB;}
+		.d2-1286978659 .color-N6{color:#EEF1F8;}
+		.d2-1286978659 .color-N7{color:#FFFFFF;}
+		.d2-1286978659 .color-B1{color:#0D32B2;}
+		.d2-1286978659 .color-B2{color:#0D32B2;}
+		.d2-1286978659 .color-B3{color:#E3E9FD;}
+		.d2-1286978659 .color-B4{color:#E3E9FD;}
+		.d2-1286978659 .color-B5{color:#EDF0FD;}
+		.d2-1286978659 .color-B6{color:#F7F8FE;}
+		.d2-1286978659 .color-AA2{color:#4A6FF3;}
+		.d2-1286978659 .color-AA4{color:#EDF0FD;}
+		.d2-1286978659 .color-AA5{color:#F7F8FE;}
+		.d2-1286978659 .color-AB4{color:#EDF0FD;}
+		.d2-1286978659 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1286978659);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1286978659);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1286978659);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1286978659);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1286978659);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1286978659);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1286978659);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1286978659);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="RklTSA=="><g class="shape" ><rect x="0.000000" y="0.000000" width="319.000000" height="98.000000" stroke="#2b8a3e" fill="#51cf66" style="stroke-width:2;" /></g><text x="159.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="159.500000" dy="0.000000">🟢 config.fish override</tspan><tspan x="159.500000" dy="17.666667">set -gx GITHUB_TOKEN (gh auth token)</tspan><tspan x="159.500000" dy="17.666667">&lt;b&gt;Neutralizes IDE dummy token&lt;/b&gt;</tspan></text></g><g class="R0g="><g class="shape" ><rect x="235.000000" y="438.000000" width="149.000000" height="66.000000" stroke="#1864ab" fill="#339af0" style="stroke-width:2;" /></g><text x="309.500000" y="476.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🎯 github.com</text></g><g class="S1Iy"><g class="shape" ><rect x="46.000000" y="227.000000" width="228.000000" height="82.000000" stroke="#2b8a3e" fill="#51cf66" style="stroke-width:2;" /></g><text x="160.000000" y="265.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="160.000000" dy="0.000000">🟢 Keyring token (HTTPS)</tspan><tspan x="160.000000" dy="18.500000">[REDACTED]</tspan></text></g><g class="U1NIMg=="><g class="shape" ><rect x="334.000000" y="219.000000" width="253.000000" height="98.000000" stroke="#2b8a3e" fill="#51cf66" style="stroke-width:2;" /></g><text x="460.500000" y="257.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="460.500000" dy="0.000000">🟢 SSH key</tspan><tspan x="460.500000" dy="17.666667">~/.ssh/id_ed25519</tspan><tspan x="460.500000" dy="17.666667">&lt;b&gt;Registered on GitHub&lt;/b&gt;</tspan></text></g><g class="KEZJU0ggLSZndDsgS1IyKVswXQ=="><marker id="mk-d2-1286978659-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 159.500000 99.500000 C 159.500000 146.300003 159.500000 172.300003 159.500000 223.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1286978659-3488378134)" mask="url(#d2-1286978659)" /><text x="160.000000" y="168.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Feeds real token to</text></g><g class="KEtSMiAtJmd0OyBHSClbMF0="><path d="M 159.500000 310.500000 C 159.500000 363.700012 178.699997 389.700012 252.123906 436.354775" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1286978659-3488378134)" mask="url(#d2-1286978659)" /><text x="180.500000" y="396.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">HTTPS transport</text></g><g class="KFNTSDIgLSZndDsgR0gpWzBd"><path d="M 460.000000 318.500000 C 460.000000 365.299988 440.799988 389.700012 367.376093 436.354774" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1286978659-3488378134)" mask="url(#d2-1286978659)" /><text x="436.000000" y="398.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">SSH transport</text></g><mask id="d2-1286978659" maskUnits="userSpaceOnUse" x="-21" y="-21" width="629" height="546">
+<rect x="-21" y="-21" width="629" height="546" fill="white"></rect>
+<rect x="96.000000" y="152.000000" width="128" height="21" fill="black"></rect>
+<rect x="124.000000" y="380.000000" width="113" height="21" fill="black"></rect>
+<rect x="388.000000" y="382.000000" width="96" height="21" fill="black"></rect>
+</mask></svg></svg>
+</div><table><thead><tr><th>Credential</th><th>Status</th></tr></thead><tbody><tr><td><strong>Keyring token</strong> (HTTPS)</td><td>✅ Active, valid, primary</td></tr><tr><td><strong>SSH key</strong></td><td>✅ Registered on GitHub</td></tr><tr><td><strong><code>config.fish</code> override</strong></td><td>✅ Neutralizes IDE dummy token</td></tr><tr><td><strong>Classic PAT</strong></td><td>🗑️ Deleted — nothing depends on it</td></tr><tr><td><strong><code>~/.git-credentials</code></strong></td><td>✅ Does not exist</td></tr></tbody></table><p><strong>One identity. Two transports. No conflicts. Zero entropy.</strong></p><hr /><h2 id="lessons-learned">🧠 Lessons Learned</h2><ol start="1"><li><p><strong>Environment variables win.</strong> If <code>GITHUB_TOKEN</code> is set, <code>gh</code> and Git will use it — even if it&apos;s garbage. Always check <code>env | grep GITHUB</code> before debugging auth failures.</p></li><li><p><strong>IDEs inject things.</strong> Development environments often set environment variables for their own internal use. These can silently override your carefully configured credentials.</p></li><li><p><strong>Audit all five credential slots.</strong> When auth fails, don&apos;t just re-generate a token. Check the full chain: env vars → keyring → SSH → credential files → credential helper.</p></li><li><p><strong>SSH keys need two halves.</strong> A key on disk without a matching registration on GitHub is dead weight. Always verify with <code>ssh -T git@github.com</code>.</p></li><li><p><strong><code>gh auth status</code> is your friend.</strong> It shows you the complete picture — which accounts exist, which is active, and what&apos;s broken.</p></li></ol><hr /><h2 id="quick-reference:-auth-debugging-cheatsheet">📋 Quick Reference: Auth Debugging Cheatsheet</h2><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+A: "Auth fails" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#333"
+}
+B: "gh auth status"
+C: "env | grep GITHUB"
+D: "ssh -T git@github.com"
+E: "cat ~/.git-credentials"
+F: "git config credential.helper"
+G: "Fix the broken link\nin the chain" {
+  style.fill: "#51cf66"
+  style.stroke: "#333"
+}
+#
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1673 242"><svg class="d2-1954990328 d2-svg" width="1673" height="242" viewBox="-21 -21 1673 242"><rect x="-21.000000" y="-21.000000" width="1673.000000" height="242.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1954990328 .text-bold {
+	font-family: "d2-1954990328-font-bold";
+}
+@font-face {
+	font-family: d2-1954990328-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style KR2 fill:#51cf66,stroke:#2b8a3e,color:#000
-    style SSH2 fill:#51cf66,stroke:#2b8a3e,color:#000
-    style FISH fill:#51cf66,stroke:#2b8a3e,color:#000
-    style GH fill:#339af0,stroke:#1864ab,color:#fff
-</code></pre><table><thead><tr><th>Credential</th><th>Status</th></tr></thead><tbody><tr><td><strong>Keyring token</strong> (HTTPS)</td><td>✅ Active, valid, primary</td></tr><tr><td><strong>SSH key</strong></td><td>✅ Registered on GitHub</td></tr><tr><td><strong><code>config.fish</code> override</strong></td><td>✅ Neutralizes IDE dummy token</td></tr><tr><td><strong>Classic PAT</strong></td><td>🗑️ Deleted — nothing depends on it</td></tr><tr><td><strong><code>~/.git-credentials</code></strong></td><td>✅ Does not exist</td></tr></tbody></table><p><strong>One identity. Two transports. No conflicts. Zero entropy.</strong></p><hr /><h2 id="lessons-learned">🧠 Lessons Learned</h2><ol start="1"><li><p><strong>Environment variables win.</strong> If <code>GITHUB_TOKEN</code> is set, <code>gh</code> and Git will use it — even if it&apos;s garbage. Always check <code>env | grep GITHUB</code> before debugging auth failures.</p></li><li><p><strong>IDEs inject things.</strong> Development environments often set environment variables for their own internal use. These can silently override your carefully configured credentials.</p></li><li><p><strong>Audit all five credential slots.</strong> When auth fails, don&apos;t just re-generate a token. Check the full chain: env vars → keyring → SSH → credential files → credential helper.</p></li><li><p><strong>SSH keys need two halves.</strong> A key on disk without a matching registration on GitHub is dead weight. Always verify with <code>ssh -T git@github.com</code>.</p></li><li><p><strong><code>gh auth status</code> is your friend.</strong> It shows you the complete picture — which accounts exist, which is active, and what&apos;s broken.</p></li></ol><hr /><h2 id="quick-reference:-auth-debugging-cheatsheet">📋 Quick Reference: Auth Debugging Cheatsheet</h2><pre><code class="language-mermaid">flowchart LR
-    A[&quot;Auth fails&quot;] --&gt; B[&quot;gh auth status&quot;]
-    B --&gt; C[&quot;env | grep GITHUB&quot;]
-    C --&gt; D[&quot;ssh -T git@github.com&quot;]
-    D --&gt; E[&quot;cat ~/.git-credentials&quot;]
-    E --&gt; F[&quot;git config credential.helper&quot;]
-    F --&gt; G[&quot;Fix the broken link&lt;br/&gt;in the chain&quot;]
-
-    style A fill:#ff6b6b,stroke:#333,color:#fff
-    style G fill:#51cf66,stroke:#333
-</code></pre><table><thead><tr><th>Command</th><th>What it checks</th></tr></thead><tbody><tr><td><code>gh auth status</code></td><td>OAuth/keyring tokens, active account</td></tr><tr><td><code>env | grep GITHUB</code></td><td>Environment variable overrides</td></tr><tr><td><code>ssh -T git@github.com</code></td><td>SSH key registration</td></tr><tr><td><code>cat ~/.git-credentials</code></td><td>Stored plaintext credentials</td></tr><tr><td><code>git config credential.helper</code></td><td>Credential helper configuration</td></tr></tbody></table></div>
+		.d2-1954990328 .fill-N1{fill:#0A0F25;}
+		.d2-1954990328 .fill-N2{fill:#676C7E;}
+		.d2-1954990328 .fill-N3{fill:#9499AB;}
+		.d2-1954990328 .fill-N4{fill:#CFD2DD;}
+		.d2-1954990328 .fill-N5{fill:#DEE1EB;}
+		.d2-1954990328 .fill-N6{fill:#EEF1F8;}
+		.d2-1954990328 .fill-N7{fill:#FFFFFF;}
+		.d2-1954990328 .fill-B1{fill:#0D32B2;}
+		.d2-1954990328 .fill-B2{fill:#0D32B2;}
+		.d2-1954990328 .fill-B3{fill:#E3E9FD;}
+		.d2-1954990328 .fill-B4{fill:#E3E9FD;}
+		.d2-1954990328 .fill-B5{fill:#EDF0FD;}
+		.d2-1954990328 .fill-B6{fill:#F7F8FE;}
+		.d2-1954990328 .fill-AA2{fill:#4A6FF3;}
+		.d2-1954990328 .fill-AA4{fill:#EDF0FD;}
+		.d2-1954990328 .fill-AA5{fill:#F7F8FE;}
+		.d2-1954990328 .fill-AB4{fill:#EDF0FD;}
+		.d2-1954990328 .fill-AB5{fill:#F7F8FE;}
+		.d2-1954990328 .stroke-N1{stroke:#0A0F25;}
+		.d2-1954990328 .stroke-N2{stroke:#676C7E;}
+		.d2-1954990328 .stroke-N3{stroke:#9499AB;}
+		.d2-1954990328 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1954990328 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1954990328 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1954990328 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1954990328 .stroke-B1{stroke:#0D32B2;}
+		.d2-1954990328 .stroke-B2{stroke:#0D32B2;}
+		.d2-1954990328 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1954990328 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1954990328 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1954990328 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1954990328 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1954990328 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1954990328 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1954990328 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1954990328 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1954990328 .background-color-N1{background-color:#0A0F25;}
+		.d2-1954990328 .background-color-N2{background-color:#676C7E;}
+		.d2-1954990328 .background-color-N3{background-color:#9499AB;}
+		.d2-1954990328 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1954990328 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1954990328 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1954990328 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1954990328 .background-color-B1{background-color:#0D32B2;}
+		.d2-1954990328 .background-color-B2{background-color:#0D32B2;}
+		.d2-1954990328 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1954990328 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1954990328 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1954990328 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1954990328 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1954990328 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1954990328 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1954990328 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1954990328 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1954990328 .color-N1{color:#0A0F25;}
+		.d2-1954990328 .color-N2{color:#676C7E;}
+		.d2-1954990328 .color-N3{color:#9499AB;}
+		.d2-1954990328 .color-N4{color:#CFD2DD;}
+		.d2-1954990328 .color-N5{color:#DEE1EB;}
+		.d2-1954990328 .color-N6{color:#EEF1F8;}
+		.d2-1954990328 .color-N7{color:#FFFFFF;}
+		.d2-1954990328 .color-B1{color:#0D32B2;}
+		.d2-1954990328 .color-B2{color:#0D32B2;}
+		.d2-1954990328 .color-B3{color:#E3E9FD;}
+		.d2-1954990328 .color-B4{color:#E3E9FD;}
+		.d2-1954990328 .color-B5{color:#EDF0FD;}
+		.d2-1954990328 .color-B6{color:#F7F8FE;}
+		.d2-1954990328 .color-AA2{color:#4A6FF3;}
+		.d2-1954990328 .color-AA4{color:#EDF0FD;}
+		.d2-1954990328 .color-AA5{color:#F7F8FE;}
+		.d2-1954990328 .color-AB4{color:#EDF0FD;}
+		.d2-1954990328 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1954990328);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1954990328);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1954990328);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1954990328);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1954990328);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1954990328);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1954990328);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1954990328);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="17.000000" y="0.000000" width="113.000000" height="66.000000" stroke="#333" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="73.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Auth fails</text></g><g class="Qg=="><g class="shape" ><rect x="0.000000" y="126.000000" width="146.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="73.000000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">gh auth status</text></g><g class="Qw=="><g class="shape" ><rect x="246.000000" y="126.000000" width="173.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="332.500000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">env | grep GITHUB</text></g><g class="RA=="><g class="shape" ><rect x="519.000000" y="126.000000" width="204.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="621.000000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">ssh -T git@github.com</text></g><g class="RQ=="><g class="shape" ><rect x="823.000000" y="126.000000" width="193.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="919.500000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">cat ~/.git-credentials</text></g><g class="Rg=="><g class="shape" ><rect x="1116.000000" y="126.000000" width="238.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1235.000000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">git config credential.helper</text></g><g class="Rw=="><g class="shape" ><rect x="1454.000000" y="118.000000" width="177.000000" height="82.000000" stroke="#333" fill="#51cf66" style="stroke-width:2;" /></g><text x="1542.500000" y="156.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="1542.500000" dy="0.000000">Fix the broken link</tspan><tspan x="1542.500000" dy="18.500000">in the chain</tspan></text></g><g class="KEIgLSZndDsgQylbMF0="><marker id="mk-d2-1954990328-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 148.000000 159.000000 C 186.000000 159.000000 206.000000 159.000000 242.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1954990328-3488378134)" mask="url(#d2-1954990328)" /></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 421.000000 159.000000 C 459.000000 159.000000 479.000000 159.000000 515.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1954990328-3488378134)" mask="url(#d2-1954990328)" /></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 725.000000 159.000000 C 763.000000 159.000000 783.000000 159.000000 819.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1954990328-3488378134)" mask="url(#d2-1954990328)" /></g><g class="KEUgLSZndDsgRilbMF0="><path d="M 1018.000000 159.000000 C 1056.000000 159.000000 1076.000000 159.000000 1112.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1954990328-3488378134)" mask="url(#d2-1954990328)" /></g><g class="KEYgLSZndDsgRylbMF0="><path d="M 1356.000000 159.000000 C 1394.000000 159.000000 1414.000000 159.000000 1450.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1954990328-3488378134)" mask="url(#d2-1954990328)" /></g><mask id="d2-1954990328" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1673" height="242">
+<rect x="-21" y="-21" width="1673" height="242" fill="white"></rect><p></mask></svg></svg></p></div><table><thead><tr><th>Command</th><th>What it checks</th></tr></thead><tbody><tr><td><code>gh auth status</code></td><td>OAuth/keyring tokens, active account</td></tr><tr><td><code>env | grep GITHUB</code></td><td>Environment variable overrides</td></tr><tr><td><code>ssh -T git@github.com</code></td><td>SSH key registration</td></tr><tr><td><code>cat ~/.git-credentials</code></td><td>Stored plaintext credentials</td></tr><tr><td><code>git config credential.helper</code></td><td>Credential helper configuration</td></tr></tbody></table></div>
 
 <p><i>Published: 2026-06-15</i></p>
 

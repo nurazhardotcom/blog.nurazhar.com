@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -152,80 +166,501 @@ done
   gh repo edit nurazhardotcom/$r --visibility public \
     --accept-visibility-change-consequences
 done
-</code></pre><p>Back to 21. But the damage wasn&apos;t over.</p><hr /><h2 id="the-cascade">🧵 The Cascade</h2><p>Here&apos;s what actually happened over the next 24 hours:</p><pre><code class="language-mermaid">flowchart TD
-    A[&quot;AI says: &apos;12 forks, make them private&apos;&quot;] --&gt; B[&quot;I say: &apos;yes&apos;&quot;]
-    B --&gt; C[&quot;12 repos → PRIVATE 😰&quot;]
-    C --&gt; D[&quot;I realize: advice was WRONG&quot;]
-    D --&gt; E[&quot;12 repos → PUBLIC again&quot;]
-    E --&gt; F[&quot;Write blog post about it 🎉&quot;]
-    F --&gt; G[&quot;Blog post references deleted repos 😱&quot;]
-    G --&gt; H[&quot;Delete 7 repos for real this time&quot;]
-    H --&gt; I[&quot;Scan 49 blog posts for dead links&quot;]
-    I --&gt; J[&quot;Fix 13 blog posts manually&quot;]
-    J --&gt; K[&quot;Write THIS post 😤&quot;]
+</code></pre><p>Back to 21. But the damage wasn&apos;t over.</p><hr /><h2 id="the-cascade">🧵 The Cascade</h2><p>Here&apos;s what actually happened over the next 24 hours:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+A: "AI says: '12 forks, make them private'" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+B: "I say: 'yes'" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+C: "12 repos → PRIVATE 😰" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+D: "I realize: advice was WRONG" {
+  style.fill: "#ffa94d"
+  style.stroke: "#e8590c"
+}
+E: "12 repos → PUBLIC again"
+F: "Write blog post about it 🎉" {
+  style.fill: "#51cf66"
+  style.stroke: "#2b8a3e"
+}
+G: "Blog post references deleted repos 😱" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+H: "Delete 7 repos for real this time" {
+  style.fill: "#ffa94d"
+  style.stroke: "#e8590c"
+}
+I: "Scan 49 blog posts for dead links"
+J: "Fix 13 blog posts manually"
+K: "Write THIS post 😤" {
+  style.fill: "#339af0"
+  style.stroke: "#1864ab"
+}
+#
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G
+G -> H
+H -> I
+I -> J
+J -> K
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 626 1602"><svg class="d2-1939070193 d2-svg" width="626" height="1602" viewBox="-21 -21 626 1602"><rect x="-21.000000" y="-21.000000" width="626.000000" height="1602.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1939070193 .text-bold {
+	font-family: "d2-1939070193-font-bold";
+}
+@font-face {
+	font-family: d2-1939070193-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style A fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style B fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style C fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style D fill:#ffa94d,stroke:#e8590c,color:#fff
-    style F fill:#51cf66,stroke:#2b8a3e,color:#000
-    style G fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style H fill:#ffa94d,stroke:#e8590c,color:#fff
-    style K fill:#339af0,stroke:#1864ab,color:#fff
-</code></pre><hr /><h2 id="the-part-that-really-pissed-me-off">🤦 The Part That Really Pissed Me Off</h2><p>It wasn&apos;t the visibility flip. That&apos;s reversible.</p><p>It was that <strong>I wrote a blog post about the mistake</strong> — and that blog post referenced repos I then <em>deleted</em>.</p><pre><code class="language-mermaid">flowchart LR
-    A[&quot;Write blog post\nabout deleted repos&quot;] --&gt; B[&quot;Then delete the repos&quot;]
-    B --&gt; C[&quot;Blog post now has\ndead links to nothing&quot;]
-    C --&gt; D[&quot;Scan 49 posts\nfor references&quot;]
-    D --&gt; E[&quot;Fix 13 posts\none by one&quot;]
-    E --&gt; F[&quot;Why did I write\na blog post FIRST?&quot;]
+		.d2-1939070193 .fill-N1{fill:#0A0F25;}
+		.d2-1939070193 .fill-N2{fill:#676C7E;}
+		.d2-1939070193 .fill-N3{fill:#9499AB;}
+		.d2-1939070193 .fill-N4{fill:#CFD2DD;}
+		.d2-1939070193 .fill-N5{fill:#DEE1EB;}
+		.d2-1939070193 .fill-N6{fill:#EEF1F8;}
+		.d2-1939070193 .fill-N7{fill:#FFFFFF;}
+		.d2-1939070193 .fill-B1{fill:#0D32B2;}
+		.d2-1939070193 .fill-B2{fill:#0D32B2;}
+		.d2-1939070193 .fill-B3{fill:#E3E9FD;}
+		.d2-1939070193 .fill-B4{fill:#E3E9FD;}
+		.d2-1939070193 .fill-B5{fill:#EDF0FD;}
+		.d2-1939070193 .fill-B6{fill:#F7F8FE;}
+		.d2-1939070193 .fill-AA2{fill:#4A6FF3;}
+		.d2-1939070193 .fill-AA4{fill:#EDF0FD;}
+		.d2-1939070193 .fill-AA5{fill:#F7F8FE;}
+		.d2-1939070193 .fill-AB4{fill:#EDF0FD;}
+		.d2-1939070193 .fill-AB5{fill:#F7F8FE;}
+		.d2-1939070193 .stroke-N1{stroke:#0A0F25;}
+		.d2-1939070193 .stroke-N2{stroke:#676C7E;}
+		.d2-1939070193 .stroke-N3{stroke:#9499AB;}
+		.d2-1939070193 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1939070193 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1939070193 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1939070193 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1939070193 .stroke-B1{stroke:#0D32B2;}
+		.d2-1939070193 .stroke-B2{stroke:#0D32B2;}
+		.d2-1939070193 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1939070193 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1939070193 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1939070193 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1939070193 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1939070193 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1939070193 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1939070193 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1939070193 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1939070193 .background-color-N1{background-color:#0A0F25;}
+		.d2-1939070193 .background-color-N2{background-color:#676C7E;}
+		.d2-1939070193 .background-color-N3{background-color:#9499AB;}
+		.d2-1939070193 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1939070193 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1939070193 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1939070193 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1939070193 .background-color-B1{background-color:#0D32B2;}
+		.d2-1939070193 .background-color-B2{background-color:#0D32B2;}
+		.d2-1939070193 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1939070193 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1939070193 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1939070193 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1939070193 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1939070193 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1939070193 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1939070193 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1939070193 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1939070193 .color-N1{color:#0A0F25;}
+		.d2-1939070193 .color-N2{color:#676C7E;}
+		.d2-1939070193 .color-N3{color:#9499AB;}
+		.d2-1939070193 .color-N4{color:#CFD2DD;}
+		.d2-1939070193 .color-N5{color:#DEE1EB;}
+		.d2-1939070193 .color-N6{color:#EEF1F8;}
+		.d2-1939070193 .color-N7{color:#FFFFFF;}
+		.d2-1939070193 .color-B1{color:#0D32B2;}
+		.d2-1939070193 .color-B2{color:#0D32B2;}
+		.d2-1939070193 .color-B3{color:#E3E9FD;}
+		.d2-1939070193 .color-B4{color:#E3E9FD;}
+		.d2-1939070193 .color-B5{color:#EDF0FD;}
+		.d2-1939070193 .color-B6{color:#F7F8FE;}
+		.d2-1939070193 .color-AA2{color:#4A6FF3;}
+		.d2-1939070193 .color-AA4{color:#EDF0FD;}
+		.d2-1939070193 .color-AA5{color:#F7F8FE;}
+		.d2-1939070193 .color-AB4{color:#EDF0FD;}
+		.d2-1939070193 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1939070193);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1939070193);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1939070193);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1939070193);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1939070193);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1939070193);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1939070193);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1939070193);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="0.000000" y="0.000000" width="310.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="155.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI says: &#39;12 forks, make them private&#39;</text></g><g class="Qg=="><g class="shape" ><rect x="370.000000" y="0.000000" width="117.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="428.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">I say: &#39;yes&#39;</text></g><g class="Qw=="><g class="shape" ><rect x="327.000000" y="166.000000" width="204.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="429.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">12 repos → PRIVATE 😰</text></g><g class="RA=="><g class="shape" ><rect x="307.000000" y="332.000000" width="243.000000" height="66.000000" stroke="#e8590c" fill="#ffa94d" style="stroke-width:2;" /></g><text x="428.500000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">I realize: advice was WRONG</text></g><g class="RQ=="><g class="shape" ><rect x="321.000000" y="498.000000" width="216.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="429.000000" y="536.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">12 repos → PUBLIC again</text></g><g class="Rg=="><g class="shape" ><rect x="312.000000" y="664.000000" width="234.000000" height="66.000000" stroke="#2b8a3e" fill="#51cf66" style="stroke-width:2;" /></g><text x="429.000000" y="702.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Write blog post about it 🎉</text></g><g class="Rw=="><g class="shape" ><rect x="273.000000" y="830.000000" width="311.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="428.500000" y="868.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Blog post references deleted repos 😱</text></g><g class="SA=="><g class="shape" ><rect x="296.000000" y="996.000000" width="265.000000" height="66.000000" stroke="#e8590c" fill="#ffa94d" style="stroke-width:2;" /></g><text x="428.500000" y="1034.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Delete 7 repos for real this time</text></g><g class="SQ=="><g class="shape" ><rect x="291.000000" y="1162.000000" width="275.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="428.500000" y="1200.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Scan 49 blog posts for dead links</text></g><g class="Sg=="><g class="shape" ><rect x="313.000000" y="1328.000000" width="232.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="429.000000" y="1366.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Fix 13 blog posts manually</text></g><g class="Sw=="><g class="shape" ><rect x="340.000000" y="1494.000000" width="177.000000" height="66.000000" stroke="#1864ab" fill="#339af0" style="stroke-width:2;" /></g><text x="428.500000" y="1532.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Write THIS post 😤</text></g><g class="KEIgLSZndDsgQylbMF0="><marker id="mk-d2-1939070193-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 428.500000 68.000000 C 428.500000 106.000000 428.500000 126.000000 428.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 428.500000 234.000000 C 428.500000 272.000000 428.500000 292.000000 428.500000 328.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 428.500000 400.000000 C 428.500000 438.000000 428.500000 458.000000 428.500000 494.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEUgLSZndDsgRilbMF0="><path d="M 428.500000 566.000000 C 428.500000 604.000000 428.500000 624.000000 428.500000 660.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEYgLSZndDsgRylbMF0="><path d="M 428.500000 732.000000 C 428.500000 770.000000 428.500000 790.000000 428.500000 826.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEcgLSZndDsgSClbMF0="><path d="M 428.500000 898.000000 C 428.500000 936.000000 428.500000 956.000000 428.500000 992.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEggLSZndDsgSSlbMF0="><path d="M 428.500000 1064.000000 C 428.500000 1102.000000 428.500000 1122.000000 428.500000 1158.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEkgLSZndDsgSilbMF0="><path d="M 428.500000 1230.000000 C 428.500000 1268.000000 428.500000 1288.000000 428.500000 1324.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><g class="KEogLSZndDsgSylbMF0="><path d="M 428.500000 1396.000000 C 428.500000 1434.000000 428.500000 1454.000000 428.500000 1490.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939070193-3488378134)" mask="url(#d2-1939070193)" /></g><mask id="d2-1939070193" maskUnits="userSpaceOnUse" x="-21" y="-21" width="626" height="1602">
+<rect x="-21" y="-21" width="626" height="1602" fill="white"></rect><p></mask></svg></svg></p></div><hr /><h2 id="the-part-that-really-pissed-me-off">🤦 The Part That Really Pissed Me Off</h2><p>It wasn&apos;t the visibility flip. That&apos;s reversible.</p><p>It was that <strong>I wrote a blog post about the mistake</strong> — and that blog post referenced repos I then <em>deleted</em>.</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+A: "Write blog post\nabout deleted repos" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+B: "Then delete the repos"
+C: "Blog post now has\ndead links to nothing" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+D: "Scan 49 posts\nfor references"
+E: "Fix 13 posts\none by one"
+F: "Why did I write\na blog post FIRST?" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+#
+B -> C
+C -> D
+D -> E
+E -> F
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1282 258"><svg class="d2-799678890 d2-svg" width="1282" height="258" viewBox="-21 -21 1282 258"><rect x="-21.000000" y="-21.000000" width="1282.000000" height="258.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-799678890 .text-bold {
+	font-family: "d2-799678890-font-bold";
+}
+@font-face {
+	font-family: d2-799678890-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style A fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style C fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style F fill:#ff6b6b,stroke:#c92a2a,color:#fff
-</code></pre><p>I documented the crime scene <em>before</em> cleaning it. Classic.</p><hr /><h2 id="the-damage-report">📊 The Damage Report</h2><pre><code class="language-mermaid">gantt
-    title 24 Hours of GitHub Chaos
-    dateFormat HH:mm
-    axisFormat %H:%M
+		.d2-799678890 .fill-N1{fill:#0A0F25;}
+		.d2-799678890 .fill-N2{fill:#676C7E;}
+		.d2-799678890 .fill-N3{fill:#9499AB;}
+		.d2-799678890 .fill-N4{fill:#CFD2DD;}
+		.d2-799678890 .fill-N5{fill:#DEE1EB;}
+		.d2-799678890 .fill-N6{fill:#EEF1F8;}
+		.d2-799678890 .fill-N7{fill:#FFFFFF;}
+		.d2-799678890 .fill-B1{fill:#0D32B2;}
+		.d2-799678890 .fill-B2{fill:#0D32B2;}
+		.d2-799678890 .fill-B3{fill:#E3E9FD;}
+		.d2-799678890 .fill-B4{fill:#E3E9FD;}
+		.d2-799678890 .fill-B5{fill:#EDF0FD;}
+		.d2-799678890 .fill-B6{fill:#F7F8FE;}
+		.d2-799678890 .fill-AA2{fill:#4A6FF3;}
+		.d2-799678890 .fill-AA4{fill:#EDF0FD;}
+		.d2-799678890 .fill-AA5{fill:#F7F8FE;}
+		.d2-799678890 .fill-AB4{fill:#EDF0FD;}
+		.d2-799678890 .fill-AB5{fill:#F7F8FE;}
+		.d2-799678890 .stroke-N1{stroke:#0A0F25;}
+		.d2-799678890 .stroke-N2{stroke:#676C7E;}
+		.d2-799678890 .stroke-N3{stroke:#9499AB;}
+		.d2-799678890 .stroke-N4{stroke:#CFD2DD;}
+		.d2-799678890 .stroke-N5{stroke:#DEE1EB;}
+		.d2-799678890 .stroke-N6{stroke:#EEF1F8;}
+		.d2-799678890 .stroke-N7{stroke:#FFFFFF;}
+		.d2-799678890 .stroke-B1{stroke:#0D32B2;}
+		.d2-799678890 .stroke-B2{stroke:#0D32B2;}
+		.d2-799678890 .stroke-B3{stroke:#E3E9FD;}
+		.d2-799678890 .stroke-B4{stroke:#E3E9FD;}
+		.d2-799678890 .stroke-B5{stroke:#EDF0FD;}
+		.d2-799678890 .stroke-B6{stroke:#F7F8FE;}
+		.d2-799678890 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-799678890 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-799678890 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-799678890 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-799678890 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-799678890 .background-color-N1{background-color:#0A0F25;}
+		.d2-799678890 .background-color-N2{background-color:#676C7E;}
+		.d2-799678890 .background-color-N3{background-color:#9499AB;}
+		.d2-799678890 .background-color-N4{background-color:#CFD2DD;}
+		.d2-799678890 .background-color-N5{background-color:#DEE1EB;}
+		.d2-799678890 .background-color-N6{background-color:#EEF1F8;}
+		.d2-799678890 .background-color-N7{background-color:#FFFFFF;}
+		.d2-799678890 .background-color-B1{background-color:#0D32B2;}
+		.d2-799678890 .background-color-B2{background-color:#0D32B2;}
+		.d2-799678890 .background-color-B3{background-color:#E3E9FD;}
+		.d2-799678890 .background-color-B4{background-color:#E3E9FD;}
+		.d2-799678890 .background-color-B5{background-color:#EDF0FD;}
+		.d2-799678890 .background-color-B6{background-color:#F7F8FE;}
+		.d2-799678890 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-799678890 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-799678890 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-799678890 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-799678890 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-799678890 .color-N1{color:#0A0F25;}
+		.d2-799678890 .color-N2{color:#676C7E;}
+		.d2-799678890 .color-N3{color:#9499AB;}
+		.d2-799678890 .color-N4{color:#CFD2DD;}
+		.d2-799678890 .color-N5{color:#DEE1EB;}
+		.d2-799678890 .color-N6{color:#EEF1F8;}
+		.d2-799678890 .color-N7{color:#FFFFFF;}
+		.d2-799678890 .color-B1{color:#0D32B2;}
+		.d2-799678890 .color-B2{color:#0D32B2;}
+		.d2-799678890 .color-B3{color:#E3E9FD;}
+		.d2-799678890 .color-B4{color:#E3E9FD;}
+		.d2-799678890 .color-B5{color:#EDF0FD;}
+		.d2-799678890 .color-B6{color:#F7F8FE;}
+		.d2-799678890 .color-AA2{color:#4A6FF3;}
+		.d2-799678890 .color-AA4{color:#EDF0FD;}
+		.d2-799678890 .color-AA5{color:#F7F8FE;}
+		.d2-799678890 .color-AB4{color:#EDF0FD;}
+		.d2-799678890 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-799678890);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-799678890);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-799678890);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-799678890);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-799678890);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-799678890);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-799678890);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-799678890);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="6.000000" y="0.000000" width="187.000000" height="82.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="99.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="99.500000" dy="0.000000">Write blog post</tspan><tspan x="99.500000" dy="18.500000">about deleted repos</tspan></text></g><g class="Qg=="><g class="shape" ><rect x="0.000000" y="142.000000" width="199.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="99.500000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Then delete the repos</text></g><g class="Qw=="><g class="shape" ><rect x="299.000000" y="134.000000" width="195.000000" height="82.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="396.500000" y="172.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="396.500000" dy="0.000000">Blog post now has</tspan><tspan x="396.500000" dy="18.500000">dead links to nothing</tspan></text></g><g class="RA=="><g class="shape" ><rect x="594.000000" y="134.000000" width="144.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="666.000000" y="172.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="666.000000" dy="0.000000">Scan 49 posts</tspan><tspan x="666.000000" dy="18.500000">for references</tspan></text></g><g class="RQ=="><g class="shape" ><rect x="838.000000" y="134.000000" width="128.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="902.000000" y="172.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="902.000000" dy="0.000000">Fix 13 posts</tspan><tspan x="902.000000" dy="18.500000">one by one</tspan></text></g><g class="Rg=="><g class="shape" ><rect x="1066.000000" y="134.000000" width="174.000000" height="82.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="1153.000000" y="172.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="1153.000000" dy="0.000000">Why did I write</tspan><tspan x="1153.000000" dy="18.500000">a blog post FIRST?</tspan></text></g><g class="KEIgLSZndDsgQylbMF0="><marker id="mk-d2-799678890-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 201.000000 175.000000 C 239.000000 175.000000 259.000000 175.000000 295.000000 175.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-799678890-3488378134)" mask="url(#d2-799678890)" /></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 496.000000 175.000000 C 534.000000 175.000000 554.000000 175.000000 590.000000 175.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-799678890-3488378134)" mask="url(#d2-799678890)" /></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 740.000000 175.000000 C 778.000000 175.000000 798.000000 175.000000 834.000000 175.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-799678890-3488378134)" mask="url(#d2-799678890)" /></g><g class="KEUgLSZndDsgRilbMF0="><path d="M 968.000000 175.000000 C 1006.000000 175.000000 1026.000000 175.000000 1062.000000 175.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-799678890-3488378134)" mask="url(#d2-799678890)" /></g><mask id="d2-799678890" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1282" height="258">
+<rect x="-21" y="-21" width="1282" height="258" fill="white"></rect><p></mask></svg></svg></p></div><p>I documented the crime scene <em>before</em> cleaning it. Classic.</p><hr /><h2 id="the-damage-report">📊 The Damage Report</h2><table><thead><tr><th>Metric</th><th>Count</th></tr></thead><tbody><tr><td>Repos flipped to private</td><td>12</td></tr><tr><td>Repos flipped back to public</td><td>12</td></tr><tr><td>Repos deleted</td><td>7</td></tr><tr><td>Blog posts referencing deleted repos</td><td>14</td></tr><tr><td>Blog posts fixed</td><td>13</td></tr><tr><td>Hours wasted</td><td>~24</td></tr><tr><td>Times I said &quot;fuck&quot;</td><td>🔴🔴🔴🔴🔴</td></tr></tbody></table><hr /><h2 id="what-i-actually-learned">🧠 What I Actually Learned</h2><h3 id="1.-ai-confidence-≠-accuracy">1. AI Confidence ≠ Accuracy</h3><p>The AI wasn&apos;t hedging. It wasn&apos;t saying &quot;I think&quot; or &quot;maybe.&quot; It produced a <strong>table</strong>. Tables look authoritative. Tables look verified.</p><p>They weren&apos;t.</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+A: "AI output has tables"
+B: "Looks authoritative"
+C: "Looks verified"
+D: "I trust it"
+E: "I don't check"
+F: 🫠 {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+#
+A -> C
+B -> D
+C -> D
+D -> E
+E -> F
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1113 234"><svg class="d2-3520928857 d2-svg" width="1113" height="234" viewBox="-21 -21 1113 234"><rect x="-21.000000" y="-21.000000" width="1113.000000" height="234.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3520928857 .text-bold {
+	font-family: "d2-3520928857-font-bold";
+}
+@font-face {
+	font-family: d2-3520928857-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    section June 18
-    AI audit gives bad advice     :done, a1, 14:00, 1h
-    I say &quot;yes&quot; without checking  :crit, a2, after a1, 5m
-    12 repos go private           :active, a3, after a2, 30m
-
-    section June 19
-    Realize advice was wrong     :done, b1, 08:00, 30m
-    Flip 12 repos back to public  :active, b2, after b1, 30m
-    Write blog post about it      :b3, after b2, 1h
-    Delete 7 repos for real       :crit, b4, after b3, 30m
-    Blog post references dead repos :crit, b5, after b4, 10m
-    Scan and fix 13 blog posts    :active, b6, after b5, 2h
-    Write THIS post               :b7, after b6, 1h
-</code></pre><table><thead><tr><th>Metric</th><th>Count</th></tr></thead><tbody><tr><td>Repos flipped to private</td><td>12</td></tr><tr><td>Repos flipped back to public</td><td>12</td></tr><tr><td>Repos deleted</td><td>7</td></tr><tr><td>Blog posts referencing deleted repos</td><td>14</td></tr><tr><td>Blog posts fixed</td><td>13</td></tr><tr><td>Hours wasted</td><td>~24</td></tr><tr><td>Times I said &quot;fuck&quot;</td><td>🔴🔴🔴🔴🔴</td></tr></tbody></table><hr /><h2 id="what-i-actually-learned">🧠 What I Actually Learned</h2><h3 id="1.-ai-confidence-≠-accuracy">1. AI Confidence ≠ Accuracy</h3><p>The AI wasn&apos;t hedging. It wasn&apos;t saying &quot;I think&quot; or &quot;maybe.&quot; It produced a <strong>table</strong>. Tables look authoritative. Tables look verified.</p><p>They weren&apos;t.</p><pre><code class="language-mermaid">flowchart LR
-    A[&quot;AI output has tables&quot;] --&gt; B[&quot;Looks authoritative&quot;]
-    A --&gt; C[&quot;Looks verified&quot;]
-    B --&gt; D[&quot;I trust it&quot;]
-    C --&gt; D
-    D --&gt; E[&quot;I don&apos;t check&quot;]
-    E --&gt; F[&quot;🫠&quot;]
-
-    style F fill:#ff6b6b,stroke:#c92a2a,color:#fff
-</code></pre><h3 id="2.-one-api-call-would-have-prevented-everything">2. One API Call Would Have Prevented Everything</h3><pre><code class="language-bash">gh api repos/nurazhardotcom/bitcoin --jq &apos;.fork&apos;
+		.d2-3520928857 .fill-N1{fill:#0A0F25;}
+		.d2-3520928857 .fill-N2{fill:#676C7E;}
+		.d2-3520928857 .fill-N3{fill:#9499AB;}
+		.d2-3520928857 .fill-N4{fill:#CFD2DD;}
+		.d2-3520928857 .fill-N5{fill:#DEE1EB;}
+		.d2-3520928857 .fill-N6{fill:#EEF1F8;}
+		.d2-3520928857 .fill-N7{fill:#FFFFFF;}
+		.d2-3520928857 .fill-B1{fill:#0D32B2;}
+		.d2-3520928857 .fill-B2{fill:#0D32B2;}
+		.d2-3520928857 .fill-B3{fill:#E3E9FD;}
+		.d2-3520928857 .fill-B4{fill:#E3E9FD;}
+		.d2-3520928857 .fill-B5{fill:#EDF0FD;}
+		.d2-3520928857 .fill-B6{fill:#F7F8FE;}
+		.d2-3520928857 .fill-AA2{fill:#4A6FF3;}
+		.d2-3520928857 .fill-AA4{fill:#EDF0FD;}
+		.d2-3520928857 .fill-AA5{fill:#F7F8FE;}
+		.d2-3520928857 .fill-AB4{fill:#EDF0FD;}
+		.d2-3520928857 .fill-AB5{fill:#F7F8FE;}
+		.d2-3520928857 .stroke-N1{stroke:#0A0F25;}
+		.d2-3520928857 .stroke-N2{stroke:#676C7E;}
+		.d2-3520928857 .stroke-N3{stroke:#9499AB;}
+		.d2-3520928857 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3520928857 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3520928857 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3520928857 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3520928857 .stroke-B1{stroke:#0D32B2;}
+		.d2-3520928857 .stroke-B2{stroke:#0D32B2;}
+		.d2-3520928857 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3520928857 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3520928857 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3520928857 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3520928857 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3520928857 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3520928857 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3520928857 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3520928857 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3520928857 .background-color-N1{background-color:#0A0F25;}
+		.d2-3520928857 .background-color-N2{background-color:#676C7E;}
+		.d2-3520928857 .background-color-N3{background-color:#9499AB;}
+		.d2-3520928857 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3520928857 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3520928857 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3520928857 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3520928857 .background-color-B1{background-color:#0D32B2;}
+		.d2-3520928857 .background-color-B2{background-color:#0D32B2;}
+		.d2-3520928857 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3520928857 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3520928857 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3520928857 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3520928857 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3520928857 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3520928857 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3520928857 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3520928857 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3520928857 .color-N1{color:#0A0F25;}
+		.d2-3520928857 .color-N2{color:#676C7E;}
+		.d2-3520928857 .color-N3{color:#9499AB;}
+		.d2-3520928857 .color-N4{color:#CFD2DD;}
+		.d2-3520928857 .color-N5{color:#DEE1EB;}
+		.d2-3520928857 .color-N6{color:#EEF1F8;}
+		.d2-3520928857 .color-N7{color:#FFFFFF;}
+		.d2-3520928857 .color-B1{color:#0D32B2;}
+		.d2-3520928857 .color-B2{color:#0D32B2;}
+		.d2-3520928857 .color-B3{color:#E3E9FD;}
+		.d2-3520928857 .color-B4{color:#E3E9FD;}
+		.d2-3520928857 .color-B5{color:#EDF0FD;}
+		.d2-3520928857 .color-B6{color:#F7F8FE;}
+		.d2-3520928857 .color-AA2{color:#4A6FF3;}
+		.d2-3520928857 .color-AA4{color:#EDF0FD;}
+		.d2-3520928857 .color-AA5{color:#F7F8FE;}
+		.d2-3520928857 .color-AB4{color:#EDF0FD;}
+		.d2-3520928857 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3520928857);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3520928857);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3520928857);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3520928857);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3520928857);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3520928857);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3520928857);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3520928857);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="0.000000" y="126.000000" width="187.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="93.500000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI output has tables</text></g><g class="Qg=="><g class="shape" ><rect x="287.000000" y="0.000000" width="184.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="379.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Looks authoritative</text></g><g class="Qw=="><g class="shape" ><rect x="307.000000" y="126.000000" width="144.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="379.000000" y="164.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Looks verified</text></g><g class="RA=="><g class="shape" ><rect x="571.000000" y="63.000000" width="101.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="621.500000" y="101.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">I trust it</text></g><g class="RQ=="><g class="shape" ><rect x="772.000000" y="63.000000" width="135.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="839.500000" y="101.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">I don&#39;t check</text></g><g class="Rg=="><g class="shape" ><rect x="1007.000000" y="63.000000" width="64.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="1039.000000" y="101.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">🫠</text></g><g class="KEEgLSZndDsgQylbMF0="><marker id="mk-d2-3520928857-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 189.000000 159.000000 C 227.000000 159.000000 251.000000 159.000000 303.000000 159.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3520928857-3488378134)" mask="url(#d2-3520928857)" /></g><g class="KEIgLSZndDsgRClbMF0="><path d="M 473.000000 33.000000 C 511.000000 33.000000 531.000000 39.200001 567.600389 61.892241" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3520928857-3488378134)" mask="url(#d2-3520928857)" /></g><g class="KEMgLSZndDsgRClbMF0="><path d="M 453.000000 159.000000 C 507.000000 159.000000 531.000000 152.800003 567.600389 130.107759" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3520928857-3488378134)" mask="url(#d2-3520928857)" /></g><g class="KEQgLSZndDsgRSlbMF0="><path d="M 674.000000 96.000000 C 712.000000 96.000000 732.000000 96.000000 768.000000 96.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3520928857-3488378134)" mask="url(#d2-3520928857)" /></g><g class="KEUgLSZndDsgRilbMF0="><path d="M 909.000000 96.000000 C 947.000000 96.000000 967.000000 96.000000 1003.000000 96.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3520928857-3488378134)" mask="url(#d2-3520928857)" /></g><mask id="d2-3520928857" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1113" height="234">
+<rect x="-21" y="-21" width="1113" height="234" fill="white"></rect><p></mask></svg></svg></p></div><h3 id="2.-one-api-call-would-have-prevented-everything">2. One API Call Would Have Prevented Everything</h3><pre><code class="language-bash">gh api repos/nurazhardotcom/bitcoin --jq &apos;.fork&apos;
 # {&quot;fork&quot;: false}
-</code></pre><p>Five seconds. One command. Would have saved 24 hours.</p><p>I didn&apos;t run it because the AI&apos;s table <em>felt</em> like it had already done that work.</p><h3 id="3.-&quot;clean-signal&quot;-is-bullshit">3. &quot;Clean Signal&quot; Is Bullshit</h3><p>The advice said: &quot;21 repos = noise. Clean signal: 3–5 relevant projects.&quot;</p><p><strong>Nobody has ever been rejected from a job for having too many public repos.</strong></p><p>Hiring managers look at:</p><ul><li>Can you build things? ✅ (21 repos says yes)</li><li>Can you write? ✅ (49 blog posts says yes)</li><li>Can you secure systems? ✅ (7 years IT ops says yes)</li></ul><p>The &quot;clean signal&quot; thing was someone&apos;s aesthetic preference dressed up as career strategy.</p><h3 id="4.-deleting-repos-has-a-cascade">4. Deleting Repos Has a Cascade</h3><p>You don&apos;t just delete a repo. You delete:</p><ul><li>The code</li><li>The commit history</li><li>Any blog posts that reference it</li><li>Any cross-links from other posts</li><li>The GitHub stars (if any)</li><li>The SEO juice from search engines</li></ul><pre><code class="language-mermaid">flowchart TD
-    A[&quot;Delete 1 repo&quot;] --&gt; B[&quot;Dead links in blog posts&quot;]
-    A --&gt; C[&quot;Broken references in other repos&quot;]
-    A --&gt; D[&quot;Lost stars / watchers&quot;]
-    A --&gt; E[&quot;SEO links → 404&quot;]
-    B --&gt; F[&quot;Scan ALL posts for references&quot;]
-    C --&gt; F
-    D --&gt; F
-    E --&gt; F
-    F --&gt; G[&quot;Fix everything manually&quot;]
-    G --&gt; H[&quot;Wish you&apos;d checked first&quot;]
+</code></pre><p>Five seconds. One command. Would have saved 24 hours.</p><p>I didn&apos;t run it because the AI&apos;s table <em>felt</em> like it had already done that work.</p><h3 id="3.-&quot;clean-signal&quot;-is-bullshit">3. &quot;Clean Signal&quot; Is Bullshit</h3><p>The advice said: &quot;21 repos = noise. Clean signal: 3–5 relevant projects.&quot;</p><p><strong>Nobody has ever been rejected from a job for having too many public repos.</strong></p><p>Hiring managers look at:</p><ul><li>Can you build things? ✅ (21 repos says yes)</li><li>Can you write? ✅ (49 blog posts says yes)</li><li>Can you secure systems? ✅ (7 years IT ops says yes)</li></ul><p>The &quot;clean signal&quot; thing was someone&apos;s aesthetic preference dressed up as career strategy.</p><h3 id="4.-deleting-repos-has-a-cascade">4. Deleting Repos Has a Cascade</h3><p>You don&apos;t just delete a repo. You delete:</p><ul><li>The code</li><li>The commit history</li><li>Any blog posts that reference it</li><li>Any cross-links from other posts</li><li>The GitHub stars (if any)</li><li>The SEO juice from search engines</li></ul><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+A: "Delete 1 repo" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+B: "Dead links in blog posts"
+C: "Broken references in other repos"
+D: "Lost stars / watchers"
+E: "SEO links → 404"
+F: "Scan ALL posts for references"
+G: "Fix everything manually"
+H: "Wish you'd checked first" {
+  style.fill: "#ff6b6b"
+  style.stroke: "#c92a2a"
+}
+#
+A -> C
+A -> D
+A -> E
+B -> F
+C -> F
+D -> F
+E -> F
+F -> G
+G -> H
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1053 772"><svg class="d2-2871311705 d2-svg" width="1053" height="772" viewBox="-21 -21 1053 772"><rect x="-21.000000" y="-21.000000" width="1053.000000" height="772.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2871311705 .text-bold {
+	font-family: "d2-2871311705-font-bold";
+}
+@font-face {
+	font-family: d2-2871311705-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-    style A fill:#ff6b6b,stroke:#c92a2a,color:#fff
-    style H fill:#ff6b6b,stroke:#c92a2a,color:#fff
-</code></pre><h3 id="5.-write-the-blog-post-last">5. Write the Blog Post LAST</h3><p>I wrote a post-mortem <em>before</em> I was done fixing things. So the post-mortem itself needed fixing.</p><p>The correct order:</p><ol start="1"><li>Fix the problem</li><li>Verify the fix is complete</li><li><strong>Then</strong> write about it</li></ol><p>Not:</p><ol start="1"><li>Fix the problem</li><li>Write about it immediately</li><li>Break the blog post by continuing to fix things</li><li>Fix the blog post</li><li>Write THIS post about writing the wrong post</li></ol><hr /><h2 id="the-part-i&apos;m-still-mad-about">😡 The Part I&apos;m Still Mad About</h2><p>I&apos;m not mad about the visibility flip. That&apos;s on me for not checking.</p><p>I&apos;m mad that <strong>the AI was confident, detailed, and wrong.</strong></p><p>I&apos;m mad that it called them &quot;forks&quot; <strong>twelve times</strong> in one table. Not &quot;possibly a fork&quot; or &quot;might be a fork.&quot; Just &quot;fork.&quot; Period. Done.</p><p>I&apos;m mad that I trusted a table more than my own <code>gh</code> CLI.</p><p>I&apos;m mad that the &quot;career optimization&quot; advice was just <strong>someone&apos;s opinion about how GitHub should look</strong>, presented as fact.</p><p>And I&apos;m mad that I&apos;m writing a blog post about it instead of sleeping. But here we are.</p><hr /><h2 id="current-state">✅ Current State</h2><p>All remaining repos: <strong>PUBLIC. FOREVER.</strong></p><pre><code class="language-bash">$ gh repo list nurazhardotcom --limit 25 --json name,visibility --jq &apos;.[] | &quot;\(.visibility)\t\(.name)&quot;&apos;
+		.d2-2871311705 .fill-N1{fill:#0A0F25;}
+		.d2-2871311705 .fill-N2{fill:#676C7E;}
+		.d2-2871311705 .fill-N3{fill:#9499AB;}
+		.d2-2871311705 .fill-N4{fill:#CFD2DD;}
+		.d2-2871311705 .fill-N5{fill:#DEE1EB;}
+		.d2-2871311705 .fill-N6{fill:#EEF1F8;}
+		.d2-2871311705 .fill-N7{fill:#FFFFFF;}
+		.d2-2871311705 .fill-B1{fill:#0D32B2;}
+		.d2-2871311705 .fill-B2{fill:#0D32B2;}
+		.d2-2871311705 .fill-B3{fill:#E3E9FD;}
+		.d2-2871311705 .fill-B4{fill:#E3E9FD;}
+		.d2-2871311705 .fill-B5{fill:#EDF0FD;}
+		.d2-2871311705 .fill-B6{fill:#F7F8FE;}
+		.d2-2871311705 .fill-AA2{fill:#4A6FF3;}
+		.d2-2871311705 .fill-AA4{fill:#EDF0FD;}
+		.d2-2871311705 .fill-AA5{fill:#F7F8FE;}
+		.d2-2871311705 .fill-AB4{fill:#EDF0FD;}
+		.d2-2871311705 .fill-AB5{fill:#F7F8FE;}
+		.d2-2871311705 .stroke-N1{stroke:#0A0F25;}
+		.d2-2871311705 .stroke-N2{stroke:#676C7E;}
+		.d2-2871311705 .stroke-N3{stroke:#9499AB;}
+		.d2-2871311705 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2871311705 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2871311705 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2871311705 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2871311705 .stroke-B1{stroke:#0D32B2;}
+		.d2-2871311705 .stroke-B2{stroke:#0D32B2;}
+		.d2-2871311705 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2871311705 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2871311705 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2871311705 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2871311705 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2871311705 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2871311705 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2871311705 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2871311705 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2871311705 .background-color-N1{background-color:#0A0F25;}
+		.d2-2871311705 .background-color-N2{background-color:#676C7E;}
+		.d2-2871311705 .background-color-N3{background-color:#9499AB;}
+		.d2-2871311705 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2871311705 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2871311705 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2871311705 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2871311705 .background-color-B1{background-color:#0D32B2;}
+		.d2-2871311705 .background-color-B2{background-color:#0D32B2;}
+		.d2-2871311705 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2871311705 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2871311705 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2871311705 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2871311705 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2871311705 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2871311705 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2871311705 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2871311705 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2871311705 .color-N1{color:#0A0F25;}
+		.d2-2871311705 .color-N2{color:#676C7E;}
+		.d2-2871311705 .color-N3{color:#9499AB;}
+		.d2-2871311705 .color-N4{color:#CFD2DD;}
+		.d2-2871311705 .color-N5{color:#DEE1EB;}
+		.d2-2871311705 .color-N6{color:#EEF1F8;}
+		.d2-2871311705 .color-N7{color:#FFFFFF;}
+		.d2-2871311705 .color-B1{color:#0D32B2;}
+		.d2-2871311705 .color-B2{color:#0D32B2;}
+		.d2-2871311705 .color-B3{color:#E3E9FD;}
+		.d2-2871311705 .color-B4{color:#E3E9FD;}
+		.d2-2871311705 .color-B5{color:#EDF0FD;}
+		.d2-2871311705 .color-B6{color:#F7F8FE;}
+		.d2-2871311705 .color-AA2{color:#4A6FF3;}
+		.d2-2871311705 .color-AA4{color:#EDF0FD;}
+		.d2-2871311705 .color-AA5{color:#F7F8FE;}
+		.d2-2871311705 .color-AB4{color:#EDF0FD;}
+		.d2-2871311705 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2871311705);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2871311705);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2871311705);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2871311705);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2871311705);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2871311705);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2871311705);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2871311705);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="632.000000" y="0.000000" width="138.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="701.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Delete 1 repo</text></g><g class="Qg=="><g class="shape" ><rect x="0.000000" y="166.000000" width="210.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="105.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Dead links in blog posts</text></g><g class="Qw=="><g class="shape" ><rect x="270.000000" y="166.000000" width="276.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="408.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Broken references in other repos</text></g><g class="RA=="><g class="shape" ><rect x="606.000000" y="166.000000" width="190.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="701.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Lost stars / watchers</text></g><g class="RQ=="><g class="shape" ><rect x="856.000000" y="166.000000" width="155.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="933.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">SEO links → 404</text></g><g class="Rg=="><g class="shape" ><rect x="429.000000" y="332.000000" width="252.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="555.000000" y="370.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Scan ALL posts for references</text></g><g class="Rw=="><g class="shape" ><rect x="447.000000" y="498.000000" width="216.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="555.000000" y="536.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Fix everything manually</text></g><g class="SA=="><g class="shape" ><rect x="446.000000" y="664.000000" width="217.000000" height="66.000000" stroke="#c92a2a" fill="#ff6b6b" style="stroke-width:2;" /></g><text x="554.500000" y="702.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Wish you&#39;d checked first</text></g><g class="KEEgLSZndDsgQylbMF0="><marker id="mk-d2-2871311705-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 630.074697 53.541488 C 452.799011 103.400002 408.000000 126.000000 408.000000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEEgLSZndDsgRClbMF0="><path d="M 701.000000 68.000000 C 701.000000 106.000000 701.000000 126.000000 701.000000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEEgLSZndDsgRSlbMF0="><path d="M 771.385556 58.666843 C 900.700012 104.400002 933.500000 126.000000 933.500000 162.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEIgLSZndDsgRilbMF0="><path d="M 105.000000 234.000000 C 105.000000 272.000000 169.699997 293.946014 424.566497 341.007679" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEMgLSZndDsgRilbMF0="><path d="M 408.000000 234.000000 C 408.000000 272.000000 425.600006 292.000000 492.522174 330.023962" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEQgLSZndDsgRilbMF0="><path d="M 701.000000 234.000000 C 701.000000 272.000000 683.400024 292.000000 616.477827 330.023963" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEUgLSZndDsgRilbMF0="><path d="M 933.500000 234.000000 C 933.500000 272.000000 882.900024 293.000000 684.408705 336.150282" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEYgLSZndDsgRylbMF0="><path d="M 554.500000 400.000000 C 554.500000 438.000000 554.500000 458.000000 554.500000 494.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><g class="KEcgLSZndDsgSClbMF0="><path d="M 554.500000 566.000000 C 554.500000 604.000000 554.500000 624.000000 554.500000 660.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2871311705-3488378134)" mask="url(#d2-2871311705)" /></g><mask id="d2-2871311705" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1053" height="772">
+<rect x="-21" y="-21" width="1053" height="772" fill="white"></rect><p></mask></svg></svg></p></div><h3 id="5.-write-the-blog-post-last">5. Write the Blog Post LAST</h3><p>I wrote a post-mortem <em>before</em> I was done fixing things. So the post-mortem itself needed fixing.</p><p>The correct order:</p><ol start="1"><li>Fix the problem</li><li>Verify the fix is complete</li><li><strong>Then</strong> write about it</li></ol><p>Not:</p><ol start="1"><li>Fix the problem</li><li>Write about it immediately</li><li>Break the blog post by continuing to fix things</li><li>Fix the blog post</li><li>Write THIS post about writing the wrong post</li></ol><hr /><h2 id="the-part-i&apos;m-still-mad-about">😡 The Part I&apos;m Still Mad About</h2><p>I&apos;m not mad about the visibility flip. That&apos;s on me for not checking.</p><p>I&apos;m mad that <strong>the AI was confident, detailed, and wrong.</strong></p><p>I&apos;m mad that it called them &quot;forks&quot; <strong>twelve times</strong> in one table. Not &quot;possibly a fork&quot; or &quot;might be a fork.&quot; Just &quot;fork.&quot; Period. Done.</p><p>I&apos;m mad that I trusted a table more than my own <code>gh</code> CLI.</p><p>I&apos;m mad that the &quot;career optimization&quot; advice was just <strong>someone&apos;s opinion about how GitHub should look</strong>, presented as fact.</p><p>And I&apos;m mad that I&apos;m writing a blog post about it instead of sleeping. But here we are.</p><hr /><h2 id="current-state">✅ Current State</h2><p>All remaining repos: <strong>PUBLIC. FOREVER.</strong></p><pre><code class="language-bash">$ gh repo list nurazhardotcom --limit 25 --json name,visibility --jq &apos;.[] | &quot;\(.visibility)\t\(.name)&quot;&apos;
 
 PUBLIC  blog.nurazhar.com
 PUBLIC  hermes-agent

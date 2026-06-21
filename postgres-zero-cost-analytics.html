@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -152,18 +166,124 @@
 );
 
 CREATE INDEX idx_page_views_path ON page_views(page_path);
-</code></pre><p>To feed this table, we don&apos;t need a heavy Node.js or Rails server. We just need a single serverless endpoint that scales to zero when no one is reading.</p><hr /><h2 id="the-boundary-trap:-resisting-easy-coupling">The Boundary Trap: Resisting Easy Coupling</h2><p>Since I already have a production payment rail engine (<code>lagu-lagu</code>) running on Neon Postgres and GCP Cloud Functions, my first instinct was to just append the tracking code there. One database, one function, zero new setups.</p><p>But this is a dangerous architectural trap.</p><p>A personal blog tracker has a completely different lifecycle, risk profile, and security boundary than a financial payment split ledger. Coupling them violates the <strong>Single Responsibility Principle</strong> and introduces a massive security blast radius:</p><blockquote><p>[!WARNING] If a vulnerability is found in the blog tracking API or dashboard code, an attacker could compromise the database credentials and gain read/write access to payment webhook logs and artist payout records.</p></blockquote><p>To prevent this, we chose <strong>strict isolation at zero cost</strong>:</p><ul><li><strong>Database level:</strong> A completely separate Neon database (<code>blog_analytics</code>) with isolated user credentials.</li><li><strong>Backend level:</strong> A dedicated, lightweight GCP Cloud Function (<code>blog-analytics-api</code>) that has no access to the payment schemas.</li></ul><hr /><h2 id="the-$0-serverless-pipeline">The $0 Serverless Pipeline</h2><p>The final architecture is incredibly clean:</p><pre><code class="language-mermaid">graph TD
-    subgraph &quot;Blog (Static on GitHub Pages)&quot;
-        BlogHTML[blog.nurazhar.com] -- POST /track --&gt; CF[GCP Cloud Function]
-        StatsDashboard[stats.html] -- GET /stats --&gt; CF
-    end
-    subgraph &quot;GCP &amp; Neon (Isolated Analytics Backend)&quot;
-        CF -- Writes Views --&gt; DB[(Neon Postgres DB)]
-    end
-    style BlogHTML fill:#f9f,stroke:#333,stroke-width:1px
-    style CF fill:#bbf,stroke:#333,stroke-width:1px
-    style DB fill:#bfb,stroke:#333,stroke-width:1px
-</code></pre><h3 id="1.-the-10-line-tracker">1. The 10-Line Tracker</h3><p>In <code>base.html</code>, we drop a tiny, non-blocking script:</p><pre><code class="language-html">&lt;script&gt;
+</code></pre><p>To feed this table, we don&apos;t need a heavy Node.js or Rails server. We just need a single serverless endpoint that scales to zero when no one is reading.</p><hr /><h2 id="the-boundary-trap:-resisting-easy-coupling">The Boundary Trap: Resisting Easy Coupling</h2><p>Since I already have a production payment rail engine (<code>lagu-lagu</code>) running on Neon Postgres and GCP Cloud Functions, my first instinct was to just append the tracking code there. One database, one function, zero new setups.</p><p>But this is a dangerous architectural trap.</p><p>A personal blog tracker has a completely different lifecycle, risk profile, and security boundary than a financial payment split ledger. Coupling them violates the <strong>Single Responsibility Principle</strong> and introduces a massive security blast radius:</p><blockquote><p>[!WARNING] If a vulnerability is found in the blog tracking API or dashboard code, an attacker could compromise the database credentials and gain read/write access to payment webhook logs and artist payout records.</p></blockquote><p>To prevent this, we chose <strong>strict isolation at zero cost</strong>:</p><ul><li><strong>Database level:</strong> A completely separate Neon database (<code>blog_analytics</code>) with isolated user credentials.</li><li><strong>Backend level:</strong> A dedicated, lightweight GCP Cloud Function (<code>blog-analytics-api</code>) that has no access to the payment schemas.</li></ul><hr /><h2 id="the-$0-serverless-pipeline">The $0 Serverless Pipeline</h2><p>The final architecture is incredibly clean:</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+BlogHTML: blog.nurazhar.com {
+  style.fill: "#f9f"
+  style.stroke: "#333"
+  style.stroke-width: "1"
+}
+CF: "GCP Cloud Function" {
+  style.fill: "#bbf"
+  style.stroke: "#333"
+  style.stroke-width: "1"
+}
+DB: "(Neon Postgres DB)" {
+  style.fill: "#bfb"
+  style.stroke: "#333"
+  style.stroke-width: "1"
+}
+StatsDashboard: stats.html
+#
+track -> CF
+stats -> CF
+Views -> DB
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 926 274"><svg class="d2-1371018542 d2-svg" width="926" height="274" viewBox="-21 -21 926 274"><rect x="-21.000000" y="-21.000000" width="926.000000" height="274.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1371018542 .text-bold {
+	font-family: "d2-1371018542-font-bold";
+}
+@font-face {
+	font-family: d2-1371018542-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-1371018542 .fill-N1{fill:#0A0F25;}
+		.d2-1371018542 .fill-N2{fill:#676C7E;}
+		.d2-1371018542 .fill-N3{fill:#9499AB;}
+		.d2-1371018542 .fill-N4{fill:#CFD2DD;}
+		.d2-1371018542 .fill-N5{fill:#DEE1EB;}
+		.d2-1371018542 .fill-N6{fill:#EEF1F8;}
+		.d2-1371018542 .fill-N7{fill:#FFFFFF;}
+		.d2-1371018542 .fill-B1{fill:#0D32B2;}
+		.d2-1371018542 .fill-B2{fill:#0D32B2;}
+		.d2-1371018542 .fill-B3{fill:#E3E9FD;}
+		.d2-1371018542 .fill-B4{fill:#E3E9FD;}
+		.d2-1371018542 .fill-B5{fill:#EDF0FD;}
+		.d2-1371018542 .fill-B6{fill:#F7F8FE;}
+		.d2-1371018542 .fill-AA2{fill:#4A6FF3;}
+		.d2-1371018542 .fill-AA4{fill:#EDF0FD;}
+		.d2-1371018542 .fill-AA5{fill:#F7F8FE;}
+		.d2-1371018542 .fill-AB4{fill:#EDF0FD;}
+		.d2-1371018542 .fill-AB5{fill:#F7F8FE;}
+		.d2-1371018542 .stroke-N1{stroke:#0A0F25;}
+		.d2-1371018542 .stroke-N2{stroke:#676C7E;}
+		.d2-1371018542 .stroke-N3{stroke:#9499AB;}
+		.d2-1371018542 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1371018542 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1371018542 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1371018542 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1371018542 .stroke-B1{stroke:#0D32B2;}
+		.d2-1371018542 .stroke-B2{stroke:#0D32B2;}
+		.d2-1371018542 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1371018542 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1371018542 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1371018542 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1371018542 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1371018542 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1371018542 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1371018542 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1371018542 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1371018542 .background-color-N1{background-color:#0A0F25;}
+		.d2-1371018542 .background-color-N2{background-color:#676C7E;}
+		.d2-1371018542 .background-color-N3{background-color:#9499AB;}
+		.d2-1371018542 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1371018542 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1371018542 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1371018542 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1371018542 .background-color-B1{background-color:#0D32B2;}
+		.d2-1371018542 .background-color-B2{background-color:#0D32B2;}
+		.d2-1371018542 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1371018542 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1371018542 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1371018542 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1371018542 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1371018542 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1371018542 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1371018542 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1371018542 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1371018542 .color-N1{color:#0A0F25;}
+		.d2-1371018542 .color-N2{color:#676C7E;}
+		.d2-1371018542 .color-N3{color:#9499AB;}
+		.d2-1371018542 .color-N4{color:#CFD2DD;}
+		.d2-1371018542 .color-N5{color:#DEE1EB;}
+		.d2-1371018542 .color-N6{color:#EEF1F8;}
+		.d2-1371018542 .color-N7{color:#FFFFFF;}
+		.d2-1371018542 .color-B1{color:#0D32B2;}
+		.d2-1371018542 .color-B2{color:#0D32B2;}
+		.d2-1371018542 .color-B3{color:#E3E9FD;}
+		.d2-1371018542 .color-B4{color:#E3E9FD;}
+		.d2-1371018542 .color-B5{color:#EDF0FD;}
+		.d2-1371018542 .color-B6{color:#F7F8FE;}
+		.d2-1371018542 .color-AA2{color:#4A6FF3;}
+		.d2-1371018542 .color-AA4{color:#EDF0FD;}
+		.d2-1371018542 .color-AA5{color:#F7F8FE;}
+		.d2-1371018542 .color-AB4{color:#EDF0FD;}
+		.d2-1371018542 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1371018542);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1371018542);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1371018542);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1371018542);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1371018542);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1371018542);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1371018542);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1371018542);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QmxvZ0hUTUw="><g class="shape" ><rect x="0.000000" y="0.000000" width="179.000000" height="66.000000" stroke="#333" fill="#f9f" style="stroke-width:1;" /></g><text x="89.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">blog.nurazhar.com</text></g><g class="Q0Y="><g class="shape" ><rect x="438.000000" y="166.000000" width="185.000000" height="66.000000" stroke="#333" fill="#bbf" style="stroke-width:1;" /></g><text x="530.500000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">GCP Cloud Function</text></g><g class="REI="><g class="shape" ><rect x="704.000000" y="166.000000" width="180.000000" height="66.000000" stroke="#333" fill="#bfb" style="stroke-width:1;" /></g><text x="794.000000" y="204.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">(Neon Postgres DB)</text></g><g class="U3RhdHNEYXNoYm9hcmQ="><g class="shape" ><rect x="239.000000" y="0.000000" width="119.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="298.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">stats.html</text></g><g class="dHJhY2s="><g class="shape" ><rect x="418.000000" y="0.000000" width="83.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="459.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">track</text></g><g class="c3RhdHM="><g class="shape" ><rect x="561.000000" y="0.000000" width="80.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="601.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">stats</text></g><g class="Vmlld3M="><g class="shape" ><rect x="750.000000" y="0.000000" width="88.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="794.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Views</text></g><g class="KHRyYWNrIC0mZ3Q7IENGKVswXQ=="><marker id="mk-d2-1371018542-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 459.500000 68.000000 C 459.500000 106.000000 468.100006 126.000000 500.217863 163.346352" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1371018542-3488378134)" mask="url(#d2-1371018542)" /></g><g class="KHN0YXRzIC0mZ3Q7IENGKVswXQ=="><path d="M 601.000000 68.000000 C 601.000000 106.000000 592.400024 126.000000 560.282138 163.346353" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1371018542-3488378134)" mask="url(#d2-1371018542)" /></g><g class="KFZpZXdzIC0mZ3Q7IERCKVswXQ=="><path d="M 794.250000 68.000000 C 794.250000 106.000000 794.250000 126.000000 794.250000 162.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1371018542-3488378134)" mask="url(#d2-1371018542)" /></g><mask id="d2-1371018542" maskUnits="userSpaceOnUse" x="-21" y="-21" width="926" height="274">
+<rect x="-21" y="-21" width="926" height="274" fill="white"></rect><p></mask></svg></svg></p></div><h3 id="1.-the-10-line-tracker">1. The 10-Line Tracker</h3><p>In <code>base.html</code>, we drop a tiny, non-blocking script:</p><pre><code class="language-html">&lt;script&gt;
   (function() {
     if (window.location.hostname === &apos;localhost&apos;) return;
     fetch(&apos;https://YOUR_REGION-YOUR_PROJECT.cloudfunctions.net/blog-analytics-api/track&apos;, {

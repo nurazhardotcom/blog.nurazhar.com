@@ -26,7 +26,21 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -138,28 +152,138 @@
   How Hermes Agent Memory Actually Works
   
 </h1>
-<div><h1 id="how-hermes-agent-memory-actually-works">How Hermes Agent Memory Actually Works</h1><p>Unlike conversational AIs that absorb patterns unconsciously, Hermes uses <strong>explicit durable memory</strong> - you decide what gets stored and what gets forgotten.</p><h2 id="the-memory-architecture">The Memory Architecture</h2><pre><code class="language-mermaid">flowchart TD
-    subgraph &quot;Persistent Storage&quot;
-        A[&quot;~/.hermes/memories/user.md&quot;] --&gt;|1,375 char limit| B[Character Budget]
-        C[&quot;~/.hermes/memories/memory.md&quot;] --&gt;|Same limit| B
-    end
-    
-    subgraph &quot;Runtime Context&quot;
-        D[Hermes Session] --&gt;|Injects both memories| E{LLM Decision}
-        B --&gt;|Injected into every prompt| D
-        F[Skills Directory] --&gt;|Loaded on-demand| D
-    end
-    
-    subgraph &quot;User Control&quot;
-        G[Explicit memory calls] --&gt;|add/replace/remove| A
-        H[Explicit skill calls] --&gt;|create/patch/delete| F
-    end
-    
-    style A fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
-    style C fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
-    style G fill:#313244,stroke:#a6e3a1,color:#cdd6f4
-    style H fill:#313244,stroke:#a6e3a1,color:#cdd6f4
-</code></pre><h2 id="key-constraints">Key Constraints</h2><ul><li><strong>Hard 1,375 character limit</strong> per memory file</li><li>No unconscious pattern absorption</li><li>No session-to-session learning without explicit <code>memory</code> tool calls</li><li>Skills (<code>skill_manage</code>) for procedural memory - separate from user facts</li></ul><h2 id="why-this-matters">Why This Matters</h2><table><thead><tr><th>Feature</th><th>Hermes Agent</th><th>Perplexity/Antigravity</th></tr></thead><tbody><tr><td>Pattern learning</td><td>❌ Explicit only</td><td>✅ Unconscious absorption</td></tr><tr><td>Memory limit</td><td>1,375 chars hard cap</td><td>Unlimited cloud storage</td></tr><tr><td>Memory drift</td><td>Impossible - you control all writes</td><td>Inevitable - patterns shift</td></tr><tr><td>Tool execution</td><td>✅ Direct to your terminal</td><td>❌ Chat only</td></tr></tbody></table><h2 id="practical-implications">Practical Implications</h2><p>When you tell Hermes something via <code>memory</code>, it:</p><ol start="1"><li>Gets stored in plain text markdown</li><li>Is injected into every subsequent prompt in that profile</li><li>Can be read/modified/deleted anytime via <code>memory</code> tool</li></ol><p>No magic. No drift. No unconscious learning. Just explicit, durable facts you control.</p><blockquote><p>This blog post was written to clarify how Hermes memory works after confusion about unconscious pattern absorption. It&apos;s a feature, not a bug - you stay in control.</p></blockquote></div>
+<div><h1 id="how-hermes-agent-memory-actually-works">How Hermes Agent Memory Actually Works</h1><p>Unlike conversational AIs that absorb patterns unconsciously, Hermes uses <strong>explicit durable memory</strong> - you decide what gets stored and what gets forgotten.</p><h2 id="the-memory-architecture">The Memory Architecture</h2><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+A: ~/.hermes/memories/user.md {
+  style.fill: "#1e1e2e"
+  style.stroke: "#cba6f7"
+}
+B: "Character Budget"
+C: ~/.hermes/memories/memory.md {
+  style.fill: "#1e1e2e"
+  style.stroke: "#cba6f7"
+}
+D: "Hermes Session"
+E: "LLM Decision" {
+  shape: diamond
+}
+F: "Skills Directory"
+G: "Explicit memory calls" {
+  style.fill: "#313244"
+  style.stroke: "#a6e3a1"
+}
+H: "Explicit skill calls" {
+  style.fill: "#313244"
+  style.stroke: "#a6e3a1"
+}
+#
+B -> D: "Injected into every prompt"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1840 321"><svg class="d2-3284111793 d2-svg" width="1840" height="321" viewBox="-21 -21 1840 321"><rect x="-21.000000" y="-21.000000" width="1840.000000" height="321.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3284111793 .text-bold {
+	font-family: "d2-3284111793-font-bold";
+}
+@font-face {
+	font-family: d2-3284111793-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA6sAAoAAAAAFkgAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAAoQAAAMoD4AReZ2x5ZgAAAfgAAAgMAAAKwPTeRuJoZWFkAAAKBAAAADYAAAA2G38e1GhoZWEAAAo8AAAAJAAAACQKfwXlaG10eAAACmAAAACUAAAAmEdoBhBsb2NhAAAK9AAAAE4AAABONzg0mm1heHAAAAtEAAAAIAAAACAAPgD3bmFtZQAAC2QAAAMoAAAIKgjwVkFwb3N0AAAOjAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3icdM25TcMAGEDhz9hcxoC5wVyGAWAHJCSQoGIChBAtokDQMA3KtUCayMoqWSEL/FHc57Vf8ZBIJShkGlRKqVzt1r1Hz168evfp26+/CNRu3Hnw1NqbD19+5haTmMY4mhjFMAbRj150oxP/7WFRidqVJanMshWr1qzLbShs2rKttGPXnn0HDh05dqJy6sy5C5eumQEAAP//AQAA///R+CQpAAAAeJxcVm1MW9f9/p1j4wsX83J9fX1t4/fre69fsAFfbAMGjIOBJNi8BkJbXtIo/7b5kxCUkIVmkfphUad1jrLVrKKtlmZTp21SM6mqJnWd2LRpb1G7T2nWL1vSbPvUD4vboWlVwHc614aEfoCD7j2c5/k9z/P7nQs1MAGAT+IN0EEdNIEJOACF8TKiIssClVSSSYHXJWXEUBPYVP7R23JQHwzqQ55N9+WlJZRfxBu7Z57Jnzz5n6VUqnzjFx+Ur6ELHwDoIA+Ae3EBGLCDj5ypxCwWzmygOG0xCDolloh3SoLAKDFtzd/PnhmIBGKD2fMjS0OJjljn8PSLvX3TuOAcToenm/QNo5nBY0H0zZAgecpzc2ERAEFU3cbteBNaAGp8khTvTCSUmIWnJEnwGQyc2aLEEknegBamXpmeuTaVPuUdsyWF1iPh2cOBtHVsypj73tkzr08qvkXeGVs8dGrVb5s/AVjjn8MFoCuKVNkbBFmJJQhvQvj9U69OTlw/EXF0TUej010OXMheX119deRSYH5s7CkRCL88AHqIC1Cv6cp5OYUTOC+XR5vlR/fuoSZcuPKNr792ZW8vntnbq3BKXGEERmDyxQcbGw9w4dGj3TXUXC7t7YVPcQF02l4mX8SF3bUq3t9xAWoqz71cvogwLuyWCEQV4xYugFt7z1osvJJIJFmFEYh0SYGiBFkWXJjj8j84TZtoPc3Qz998marT6eMLkwuden0thQvle45+l6vfgXy7aw894xPuN7/88k33xLjnIcEQ1G1M400IaZ7ISYul4rUsR/FBgzizhecryiLzwEuxY8JsIBpRwjPeXil1Otu1Ghr1DMhSpDt0LDXcs2Jsj/6fS/I53U6Tv7FtuC0x19kaWrC1uB0uF+OzHhtKzHcBhpC6jT5GO2ADAYD3kVAkNThK1sA5RpAFgyEZSyTjWkZ+lZ24WsRC0D3gj7ct9yw9t07r3SO1NpEd63Ubj6fH5pq8spV71ulfOV/+p+IQzvPscTrstPKapn51G22hHbB/NYOVCisJNCDb0LnM4a9loyOOIcETT6fbrVG2R5w19l2cml7rc/FLzlxmIM81nfC0EK8wyOo22sFbwIJnrw7tYJkEY7+CPSG/mD+XWuoMdtkMxXVabx/GVtnEhs1Cos347RcnL/Y7rLmf7g522IV1s+1DU+PgyJEhwBr3B2gHrCQRT7DXetVLnCPcdUonQUHukfOHBs+kRhba9Lj8CT3cEU90SItvvCe3+hLG/rWpybV0ejnLinUJxfuU3YV6gvE2UosOfGoEU2gH2iAFR7VqpHgnIU/Mie/B8gonVBvNJ2vaEbvMBoOuMiy0Qtnq4PBJ2pYveha7RtgWj9Ue7FmMt3p/Pk7Vdc4lnW6TLzgx/2z2ylGnLDudshyMDciiYvMaW/ru2LtaewP6hoC7JdasN2XDveMB43K9z9x91E83WVhTalCZjKLboaAcDASCoXLRb+ObdTqrzeGs9FGGGIS3wFzpVWovWIzGkmIyRcoxGps8UnR6HAEr3nrnKVt4eaH8EfImAja+/C6oKiQB4G/4DpZIToECP7wCoKrqn9VeuK89F6vPC/uYLrwFxkpvK0mFYgWZ4jLX9d+/+bNfvrWaxlvlld9/VP7rb0Yuk/3qNjLhLWiqpIdRmP0w/imXKjJ1NZTBZBSNz4xiYfcT3oTQ2RqqgqNzoh3wajhkQJDUHaiQ2l8zpFeGO+IZ1nu0Y2K06PSI7eRXGyoNuCPhgK9jr+z28rvVZU8/tFPVr4rxpH7rtN6T3xcQldKuyAH9KtnVMtX0lemvJUZ+IjHIkj6XzZ5Lp1ey2ZV0JBqNRCORat/1rU1PXey7lB/I5Ej7kXMz6mFsQTvAgguAf8xOi6Uk85yWQMFH7jLC03lEfvqF3qWEp9deMy4lZsMhc+B9/JMOu/CtCzPr6Rbb+HeRfzj3cuRDU2PVR3Qd7YDpgL6ViVipvCUncQ7a2mBrdvSZUel4rKOm5iW9PhgrfwoIOHUbvYV2QNZ8fTxfpcp83T+MTFcX5syGOx3PS4d8abfX5YzaXanA6Znu4+5D9k57d7fk6Qu+YJTc87YWnmUsLG30dweHZmXrnNkiW22N9UJ3dHChknlG3UYreA14Te14XIgnk4p2oT0ecjA/ns0xly9dEpxGG82zSeP/z94+a7h69cIfQ6JBv2wwVs7qVbfRf1GJ+H8gm0x1tP1l8kjR5XFIluJ6vc591Li8gDrL9+NBuxMdLjcPia2ASB8gFZWgAUDRKXz1Lksquvd+vDFAs7S+jqUz136ISp+JeVnOi5+VmzVsYsI2KoENQGHlJ/6R4gVZkgg8RTVuXr/RSltofa2p1rf5nddvtBt5o77OXCcj/K8JLsxxYW5C/XyKa+W4sGWKnGtU+9EuKpE0PvYlmTxArRGvW7xNdspUKwZo6tcbI/UmWl/L1PVee4fvGv+tQb+KavxOO/rHXd+wKIwId8v1/TOhimZ96jY8hFvk+6ByG1RC+ZqkKJKkKMa4HIjHA3Kc7G1QT6AE/gP5PuBZRddw+8Ttm7rndt4g75xQQv9Gb4MFQPRFseCr3IsuvGfigrtN9HOyNyfmRO1PTmjOiaMl3sX3pLraeBfvcqS62qpZho9Rae87JFNEpXIzIPUW7oZpfIdwZZ7gKkajohiN4u6QIITID7GQzLu7qATNB/JMImEw+N3BJjvN0k6+6Mn/rtZwRqeXg+jzMpt4Ogn/AwAA//8BAAD//zhnNmsAAQAAAAILhZq8eqlfDzz1AAED6AAAAADYXaCEAAAAAN1mLzb+N/7ECG0D8QABAAMAAgAAAAAAAAABAAAD2P7vAAAImP43/jcIbQABAAAAAAAAAAAAAAAAAAAAJnicHMw9DgFRFMfR3/1LJhHjKxnTUfASCUNLYqa4je4lEpXCShR2YBF6jdYGNCq70YzQnxzd2fEEHYnastSJqEDUlWgLohKiPkQVTNRlZm+CKqZKCMoZa4Nbxsry+qWA2whvHHCVuOZ/63bB7cHAzvS1plSLVKKjJqkVVLanrR5Dy3Cob7/rCwAA//8BAAD//8o7FrAAAAAsACwAYACMALAAxgDcAOgA+AEqAWoBogHOAgACNAKcAr4CygLWAu4DCgM8A14DigO6A9oEFgQ8BF4EegSmBNYE7AT6BSAFLAVCBWAAAAABAAAAJgCQAAwAYwAHAAEAAAAAAAAAAAAAAAAABAADeJyclM9uG1UUxn9ObNMKwQJFVbqJ7oJFkejYVEnVNiuH1IpFFAePC0JCSBPP+I8ynhl5Jg7hCVjzFrxFVzwEz4FYo/l87NgF0SaKknx37vnznXO+c4Ed/mabSvUh8Ec9MVxhr35ueIsH9RPD27TrW4arPKn9abhGWJsbrvN5rWf4I95WfzP8gP3qT4YfslttG/6YZ9Udw59sO/4y/Cn7vF3gCrzgV8MVdskMb7HDj4a3eYTFrFR5RNNwjc/YM1xnD+gzoSBmQsIIx5AJI66YEZHjEzFjwpCIEEeHFjGFviYEQo7Rf34N8CmYESjimAJHjE9MQM7YIv4ir5RzZRzqNLO7FgVjAi7kcUlAgiNlREpCxKXiFBRkvKJBg5yB+GYU5HjkTIjxSJkxokGXNqf0GTMhx9FWpJKZT8qQgmsC5XdmUXZmQERCbqyuSAjF04lfJO8Opzi6ZLJdj3y6EeFLHN/Ju+SWyvYrPP26NWabeZdsAubqZ6yuxLq51gTHui3ztvhWuOAV7l792WTy/h6F+l8o8gVXmn+oSSVikuDcLi18Kch3j3Ec6dzBV0e+p0OfE7q8oa9zix49WpzRp8Nr+Xbp4fiaLmccy6MjvLhrSzFn/IDjGzqyKWNH1p/FxCJ+JjN15+I4Ux1TMvW8ZO6p1kgV3n3C5Q6lG+rI5TPQHpWWTvNLtGcBI1NFJoZT9XKpjdz6F5oipqqlnO3tfbkNc9u95RbfkGqHS7UuOJWTWzB631S9dzRzrR+PgJCUC1kMSJnSoOBGvM8JuCLGcazunWhLClornzLPjVQSMRWDDonizMj0NzDd+MZ9sKF7Z29JKP+S6eWqqvtkcerV7YzeqHvLO9+6HK1NoGFTTdfUNBDXxLQfaafW+fvyzfW6pTzliJSY8F8vwDM8muxzwCFjZRjoZm6vQ1MvRJOXHKr6SyJZDaXnyCIc4PGcAw54yfN3+rhk4oyLW3FZz93imCO6HH5QFQv7Lke8Xn37/6y/i2lTtTierk4v7j3FJ3dQ6xfas9v3sqeJlZOYW7TbrTgjYFpycbvrNbnHeP8AAAD//wEAAP//9LdPUXicYmBmAIP/5xiMGLAAAAAAAP//AQAA//8vAQIDAAAA");
+}
+.d2-3284111793 .text-italic {
+	font-family: "d2-3284111793-font-italic";
+}
+@font-face {
+	font-family: d2-3284111793-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-3284111793 .fill-N1{fill:#0A0F25;}
+		.d2-3284111793 .fill-N2{fill:#676C7E;}
+		.d2-3284111793 .fill-N3{fill:#9499AB;}
+		.d2-3284111793 .fill-N4{fill:#CFD2DD;}
+		.d2-3284111793 .fill-N5{fill:#DEE1EB;}
+		.d2-3284111793 .fill-N6{fill:#EEF1F8;}
+		.d2-3284111793 .fill-N7{fill:#FFFFFF;}
+		.d2-3284111793 .fill-B1{fill:#0D32B2;}
+		.d2-3284111793 .fill-B2{fill:#0D32B2;}
+		.d2-3284111793 .fill-B3{fill:#E3E9FD;}
+		.d2-3284111793 .fill-B4{fill:#E3E9FD;}
+		.d2-3284111793 .fill-B5{fill:#EDF0FD;}
+		.d2-3284111793 .fill-B6{fill:#F7F8FE;}
+		.d2-3284111793 .fill-AA2{fill:#4A6FF3;}
+		.d2-3284111793 .fill-AA4{fill:#EDF0FD;}
+		.d2-3284111793 .fill-AA5{fill:#F7F8FE;}
+		.d2-3284111793 .fill-AB4{fill:#EDF0FD;}
+		.d2-3284111793 .fill-AB5{fill:#F7F8FE;}
+		.d2-3284111793 .stroke-N1{stroke:#0A0F25;}
+		.d2-3284111793 .stroke-N2{stroke:#676C7E;}
+		.d2-3284111793 .stroke-N3{stroke:#9499AB;}
+		.d2-3284111793 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3284111793 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3284111793 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3284111793 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3284111793 .stroke-B1{stroke:#0D32B2;}
+		.d2-3284111793 .stroke-B2{stroke:#0D32B2;}
+		.d2-3284111793 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3284111793 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3284111793 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3284111793 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3284111793 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3284111793 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3284111793 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3284111793 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3284111793 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3284111793 .background-color-N1{background-color:#0A0F25;}
+		.d2-3284111793 .background-color-N2{background-color:#676C7E;}
+		.d2-3284111793 .background-color-N3{background-color:#9499AB;}
+		.d2-3284111793 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3284111793 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3284111793 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3284111793 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3284111793 .background-color-B1{background-color:#0D32B2;}
+		.d2-3284111793 .background-color-B2{background-color:#0D32B2;}
+		.d2-3284111793 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3284111793 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3284111793 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3284111793 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3284111793 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3284111793 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3284111793 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3284111793 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3284111793 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3284111793 .color-N1{color:#0A0F25;}
+		.d2-3284111793 .color-N2{color:#676C7E;}
+		.d2-3284111793 .color-N3{color:#9499AB;}
+		.d2-3284111793 .color-N4{color:#CFD2DD;}
+		.d2-3284111793 .color-N5{color:#DEE1EB;}
+		.d2-3284111793 .color-N6{color:#EEF1F8;}
+		.d2-3284111793 .color-N7{color:#FFFFFF;}
+		.d2-3284111793 .color-B1{color:#0D32B2;}
+		.d2-3284111793 .color-B2{color:#0D32B2;}
+		.d2-3284111793 .color-B3{color:#E3E9FD;}
+		.d2-3284111793 .color-B4{color:#E3E9FD;}
+		.d2-3284111793 .color-B5{color:#EDF0FD;}
+		.d2-3284111793 .color-B6{color:#F7F8FE;}
+		.d2-3284111793 .color-AA2{color:#4A6FF3;}
+		.d2-3284111793 .color-AA4{color:#EDF0FD;}
+		.d2-3284111793 .color-AA5{color:#F7F8FE;}
+		.d2-3284111793 .color-AB4{color:#EDF0FD;}
+		.d2-3284111793 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3284111793);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3284111793);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3284111793);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3284111793);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3284111793);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3284111793);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3284111793);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3284111793);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QQ=="><g class="shape" ><rect x="0.000000" y="13.000000" width="257.000000" height="66.000000" stroke="#cba6f7" fill="#1e1e2e" style="stroke-width:2;" /></g><text x="128.500000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">~/.hermes/memories/user.md</text></g><g class="Qg=="><g class="shape" ><rect x="317.000000" y="13.000000" width="169.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="401.500000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Character Budget</text></g><g class="Qw=="><g class="shape" ><rect x="546.000000" y="13.000000" width="285.000000" height="66.000000" stroke="#cba6f7" fill="#1e1e2e" style="stroke-width:2;" /></g><text x="688.500000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">~/.hermes/memories/memory.md</text></g><g class="RA=="><g class="shape" ><rect x="324.000000" y="213.000000" width="156.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="402.000000" y="251.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Hermes Session</text></g><g class="RQ=="><g class="shape" ><path d="M 997 92 C 996 92 996 92 995 92 L 892 47 C 891 47 891 46 892 45 L 995 0 C 996 0 998 0 999 0 L 1102 45 C 1103 45 1103 46 1102 47 L 999 92 C 998 92 998 92 997 92 Z" stroke="#0D32B2" fill="#CFD2DD" class=" stroke-B1 fill-N4" style="stroke-width:2;" /></g><text x="997.000000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">LLM Decision</text></g><g class="Rg=="><g class="shape" ><rect x="1163.000000" y="13.000000" width="154.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1240.000000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Skills Directory</text></g><g class="Rw=="><g class="shape" ><rect x="1377.000000" y="13.000000" width="195.000000" height="66.000000" stroke="#a6e3a1" fill="#313244" style="stroke-width:2;" /></g><text x="1474.500000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Explicit memory calls</text></g><g class="SA=="><g class="shape" ><rect x="1632.000000" y="13.000000" width="166.000000" height="66.000000" stroke="#a6e3a1" fill="#313244" style="stroke-width:2;" /></g><text x="1715.000000" y="51.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Explicit skill calls</text></g><g class="KEIgLSZndDsgRClbMF0="><marker id="mk-d2-3284111793-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 401.500000 80.500000 C 401.500000 137.699997 401.500000 164.699997 401.500000 209.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3284111793-3488378134)" mask="url(#d2-3284111793)" /><text x="401.500000" y="152.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Injected into every prompt</text></g><mask id="d2-3284111793" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1840" height="321">
+<rect x="-21" y="-21" width="1840" height="321" fill="white"></rect>
+<rect x="313.000000" y="136.000000" width="177" height="21" fill="black"></rect>
+</mask></svg></svg>
+</div><h2 id="key-constraints">Key Constraints</h2><ul><li><strong>Hard 1,375 character limit</strong> per memory file</li><li>No unconscious pattern absorption</li><li>No session-to-session learning without explicit <code>memory</code> tool calls</li><li>Skills (<code>skill_manage</code>) for procedural memory - separate from user facts</li></ul><h2 id="why-this-matters">Why This Matters</h2><table><thead><tr><th>Feature</th><th>Hermes Agent</th><th>Perplexity/Antigravity</th></tr></thead><tbody><tr><td>Pattern learning</td><td>❌ Explicit only</td><td>✅ Unconscious absorption</td></tr><tr><td>Memory limit</td><td>1,375 chars hard cap</td><td>Unlimited cloud storage</td></tr><tr><td>Memory drift</td><td>Impossible - you control all writes</td><td>Inevitable - patterns shift</td></tr><tr><td>Tool execution</td><td>✅ Direct to your terminal</td><td>❌ Chat only</td></tr></tbody></table><h2 id="practical-implications">Practical Implications</h2><p>When you tell Hermes something via <code>memory</code>, it:</p><ol start="1"><li>Gets stored in plain text markdown</li><li>Is injected into every subsequent prompt in that profile</li><li>Can be read/modified/deleted anytime via <code>memory</code> tool</li></ol><p>No magic. No drift. No unconscious learning. Just explicit, durable facts you control.</p><blockquote><p>This blog post was written to clarify how Hermes memory works after confusion about unconscious pattern absorption. It&apos;s a feature, not a bug - you stay in control.</p></blockquote></div>
 
 <p><i>Published: 2026-06-19</i></p>
 
