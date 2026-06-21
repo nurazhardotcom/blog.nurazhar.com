@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think">
+    <meta name="twitter:title" content="Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think">
+    <meta property="og:title" content="Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Daniel Miessler&#39;s unified theory of AI and jobs says the future belongs to Thrivers — the curious, self-improving, AI-wielding few. But what if most humans don&#39;t want to be Thrivers? What if the thing machines lack — intent — is something most people are already happy to outsource?">
+    <meta name="twitter:description" content="Daniel Miessler&#39;s unified theory of AI and jobs says the future belongs to Thrivers — the curious, self-improving, AI-wielding few. But what if most humans don&#39;t want to be Thrivers? What if the thing machines lack — intent — is something most people are already happy to outsource?">
+    <meta property="og:description" content="Daniel Miessler&#39;s unified theory of AI and jobs says the future belongs to Thrivers — the curious, self-improving, AI-wielding few. But what if most humans don&#39;t want to be Thrivers? What if the thing machines lack — intent — is something most people are already happy to outsource?">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/humans-are-the-glue-ai-intent-jobs.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/humans-are-the-glue-ai-intent-jobs.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Bitcoin protocol engineering, AI agents, decentralized infrastructure, overlay networks, and the Internet of Agents. Engineering on BSV.",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think",
+  "description": "Daniel Miessler&#39;s unified theory of AI and jobs says the future belongs to Thrivers — the curious, self-improving, AI-wielding few. But what if most humans don&#39;t want to be Thrivers? What if the thing machines lack — intent — is something most people are already happy to outsource?",
+  "datePublished": "2026-06-21",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/humans-are-the-glue-ai-intent-jobs.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/humans-are-the-glue-ai-intent-jobs.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div>
+          <h1 class="site-title">
+            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
+          </h1>
+	  <p>Bitcoin protocol engineering, AI agents, decentralized infrastructure, overlay networks, and the Internet of Agents. Engineering on BSV.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Humans Are the Glue — AI, Intent, and Why Most People Don&#39;t Want to Think
+  
+</h1>
+<div><hr /><p>Daniel Miessler&apos;s <a href="https://danielmiessler.com/blog/unified-theory-ai-jobs">A Unified Theory For How AI Will Affect Jobs</a> is the clearest articulation I&apos;ve read of the coming bifurcation. He predicts a K-shaped split: Thrivers above the employability line, Strugglers below it. The difference, he argues, is not background or pedigree but <strong>mental frames and behaviors</strong> — curiosity, optimism, AI literacy, self-improvement, reading, creating rather than consuming.</p><p>He&apos;s not wrong. But he&apos;s missing something deeper.</p><p>Miessler&apos;s framework assumes everyone wants to be a Thriver. Or at least, that everyone <em>should</em> want it, and the ones who don&apos;t are making a mistake.</p><p>My experience with Artificial Glue Intelligence — the pattern-matching systems we call LLMs — suggests a different question: <strong>what if most humans don&apos;t have the intent that Miessler&apos;s framework demands?</strong></p><p>Not <em>can&apos;t</em>. <em>Don&apos;t want to.</em></p><hr /><h2 id="what-machines-lack">What Machines Lack</h2><p>Across all the AGI posts on this blog — <em>Why AGI Won&apos;t Happen</em>, <em>G is Glue</em>, <em>AGI Is a Competing Worldview</em> — one thread runs through every argument:</p><p><strong>Machines lack intent and agency.</strong></p><p>They can predict tokens, optimize functions, and match patterns at superhuman speed. They cannot <em>decide what matters</em>. They cannot <em>want something for its own sake</em>. They have no skin in the game. The &quot;G&quot; stands for Glue because what looks like general intelligence is just statistical coherence assembled from training data.</p><p>But here&apos;s the uncomfortable truth this sequence has been circling:</p><p><strong>Most humans also outsource their intent.</strong></p><p>They don&apos;t decide what matters. They inherit it from family, culture, religion, employer, government. They follow orders, clock in and out, raise children, watch Netflix, scroll short video, and die. They live fulfilling lives by any reasonable measure — love, community, purpose — without ever asking &quot;what do I want?&quot; in the way Miessler&apos;s Thrivers do.</p><p>This is not a defect. It is the default configuration of the human animal.</p><hr /><h2 id="the-two-kinds-of-intent">The Two Kinds of Intent</h2><pre><code class="language-mermaid">graph TD
+    AGI[&quot;Artificial Glue Intelligence&lt;br/&gt;Pattern matching, no intent&quot;] --&gt; OUTCOME[&quot;Outputs without purpose&quot;]
+
+    HUMAN_1[&quot;Human (default)&lt;br/&gt;Inherits intent from society&quot;] --&gt; OUTCOME_2[&quot;Purpose without&lt;br/&gt;individual authorship&quot;]
+    HUMAN_1 --&gt; STRUCTURES[&quot;Institutions provide:&lt;br/&gt;- Meaning (religion/nation)&lt;br/&gt;- Direction (job/career)&lt;br/&gt;- Validation (family/community)&quot;]
+
+    HUMAN_2[&quot;Human (Miessler&apos;s Thriver)&lt;br/&gt;Generates own intent&quot;] --&gt; OUTCOME_3[&quot;Individual purpose&lt;br/&gt;+ agency burden&quot;]
+    HUMAN_2 --&gt; BURDEN[&quot;Costs:&lt;br/&gt;- Constant self-improvement&lt;br/&gt;- Loneliness of agency&lt;br/&gt;- No institutional safety net&quot;]
+
+    style AGI fill:#822,color:#fff
+    style HUMAN_1 fill:#228,color:#fff
+    style HUMAN_2 fill:#282,color:#fff
+    style STRUCTURES fill:#960,color:#fff
+    style BURDEN fill:#960,color:#fff
+</code></pre><p>Miessler&apos;s Thrivers are people who generate their own intent. They are curious because they <em>decided</em> to be curious. They self-improve because they <em>want</em> to improve. They read voraciously because they <em>choose</em> to know.</p><p>This is exhausting. It is also rare.</p><p>The Strugglers in Miessler&apos;s framework are not people who lack <em>capacity</em>. They are people who lack <em>desire for agency</em>. And that is not a personal failing — it is the human baseline. For 10,000 years of civilization, most humans lived their lives according to scripts written by others: the harvest, the monsoon, the king, the church, the company. Freedom from having to decide was the point of civilization.</p><p>Miessler calls this &quot;Struggling.&quot; Civilization called it &quot;normal.&quot;</p><hr /><h2 id="individualism-vs.-institutional-psyop">Individualism vs. Institutional Psyop</h2><p>This brings us to the frame the user of this blog noticed:</p><blockquote><p><em>&quot;It&apos;s either individualism or institutional psyop because the vast majority of humans doesn&apos;t want to think. They just want to follow orders and be done with it.&quot;</em></p></blockquote><p>There is a third option that neither camp admits.</p><p><strong>The institutional camp</strong> (religion, state, corporation) says: let the institution provide meaning. The individual&apos;s role is to fit in, contribute, and receive validation in return. This works for most people but concentrates power at the top.</p><p><strong>The individualist camp</strong> (Silicon Valley, the Thriver ethos) says: generate your own meaning. Be curious, be agentic, be your own CEO. This works for a minority but creates anxiety, burnout, and loneliness for everyone else.</p><p><strong>The third option</strong>: institutions exist to <em>distribute the burden of agency</em>. They are not psyops (though some are). They are technologies for reducing the cognitive load of having to decide everything yourself. The problem is not that institutions provide meaning. The problem is that AI is about to disrupt which institutions survive, and the people who relied on the old ones will be stranded without a new source of meaning.</p><hr /><h2 id="what-this-means-for-jobs">What This Means for Jobs</h2><p>Miessler&apos;s employability waterline is real. But the hardest transition is not <em>learning new skills</em> — it is <em>acquiring the desire for agency</em> that the new economy demands.</p><p>Most people do not lose their jobs because they refuse to learn Python. They lose their jobs because they refuse to <em>become the kind of person who decides what to learn next without being told.</em></p><p>That is a much deeper ask. It is not a skills gap. It is an <strong>ontology gap</strong> — a disagreement about what a human being is for.</p><pre><code class="language-mermaid">graph LR
+    OLD[&quot;Old contract:&lt;br/&gt;Institution provides meaning&lt;br/&gt;Individual follows orders&quot;] --&gt; DISRUPTION[&quot;AI disrupts institutions&quot;]
+    DISRUPTION --&gt; NEW[&quot;New demand:&lt;br/&gt;Individual generates meaning&lt;br/&gt;Institution is optional&quot;]
+
+    OLD --&gt; M1[&quot;Works for 80% of people&quot;]
+    NEW --&gt; M2[&quot;Works for 20% of people&quot;]
+    DISRUPTION --&gt; STRANDED[&quot;The 80% are stranded&lt;br/&gt;without a new source of meaning&quot;]
+
+    style OLD fill:#228,color:#fff
+    style NEW fill:#282,color:#fff
+    style STRANDED fill:#822,color:#fff
+</code></pre><hr /><h2 id="what-i-actually-think">What I Actually Think</h2><p>I don&apos;t know what will happen. The competing worldviews post argued that AGI is a civilizational contest. The jobs post argues that the winners will be those who generate their own intent. The &quot;G is Glue&quot; post argues that LLMs cannot generate intent at all.</p><p>Put them together and the picture is:</p><ul><li>Machines cannot replace human intent (they have none)</li><li>But they can replace the <em>output</em> of human intent (tasks, decisions, patterns)</li><li>Most humans already outsource their intent to institutions</li><li>AI will disrupt those institutions</li><li>The people who survive are not the smartest or most skilled but those who can <em>generate their own reason to exist without being told</em></li></ul><p>I don&apos;t know if that&apos;s a good future. I don&apos;t know if it&apos;s fair. I know it&apos;s where we&apos;re headed.</p><p>The user of this blog said something I keep coming back to:</p><blockquote><p><em>&quot;The vast majority of humans just want to coast and live a fulfilling life and die.&quot;</em></p></blockquote><p>That is not a take to argue with. It is a fact about human nature that every AI prediction model needs to account for. The question is not how to turn everyone into a Thriver. The question is what happens to a society where the default human configuration — coast, connect, die — is no longer economically viable.</p><p>I don&apos;t have the answer. But I know it&apos;s the right question.</p><hr /><h2 id="summary">Summary</h2><ul><li>Miessler&apos;s Thrivers vs Strugglers framework is useful but assumes universal desire for agency</li><li>What machines lack is intent — but most humans outsource their intent to institutions</li><li>Individualism vs institutional meaning is a false binary; institutions distribute the burden of agency</li><li>AI will disrupt the institutions that most people rely on for meaning, not just for jobs</li><li>The real question is not &quot;who will learn AI skills?&quot; but &quot;who will learn to want something without being told?&quot;</li><li>I don&apos;t know what happens to people who don&apos;t want the burden of agency in a world that demands it</li></ul></div>
+
+<p><i>Published: 2026-06-21</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/philosophy.html">philosophy</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/meaning.html">meaning</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/glue.html">glue</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/psychology.html">psychology</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai.html">ai</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/jobs.html">jobs</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/miessler.html">miessler</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
