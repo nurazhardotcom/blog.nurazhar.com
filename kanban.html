@@ -13,10 +13,10 @@
         }
       })();
     </script>
-    <title>lagu-lagu — Bitcoin, AI Agents, Protocol Engineering</title>
+    <title>Kanban — Bitcoin, AI Agents, Protocol Engineering</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="lagu-lagu">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Kanban">
     <link rel="stylesheet" href="style.css">
     <link rel="sitemap" type="application/xml" href="sitemap.xml">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
@@ -43,9 +43,9 @@
 
 
     <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
-    <meta name="title" content="lagu-lagu">
-    <meta name="twitter:title" content="lagu-lagu">
-    <meta property="og:title" content="lagu-lagu">
+    <meta name="title" content="Kanban">
+    <meta name="twitter:title" content="Kanban">
+    <meta property="og:title" content="Kanban">
     <meta property="og:type" content="articlewebsite">
     <meta property="og:locale" content="en_SG">
     <meta property="og:site_name" content="Nur Azhar's Blog">
@@ -130,12 +130,8 @@
     <div class="wrapper">
 
       <div id="kanban-app" style="margin-top: 30px; font-family: system-ui, -apple-system, sans-serif;">
-  <div style="border-bottom: 1px solid var(--code-border); padding-bottom: 15px; margin-bottom: 30px;">
-    <p style="margin: 5px 0 0 0; font-size: 1.1rem; color: var(--text-color); font-weight: bold;">Building public pipelines are real-time, Compiled statically.</p>
-  </div>
-
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; align-items: start;">
-    
+
     <!-- Backlog Column -->
     <div style="background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 8px; padding: 15px;">
       <h3 style="margin-top: 0; padding-bottom: 8px; border-bottom: 2px solid #64748b; font-size: 1rem; color: var(--text-color); text-transform: uppercase; display: flex; justify-content: space-between;">
@@ -177,7 +173,6 @@
 
 <script>
   (function() {
-    // Inject the raw state directly compiled from local JSON during rendering
     const state = {
   "tasks": [
     {
@@ -226,30 +221,24 @@
         document.getElementById('tasks-' + c).innerHTML = '';
         document.getElementById('count-' + c).innerText = '0';
       });
-
       if (!state || !state.tasks) return;
 
       state.tasks.forEach(t => {
         const list = document.getElementById('tasks-' + t.status);
         if (!list) return;
-
         const card = document.createElement('div');
         card.style.background = 'var(--bg-color)';
         card.style.border = '1px solid var(--code-border)';
         card.style.padding = '12px';
         card.style.borderRadius = '6px';
-        card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-        
         card.innerHTML = `
           <h4 style="margin: 0; font-size: 0.95rem; font-weight: bold; color: var(--text-color);">${escapeHtml(t.title)}</h4>
           ${t.desc ? `<p style="margin: 8px 0 0 0; font-size: 0.8rem; color: var(--text-color); opacity: 0.7; line-height: 1.4;">${escapeHtml(t.desc)}</p>` : ''}
         `;
         list.appendChild(card);
       });
-
       cols.forEach(c => {
-        const list = document.getElementById('tasks-' + c);
-        document.getElementById('count-' + c).innerText = list.children.length;
+        document.getElementById('count-' + c).innerText = document.getElementById('tasks-' + c).children.length;
       });
     }
 
@@ -257,7 +246,6 @@
       if (!str) return '';
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
-
     renderBoard();
   })();
 </script>
