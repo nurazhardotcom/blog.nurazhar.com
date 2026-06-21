@@ -13,11 +13,12 @@
         }
       })();
     </script>
-    <title>Analytics Dashboard</title>
+    <title>Analytics Dashboard — Bitcoin, AI Agents, Protocol Engineering</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Analytics Dashboard">
     <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
     
@@ -25,7 +26,7 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
       document.addEventListener("DOMContentLoaded", async () => {
         const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
         for (const codeBlock of codeBlocks) {
@@ -45,7 +46,9 @@
     <meta name="title" content="Analytics Dashboard">
     <meta name="twitter:title" content="Analytics Dashboard">
     <meta property="og:title" content="Analytics Dashboard">
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="articlewebsite">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
 
     <meta name="description" content="">
     <meta name="twitter:description" content="">
@@ -61,13 +64,37 @@
     <meta property="og:image" content="">
     <meta property="og:image:alt" content="">
 
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
 
 
     <meta name="twitter:creator" content="">
+    <meta name="author" content="">
+
+    <meta name="author" content="Nur Azhar">
 
 
     <meta name="twitter:site" content="">
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Bitcoin protocol engineering, AI agents, decentralized infrastructure, overlay networks, and the Internet of Agents. Engineering on BSV.",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    
 
   </head>
   <body>
@@ -95,7 +122,7 @@
           <h1 class="site-title">
             <a class="page-link" href="index.html">Nur Azhar's</a>
           </h1>
-	  <p>Blog in an era of artificial intelligence</p>
+	  <p>Bitcoin protocol engineering, AI agents, decentralized infrastructure, overlay networks, and the Internet of Agents. Engineering on BSV.</p>
         </div>
       </div>
     </div>

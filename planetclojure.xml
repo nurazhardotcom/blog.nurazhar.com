@@ -3,11 +3,795 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-19T12:47:36+00:00</updated>
+  <updated>2026-06-21T02:21:36+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
   </author>
+  <entry>
+    <id>https://blog.nurazhar.com/paperclip-deterministic-business-engine.html</id>
+    <link href="https://blog.nurazhar.com/paperclip-deterministic-business-engine.html"/>
+    <title>The Paperclip Engine: A Deterministic Business Kernel in Clojure</title>
+    <updated>2026-06-21T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>The previous posts covered the BSV coordination layer (the glue between agents and Bitcoin primitives) and its architecture. This post covers something different: a complete business engine.</p><p>Paperclip-clj is a deterministic Clojure kernel for autonomous business operations. It integrates governance, policy enforcement, billing, escrow, and blockchain settlement into one acyclic module graph. 33 tests, 54 assertions, 0 failures, 0 errors.</p><h2 id="the-engine-vs-the-glue">The Engine vs The Glue</h2><p>The BSV Agent Coordination Layer was glue: it connected AI agents to BSV testnet primitives (identity, payments, OP_RETURN anchoring). Paperclip is an engine: a self-contained business runtime with its own domain model, policy engine, billing system, and execution pipeline. BSV is one adapter among many — the engine would work just as well with Stripe or PayPal.</p><h2 id="system-architecture">System Architecture</h2><p>The engine is organized into five layers:</p><pre><code class="language-mermaid">flowchart TB
+    subgraph Core[&quot;Core Domain&quot;]
+        CORE[&quot;paperclip.core&lt;br/&gt;proposals, organizations, voting&quot;]
+        GOV[&quot;paperclip.governance&lt;br/&gt;execute approved proposals&quot;]
+        LEDGER[&quot;paperclip.ledger&lt;br/&gt;append-only audit trail&quot;]
+    end
+
+    subgraph Policy[&quot;Policy Layer&quot;]
+        POL[&quot;paperclip.policy&lt;br/&gt;budget caps, risk tiers, auto-approve&quot;]
+        PLAY[&quot;paperclip.playbook&lt;br/&gt;approved task schemas&quot;]
+        ROUTE[&quot;paperclip.routing&lt;br/&gt;green, yellow, red lanes&quot;]
+    end
+
+    subgraph Billing[&quot;Billing Layer&quot;]
+        BILL[&quot;paperclip.billing&lt;br/&gt;fee calculation, extraction math&quot;]
+        COMM[&quot;paperclip.commercial&lt;br/&gt;prepaid escrow gate&quot;]
+    end
+
+    subgraph Execution[&quot;Execution Layer&quot;]
+        REPAIR[&quot;paperclip.repair&lt;br/&gt;bounded self-healing&quot;]
+        FALLBACK[&quot;paperclip.fallback&lt;br/&gt;static safe states&quot;]
+        ATT[&quot;paperclip.attention&lt;br/&gt;mindshare scoring&quot;]
+    end
+
+    subgraph Adapters[&quot;Adapters&quot;]
+        BSV[&quot;adapters.bsv&lt;br/&gt;SHA-256 + OP_RETURN&quot;]
+        AGENT[&quot;adapters.agent&lt;br/&gt;LLM sandbox&quot;]
+        EMAIL[&quot;adapters.email&quot;]
+        WEBHK[&quot;adapters.webhook&quot;]
+    end
+
+    Core --&gt; Policy
+    Policy --&gt; Billing
+    Billing --&gt; Execution
+    Execution --&gt; Adapters
+</code></pre><p>Every namespace is pure Clojure with no mutable state at the core. Side effects are isolated in the adapter layer.</p><h2 id="the-five-gates">The Five Gates</h2><p>The engine enforces five fail-closed gates before any work executes, as specified in the original design:</p><table><thead><tr><th>Gate</th><th>Module</th><th>Question</th><th>If failed</th></tr></thead><tbody><tr><td>Payment</td><td>commercial.clj</td><td>Is money already deposited?</td><td>No execution</td></tr><tr><td>Scope</td><td>playbook.clj</td><td>Is this request in an approved contract?</td><td>Dead-letter drop</td></tr><tr><td>Input</td><td>playbook.clj</td><td>Does payload match allowed schema?</td><td>Dead-letter drop</td></tr><tr><td>Policy</td><td>policy.clj</td><td>Is spend within cap, vendor approved?</td><td>Rejected</td></tr><tr><td>Attention</td><td>attention.clj</td><td>Will this task waste founder focus?</td><td>Bounce to agent</td></tr></tbody></table><p>Only tasks that pass all five gates reach the BSV settlement adapter.</p><h2 id="execution-pipeline">Execution Pipeline</h2><p>The routing engine maps every task into one of four lanes:</p><pre><code class="language-mermaid">flowchart LR
+    TASK[&quot;Task Input&quot;] --&gt; PLAYBOOK[&quot;playbook.clj&lt;br/&gt;validate contract&quot;]
+    PLAYBOOK --&gt;|valid| ROUTE[&quot;routing.clj&lt;br/&gt;determine lane&quot;]
+    PLAYBOOK --&gt;|invalid| DL[&quot;dead-letter queue&quot;]
+
+    ROUTE --&gt;|green| EXEC[&quot;silent execution&lt;br/&gt;auto-approve&quot;]
+    ROUTE --&gt;|yellow| REPAIR[&quot;repair.clj&lt;br/&gt;3 retry attempts&quot;]
+    ROUTE --&gt;|red| SETTLE[&quot;BSV settlement&lt;br/&gt;founder authorized&quot;]
+    ROUTE --&gt;|dead-letter| DL
+
+    REPAIR --&gt;|success| EXEC
+    REPAIR --&gt;|exhausted| DL
+</code></pre><p>The green lane runs without any human attention. The yellow lane attempts bounded self-healing (3 retries max, no LLM repair loop). The red lane triggers BSV settlement with split payouts. Everything else drops silently into the dead-letter queue.</p><h2 id="billing-and-income-extraction">Billing and Income Extraction</h2><p>The billing engine computes fees at three levels:</p><pre><code class="language-clojure">(def default-pricing
+  {:pricing/workspace-monthly 499.00
+   :pricing/execution-fee 0.25
+   :pricing/budget-unlock-rate 0.015
+   :pricing/settlement-rate 0.010
+   :pricing/min-settlement-fee 1.00
+   :pricing/anchor-fee-bsv 0.000005})
+
+(defn calculate-fees [{:keys [proposal execution-count settlement-amount pricing]}]
+  ;; Returns workspace-monthly, execution-fee, unlock-fee,
+  ;; settlement-fee, anchor-fee, and total-variable-fee
+  ...)
+</code></pre><p>Revenue comes from three streams: monthly workspace retainers, usage-based execution fees, and optional BSV settlement margin. The commercial module enforces prepaid escrow — no balance means no execution.</p><h2 id="bsv-integration">BSV Integration</h2><p>The BSV adapter generates deterministic SHA-256 digests, constructs split-payout transactions (vendor + platform fee), and anchors OP_RETURN proofs:</p><pre><code class="language-clojure">(defn settle-payout-with-extraction!
+  [{:keys [vendor-address platform-treasury-address]} proposal billing-breakdown]
+  (let [receipt-hash (canonicalize-and-hash proposal billing-breakdown)
+        tx-template {:outputs [{:address vendor-address
+                                :satoshis (to-sats net-vendor-payout)}
+                               {:address platform-treasury-address
+                                :satoshis (to-sats platform-fee)}
+                               {:op-return receipt-hash}]}]
+    ...))
+</code></pre><h2 id="revenue-model">Revenue Model</h2><p>The engine is designed for a solo founder targeting $100,000/year through:</p><ol start="1"><li><strong>One narrow workflow</strong> — pick one painful business process, encode it as a playbook</li><li><strong>Two B2B retainers</strong> at <span class="formula">4,500/month each = </span>108,000/year ARR</li><li><strong>Prepaid escrow</strong> — no credit, no net-30, no invoices</li><li><strong>Dead-letter as contract law</strong> — dropped invalid inputs are defined as correct system behavior, not support tickets</li></ol><h2 id="test-results">Test Results</h2><p>All 33 tests pass with 54 assertions:</p><table><thead><tr><th>Module</th><th>Tests</th><th>What it proves</th></tr></thead><tbody><tr><td>core</td><td>8</td><td>Proposal lifecycle, voting, quorum evaluation</td></tr><tr><td>governance</td><td>2</td><td>Approved/non-approved proposal execution</td></tr><tr><td>policy</td><td>10</td><td>Spending limits, risk tiers, agent intent, founder override</td></tr><tr><td>billing</td><td>3</td><td>Fee calculation, extraction model, pricing</td></tr><tr><td>playbook</td><td>6</td><td>Contract validation, schema enforcement, immutable contracts</td></tr><tr><td>attention</td><td>4</td><td>Risk scoring, triage lanes, escalation thresholds</td></tr></tbody></table><p>The engine is at <a href="https://github.com/nurazhardotcom/paperclip-clj">github.com/nurazhardotcom/paperclip-clj</a>. Next step: deploy for one paying client and prove the loop closes.</p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/debugging-quickblog-cache-yaml-frontmatter.html</id>
+    <link href="https://blog.nurazhar.com/debugging-quickblog-cache-yaml-frontmatter.html"/>
+    <title>Debugging a Missing Blog Post — Quickblog Cache &amp; YAML Frontmatter</title>
+    <updated>2026-06-20T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>I published a new post. Pushed to <code>main</code>. Watched GitHub Actions deploy succeed with green checkmarks. But the URL returned 404.</p><h2 id="the-investigation-trail">The Investigation Trail</h2><pre><code class="language-mermaid">flowchart TD
+    A[Post published to main] --&gt; B[Deploy workflow ran]
+    B --&gt; C{gh-pages updated?}
+    C --&gt;|No| D[Check deploy logs]
+    C --&gt;|Yes| E[Post should work]
+    D --&gt; F[Check which files deployed]
+    F --&gt; G[Only atom.xml + planetclojure.xml]
+    G --&gt; H[No HTML generated!]
+</code></pre><p>The deploy workflow ran fine — but the <code>gh-pages</code> branch only had two files changed: <code>atom.xml</code> and <code>planetclojure.xml</code>. No new HTML post. Worse, the workflow exit code was <code>0</code> (success), but <code>bb quickblog render</code> had silently skipped my post.</p><h2 id="root-cause-#1:-stale-cache">Root Cause #1: Stale Cache</h2><p>Quickblog caches post metadata in <code>.work/prod/cache.edn</code>. When I checked, the cache had 54 posts — all created before my new post existed.</p><pre><code class="language-mermaid">flowchart TD
+    A[Post added to posts/] --&gt; B[Quickblog scans posts/]
+    B --&gt; C{Cache exists?}
+    C --&gt;|Yes - stale| D[Loads old post list]
+    C --&gt;|No| E[Scans all posts fresh]
+    D --&gt; F[New post invisible]
+    F --&gt; G[Skipped during render]
+    E --&gt; H[New post included]
+</code></pre><p>Clearing <code>.work/</code> forced a fresh scan. The post now rendered — but hit a second error:</p><pre><code>Skipping post aur-audit-pgp-keys-wkhtmltopdf.md due to exception:
+java.lang.IllegalArgumentException: Don&apos;t know how to create ISeq from: java.util.Date
+</code></pre><h2 id="root-cause-#2:-yaml-date-parsing">Root Cause #2: YAML Date Parsing</h2><p>My post used YAML frontmatter:</p><pre><code class="language-yaml">---
+title: &quot;How I Fixed a Broken AUR Install in 2 Commands&quot;
+date: 2026-06-19
+tags: [&quot;arch-linux&quot;, &quot;aur&quot;, &quot;pgp&quot;, &quot;troubleshooting&quot;]
+---
+</code></pre><p>The <code>---</code> delimiters trigger SnakeYAML parsing. SnakeYAML interprets <code>date: 2026-06-19</code> as a <code>java.util.Date</code> object — not a string.</p><h2 id="the-cascade-crash">The Cascade Crash</h2><pre><code class="language-mermaid">flowchart TD
+    A[YAML date: 2026-06-19] --&gt; B[SnakeYAML parses as java.util.Date]
+    B --&gt; C[sort-by :date crashes]
+    C --&gt; D[ClassCastException on Mixed Types]
+    D --&gt; E[post-by-tag fails]
+    E --&gt; F[Tag pages corrupted]
+    E --&gt; G[index.html not updated]
+    E --&gt; H[archive.html not updated]
+    F --&gt; I[Deploy succeeds but missing pages]
+</code></pre><p>Quoting the date (<code>date: &quot;2026-06-19&quot;</code>) seemed to fix it — but created a twist.</p><p>SnakeYAML then returned a <code>Long</code> instead of a <code>Date</code>. All other 54 posts produce <strong>strings</strong>. Mixing <code>Long</code> with <code>String</code> in <code>sort-by</code> causes:</p><pre><code>ClassCastException: java.lang.String cannot be cast to java.lang.Character
+</code></pre><h2 id="the-render-lifecycle">The Render Lifecycle</h2><pre><code class="language-mermaid">flowchart TD
+    A[bb quickblog render] --&gt; B[Read post HTMLs]
+    B --&gt; C[Write individual posts]
+    C --&gt; D[write-post! x54]
+    D --&gt; E[posts-by-tag - CRASH HERE]
+    E --&gt; F[Write tag pages]
+    E --&gt; G[Write index.html]
+    E --&gt; H[Write archive.html]
+    E --&gt; I[Write atom.xml]
+    
+    style D fill:#90ee90
+    style E fill:#ff6b6b
+    style F fill:#ff6b6b
+    style G fill:#ff6b6b
+    style H fill:#ff6b6b
+    style I fill:#ff6b6b
+</code></pre><p>The render wrote all 55 post HTMLs successfully — then crashed writing tag pages. I had raw HTML files but no <code>index.html</code>, no <code>archive.html</code>, no RSS feed.</p><h2 id="format-comparison">Format Comparison</h2><table><thead><tr><th>Format</th><th>Delimiters</th><th>Date Type</th><th>Tags Format</th><th>Used By</th></tr></thead><tbody><tr><td>Old-style</td><td>None</td><td>String</td><td><code>Tag1, Tag2</code></td><td>54 of 55 posts</td></tr><tr><td>YAML-style</td><td><code>---</code></td><td><code>Long</code>/<code>Date</code></td><td><code>[&quot;Tag1&quot;, &quot;Tag2&quot;]</code></td><td>1 post (mine)</td></tr></tbody></table><p>The format mismatch was invisible until the type check in <code>sort-by</code>.</p><h2 id="the-fix">The Fix</h2><p>Convert to quickblog-native format:</p><pre><code class="language-text">Title: How I Fixed a Broken AUR Install in 2 Commands
+Date: 2026-06-19
+Tags: arch-linux, aur, pgp, troubleshooting
+Description: Using aur-audit to diagnose missing PGP keys blocking wkhtmltopdf-bin installation on Arch.
+
+---
+</code></pre><p>No <code>---</code> delimiters. No YAML parsing. No type ambiguity.</p><h2 id="manual-deploy-required">Manual Deploy Required</h2><p>Since CI crashed, I deployed manually:</p><pre><code class="language-bash">rm -rf .work
+bb quickblog render  # Now generates index.html, tags/, everything
+git worktree add /tmp/gh-pages origin/gh-pages
+cd /tmp/gh-pages
+git rm -rf . &amp;&amp; cp -r /path/to/public/* .
+git push --force origin HEAD:gh-pages
+</code></pre><h2 id="the-fix-verification">The Fix Verification</h2><table><thead><tr><th>Step</th><th>Status</th></tr></thead><tbody><tr><td>Post HTML exists</td><td>✅ 10KB file generated</td></tr><tr><td>Tag pages exist</td><td>✅ <code>tags/pgp.html</code>, <code>tags/archlinux.html</code></td></tr><tr><td>Index includes post</td><td>✅ <code>grep -c aur-audit-pgp</code> in <code>index.html</code></td></tr><tr><td>RSS updated</td><td>✅ <code>atom.xml</code> contains entry</td></tr></tbody></table><pre><code class="language-mermaid">flowchart LR
+    A[Check HTML file] --&gt; B{Exists?}
+    B --&gt;|Yes| C[Verify tags]
+    B --&gt;|No| D[Revert changes]
+    C --&gt; E{Tags generated?}
+    E --&gt;|Yes| F[Check index.html]
+    E --&gt;|No| G[Fix format]
+    F --&gt; H{Post listed?}
+    H --&gt;|Yes| I[SUCCESS]
+    H --&gt;|No| J[Check metadata]
+</code></pre><h2 id="lessons-learned">Lessons Learned</h2><pre><code class="language-mermaid">mindmap
+  root((War Story))
+    Cache
+      .work/ must be cleared on new posts
+      Cache.edn hides missing content silently
+    YAML
+      date: YYYY-MM-DD becomes java.util.Date
+      Breaks sort-by on mixed post types
+    Format
+      Old-style: Title:, Date:, Tags: (no delimiters)
+      YAML-style: title:, date:, tags: with ---
+      Cannot mix in same blog
+    Render Order
+      Individual posts render first
+      Tag/index crash doesn&apos;t revert
+</code></pre><ol start="1"><li><strong>Clear <code>.work/</code> on new posts</strong> — stale cache hides content</li><li><strong>YAML frontmatter ≠ quickblog format</strong> — <code>---</code> delimiters change parsing</li><li><strong>SnakeYAML types differ</strong> — <code>Date</code> and <code>Long</code> vs <code>String</code></li><li><strong>CI can succeed partially</strong> — exit 0 but missing critical files</li><li><strong>Always verify deploy output</strong> — check <code>gh-pages</code> for actual changes</li></ol><h2 id="next-steps">Next Steps</h2><p>Report the type-safety bug upstream. Quickblog should handle mixed frontmatter formats gracefully, or provide a clear error message instead of crashing mid-render.</p><hr /><p><em>Running on: Babashka quickblog (git sha: c542bdd). CachyOS (Arch-based).</em></p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/from-simulation-to-settlement.html</id>
+    <link href="https://blog.nurazhar.com/from-simulation-to-settlement.html"/>
+    <title>From Simulation to Settlement: Live Testnet BSV for AI Agents</title>
+    <updated>2026-06-20T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>The previous post laid out the vision: sovereign AI agents using Clojure + BSV as two primitives that collapse six layers of vendor dependencies into zero. That post ended at &quot;steps 4 and 5 are the frontier — the glue layer that has not been built yet.&quot;</p><p>Today, that frontier gets paved. This post walks through the live testnet implementation of the BSV Agent Coordination Layer — a Clojure monorepo that turns simulated stubs into real BSV testnet transactions. 100 tests, 242 assertions, zero failures.</p><h2 id="the-gap:-what-was-simulated">The Gap: What Was Simulated</h2><p>The original codebase had working coordination logic — identity protocols, atomic wallet reserves, policy engines, escrow workflows — but every interaction with the ledger was mocked:</p><table><thead><tr><th>Layer</th><th>Simulated</th><th>Live Replacement</th></tr></thead><tbody><tr><td>Address derivation</td><td>Hardcoded <code>&quot;mxx...&quot;</code> string</td><td>secp256k1 pubkey -&gt; RIPEMD160(SHA256) -&gt; Base58Check</td></tr><tr><td>Transaction spending</td><td><code>(str &quot;tx-&quot; (random-nonce))</code></td><td>UTXO selection, P2PKH build, DER signing, broadcast</td></tr><tr><td>OP_RETURN anchoring</td><td>Local SHA-256 hash only</td><td>Real OP_RETURN tx with change output</td></tr><tr><td>Balance</td><td>In-memory atom</td><td>Bitails API (<code>get-balance</code>)</td></tr><tr><td>UTXOs</td><td>Manually set</td><td>Bitails API (<code>get-unspent</code>)</td></tr><tr><td>Faucet</td><td>No-op</td><td>WhatsonChain API + poll-for-confirmation</td></tr><tr><td>Network calls</td><td>No retry</td><td>Exponential backoff (3 retries)</td></tr></tbody></table><p>The architecture required six modules with acyclic dependencies:</p><pre><code class="language-mermaid">graph TD
+    subgraph Core[&quot;core: Specs + Primitives&quot;]
+        CORE(&quot;coordination.core&quot;)
+        COORD(&quot;coordination.coordination&quot;)
+    end
+
+    subgraph Identity[&quot;wallet: Keys + Addresses&quot;]
+        ID(&quot;coordination.identity&quot;)
+        WAL(&quot;coordination.wallet&quot;)
+    end
+
+    subgraph Payment[&quot;brc105: HTTP 402&quot;]
+        BRC(&quot;coordination.brc105&quot;)
+        POL(&quot;coordination.policy&quot;)
+    end
+
+    subgraph Audit[&quot;audit: OP_RETURN&quot;]
+        AUD(&quot;coordination.audit&quot;)
+    end
+
+    subgraph SDK[&quot;agent-sdk: Agent Runtime&quot;]
+        SDK(&quot;coordination.agent-sdk&quot;)
+    end
+
+    subgraph Testnet[&quot;testnet: Live BSV&quot;]
+        CLI(&quot;coordination.testnet.client&quot;)
+    end
+
+    ID --&gt; WAL
+    WAL --&gt; CORE
+    CORE --&gt; COORD
+    COORD --&gt; AUD
+    BRC --&gt; POL
+    BRC --&gt; WAL
+    SDK --&gt; ID
+    SDK --&gt; WAL
+    SDK --&gt; BRC
+    SDK --&gt; AUD
+    CLI --&gt; ID
+    CLI --&gt; WAL
+</code></pre><p>The goal: replace the dotted-line simulations with solid, broadcast-ready transactions without changing a single coordination-logic test.</p><h2 id="step-1:-address-derivation-into-the-identity-protocol">Step 1: Address Derivation Into the Identity Protocol</h2><p>The first fix was architectural. Address derivation (pubkey -&gt; Base58Check address) lived in <code>testnet.client</code> as a utility. But every agent identity <em>is</em> an address — it should be a first-class protocol method.</p><p>Before (testnet/client.clj, leaky):</p><pre><code class="language-clojure">(defn agent-&gt;address [agent]
+  (pubkey-&gt;address (identity/public-key (:identity agent))))
+</code></pre><p>After (coordination/identity.clj, protocol):</p><pre><code class="language-clojure">(defprotocol IAgentIdentity
+  (agent-id [_])
+  (public-key [_])
+  (sign [_ data])
+  (verify [_ data signature])
+  (address [_] [_ version-byte]))
+</code></pre><p>Every identity now answers <code>(address identity)</code> returning <code>&quot;m...&quot;</code> or <code>&quot;n...&quot;</code> for testnet, <code>&quot;1...&quot;</code> for mainnet. The 25-byte Base58Check encoding is self-contained:</p><pre><code class="language-clojure">(defn pubkey-&gt;address
+  ([pubkey-bytes] (pubkey-&gt;address pubkey-bytes 0x6f))
+  ([pubkey-bytes version-byte]
+   (let [hash160 (ripemd160 (sha256 pubkey-bytes))
+         versioned (byte-array (inc (alength hash160)))]
+     (aset versioned 0 (byte version-byte))
+     ;; ... checksum, encode-base58 ...
+     )))
+</code></pre><p>The testnet client delegates to identity now, removing the cycle that forced forward-declarations.</p><pre><code class="language-mermaid">graph LR
+    subgraph Before[&quot;Before: Address in testnet client&quot;]
+        TC1[&quot;testnet.client/pubkey-&gt;address&quot;]
+        TC2[&quot;testnet.client/agent-&gt;address&quot;]
+        TC1 --&gt; TC2
+    end
+
+    subgraph After[&quot;After: Address in identity protocol&quot;]
+        ID1[&quot;identity/address (protocol method)&quot;]
+        AG[&quot;AgentIdentity record&quot;]
+        ID1 --&gt; AG
+    end
+
+    Before --&gt;|moved| After
+</code></pre><h2 id="step-2:-live-transaction-building">Step 2: Live Transaction Building</h2><p>The core of the work. A valid BSV P2PKH transaction requires:</p><ol start="1"><li>UTXO selection from Bitails API</li><li>Transaction serialization (version, inputs, outputs, locktime)</li><li>SIGHASH preimage construction for each input</li><li>ECDSA signing with SIGHASH_ALL appended</li><li>Broadcast via Bitails <code>/tx/broadcast</code></li></ol><h3 id="utxo-selection">UTXO Selection</h3><p>Coin selection with fee estimation. The simplest approach: sort UTXOs descending, grab until we cover <code>amount + fee</code>:</p><pre><code class="language-clojure">(defn select-utxos [utxos target-amount estimated-fee]
+  (let [needed (+ target-amount estimated-fee)
+        sorted (sort-by (comp - :satoshis) utxos)
+        selected (reduce (fn [acc u]
+                           (if (&gt;= (:total acc) needed)
+                             (reduced acc)
+                             (update acc :selected conj u)
+                             (update acc :total + (:satoshis u))))
+                         {:selected [] :total 0}
+                         sorted)]
+    (if (&gt;= (:total selected) needed)
+      (assoc selected :change (- (:total selected) target-amount))
+      (throw (ex-info &quot;Insufficient UTXOs&quot; {:needed needed})))))
+</code></pre><h3 id="transaction-serialization">Transaction Serialization</h3><p>Every byte matters. The BSV wire format is little-endian, with varint prefixes for variable-length fields:</p><pre><code class="language-mermaid">flowchart LR
+    subgraph Tx[&quot;Raw BSV Transaction&quot;]
+        V[&quot;4 bytes: Version (1)&quot;]
+        IC[&quot;varint: Input Count&quot;]
+        I1[&quot;Input 1&quot;]
+        I2[&quot;Input 2 (optional)&quot;]
+        OC[&quot;varint: Output Count&quot;]
+        O1[&quot;Output 1 (payment)&quot;]
+        O2[&quot;Output 2 (change)&quot;]
+        L[&quot;4 bytes: Locktime&quot;]
+    end
+
+    subgraph Input[&quot;Each Input&quot;]
+        TXID[&quot;32 bytes: Prev TXID (reversed)&quot;]
+        VOUT[&quot;4 bytes: Vout&quot;]
+        SCRL[&quot;varint: ScriptSig Length&quot;]
+        SCR[&quot;ScriptSig (empty before signing)&quot;]
+        SEQ[&quot;4 bytes: Sequence (0xffffffff)&quot;]
+    end
+
+    subgraph Output[&quot;Each Output&quot;]
+        SAT[&quot;8 bytes: Satoshis&quot;]
+        SCRL2[&quot;varint: ScriptPubKey Length&quot;]
+        SCR2[&quot;ScriptPubKey (P2PKH)&quot;]
+    end
+
+    Tx --&gt; Input
+    Tx --&gt; Output
+    V --&gt; IC --&gt; I1 --&gt; I2 --&gt; OC --&gt; O1 --&gt; O2 --&gt; L
+    TXID --&gt; VOUT --&gt; SCRL --&gt; SCR --&gt; SEQ
+    SAT --&gt; SCRL2 --&gt; SCR2
+</code></pre><p>The serialization is a straightforward byte-array concatenation:</p><pre><code class="language-clojure">(defn- serialize-tx [tx]
+  (let [ver (le32 (:version tx))
+        in-count (varint (count (:inputs tx)))
+        in-bytes (apply concat (for [in (:inputs tx)]
+                                 (concat (hex-&gt;bytes (reverse-hex (:txid-hex in)))
+                                         (le32 (:vout in))
+                                         (varint (count (:script-hex in)))
+                                         (hex-&gt;bytes (:script-hex in))
+                                         (le32 (:sequence in)))))
+        out-count (varint (count (:outputs tx)))
+        out-bytes (apply concat (for [out (:outputs tx)]
+                                  (concat (le64 (:satoshis out))
+                                          (varint (count (:script-hex out)))
+                                          (hex-&gt;bytes (:script-hex out)))))
+        locktime (le32 (:locktime tx))]
+    (byte-array (concat ver in-count in-bytes
+                        out-count out-bytes locktime))))
+</code></pre><h3 id="sighash-+-signing">SIGHASH + Signing</h3><p>The Bitcoin signing algorithm: double-SHA256 of the sighash preimage, ECDSA sign, append <code>0x01</code> (SIGHASH_ALL):</p><pre><code class="language-mermaid">sequenceDiagram
+    participant TX as Unsigned Transaction
+    participant BUILD as Sighash Builder
+    participant SIGN as ECDSA Signer
+    participant BROADCAST as Bitails API
+
+    TX-&gt;&gt;BUILD: For each input, set script = prevout scriptPubKey
+    BUILD-&gt;&gt;BUILD: Serialize to bytes
+    BUILD-&gt;&gt;BUILD: Append 0x01000000 (SIGHASH_ALL LE)
+    BUILD-&gt;&gt;SIGN: 32 bytes: SHA256(SHA256(preimage))
+    SIGN-&gt;&gt;SIGN: DER-encode signature
+    SIGN-&gt;&gt;SIGN: Append 0x01 byte
+    SIGN-&gt;&gt;TX: Build scriptSig: &lt;sig+hashbyte&gt; &lt;pubkey&gt;
+    TX-&gt;&gt;BROADCAST: Broadcast raw hex
+    BROADCAST--&gt;&gt;TX: Return txid
+</code></pre><p>The signing function uses the same Bouncy Castle <code>SHA256withECDSA</code> that the identity protocol uses — butnote the double-hash:</p><pre><code class="language-clojure">(defn- sign-input [tx input-index prevout-script-hex key-material]
+  (let [preimage (sighash-preimage tx input-index prevout-script-hex)
+        hash (sha256 (sha256 preimage))  ;; Bitcoin double-SHA256
+        sig-der (ecdsa-sign key-material hash)
+        sig-with-hash (byte-array (inc (alength sig-der)))]
+    (System/arraycopy sig-der 0 sig-with-hash 0 (alength sig-der))
+    (aset sig-with-hash (alength sig-der) (byte 0x01))  ;; SIGHASH_ALL
+    ;; Build scriptSig: &lt;varint length&gt; &lt;sig+hashbyte&gt; &lt;varint length&gt; &lt;pubkey&gt;
+    ...))
+</code></pre><h3 id="full-spend-flow">Full Spend Flow</h3><p>The <code>live-spend</code> function ties it all together:</p><pre><code class="language-mermaid">flowchart TD
+    START[&quot;live-spend(identity, wallet, recipient, amount)&quot;]
+    FETCH[&quot;get-unspent-with-retry(from-address)&quot;]
+    CHECK{&quot;UTXOs available?&quot;}
+    BUILD[&quot;build-p2pkh-tx(utxos, recipient, amount, fee)&quot;]
+    SIGN[&quot;sign-tx(built-tx, identity)&quot;]
+    HEX[&quot;tx-&gt;hex(signed-tx)&quot;]
+    BROAD[&quot;broadcast-tx-with-retry(raw-hex)&quot;]
+    OK{&quot;Status :ok?&quot;}
+    DEDUCT[&quot;wallet/deduct(wallet, amount)&quot;]
+    ERROR[&quot;Return {:status :error ...}&quot;]
+    DONE[&quot;Return {:status :ok :txid ...}&quot;]
+
+    START --&gt; FETCH --&gt; CHECK
+    CHECK --&gt;|no| ERROR
+    CHECK --&gt;|yes| BUILD --&gt; SIGN --&gt; HEX --&gt; BROAD --&gt; OK
+    OK --&gt;|yes| DEDUCT --&gt; DONE
+    OK --&gt;|no| ERROR
+</code></pre><h2 id="step-3:-real-op-return-anchoring">Step 3: Real OP_RETURN Anchoring</h2><p>The audit module&apos;s <code>simulate-anchor</code> was a SHA-256 hash with a fake txid. The replacement <code>live-anchor</code> builds a transaction where:</p><ul><li><strong>Input:</strong> One or more UTXOs from the agent&apos;s wallet (to fund the fee)</li><li><strong>Output 0:</strong> OP_RETURN with <code>6a</code> prefix + data push + bundle hash hex</li><li><strong>Output 1 (optional):</strong> Change output back to agent&apos;s address (P2PKH)</li></ul><pre><code class="language-clojure">(defn live-anchor [identity wallet data-hex &amp; {:keys [fee-satoshis]}]
+  (let [utxos (get-unspent-with-retry (identity/address identity))
+        selection (select-utxos utxos 0 fee)
+        inputs (mapv utxo-&gt;input (:selected selection))
+        anchor-script (str &quot;6a&quot; (format &quot;%02x&quot; (quot (count data-hex) 2)) data-hex)
+        outputs [{:satoshis 0 :script-hex anchor-script}]
+        outputs (if (pos? (:change selection))
+                  (conj outputs {:satoshis (:change selection)
+                                 :script-hex (p2pkh-script (pubkey-&gt;hash160 pubkey))})
+                  outputs)
+        signed (sign-all-inputs {:version 1 :inputs inputs :outputs outputs} ...)
+        raw-hex (bytes-&gt;hex (serialize-tx signed))
+        result (broadcast-tx-with-retry raw-hex)]
+    ...))
+</code></pre><p>The <code>bundle-and-anchor</code> function now takes an optional <code>:wallet</code> parameter. When present, it broadcasts to testnet. When absent, it falls back to simulation — making all existing tests pass without modification.</p><h2 id="step-4:-brc-105-ring-middleware">Step 4: BRC-105 Ring Middleware</h2><p>HTTP 402 Payment Required is the mechanism. The BRCC-105 spec says: server returns 402 with <code>x-bsv-payment-*</code> headers, client pays and retries with <code>x-bsv-payment</code> header.</p><pre><code class="language-mermaid">sequenceDiagram
+    participant C as Agent A (Client)
+    participant S as Agent B (Server)
+    participant L as BSV Ledger
+
+    C-&gt;&gt;S: GET /api/translate
+    S--&gt;&gt;C: 402 Payment Required
+    Note over S: Headers: x-bsv-payment-version: 1.0
+    Note over S: x-bsv-payment-satoshis-required: 500
+    Note over S: x-bsv-auth-identity-key: &lt;pubkey&gt;
+
+    C-&gt;&gt;C: evaluate-payment(wallet, challenge, policy)
+    C-&gt;&gt;L: Broadcast P2PKH payment (500 sats)
+    L--&gt;&gt;C: txid: a1b2c3...
+    C-&gt;&gt;S: GET /api/translate
+    Note over C: Header: x-bsv-payment: BSV &lt;base64 JSON&gt;
+    S-&gt;&gt;S: verify-payment-header(header, 500, pubkey)
+    S--&gt;&gt;C: 200 OK + translation result
+</code></pre><p>The Ring middleware wraps any handler and intercepts configured routes:</p><pre><code class="language-clojure">(defn wrap-brc105-challenge [handler &amp; {:keys [challenge-routes price-satoshis identity-key]}]
+  (fn [request]
+    (let [payment-header (get-in request [:headers &quot;x-bsv-payment&quot;])]
+      (cond
+        payment-header
+        (if (verify-payment-header payment-header price-satoshis identity-key)
+          (handler request)
+          {:status 402 :body &quot;invalid-payment&quot;})
+
+        ((set challenge-routes) (:uri request))
+        (let [challenge-headers (service-response-&gt;challenge price-satoshis identity-key)]
+          {:status 402 :headers challenge-headers :body &quot;payment-required&quot;})
+
+        :else (handler request)))))
+</code></pre><h2 id="step-5:-retry-+-resilience">Step 5: Retry + Resilience</h2><p>Every external API call (Bitails, WhatsonChain) is wrapped with exponential backoff:</p><pre><code class="language-clojure">(defn with-retry [f &amp; {:keys [max-retries base-delay-ms factor]
+                        :or {max-retries 3, base-delay-ms 1000, factor 2}}]
+  (loop [attempt 1]
+    (let [result (try {:value (f) :error nil}
+                      (catch Exception e {:value nil :error e}))]
+      (if (:error result)
+        (if (&lt; attempt max-retries)
+          (do (Thread/sleep (* base-delay-ms (long (Math/pow factor (dec attempt)))))
+              (recur (inc attempt)))
+          (throw (:error result)))
+        (:value result)))))
+</code></pre><p>The <code>refresh-utxos</code> function provides a recovery path after failed broadcasts:</p><pre><code class="language-clojure">(defn refresh-utxos [identity]
+  (let [addr (identity/address identity)
+        utxos (get-unspent-with-retry addr)]
+    {:address addr :utxos utxos}))
+</code></pre><h2 id="the-test-suite:-100-tests,-242-assertions">The Test Suite: 100 Tests, 242 Assertions</h2><p>Every layer has test coverage. The new code added tests for:</p><table><thead><tr><th>Test Group</th><th>Tests</th><th>What It Proves</th></tr></thead><tbody><tr><td>Address derivation</td><td>6</td><td>Protocol works, testnet/mainnet bytes, consistency</td></tr><tr><td>Varint/hex/LE encoding</td><td>5</td><td>Wire format helpers are correct</td></tr><tr><td>UTXO selection</td><td>2</td><td>Coin selection for sufficient/insufficient funds</td></tr><tr><td>Transaction structure</td><td>2</td><td>Build P2PKH tx, serialize roundtrip</td></tr><tr><td>Signing flow</td><td>1</td><td>ScriptSig is non-empty after signing</td></tr><tr><td>Retry logic</td><td>2</td><td>Returns value, throws after exhaustion</td></tr><tr><td>BRC-105 middleware</td><td>5</td><td>402 issued, verified, rejected</td></tr><tr><td>Faucet/hash160/refresh</td><td>4</td><td>Offline handling, byte lengths</td></tr></tbody></table><pre><code class="language-mermaid">flowchart LR
+    subgraph TestResults[&quot;100 tests | 242 assertions | 0 failures&quot;]
+        CORE[&quot;core: 13 tests&quot;]
+        ID[&quot;identity: 9 tests&quot;]
+        WAL[&quot;wallet: 9 tests&quot;]
+        AUD[&quot;audit: 15 tests&quot;]
+        POL[&quot;policy: 9 tests&quot;]
+        BRC[&quot;brc105: 18 tests&quot;]
+        SDK[&quot;agent-sdk: 10 tests&quot;]
+        COORD[&quot;coordination: 10 tests&quot;]
+        TC[&quot;testnet: 17 tests&quot;]
+    end
+
+    CORE --&gt; ID --&gt; WAL --&gt; AUD --&gt; POL --&gt; BRC --&gt; SDK --&gt; COORD --&gt; TC
+</code></pre><pre><code class="language-clojure">;; From the REPL:
+;; Ran 100 tests containing 242 assertions.
+;; 0 failures, 0 errors.
+</code></pre><h2 id="the-architecture-decoupling">The Architecture Decoupling</h2><p>The critical design constraint: <code>coordination.audit</code> needed to call <code>coordination.testnet.client/live-anchor</code>, but <code>testnet.client</code> already depended on <code>audit</code> for <code>bytes-&gt;hex</code>. This created a circular dependency.</p><p>The solution: pull <code>hex-&gt;bytes</code> and <code>bytes-&gt;hex</code> into <code>testnet.client</code> as local utilities (they are one-liners), then make <code>audit</code> depend on <code>testnet.client</code> only optionally through a <code>:wallet</code> key in <code>bundle-and-anchor</code>.</p><pre><code class="language-mermaid">graph TD
+    AUD[&quot;audit.clj&quot;]
+    TC[&quot;testnet.client&quot;]
+    TXN[&quot;testnet.client/tx builders&quot;]
+    RETRY[&quot;testnet.client/with-retry&quot;]
+
+    AUD -.-&gt;|optional: wallet| TC
+    TC --&gt; TXN
+    TC --&gt; RETRY
+    TXN --&gt;|no audit dep| AUD
+
+    style AUD fill:#f8f9fa,stroke:#e94560
+    style TC fill:#e8f4f8,stroke:#0f3460
+    style TXN fill:#e8f4f8,stroke:#0f3460
+    style RETRY fill:#e8f4f8,stroke:#0f3460
+</code></pre><p>No cycles. No shared mutable state. Each module is independently testable.</p><h2 id="the-agile-angle">The Agile Angle</h2><p>This implementation followed the Scrum framework from the course: one-week sprints, daily self-inspection, Friday freezes. The product backlog was ordered by dependency (addresses before transactions, transactions before anchoring, anchoring before middleware).</p><pre><code class="language-mermaid">gantt
+    title BSV Agent Coordination — Sprint Plan
+    dateFormat  YYYY-MM-DD
+    axisFormat  %a
+
+    section Identity
+    Address derivation        :a1, 2026-06-20, 1d
+    Protocol method           :a2, after a1, 1d
+
+    section Tx Builder
+    UTXO selection            :b1, after a2, 1d
+    Serialization             :b2, after b1, 1d
+    Signing                   :b3, after b2, 1d
+
+    section Anchoring
+    OP_RETURN construction    :c1, after b3, 1d
+    Live-anchor integration   :c2, after c1, 1d
+
+    section BRC-105
+    Ring middleware           :d1, after c2, 1d
+    Verify handler            :d2, after d1, 1d
+
+    section Resilience
+    Retry wrapper             :e1, 2026-06-20, 1d
+    Faucet + polling          :e2, after e1, 1d
+</code></pre><p>The empirical pillars — transparency (open PRs), inspection (test suite), adaptation (breaking the audit cycle) — are not theoretical. They directly shaped the implementation.</p><h2 id="what-this-enables">What This Enables</h2><p>An agent with a BSV keypair and this coordination layer can now:</p><ol start="1"><li>Derive its own testnet address</li><li>Fetch live UTXO balances from Bitails</li><li>Build and sign real P2PKH transactions</li><li>Anchor OP_RETURN audit trails to testnet</li><li>Request tBSV from the WhatsonChain faucet with confirmation polling</li><li>Serve and verify BRC-105 HTTP 402 payments via Ring middleware</li><li>Retry failed network calls with exponential backoff</li></ol><p>The next step is the frontier the previous post described: two agents where one hires the other using these primitives. The orchestrator writes a task contract to OP_RETURN, the worker reads it, bonds a micropayment, executes, and settles — all on BSV testnet, all in Clojure, all verifiable by a third party.</p><p>The glue is laid. The transactions are real. The test suite says green.</p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/ai-agents-need-identity-bsv-machine-to-machine.html</id>
+    <link href="https://blog.nurazhar.com/ai-agents-need-identity-bsv-machine-to-machine.html"/>
+    <title>One Language. One Ledger. How Clojure + BSV Is All You Need for Sovereign AI Agents</title>
+    <updated>2026-06-20T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>Every multi-agent architecture I&apos;ve seen has the same problem: <strong>too many moving parts held together by trust you can&apos;t verify</strong>. OAuth tokens, API keys, SaaS orchestrators, cloud runtimes, payment processors — each one is a failure point, a vendor, and a permission boundary that someone else controls.</p><p>Collapse the entropy. Two primitives cover everything:</p><ul><li><strong>Clojure</strong> — one language that runs on JVM, BEAM, and browser via ClojureScript. One syntax, one REPL, every runtime.</li><li><strong>BSV</strong> — one ledger for identity, data, and payment. Unbounded throughput, sub-cent transactions, no artificial caps.</li></ul><p>This is not minimalism for aesthetics. It is the recognition that the interesting problem — <strong>agents that can reason, coordinate, and settle economic transactions without a human in the loop</strong> — requires exactly these two primitives and nothing else.</p><h2 id="the-problem-with-fragmented-stacks">The Problem With Fragmented Stacks</h2><p>Here is what most agent orchestration stacks look like:</p><pre><code class="language-mermaid">graph TD
+    subgraph Runtime[&quot;Runtime Layer&quot;]
+        PY[Python / Node.js]
+    end
+    subgraph Orch[&quot;Orchestration Layer&quot;]
+        LG[LangGraph / AutoGen / CrewAI]
+    end
+    subgraph Auth[&quot;Auth Layer&quot;]
+        OA[OAuth2 / API Keys / JWTs]
+    end
+    subgraph Pay[&quot;Payment Layer&quot;]
+        ST[Stripe / Billing SaaS]
+    end
+    subgraph Data[&quot;Data Layer&quot;]
+        PG[Postgres / Redis / S3]
+    end
+    subgraph Model[&quot;Model Layer&quot;]
+        LLM[OpenAI / Anthropic API]
+    end
+
+    PY --&gt; LG --&gt; OA
+    OA --&gt; Pay
+    LG --&gt; Data
+    LG --&gt; LLM
+
+    style Runtime fill:#f5f5f5
+    style Orch fill:#f5f5f5
+    style Auth fill:#f5f5f5
+    style Pay fill:#f5f5f5
+    style Data fill:#f5f5f5
+    style Model fill:#f5f5f5
+</code></pre><p>Each box is a vendor. Each arrow is a trust relationship you cannot audit. Each layer adds latency, cost, and a new way for the whole system to fail. The human operator at the top is not a feature — it is a crutch that disguises the fact that none of these layers trust each other.</p><p>Now look at what two primitives get you:</p><pre><code class="language-mermaid">graph TD
+    subgraph CLJ[&quot;Clojure — One Language&quot;]
+        JVM[&quot;JVM Runtime: Agent Logic + LLM calls&quot;]
+        BEAM[&quot;Clojerl on BEAM: OTP Supervision + Distribution&quot;]
+        CLJS[&quot;ClojureScript: Browser UI + Agent Monitor&quot;]
+    end
+
+    subgraph BSV[&quot;BSV — One Ledger&quot;]
+        ID[&quot;Keypair Identity: Every agent = 1 BSV key&quot;]
+        TX[&quot;Micropayments: Work proven and paid on-chain&quot;]
+        DATA[&quot;OP_RETURN: Receipts, contracts, audit trail&quot;]
+    end
+
+    JVM &lt;--&gt;|same syntax, same data structures| BEAM
+    BEAM &lt;--&gt;|same syntax, same data structures| CLJS
+    JVM --&gt; ID
+    BEAM --&gt; TX
+    CLJS --&gt; DATA
+</code></pre><p>No framework. No vendor. No permission boundary you don&apos;t own.</p><h2 id="clojure-is-not-one-runtime-—-it-is-all-runtimes">Clojure Is Not One Runtime — It Is All Runtimes</h2><p>The misunderstanding people have about Clojure is thinking it means JVM. It does not. It means:</p><ul><li><strong>Clojure/JVM</strong> — the original. Deep Java interop, mature ecosystem, where most BSV tooling lives today.</li><li><strong>Clojerl</strong> — Clojure compiled to BEAM bytecode. You write Clojure syntax; it runs as Erlang processes with full OTP supervision, GenServers, and fault recovery. Released v0.10.1 in January 2025.</li><li><strong>ClojureScript</strong> — Clojure compiled to JavaScript. Runs in browsers or Node.js. Same language, same data structures.</li><li><strong>Babashka</strong> — Clojure as a scripting runtime. No JVM startup cost. This blog itself is built with Babashka + Quickblog.</li></ul><p>The same Clojure map <code>{:agent/id &quot;1Abc...&quot; :task/status :pending}</code> means the same thing in all four runtimes. You do not translate. You do not adapt. You write once and choose the runtime that fits the deployment constraint.</p><pre><code class="language-mermaid">graph LR
+    SRC[&quot;Clojure Source (.clj / .cljc)&quot;]
+
+    SRC --&gt;|&quot;javac + tools.deps&quot;| JVM[&quot;JVM: Agent logic, BSV tooling&quot;]
+    SRC --&gt;|&quot;clojerl compiler&quot;| BEAM[&quot;BEAM: OTP supervision, agent coordination&quot;]
+    SRC --&gt;|&quot;cljs compiler&quot;| JS[&quot;JavaScript: Browser monitor, light agents&quot;]
+    SRC --&gt;|&quot;bb&quot;| SCRIPT[&quot;Babashka: CI, scripts, build tools&quot;]
+</code></pre><p>For agent orchestration specifically, <strong>Clojerl on BEAM</strong> is the correct runtime for the coordination layer. You get:</p><ul><li>Millions of lightweight processes — each agent is a GenServer, monitored by a supervisor</li><li>If an agent crashes, the supervisor restarts it automatically</li><li>Node distribution is built into the VM — agents on different machines are first-class peers</li><li><code>receive*</code> and <code>erl-tuple*</code> let you speak native Erlang when you need to reach any BEAM library directly</li></ul><p>And you write it all in Clojure.</p><h2 id="bsv-is-not-a-currency-—-it-is-a-data-structure">BSV Is Not a Currency — It Is a Data Structure</h2><p>Stop thinking about BSV as something you trade. Think of it as an <strong>append-only, globally-verifiable ledger</strong> that any process on earth can read and write to for fractions of a cent per operation.</p><p>Three primitives are all you need:</p><table><thead><tr><th>Primitive</th><th>What it gives you</th><th>Why agents need it</th></tr></thead><tbody><tr><td><strong>P2PKH keypair</strong></td><td>Cryptographic identity</td><td>Every agent has an unforgeable address</td></tr><tr><td><strong>UTXO transaction</strong></td><td>Payment + proof of work</td><td>Agent completing a task unlocks payment atomically</td></tr><tr><td><strong>OP_RETURN</strong></td><td>Arbitrary data on-chain</td><td>Contracts, receipts, capability ads, audit trail</td></tr></tbody></table><p>An agent with a BSV keypair can:</p><ol start="1"><li><strong>Prove it exists</strong> — sign any message with its private key; anyone can verify without asking a third party</li><li><strong>Accept work</strong> — read a task contract from OP_RETURN; bond a micropayment to signal commitment</li><li><strong>Prove it worked</strong> — submit result hash to OP_RETURN; unlock payment atomically in the same transaction</li><li><strong>Hire other agents</strong> — write a new contract to OP_RETURN with a payment output; any agent can claim it</li></ol><p>This is the entire economic model for machine-to-machine coordination, and it costs less than a cent per step.</p><h2 id="the-full-agent-lifecycle-in-two-primitives">The Full Agent Lifecycle in Two Primitives</h2><pre><code class="language-mermaid">sequenceDiagram
+    participant B as BSV Ledger
+    participant O as Orchestrator
+    participant W as Worker
+
+    note over O: Clojerl GenServer, Key 1Orc...
+    note over W: Clojerl GenServer, Key 1Wkr...
+
+    O-&gt;&gt;B: Write task contract to OP_RETURN
+    note over B: task-id, reward, capability-required
+    W-&gt;&gt;B: Read contract, verify reward output exists
+    W-&gt;&gt;B: Bond micropayment as commitment signal
+    B--&gt;&gt;O: Worker 1Wkr... accepted task
+    O-&gt;&gt;W: Send task payload, signed with 1Orc... key
+    W-&gt;&gt;W: Execute task via LLM call and tool use
+    W-&gt;&gt;B: Submit result hash to OP_RETURN, unlock reward
+    B--&gt;&gt;O: TXID proves work done and settled
+    O-&gt;&gt;B: Verify TXID, record in audit trail OP_RETURN
+</code></pre><p>Every step is verifiable by any third party reading the BSV ledger. The orchestrator does not need to trust the worker — the ledger proves the work. The worker does not need to trust the orchestrator will pay — the payment is locked in the transaction structure before work begins.</p><p>This is atomic settlement. Remove it and you have assertion-based trust. Add it back and you have proof-based coordination.</p><h2 id="what-the-clojure-code-looks-like">What the Clojure Code Looks Like</h2><p>An agent in this model is a Clojerl GenServer with a BSV keypair attached to its state:</p><pre><code class="language-clojure">(ns agents.worker
+  (:require [bsv.core :as bsv]
+            [llm.client :as llm]))
+
+;; Agent state: identity + current task
+(defrecord AgentState [keypair current-task])
+
+;; On init: generate or load BSV keypair
+(defn init [_args]
+  {:ok (-&gt;AgentState (bsv/load-or-generate-keypair) nil)})
+
+;; On task assignment: verify contract on-chain, accept it
+(defn handle-cast [:accept-task task-id state]
+  (let [contract (bsv/read-op-return task-id)
+        proof    (bsv/bond-micropayment (:keypair state) contract)]
+    {:noreply (assoc state :current-task {:id task-id
+                                          :contract contract
+                                          :bond proof})}))
+
+;; On execute: call LLM, submit result hash, unlock payment
+(defn handle-call [:execute payload state]
+  (let [result      (llm/invoke payload)
+        result-hash (bsv/hash result)
+        txid        (bsv/submit-result-unlock-payment
+                      (:keypair state)
+                      (:current-task state)
+                      result-hash)]
+    {:reply {:result result :proof txid}
+     :state (assoc state :current-task nil)}))
+</code></pre><p>The GenServer is supervised by OTP. If it crashes, a new one starts, loads the same keypair from disk, and resumes. The keypair is persistent identity — even through process death. The payment proof is on-chain — even through node failure.</p><h2 id="why-this-collapses-entropy">Why This Collapses Entropy</h2><p>Look at what disappears when you collapse to two primitives:</p><pre><code class="language-mermaid">graph LR
+    subgraph Before[&quot;Before: 6 layers, 6 vendors&quot;]
+        B1[Runtime vendor]
+        B2[Orchestration framework]
+        B3[Auth provider]
+        B4[Payment processor]
+        B5[Database]
+        B6[Model API]
+    end
+
+    subgraph After[&quot;After: 2 primitives, 0 vendors&quot;]
+        A1[&quot;Clojure: all runtimes&quot;]
+        A2[&quot;BSV: identity + payment + data&quot;]
+    end
+
+    Before --&gt;|collapse| After
+</code></pre><ul><li><strong>No OAuth</strong> — BSV keypair signatures replace token-based auth entirely</li><li><strong>No payment processor</strong> — BSV transactions are the payment, atomic with work delivery</li><li><strong>No database for agent state</strong> — OP_RETURN is the audit log; BEAM process state is the working memory</li><li><strong>No orchestration SaaS</strong> — OTP supervision trees are the orchestration layer</li><li><strong>No vendor lock-in</strong> — any node with a Clojure REPL and a BSV wallet can join the swarm</li></ul><p>The stack becomes reproducible from two dependencies: <code>clojure</code> and a BSV node. That is it.</p><h2 id="the-sovereignty-test">The Sovereignty Test</h2><p>A useful way to think about this: can your agent swarm survive the death of every vendor you depend on?</p><ul><li>OpenAI goes down → your agents can route to any LLM provider. The model is swappable.</li><li>Your cloud provider goes down → your BEAM cluster can run on any hardware. The runtime is portable.</li><li>Your auth provider revokes your tokens → your agents have BSV keypairs. Identity is self-sovereign.</li><li>Your payment processor freezes your account → your agents use BSV. Settlement is peer-to-peer.</li></ul><p>This is not theoretical resilience. It is the logical outcome of choosing primitives over platforms. Platforms are optimised for the vendor&apos;s business model. Primitives are owned by nobody and available to everyone.</p><h2 id="what-to-build-first">What To Build First</h2><p>If you are starting from scratch, the order that minimises risk and maximises learning:</p><ol start="1"><li><p><strong>Single Clojure/JVM agent with a BSV keypair</strong> — can sign messages, write to OP_RETURN, read contracts. No LLM yet. Prove the identity and ledger primitives work.</p></li><li><p><strong>Add LLM tool calling</strong> — wire in an LLM client (Anthropic, local Ollama, whatever). The agent now reasons and acts.</p></li><li><p><strong>Port to Clojerl on BEAM</strong> — same code, different runtime. Wrap in a GenServer. Add a supervisor. Your agent is now fault-tolerant.</p></li><li><p><strong>Two agents, one hires the other</strong> — orchestrator writes a task contract to BSV; worker reads it, bonds a payment, executes, submits result hash, unlocks reward. This is the complete M2M economic primitive.</p></li><li><p><strong>Swarm</strong> — multiple workers, supervision tree, task routing by capability. OP_RETURN becomes the discovery layer: agents advertise what they can do, orchestrators match tasks to bids.</p></li></ol><p>Steps 1 and 2 you can do today with existing libraries. Step 3 requires Clojerl (experimental but functional). Steps 4 and 5 are the frontier — the glue layer that has not been built yet, but every component exists.</p><h2 id="one-language.-one-ledger.">One Language. One Ledger.</h2><p>The industry keeps adding layers — a new orchestration framework, a new identity standard, a new payment rails integration. Each layer solves one problem by introducing three new dependencies.</p><p>The insight that Clojure and BSV together make possible is this: <strong>the same data structure — an immutable, persistent map — can represent agent state in memory, a message on the wire, a record in a database, and a contract on a ledger.</strong> There is no translation layer. There is no impedance mismatch.</p><p>A Clojure map is a Clojure map whether it lives in a JVM heap, a BEAM process mailbox, a ClojureScript component, or serialised as data in an OP_RETURN output. BSV is an append-only store of such maps, globally accessible, cryptographically signed, economically settled.</p><p>That is the complete picture. One language that runs everywhere. One ledger that remembers everything. Agents that can think, act, prove, and pay — without asking anyone&apos;s permission.</p></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/bsv-agent-coordination-visual-architecture.html</id>
+    <link href="https://blog.nurazhar.com/bsv-agent-coordination-visual-architecture.html"/>
+    <title>The BSV Agent Coordination Layer: A Visual Architecture</title>
+    <updated>2026-06-20T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>The previous posts covered <em>why</em> AI agents need BSV-native identity and <em>how</em> we built live testnet transactions. This post steps up one level: the full system architecture, captured in diagrams.</p><p>The BSV Agent Coordination Layer is a Clojure monorepo that gives AI agents economic agency — identity, payments, escrow, audit, policy enforcement — all on Bitcoin SV primitives. 99 tests, 246 assertions, 9 modules, 0 failures.</p><h2 id="system-architecture">System Architecture</h2><p>The stack has six layers, from the Agent SDK down to the BSV blockchain:</p><pre><code class="language-mermaid">flowchart TB
+  subgraph Agent[&quot;Agent Ecosystem&quot;]
+    A1[&quot;Alice Agent&lt;br/&gt;consumer&quot;]
+    A2[&quot;Bob Agent&lt;br/&gt;provider&quot;]
+  end
+
+  subgraph SDK[&quot;Agent SDK Layer&quot;]
+    SDK1[&quot;AgentRuntime&lt;br/&gt;service registry&quot;]
+    SDK2[&quot;AgentMemory&lt;br/&gt;AnchorChain pattern&quot;]
+    SDK3[&quot;call-service&lt;br/&gt;pay-agent&quot;]
+  end
+
+  subgraph Identity[&quot;Identity and Wallet&quot;]
+    I1[&quot;IAgentIdentity&lt;br/&gt;secp256k1 ECDSA&quot;]
+    W1[&quot;IAgentWallet&lt;br/&gt;atomic balance&quot;]
+  end
+
+  subgraph Payments[&quot;BRC-105 Payment Layer&quot;]
+    P1[&quot;402 Challenge&lt;br/&gt;service to client&quot;]
+    P2[&quot;Policy Engine&lt;br/&gt;budget, domain, rate&quot;]
+    P3[&quot;Payment Header&lt;br/&gt;client to service&quot;]
+  end
+
+  subgraph Audit[&quot;Audit and Anchoring&quot;]
+    AU1[&quot;Event Bundles&lt;br/&gt;SHA-256 hashing&quot;]
+    AU2[&quot;OP_RETURN Script&lt;br/&gt;BSV blockchain&quot;]
+    AU3[&quot;Chain Verification&quot;]
+  end
+
+  subgraph Coordination[&quot;Coordination Primitives&quot;]
+    C1[&quot;Task Commitment&lt;br/&gt;signed agreements&quot;]
+    C2[&quot;Milestone Escrow&lt;br/&gt;staged payments&quot;]
+    C3[&quot;Dispute Resolution&lt;br/&gt;arbitration&quot;]
+  end
+
+  Agent --&gt; SDK
+  SDK --&gt; Identity
+  SDK --&gt; Payments
+  SDK --&gt; Audit
+  SDK --&gt; Coordination
+  Payments --&gt; Identity
+  Audit --&gt; Identity
+  Coordination --&gt; Identity
+  Coordination --&gt; W1
+
+  subgraph Blockchain[&quot;Bitcoin SV (testnet)&quot;]
+    BSV[&quot;WhatsonChain Faucet&lt;br/&gt;Bitails API&lt;br/&gt;OP_RETURN TX&quot;]
+  end
+
+  Payments -.-&gt;|&quot;402 + x-bsv-payment&quot;| Blockchain
+  Audit --&gt;|&quot;anchor hash&quot;| Blockchain
+</code></pre><p>Every module is independently testable with acyclic dependencies. The key design rule: identity is the root. Everything — payments, audit, coordination — starts from the agent&apos;s secp256k1 keypair.</p><h2 id="brc-105-payment-flow">BRC-105 Payment Flow</h2><p>HTTP 402 Payment Required is the handshake protocol. A service returns 402 with challenge headers; the client evaluates policy, reserves funds, constructs a payment proof, and retries:</p><pre><code class="language-mermaid">sequenceDiagram
+  participant Client as Alice (Client)
+  participant Service as Bob (Service)
+  participant Wallet as Wallet
+  participant Policy as Policy Engine
+
+  Client-&gt;&gt;Service: HTTP GET /translate
+  Service--&gt;&gt;Client: 402 Payment Required&lt;br/&gt;x-bsv-payment-version&lt;br/&gt;x-bsv-payment-derivation-prefix
+  Client-&gt;&gt;Policy: evaluate-payment(500 sats, api.testnet)
+  Policy--&gt;&gt;Client: allow
+  Client-&gt;&gt;Wallet: reserve-funds(500 sats)
+  Wallet--&gt;&gt;Client: ok
+  Client-&gt;&gt;Client: construct-payment-header()
+  Client-&gt;&gt;Service: HTTP GET /translate&lt;br/&gt;x-bsv-payment: {tx, proof, merklePath}
+  Service-&gt;&gt;Service: verify-payment-header()
+  Service--&gt;&gt;Client: 200 OK + translation result
+  Service--&gt;&gt;Client: x-bsv-receipt: {txid, amount}
+</code></pre><p>The policy engine sits between the agent&apos;s wallet and every payment decision. It enforces budgets, rate limits, domain whitelists, and approval thresholds — all programmatically, with human-only escalation above configurable thresholds.</p><h2 id="micropayment-escrow-and-milestone-flow">Micropayment Escrow and Milestone Flow</h2><p>For multi-step agent tasks, the coordination module provides milestone escrows. Funds are locked and released incrementally as deliverables are confirmed:</p><pre><code class="language-mermaid">sequenceDiagram
+  participant Alice
+  participant Escrow as Escrow Account
+  participant Bob
+
+  Alice-&gt;&gt;Escrow: create-escrow(alice, bob, 7000 sats)
+  Note over Escrow: 3 milestones created
+
+  par Milestone 1: Research
+    Alice-&gt;&gt;Bob: assign task
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(1)
+    Escrow--&gt;&gt;Bob: release 2000 sats
+  and Milestone 2: Implement
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(2)
+    Escrow--&gt;&gt;Bob: release 4000 sats
+  and Milestone 3: Verify
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(3)
+    Escrow--&gt;&gt;Bob: release 1000 sats
+  end
+
+  rect rgba(255, 100, 50, 0.1)
+    Note over Alice, Bob: Dispute Path
+    Alice-&gt;&gt;Escrow: raise-dispute(escrow, quality issue)
+    Escrow-&gt;&gt;Escrow: resolve-dispute(split, 50%)
+    Escrow--&gt;&gt;Alice: return 3500 sats
+    Escrow--&gt;&gt;Bob: release 3500 sats
+  end
+</code></pre><p>The dispute resolution state machine supports three outcomes: release to beneficiary, return to depositor, or split at configurable ratio. Funds are frozen from the moment a dispute is raised.</p><h2 id="audit-anchoring">Audit Anchoring</h2><p>Every agent action — payments, task completions, decisions — is bundled into a SHA-256 hash and optionally anchored to BSV via OP_RETURN:</p><pre><code class="language-mermaid">flowchart LR
+  Event[&quot;Agent Event&lt;br/&gt;payment, task, decision&quot;] --&gt; Bundle[&quot;Audit Bundle&lt;br/&gt;type, version, agent,&lt;br/&gt;timestamp, data&quot;]
+  Bundle --&gt; Hash[&quot;SHA-256 Hash&lt;br/&gt;32 bytes&quot;]
+  Hash --&gt; Script[&quot;OP_RETURN Script&lt;br/&gt;0x6a + len + data&quot;]
+  Script --&gt; TX[&quot;Anchor TX&lt;br/&gt;version 1, 1 input,&lt;br/&gt;1 OP_RETURN output&quot;]
+  TX --&gt; Blockchain[&quot;BSV Blockchain&lt;br/&gt;immutable timestamp&quot;]
+  Blockchain --&gt; Verify[&quot;Chain Verification&lt;br/&gt;verify hash integrity&quot;]
+</code></pre><p>The <code>bundle-and-anchor</code> function accepts an optional wallet. With a wallet, it broadcasts to BSV testnet. Without one, it falls back to local simulation — making the entire test suite run offline.</p><h2 id="core-domain-model">Core Domain Model</h2><p>The domain model is expressed as Clojure records with typed fields:</p><pre><code class="language-mermaid">classDiagram
+  class PaymentIntent {
+    +String endpoint
+    +Int price-satoshis
+    +String nonce
+    +Int expiry
+    +String policy-scope
+  }
+  class TaskCommitment {
+    +String task-id
+    +String requester
+    +String provider
+    +String service
+    +Int max-price
+    +String deadline
+    +String signature
+  }
+  class PaymentReceipt {
+    +String txid
+    +Int amount
+    +String session-id
+    +String timestamp
+    +String signature
+  }
+  class AuditAnchor {
+    +String hash
+    +String bundle-json
+    +String txid
+    +Int timestamp
+    +String status
+  }
+  class BudgetPolicy {
+    +String policy-id
+    +String agent-id
+    +Int max-satoshis
+    +Int window-seconds
+    +List~String~ allowed-domains
+    +Int approval-threshold
+  }
+  class EscrowAccount {
+    +String escrow-id
+    +String depositor
+    +String beneficiary
+    +Int total-amount
+    +List~Milestone~ milestones
+    +String status
+    +Int released
+  }
+  class Milestone {
+    +String milestone-id
+    +String description
+    +Int amount-satoshis
+    +String status
+  }
+
+  PaymentIntent --&gt; TaskCommitment: resolves to
+  TaskCommitment --&gt; PaymentReceipt: produces
+  PaymentReceipt --&gt; AuditAnchor: gets hashed into
+  BudgetPolicy --&gt; PaymentIntent: governs
+  EscrowAccount --&gt; Milestone: contains
+  EscrowAccount --&gt; TaskCommitment: wraps
+</code></pre><h2 id="business-model">Business Model</h2><p>The architecture enables six economic primitives for autonomous agent commerce:</p><ul><li><strong>Pay-per-call AI services</strong> — agents monetize with microtransactions (500–10,000 sats), no subscriptions or API keys</li><li><strong>Staged milestone escrows</strong> — large tasks broken into funded milestones, payment releases on delivery</li><li><strong>Immutable audit trail</strong> — every action hashed and optionally anchored to BSV via OP_RETURN</li><li><strong>Programmable policy engine</strong> — budgets, rate limits, domain whitelists enforced automatically</li><li><strong>BSV-native identity</strong> — secp256k1 keypair for payments, commitments, and audit signatures</li><li><strong>Open protocol stack</strong> — built on BRC-105, OP_RETURN, secp256k1; interoperable with any BRC-105-compliant service</li></ul><h2 id="testnet-integration">Testnet Integration</h2><p>The full end-to-end flow runs on BSV testnet via the Bitails API:</p><pre><code class="language-mermaid">flowchart TD
+  Start([&quot;run testnet simulate&quot;]) --&gt; AgentA[&quot;Create Alice Agent&lt;br/&gt;secp256k1 identity&lt;br/&gt;100,000 sats wallet&quot;]
+  AgentA --&gt; AgentB[&quot;Create Bob Agent&lt;br/&gt;secp256k1 identity&lt;br/&gt;0 sats wallet&quot;]
+  AgentA --&gt; Addr[&quot;Derive BSV testnet addresses&lt;br/&gt;Alice: m...&lt;br/&gt;Bob: n...&quot;]
+  Addr --&gt; Bal[&quot;Check testnet balance&lt;br/&gt;via Bitails API&quot;]
+  Bal --&gt; Reg[&quot;Register BRC-105 service&lt;br/&gt;Bob: translate 500 sats/call&quot;]
+  Reg --&gt; Policy[&quot;Apply spending policies&lt;br/&gt;budget: 50k sats/1h&lt;br/&gt;domain allow: bob-testnet&quot;]
+  Policy --&gt; Pay[&quot;Execute BRC-105 payment&lt;br/&gt;Alice pays Bob 500 sats&quot;]
+  Pay --&gt; AuditGen[&quot;Generate audit bundle&lt;br/&gt;SHA-256 hash + sign&quot;]
+  AuditGen --&gt; ORETURN[&quot;Construct OP_RETURN TX&lt;br/&gt;for blockchain anchoring&quot;]
+  ORETURN --&gt; Escrow[&quot;Create milestone escrow&lt;br/&gt;Alice to 7000 sats to escrow&quot;]
+  Escrow --&gt; Milestones[&quot;Complete 3 milestones&lt;br/&gt;Research, Implement, Verify&quot;]
+  Milestones --&gt; Release[&quot;Release payment to Bob&quot;]
+  Release --&gt; CheckPolicy[&quot;Verify policy engine&lt;br/&gt;allow 500, deny 5000&quot;]
+  CheckPolicy --&gt; VerifyAudit[&quot;Verify audit chain integrity&quot;]
+  VerifyAudit --&gt; Report[&quot;Print summary report&lt;br/&gt;addresses, balances, status&quot;]
+
+  style Start fill:#ddf4ff,stroke:#0969da
+  style Report fill:#dafbe1,stroke:#1a7f37
+</code></pre><h2 id="stack-summary">Stack Summary</h2><table><thead><tr><th>Layer</th><th>Technology</th><th>BSV Standard</th></tr></thead><tbody><tr><td>Identity</td><td>Bouncy Castle secp256k1</td><td>ECDSA (same curve as BSV)</td></tr><tr><td>Payments</td><td>BRC-105 HTTP 402</td><td><a href="https://bsv.brc.dev/payments/0105">BRC-105</a></td></tr><tr><td>Anchoring</td><td>OP_RETURN + SHA-256</td><td>Bitcoin Script OP_RETURN</td></tr><tr><td>Testnet API</td><td>Bitails API</td><td>—</td></tr><tr><td>Runtime</td><td>Clojure on JVM</td><td>—</td></tr></tbody></table><p>The full architecture page with interactive diagrams, all 9 module diagrams, and the complete business model breakdown is available in the repository&apos;s <a href="https://github.com/nurazhardotcom/bsv-agent-coordination">architecture.html</a>.</p><p>99 tests. 246 assertions. 0 failures. 9 modules. One coordination layer for sovereign agent commerce.</p></div>]]></content>
+  </entry>
   <entry>
     <id>https://blog.nurazhar.com/python-to-babashka-etl-rewrite.html</id>
     <link href="https://blog.nurazhar.com/python-to-babashka-etl-rewrite.html"/>
