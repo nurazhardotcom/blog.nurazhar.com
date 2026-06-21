@@ -39,6 +39,7 @@
 <url><loc>https://blog.nurazhar.com/hermes-agent-memory-system.html</loc></url>
 <url><loc>https://blog.nurazhar.com/hermes-desktop-bulk-session-archive.html</loc></url>
 <url><loc>https://blog.nurazhar.com/how-to-maximize-clojure-usage-token-on-antigravity-ide.html</loc></url>
+<url><loc>https://blog.nurazhar.com/hyperliquid-bsv-architecture.html</loc></url>
 <url><loc>https://blog.nurazhar.com/integrating-aur-audit-into-paru.html</loc></url>
 <url><loc>https://blog.nurazhar.com/leaky-layout-abstractions.html</loc></url>
 <url><loc>https://blog.nurazhar.com/license-and-derivation-divergence-electrumsv-vs-yours-wallet.html</loc></url>
@@ -87,6 +88,7 @@
 <url><loc>https://blog.nurazhar.com/tags/blogging.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bootloader.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/brc105.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/bridget-doran.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bsv.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/btrfs.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/build.html</loc></url>
@@ -112,6 +114,7 @@
 <url><loc>https://blog.nurazhar.com/tags/data-poisoning.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/database.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/debugging.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/defi.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/definitions.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/design.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/desktop-gui.html</loc></url>
@@ -154,6 +157,7 @@
 <url><loc>https://blog.nurazhar.com/tags/hermes-agent.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hermes.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/htmx.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/hyperliquid.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hyperscale.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/identity.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/income.html</loc></url>
@@ -193,6 +197,7 @@
 <url><loc>https://blog.nurazhar.com/tags/orchestration.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/organization.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/overlay.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/overlays.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/packages.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/packaging.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/parsing.html</loc></url>
@@ -241,10 +246,12 @@
 <url><loc>https://blog.nurazhar.com/tags/systemd.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/systems.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/technology.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/teranode.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/testnet.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/tool-calling.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/tooling.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/tools.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/traceport.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/troubleshooting.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/typography.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/utxo.html</loc></url>
@@ -265,6 +272,7 @@
 <url><loc>https://blog.nurazhar.com/tool-calling-explained.html</loc></url>
 <url><loc>https://blog.nurazhar.com/training-data-poisoning-invisible-cyber-threat.html</loc></url>
 <url><loc>https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html</loc></url>
+<url><loc>https://blog.nurazhar.com/utxoengineer-bridget-doran-bsv-infrastructure.html</loc></url>
 <url><loc>https://blog.nurazhar.com/v0-1-set-in-stone-clojure-bitcoin-toolkit.html</loc></url>
 <url><loc>https://blog.nurazhar.com/why-agi-wont-happen.html</loc></url>
 <url><loc>https://blog.nurazhar.com/why-llms-fail-at-mermaid-diagrams.html</loc></url>
