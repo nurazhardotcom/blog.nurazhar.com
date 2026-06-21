@@ -26,6 +26,7 @@
 <url><loc>https://blog.nurazhar.com/debugging-quickblog-cache-yaml-frontmatter.html</loc></url>
 <url><loc>https://blog.nurazhar.com/decoupled-static-dashboards.html</loc></url>
 <url><loc>https://blog.nurazhar.com/decoupled-zero-cost-blog-analytics-spec.html</loc></url>
+<url><loc>https://blog.nurazhar.com/deepseek-v4-censorship.html</loc></url>
 <url><loc>https://blog.nurazhar.com/demystifying-arch-packaging-pkgbuilds-aur-cachyos.html</loc></url>
 <url><loc>https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html</loc></url>
 <url><loc>https://blog.nurazhar.com/env-secret-leak-fix.html</loc></url>
@@ -54,6 +55,7 @@
 <url><loc>https://blog.nurazhar.com/paperclip-deterministic-business-engine.html</loc></url>
 <url><loc>https://blog.nurazhar.com/postgres-threshold-batching.html</loc></url>
 <url><loc>https://blog.nurazhar.com/postgres-zero-cost-analytics.html</loc></url>
+<url><loc>https://blog.nurazhar.com/prof-faustus-craig-wright-2026-output.html</loc></url>
 <url><loc>https://blog.nurazhar.com/profile-drift-when-ai-knows-things-you-didnt-say.html</loc></url>
 <url><loc>https://blog.nurazhar.com/python-to-babashka-etl-rewrite.html</loc></url>
 <url><loc>https://blog.nurazhar.com/quickblog-double-title-gotcha.html</loc></url>
@@ -67,6 +69,7 @@
 <url><loc>https://blog.nurazhar.com/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown.html</loc></url>
 <url><loc>https://blog.nurazhar.com/sovereign-clojure-bitcoin-integration.html</loc></url>
 <url><loc>https://blog.nurazhar.com/sycophancy-loop-llm-epistemic-failure.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/accounting.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/aeo.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/agentic-ide.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/agents.html</loc></url>
@@ -83,12 +86,14 @@
 <url><loc>https://blog.nurazhar.com/tags/aur.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/automation.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/babashka.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/babbage.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/beam.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bip39.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bitcoin.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/blockchain.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/blogging.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bootloader.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/bopen.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/brc105.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bridget-doran.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bsv.html</loc></url>
@@ -98,6 +103,7 @@
 <url><loc>https://blog.nurazhar.com/tags/cachyos.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/career-ops.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/career.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/censorship.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/cga.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/chronicle.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/civilization.html</loc></url>
@@ -111,17 +117,20 @@
 <url><loc>https://blog.nurazhar.com/tags/composability.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/context-window.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/contribution.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/craig-wright.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/css.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/data-engineering.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/data-poisoning.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/database.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/debugging.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/deepseek.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/defi.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/definitions.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/design.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/desktop-gui.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/desktop.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/developer-experience.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/developers.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/devops.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/devsecops.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/devtools.html</loc></url>
@@ -131,6 +140,7 @@
 <url><loc>https://blog.nurazhar.com/tags/docker.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/e-commerce.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/economics.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/ecosystem.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/education.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/electrum.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/engine.html</loc></url>
@@ -216,6 +226,7 @@
 <url><loc>https://blog.nurazhar.com/tags/power.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/privacy.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/productivity.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/prof-faustus.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/project-management.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/protocol.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/python.html</loc></url>
@@ -227,6 +238,7 @@
 <url><loc>https://blog.nurazhar.com/tags/repl.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/rest.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/rewrite.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/runar.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/rust.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/safety.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/sandbox.html</loc></url>
@@ -259,6 +271,7 @@
 <url><loc>https://blog.nurazhar.com/tags/tooling.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/tools.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/traceport.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/triple-entry.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/troubleshooting.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/typography.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/utxo.html</loc></url>
@@ -281,6 +294,7 @@
 <url><loc>https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html</loc></url>
 <url><loc>https://blog.nurazhar.com/utxoengineer-bridget-doran-bsv-infrastructure.html</loc></url>
 <url><loc>https://blog.nurazhar.com/v0-1-set-in-stone-clojure-bitcoin-toolkit.html</loc></url>
+<url><loc>https://blog.nurazhar.com/who-builds-on-original-bitcoin.html</loc></url>
 <url><loc>https://blog.nurazhar.com/why-agi-wont-happen.html</loc></url>
 <url><loc>https://blog.nurazhar.com/why-llms-fail-at-mermaid-diagrams.html</loc></url>
 </urlset>
