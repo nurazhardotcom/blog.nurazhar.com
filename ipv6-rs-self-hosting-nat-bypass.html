@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>ipv6.rs — Why Pay for an IP When You Already Have One? — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="ipv6.rs — Why Pay for an IP When You Already Have One?">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="ipv6.rs — Why Pay for an IP When You Already Have One?">
+    <meta name="twitter:title" content="ipv6.rs — Why Pay for an IP When You Already Have One?">
+    <meta property="og:title" content="ipv6.rs — Why Pay for an IP When You Already Have One?">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="ipv6.rs gives you a globally routable IPv6 address and tunnels it to your home machine. Who pays $3-10/month for this, and why?">
+    <meta name="twitter:description" content="ipv6.rs gives you a globally routable IPv6 address and tunnels it to your home machine. Who pays $3-10/month for this, and why?">
+    <meta property="og:description" content="ipv6.rs gives you a globally routable IPv6 address and tunnels it to your home machine. Who pays $3-10/month for this, and why?">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/ipv6-rs-self-hosting-nat-bypass.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/ipv6-rs-self-hosting-nat-bypass.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ipv6.rs — Why Pay for an IP When You Already Have One?",
+  "description": "ipv6.rs gives you a globally routable IPv6 address and tunnels it to your home machine. Who pays $3-10/month for this, and why?",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/ipv6-rs-self-hosting-nat-bypass.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/ipv6-rs-self-hosting-nat-bypass.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  ipv6.rs — Why Pay for an IP When You Already Have One?
+  
+</h1>
+<div><hr /><p>I came across <a href="https://www.ipv6.rs/">ipv6.rs</a> and had the same reaction: &quot;Why would I pay for an IP address?&quot;</p><p>Then I realized the service isn&apos;t selling IPs — it&apos;s selling <strong>reachability through NAT</strong>.</p><hr /><h2 id="what-it-actually-does">What It Actually Does</h2><p>You sign up. They assign you 5 IPv6 addresses. A WireGuard tunnel connects your home machine to their network. The internet sees your server at their IPv6 address; traffic flows through the tunnel to your machine.</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+Internet: "Internet Client\n(IPv4 or IPv6)" {
+  shape: oval
+  style.fill: "#85c1e9"
+}
+#
+IPv6rs: "IPv6rs\nWireGuard endpoint\n+ IPv4 reverse proxy" {
+  shape: rectangle
+  style.fill: "#f9ab00"
+}
+#
+NAT: "Your ISP\nNAT / CGNAT" {
+  shape: rectangle
+  style.fill: "#f1948a"
+}
+#
+Home: "Your Home Server" {
+  shape: rectangle
+  style.fill: "#82e0aa"
+}
+#
+Internet -> IPv6rs: "1. Request to\nyour IPv6 or domain"
+IPv6rs -> Home: "2. WireGuard tunnel\n(encrypted)"
+Home -> IPv6rs -> Internet: "3. Response\nback through tunnel"
+#
+NAT -> Home: "ISP blocks inbound\n(no port forwarding)"
+IPv6rs -> NAT: "Tunnel goes outbound,\nNAT can't block it"
+#
+Note: "The tunnel is outbound from your machine.\nNAT only blocks inbound — outbound works fine.\nThe tunnel bypasses NAT entirely." {
+  shape: square
+  style.stroke-dash: 2
+  style.font-size: 11
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1809 493"><svg class="d2-264238599 d2-svg" width="1809" height="493" viewBox="-21 -8 1809 493"><rect x="-21.000000" y="-8.000000" width="1809.000000" height="493.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-264238599 .text-bold {
+	font-family: "d2-264238599-font-bold";
+}
+@font-face {
+	font-family: d2-264238599-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAABJ0AAoAAAAAG6wAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAAyQAAASpFzeeoZ2x5ZgAAAiAAAAtgAAAPbPrdejRoZWFkAAANgAAAADYAAAA2G38e1GhoZWEAAA24AAAAJAAAACQKfwX0aG10eAAADdwAAADBAAAA1GgCCJNsb2NhAAAOoAAAAGwAAABsau5vJG1heHAAAA8MAAAAIAAAACAATQD3bmFtZQAADywAAAMoAAAIKgjwVkFwb3N0AAASVAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3icjM67LoMBHMbh52tLqTrXqajPWQ9aFbGLQSwiIhGjUVyBe2IjGCTcCffAKH/xRcze+UneHxJ5CcoKSQ0NqYKS1Lq6ppa2jh279uw7dOTYqTPnLl2nlQgyu/Fnu7/2ILMnmb1w9WPjXa+iIvElF5/xEa/xEs/xFI/xEPdxF7dx81bNiv67xKaOLdtamrrWspq6hpy8gp7ss0+/kgFlg4YMGzFqzLiKCZOmTJtRNWvOvJoFqUVLlq1Y1eYbAAD//wEAAP//Vn4tfgAAAHicbFdrbBtXev3u5WMsmpREDodDUnwPOcOHRIocDkdvShZJPUzakhzLcqyHIySxE9mSNpYrJWs3C9TZtAndZCs10WbbbFDsog8kiwRuAe+2atEFktRdYwM02booupsEDdxg06bqVi2CRBoWd0g97O0PaQRh5nz3nu+c890LOhgBwLN4DTRQBw1gAQZANPvNIVEQOEoWZZljNbKAzNQItijf/54Q0UYi2qhv3fvUzAwqTeO1nQtnSrOz/zvT2am8+sMfKdfRpR8B4MqXALgfl6EOzAA0JQo8L3B6vYYWaU7gqLuNzzeYmkxao+PL22/d/oPwu2E03NWVnBfTF5VncHln6TvfAQBAEK9s4Va8Dk0AugDPS+lMRkzZWIrnuYBez1htYiojs3o0NfbciZPXx7IP+485ZK55KDY+GM7aj40Zi79/8cK3R8XANOtOTR95eDHomDxbw83hdfD+f7g1WImTRLNejy6e/tbJUy+eGnjUV3K0RYtnJ89YeeOFzwNfq4Gn/dM2z+Lsw4sGw+KK8oE/DghKAPgkLsNhwqfIiJJo5sycubT68drax7j81Vc7S6hR2VT3WAKAj3AZNOq75tIqIaCGUcRloNX/06zI8xLB0QiczcYwpZf/rFerrS+Th86Ey8pfvZj+RsfdnSWU/93MlY5/AwCsYrTiMhjBqqKkbDbGqtdzHGMWU1Ka57jSR4OXC4Wl/OjgSm9XDpeFyePF2cTP0dh5MQp7GCdwGeqBPYBBkUYSlEwV5rP8E7mstPb9q6PFju7ujiIuhyaODU6xyleffYbOJltbebJXrrKFDXgdoirvgmyzVQEEIY5/rQksW10tsvY+nXqAGw/HW8TYSX8X3/lYrm0xetTXK/At7dEHOgsd88bW+CMePuD2ui3B+kQhkZlIN0enHE1el8djDtgfyGcm2wCBAwDTuAwU2Qkn+RnOfPsG+vIGbrxyZWezqrl6AI0Pl8EPIGpE2mZjxUxGpg/8peE0VT1TmmeffLlFX6/XGmhD4WrBQBu0lIlqub70w95DJp1WbzrUjcvKe+K5dPqciJLKe8nzknQuhZI7SyjMl4LBEq/8E6DKFwCYwWVoABAljcjWSsmihtl4+9WOeqdJW+8ydb7y9qfoey+F8jyfD72kTH6q9ida2UIfoG1wAAfABoiYZZVCSlAJZcwcWatMJK165q9zI9dWMRfx9galxFzHzKMrBq134JAjRB/r8hpPZY9NNPgFO/OQOzj/hPKJ6OKeYOlThpjbzqr1+ipb2IY3wFpzj8BRnFlkKLWY2jCB9JQLUIzNhvL+frfWeGlV684FuiYSXTMTfGa8OWING/0+CW+8XnS6e75WPPlkdqVQ/GbLTyz1ag+ClS20gbbBeb8/9+3J6vXIkV/oG/yNXHzAled8Ujbbao/THaFxY/flsRNL3R52xl3s6y0xDWd9TVUtC5UttI03gAbfLlcqsECMtcfSrgB/NbnQOZOOtDn0qysGrbOA7YKFjlm5TML4/JOjl3tc9uKf7vQnndyK1fETS33/wFAesLr2j9E22O9LF9U1fqJ4snaNmCZVkHfgiSP9FzoHphJarNwxFJJSJslPv3JDaA5kjD1LY6NL2excjg7VZUT/aacHdUSkRFWndgC0hG+RJ9GyfJ9/GJHhzA8eORIc6femG5tMTmOT5/RpdPWirkkaTxv1F3Q6P++5pPwWgAYClRZMoW1IQCcMq8zwUpoQQcQk7W6BFRmuFiABQe0DkZdVr9dUU0Alja4lQoBXX/lVx3TbAN3kszsjHdNSs/8vjlN16QnZ7bUEIiOTD+WuDLsFwe0WhEiqVwiJDr+xqft9Z1tzV1hrCnubUo1aSy7WdTxsnDscsLYPBw0NNtrS2S+OxtGtaESIhMORqLIadLCNGo3d4XJXuekjzVY1quYvtWsEs7pKyty3SrmOpkaHVt0+V9iON14/7YjNTSm3kT8TdrDKW1CpgAwAP8fvYx5EAKAgDc/tYXvwBhireS3KIslCiul7QfuHr/3gL7+7mMUbyvzbt5V/+duBp8j7lS1kwRvE20RxZtG8J+C/K3aumut0lN5iDBnPHMXczh3WgtBFHVWto3GjbTWHzCLJA9Lde3ZC7T37iIcLSamP9g8nR46uun2hVvIrgTZ7vS2xcCC5u71W5a3aY5cntF3jqVbjIE8rBq2vtEcU2sx6Wu7hqap3VTsN903p/SioKQPZsgu53EI2O5/LzWdb4vGWeEtLzavdSyfGLncvl3r7isSy1ZwZxDa0DTR4ANj91any4wWWofdjhqzTPSQ8eL5rJuPrcuqO85nxWNQavon/JOnkfufSyZVsk+P4t1BwL2RIFgyibRXfB6CTZBV210SiLJo1B7MAPaZ3HAlUA6GHJNone2Fw8+Wi3asGgtuX3JlAwf00qOkFvYC2wXJPH6surTLcVOQZl8FucjS6uq1o81QqqdM9rdVGUspHgICpbKHvom0QVP3sz0y+OjP3wMjE9GDGqn8/eY4/Esh6/R533OnpDD92sv2U94gz7Wxv533dkfNG3jvpaGJps402GIPtkfy4YJ+w2gS7o/4w1x7vn6p6yFzZQvN4iUx9XYCXJE6SZZGkyoEAhsnjuaL5qeVlzm10GFhaNj4+fuui/tq1S+9GQ3rtnN5YxeqqbKEv0CbR2T0eMNdi9x9Hh1Y9PhdvW105rPEOG+emUFr5UIo43WhQacyHmgERv6EK2gSTOpcPjMgbf7zWSyZvHW3ou/5HaPOXoZIglEK/VBp3cxJvos3aPN//7gACVzufUtTald9r1Rv0WspUJz/dVtdAaak6KvHby6+3UCZKSx2mmtHm3dAgzw9zd9XnYOiu0vgOVwiHC9w7u+cHtIU2yVlDpIUDZSh2v079+guvNhtsBu0hy6HA+ovffrXVyBq1ddY6AeHPR5gYw8SYkcp/jTHNDBOzjRFcY6UH7aBN4rJ9HcjyPVTU4xWbv8FJWQ6Fwgbqb9YGDlsM2kPmuq7rr7Ntx3+s1y4iXdDtRP/6s0AhxA1wP1MO95yMVntUAED/jL+u5hoZh1ImI5PwLDy3nB4MXFheRgtnDC7rzvZy9X0PAPoEPwsu8n4Prtq8duZQXUpSV2RCo1cLyUhAto8kZnPZaalzMm3vsn3jgdLVx1oSScF5PCWmznRLCwsZje4KwbVVttCH+FmI3K93TtoNk92TjVVPzE9q/XfpIpdzF8KJNtdwfrw3zAdkz3DzbMfsk7IoD/TNGVPhKVdQCLoitvMJ3h/yOB/kY2dOJAs2bWOpp/NErHo+oAHQF/jrUEeUSotk+pF20ZJfogkXHPPaN3VIa3TWp5T/+PTPh4bQoXPeUY8z06TMrz+CflO5vrhOcCKVLfTv+Fk4DGEAFNBTu5vQ/PothtqLNUQ7RKuhze9PJDzd8/mhy/3ZSU+pUXZxHZzGMeQem+uYQSF34Gh7MpOKKu/1Pb+wvD7U4p2wNIVODfu4mUeOzKTV3nRXtuA/4Q1y/6iecqoVXuJFkedF0SgJYUkKC1L1jtWDAN4g+cQKmYwQCHAHPil62joQ1mIuk+FT6ckfH7P2hWJhPj7cN7ZS1UERzcJH+AegA6AFQaSoebduTedGs+8+88y7gCAGP8X/g5rJ/UaW/EwM//1Pp6cBwWClhML4Q+JntnrQYNXjKXs7m89nJ+VUSr5x7hfXrv3iHP/QnbnH78wCgtZKCTXWvhEy6s1BVgVQnmxLpdoms/n8DX72zuNzdx7i1W8BgalyFmXwO6Q+S4sa062zt17TPLr9Cll7AKbR5zhDeFLve1I14P7hzTcvvPnm9M3zN2+ev1nLcPgAbe7e0fpW0abSCKjyBm6HE/h98r35AGmheDwUisdxe5TjouQH/g8AAP//AQAA//9C7T88AAEAAAACC4ViI6jbXw889QABA+gAAAAA2F2ghAAAAADdZi82/jf+xAhtA/EAAQADAAIAAAAAAAAAAQAAA9j+7wAACJj+N/43CG0AAQAAAAAAAAAAAAAAAAAAADV4nBzKMUoDQRTG8f/7BkQxiSPGEJsgcUE0s4udgjvFaxYLBwQV1gN4Db2Bva29ja0XsPcyYrNi+p8+uOELlIdfdTR6otEbxWqKXim6o+iRosSREgehZqLx8KMdTpVx+6ZS5lgbVHbPXDOWusRtyrkq3BZ4eMDV4lqtrf97e8Htk317ZlcXtNpmFDaZS0y0xUiRTpGFIjNF9hQ5sUS2RGOJ63DIynqurOfMbhkrsrQpDsP7HwAAAP//AQAA//9YZRvrAAAAAAAALAAsAFAAfACsAMIAzgDwARIBOAF4AYoBxAHiAhoCTAJ4AqoC3gMEA2wDjgOaA7IDzgQABCIETgR+BLIE0gUOBTQFVgVyBaoF1gYGBh4GSgaIBqwG7AcCByIHMgc+B1gHcgeAB5QHoAe2AAEAAAA1AJAADABjAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyUz24bVRTGf05s0wrBAkVVuonugkWR6NhUSdU2K4fUikUUB48LQkJIE8/4jzKeGXkmDuEJWPMWvEVXPATPgVij+Xzs2AXRJoqSfHfu+fOdc75zgR3+ZptK9SHwRz0xXGGvfm54iwf1E8PbtOtbhqs8qf1puEZYmxuu83mtZ/gj3lZ/M/yA/epPhh+yW20b/phn1R3Dn2w7/jL8Kfu8XeAKvOBXwxV2yQxvscOPhrd5hMWsVHlE03CNz9gzXGcP6DOhIGZCwgjHkAkjrpgRkeMTMWPCkIgQR4cWMYW+JgRCjtF/fg3wKZgRKOKYAkeMT0xAztgi/iKvlHNlHOo0s7sWBWMCLuRxSUCCI2VESkLEpeIUFGS8okGDnIH4ZhTkeORMiPFImTGiQZc2p/QZMyHH0VakkplPypCCawLld2ZRdmZAREJurK5ICMXTiV8k7w6nOLpksl2PfLoR4Usc38m75JbK9is8/bo1Zpt5l2wC5upnrK7EurnWBMe6LfO2+Fa44BXuXv3ZZPL+HoX6XyjyBVeaf6hJJWKS4NwuLXwpyHePcRzp3MFXR76nQ58Turyhr3OLHj1anNGnw2v5dunh+JouZxzLoyO8uGtLMWf8gOMbOrIpY0fWn8XEIn4mM3Xn4jhTHVMy9bxk7qnWSBXefcLlDqUb6sjlM9AelZZO80u0ZwEjU0UmhlP1cqmN3PoXmiKmqqWc7e19uQ1z273lFt+QaodLtS44lZNbMHrfVL13NHOtH4+AkJQLWQxImdKg4Ea8zwm4IsZxrO6daEsKWiufMs+NVBIxFYMOieLMyPQ3MN34xn2woXtnb0ko/5Lp5aqq+2Rx6tXtjN6oe8s737ocrU2gYVNN19Q0ENfEtB9pp9b5+/LN9bqlPOWIlJjwXy/AMzya7HPAIWNlGOhmbq9DUy9Ek5ccqvpLIlkNpefIIhzg8ZwDDnjJ83f6uGTijItbcVnP3eKYI7ocflAVC/suR7xeffv/rL+LaVO1OJ6uTi/uPcUnd1DrF9qz2/eyp4mVk5hbtNutOCNgWnJxu+s1ucd4/wAAAP//AQAA///0t09ReJxiYGYAg//nGIwYsAAAAAAA//8BAAD//y8BAgMAAAA=");
+}
+.d2-264238599 .text-italic {
+	font-family: "d2-264238599-font-italic";
+}
+@font-face {
+	font-family: d2-264238599-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-264238599 .fill-N1{fill:#0A0F25;}
+		.d2-264238599 .fill-N2{fill:#676C7E;}
+		.d2-264238599 .fill-N3{fill:#9499AB;}
+		.d2-264238599 .fill-N4{fill:#CFD2DD;}
+		.d2-264238599 .fill-N5{fill:#DEE1EB;}
+		.d2-264238599 .fill-N6{fill:#EEF1F8;}
+		.d2-264238599 .fill-N7{fill:#FFFFFF;}
+		.d2-264238599 .fill-B1{fill:#0D32B2;}
+		.d2-264238599 .fill-B2{fill:#0D32B2;}
+		.d2-264238599 .fill-B3{fill:#E3E9FD;}
+		.d2-264238599 .fill-B4{fill:#E3E9FD;}
+		.d2-264238599 .fill-B5{fill:#EDF0FD;}
+		.d2-264238599 .fill-B6{fill:#F7F8FE;}
+		.d2-264238599 .fill-AA2{fill:#4A6FF3;}
+		.d2-264238599 .fill-AA4{fill:#EDF0FD;}
+		.d2-264238599 .fill-AA5{fill:#F7F8FE;}
+		.d2-264238599 .fill-AB4{fill:#EDF0FD;}
+		.d2-264238599 .fill-AB5{fill:#F7F8FE;}
+		.d2-264238599 .stroke-N1{stroke:#0A0F25;}
+		.d2-264238599 .stroke-N2{stroke:#676C7E;}
+		.d2-264238599 .stroke-N3{stroke:#9499AB;}
+		.d2-264238599 .stroke-N4{stroke:#CFD2DD;}
+		.d2-264238599 .stroke-N5{stroke:#DEE1EB;}
+		.d2-264238599 .stroke-N6{stroke:#EEF1F8;}
+		.d2-264238599 .stroke-N7{stroke:#FFFFFF;}
+		.d2-264238599 .stroke-B1{stroke:#0D32B2;}
+		.d2-264238599 .stroke-B2{stroke:#0D32B2;}
+		.d2-264238599 .stroke-B3{stroke:#E3E9FD;}
+		.d2-264238599 .stroke-B4{stroke:#E3E9FD;}
+		.d2-264238599 .stroke-B5{stroke:#EDF0FD;}
+		.d2-264238599 .stroke-B6{stroke:#F7F8FE;}
+		.d2-264238599 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-264238599 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-264238599 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-264238599 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-264238599 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-264238599 .background-color-N1{background-color:#0A0F25;}
+		.d2-264238599 .background-color-N2{background-color:#676C7E;}
+		.d2-264238599 .background-color-N3{background-color:#9499AB;}
+		.d2-264238599 .background-color-N4{background-color:#CFD2DD;}
+		.d2-264238599 .background-color-N5{background-color:#DEE1EB;}
+		.d2-264238599 .background-color-N6{background-color:#EEF1F8;}
+		.d2-264238599 .background-color-N7{background-color:#FFFFFF;}
+		.d2-264238599 .background-color-B1{background-color:#0D32B2;}
+		.d2-264238599 .background-color-B2{background-color:#0D32B2;}
+		.d2-264238599 .background-color-B3{background-color:#E3E9FD;}
+		.d2-264238599 .background-color-B4{background-color:#E3E9FD;}
+		.d2-264238599 .background-color-B5{background-color:#EDF0FD;}
+		.d2-264238599 .background-color-B6{background-color:#F7F8FE;}
+		.d2-264238599 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-264238599 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-264238599 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-264238599 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-264238599 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-264238599 .color-N1{color:#0A0F25;}
+		.d2-264238599 .color-N2{color:#676C7E;}
+		.d2-264238599 .color-N3{color:#9499AB;}
+		.d2-264238599 .color-N4{color:#CFD2DD;}
+		.d2-264238599 .color-N5{color:#DEE1EB;}
+		.d2-264238599 .color-N6{color:#EEF1F8;}
+		.d2-264238599 .color-N7{color:#FFFFFF;}
+		.d2-264238599 .color-B1{color:#0D32B2;}
+		.d2-264238599 .color-B2{color:#0D32B2;}
+		.d2-264238599 .color-B3{color:#E3E9FD;}
+		.d2-264238599 .color-B4{color:#E3E9FD;}
+		.d2-264238599 .color-B5{color:#EDF0FD;}
+		.d2-264238599 .color-B6{color:#F7F8FE;}
+		.d2-264238599 .color-AA2{color:#4A6FF3;}
+		.d2-264238599 .color-AA4{color:#EDF0FD;}
+		.d2-264238599 .color-AA5{color:#F7F8FE;}
+		.d2-264238599 .color-AB4{color:#EDF0FD;}
+		.d2-264238599 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-264238599);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-264238599);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-264238599);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-264238599);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-264238599);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-264238599);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-264238599);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-264238599);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="SW50ZXJuZXQ="><g class="shape" ><ellipse rx="103.000000" ry="40.000000" cx="141.000000" cy="83.000000" stroke="#0D32B2" fill="#85c1e9" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="141.000000" y="80.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="141.000000" dy="0.000000">Internet Client</tspan><tspan x="141.000000" dy="18.500000">(IPv4 or IPv6)</tspan></text></g><g class="SVB2NnJz"><g class="shape" ><rect x="605.000000" y="34.000000" width="189.000000" height="98.000000" stroke="#0D32B2" fill="#f9ab00" class=" stroke-B1" style="stroke-width:2;" /></g><text x="699.500000" y="72.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="699.500000" dy="0.000000">IPv6rs</tspan><tspan x="699.500000" dy="17.666667">WireGuard endpoint</tspan><tspan x="699.500000" dy="17.666667">+ IPv4 reverse proxy</tspan></text></g><g class="TkFU"><g class="shape" ><rect x="1134.000000" y="97.000000" width="135.000000" height="82.000000" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1201.500000" y="135.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="1201.500000" dy="0.000000">Your ISP</tspan><tspan x="1201.500000" dy="18.500000">NAT / CGNAT</tspan></text></g><g class="SG9tZQ=="><g class="shape" ><rect x="1592.000000" y="105.000000" width="175.000000" height="66.000000" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="1679.500000" y="143.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Your Home Server</text></g><g class="Tm90ZQ=="><g class="shape" ><rect x="0.000000" y="183.000000" width="281.000000" height="281.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="140.500000" y="316.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="140.500000" dy="0.000000">The tunnel is outbound from your machine.</tspan><tspan x="140.500000" dy="12.000000">NAT only blocks inbound — outbound works fine.</tspan><tspan x="140.500000" dy="12.000000">The tunnel bypasses NAT entirely.</tspan></text></g><g class="KEludGVybmV0IC0mZ3Q7IElQdjZycylbMF0="><marker id="mk-d2-264238599-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 240.983645 70.744752 C 402.200012 50.000000 475.399994 49.549999 601.043186 68.163805" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="422.000000" y="47.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="422.000000" dy="0.000000">1. Request to</tspan><tspan x="422.000000" dy="18.500000">your IPv6 or domain</tspan></text></g><g class="KElQdjZycyAtJmd0OyBIb21lKVswXQ=="><path d="M 795.958914 63.096694 C 930.000000 35.500000 1011.500000 28.500000 1082.750000 28.500000 C 1154.000000 28.500000 1465.099976 43.900002 1599.845625 103.873487" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="1203.500000" y="28.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1203.500000" dy="0.000000">2. WireGuard tunnel</tspan><tspan x="1203.500000" dy="18.500000">(encrypted)</tspan></text></g><g class="KEhvbWUgLSZndDsgSVB2NnJzKVswXQ=="><path d="M 1602.671079 171.309350 C 1465.300049 232.100006 1384.699951 247.500000 1316.000000 247.500000 C 1247.300049 247.500000 926.880981 224.449997 781.805095 134.360174" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="1185.000000" y="241.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1185.000000" dy="0.000000">3. Response</tspan><tspan x="1185.000000" dy="18.500000">back through tunnel</tspan></text></g><g class="KElQdjZycyAtJmd0OyBJbnRlcm5ldClbMF0="><path d="M 603.021593 98.043097 C 475.399994 116.949997 402.000000 116.599998 241.968813 96.498522" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="422.000000" y="114.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="422.000000" dy="0.000000">3. Response</tspan><tspan x="422.000000" dy="18.500000">back through tunnel</tspan></text></g><g class="KE5BVCAtJmd0OyBIb21lKVswXQ=="><path d="M 1270.500000 138.000000 C 1398.099976 138.000000 1462.900024 138.000000 1588.500000 138.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="1430.500000" y="136.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1430.500000" dy="0.000000">ISP blocks inbound</tspan><tspan x="1430.500000" dy="18.500000">(no port forwarding)</tspan></text></g><g class="KElQdjZycyAtJmd0OyBOQVQpWzBd"><path d="M 795.958914 103.403306 C 930.000000 131.000000 998.000000 138.000000 1130.000000 138.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-264238599-3488378134)" mask="url(#d2-264238599)" /><text x="963.000000" y="132.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="963.000000" dy="0.000000">Tunnel goes outbound,</tspan><tspan x="963.000000" dy="18.500000">NAT can&#39;t block it</tspan></text></g><mask id="d2-264238599" maskUnits="userSpaceOnUse" x="-21" y="-8" width="1809" height="493">
+<rect x="-21" y="-8" width="1809" height="493" fill="white"></rect>
+<rect x="354.000000" y="31.000000" width="136" height="37" fill="black"></rect>
+<rect x="1136.000000" y="12.000000" width="135" height="37" fill="black"></rect>
+<rect x="1116.000000" y="225.000000" width="138" height="37" fill="black"></rect>
+<rect x="353.000000" y="98.000000" width="138" height="37" fill="black"></rect>
+<rect x="1362.000000" y="120.000000" width="137" height="37" fill="black"></rect>
+<rect x="886.000000" y="116.000000" width="154" height="37" fill="black"></rect>
+</mask></svg></svg>
+</div><p>The clever part: the WireGuard connection is <strong>initiated from your machine</strong> (outbound). NAT doesn&apos;t block outbound connections, so even CGNAT can&apos;t stop it. Once the tunnel is up, it&apos;s a bidirectional link, and your machine has a public IP.</p><hr /><h2 id="the-three-groups-who-subscribe">The Three Groups Who Subscribe</h2><h3 id="1.-people-behind-cgnat">1. People Behind CGNAT</h3><p>Carrier-Grade NAT means you share a public IPv4 with hundreds of other customers. You cannot port forward. You cannot run a server. Period.</p><p>Who has CGNAT?</p><ul><li><strong>Starlink</strong> — CGNAT by default</li><li><strong>Mobile ISPs</strong> — all of them</li><li><strong>Many residential ISPs</strong> — including some Singtel plans</li><li><strong>T-Mobile Home Internet</strong>, <strong>Verizon 5G Home</strong> — CGNAT</li></ul><p>If your ISP uses CGNAT, ipv6.rs is the cheapest way to get a publicly reachable server at home (<span class="formula">3.33/month vs. </span>5-10/month for the cheapest VPS).</p><h3 id="2.-privacy-conscious-self-hosters">2. Privacy-Conscious Self-Hosters</h3><p>When you rent a VPS, the host has physical access to your RAM and disk. This is a fundamental trust issue:</p><blockquote><p>&quot;The only thing between your host and your data is trust. Trust is not security.&quot;</p></blockquote><p>ipv6.rs lets you run the server on your own hardware. The provider only forwards IP packets — they never touch your storage or memory. Their open-source tunnel software (delorean, shrimp) is auditable.</p><h3 id="3.-people-who-want-one-click-self-hosting-without-networking">3. People Who Want One-Click Self-Hosting Without Networking</h3><p>Their open-source <strong>Cloud Seeder</strong> tool installs server software in one click:</p><ul><li>Nextcloud</li><li>Jellyfin (media server)</li><li>WordPress</li><li>Game servers (Minecraft, etc.)</li><li>Matrix/Synapse</li><li>GnuCash</li></ul><p>No port forwarding. No DNS config. No reverse proxy setup. Click, wait 30 seconds, your service is live at <code>https://yourname.ipv6.rs</code>.</p><p>For someone who just wants to run a family Nextcloud instance and doesn&apos;t know what a &quot;port&quot; is, this eliminates the friction that kills most self-hosting projects.</p><hr /><h2 id="when-it-doesn&apos;t-make-sense">When It Doesn&apos;t Make Sense</h2><table><thead><tr><th>Scenario</th><th>Stick with VPS</th><th>Try ipv6.rs</th></tr></thead><tbody><tr><td>Low upload bandwidth (&lt;10 Mbps)</td><td>✅ VPS wins</td><td>❌ Home upload will bottleneck</td></tr><tr><td>Need 99.99% uptime</td><td>✅ Data centre SLA</td><td>❌ Home power/internet outages</td></tr><tr><td>Need DDoS protection</td><td>✅ Cloudflare + VPS</td><td>❌ Nothing between you and attacker</td></tr><tr><td>Need lots of RAM/disk</td><td>❌ Expensive VPS</td><td>✅ Your home PC&apos;s resources</td></tr><tr><td>Privacy-sensitive app</td><td>❌ VPS host sees your data</td><td>✅ Your hardware, your control</td></tr><tr><td>Behind CGNAT</td><td>❌ Can&apos;t host at all</td><td>✅ Only option for hosting</td></tr></tbody></table><hr /><h2 id="the-bigger-picture">The Bigger Picture</h2><p>ipv6.rs is interesting not for the technology (WireGuard tunnels are trivial) but for the <strong>mission</strong>:</p><blockquote><p>&quot;Decentralize the internet in order to increase freedom for all mankind.&quot;</p></blockquote><p>They open-sourced their entire stack (Cloud Seeder, delorean proxy, shrimp forward proxy, legacydns, hamon). Their pricing is low enough that it undercuts VPS providers for small workloads. They&apos;re betting that self-hosting adoption is bottlenecked by networking complexity, not by hardware or desire.</p><p>For $3.33/month, they remove the CGNAT barrier. Whether that&apos;s worth it depends on whether you value data sovereignty over the convenience of renting someone else&apos;s server.</p><hr /><p><em>Sources: ipv6.rs website, LowEndBox interview with Chad (2024), LowEndTalk discussion, GitHub (ipv6rslimited/cloudseeder). Not affiliated with ipv6.rs.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/homelab.html">homelab</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/cgnat.html">cgnat</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ipv6.html">ipv6</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/nat.html">nat</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/networking.html">networking</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/wireguard.html">wireguard</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/self-hosting.html">self-hosting</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

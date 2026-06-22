@@ -61,6 +61,7 @@
 <url><loc>https://blog.nurazhar.com/hyperscaler-cross-subsidization-google-meta-spacex.html</loc></url>
 <url><loc>https://blog.nurazhar.com/infrastructure-router-analogy-he-openrouter.html</loc></url>
 <url><loc>https://blog.nurazhar.com/integrating-aur-audit-into-paru.html</loc></url>
+<url><loc>https://blog.nurazhar.com/ipv6-rs-self-hosting-nat-bypass.html</loc></url>
 <url><loc>https://blog.nurazhar.com/leaky-layout-abstractions.html</loc></url>
 <url><loc>https://blog.nurazhar.com/license-and-derivation-divergence-electrumsv-vs-yours-wallet.html</loc></url>
 <url><loc>https://blog.nurazhar.com/line-length-and-measure.html</loc></url>
@@ -144,6 +145,7 @@
 <url><loc>https://blog.nurazhar.com/tags/career.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/censorship.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/cga.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/cgnat.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/chronicle.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/civilization.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/cleanup.html</loc></url>
@@ -229,6 +231,7 @@
 <url><loc>https://blog.nurazhar.com/tags/hardware.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/he-net.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hermes.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/homelab.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/htmx.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hurricane-electric.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hyperliquid.html</loc></url>
@@ -268,6 +271,7 @@
 <url><loc>https://blog.nurazhar.com/tags/mirrors.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/mistakes.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/multi-agent-system.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/nat.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/network-topology.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/networking.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/nodejs.html</loc></url>
@@ -326,6 +330,7 @@
 <url><loc>https://blog.nurazhar.com/tags/scrum.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/security.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/self-host.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/self-hosting.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/self-improvement.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/seo.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/serverless.html</loc></url>
@@ -373,6 +378,7 @@
 <url><loc>https://blog.nurazhar.com/tags/white-collar.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/whitepaper.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/windows-11.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/wireguard.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/workflow.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/yaml.html</loc></url>
 <url><loc>https://blog.nurazhar.com/the-autonomous-os-safety-net-for-agentic-sysops.html</loc></url>
