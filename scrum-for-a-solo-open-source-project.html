@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Scrum for a Solo Open-Source Project — Building Butler — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Scrum for a Solo Open-Source Project — Building Butler">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css"></noscript>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Scrum for a Solo Open-Source Project — Building Butler">
+    <meta name="twitter:title" content="Scrum for a Solo Open-Source Project — Building Butler">
+    <meta property="og:title" content="Scrum for a Solo Open-Source Project — Building Butler">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Applying the 2020 Scrum Guide to a solo open-source Clojure project. Roles, events, artifacts, and the Product Backlog for the Butler — from someone learning this in class and building it in real time.">
+    <meta name="twitter:description" content="Applying the 2020 Scrum Guide to a solo open-source Clojure project. Roles, events, artifacts, and the Product Backlog for the Butler — from someone learning this in class and building it in real time.">
+    <meta property="og:description" content="Applying the 2020 Scrum Guide to a solo open-source Clojure project. Roles, events, artifacts, and the Product Backlog for the Butler — from someone learning this in class and building it in real time.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/scrum-for-a-solo-open-source-project.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/scrum-for-a-solo-open-source-project.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Scrum for a Solo Open-Source Project — Building Butler",
+  "description": "Applying the 2020 Scrum Guide to a solo open-source Clojure project. Roles, events, artifacts, and the Product Backlog for the Butler — from someone learning this in class and building it in real time.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/scrum-for-a-solo-open-source-project.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/scrum-for-a-solo-open-source-project.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Scrum for a Solo Open-Source Project — Building Butler
+  
+</h1>
+<div><hr /><p>I&apos;m taking the <strong>Agile Project Management</strong> module (PDWD-APM-0226) at Lithan Academy as part of my SCTP Professional Diploma in Full Stack Web Development. This post is the practical half of what I&apos;m learning — applying Scrum to a real project I&apos;m building alongside class.</p><p>The project is <a href="https://github.com/nurazhardotcom/butler"><strong>Butler</strong></a> — a personal AI butler written in Clojure/Babashka. Think Hermes Agent (the #1 app on OpenRouter by token volume) but rebuilt from scratch in Clojure so I control the endpoints, the data, and the architecture. No vendor gatekeeping what models I can use.</p><p>This post walks through: Scrum accountabilities in a solo context, the Product Backlog, how Sprint events work when you&apos;re a team of one, and the license choice for an open-source agent project.</p><hr /><h2 id="the-project">The Project</h2><p>Butler started as <code>financial-butler</code> — a rule engine that answers &quot;can I afford this?&quot; by reading my checking balance, debt obligations, upcoming expenses, and emergency reserve. It has:</p><ul><li>A CLI (<code>./butler check 5000</code>)</li><li>An interactive REPL with <code>ask</code> for natural language questions via LLM</li><li>An MCP server so Claude and other agents can use its tools</li><li>Transaction history and recurring obligations tracking</li></ul><p>The next phase expands it from financial butler to <strong>life butler</strong>: adding persistent memory (SQLite FTS5), session context from profile files, skill generation (the Hermes &quot;do, learn, improve&quot; loop), scheduled automations, and messaging platform gateways.</p><p><a href="https://github.com/nurazhardotcom/butler">Source code here</a>. MIT license.</p><hr /><h2 id="why-scrum-for-a-solo-project?">Why Scrum for a Solo Project?</h2><p>The 2020 Scrum Guide (Schwaber &amp; Sutherland) says:</p><blockquote><p>Scrum is a lightweight framework that helps people, teams and organizations generate value through adaptive solutions for complex problems.</p></blockquote><p>Scrum was designed for teams, but the core mechanisms — <strong>Transparency, Inspection, Adaptation</strong> — apply regardless of team size. A solo developer still needs:</p><ul><li><strong>Transparency</strong>: The Product Backlog must be visible and the Increment inspectable. If only I know what I&apos;m building, I can&apos;t evaluate whether I&apos;m building the right thing.</li><li><strong>Inspection</strong>: Regular checkpoints to detect problems early. Without a team to catch drift, I need the Sprint cadence to force self-inspection.</li><li><strong>Adaptation</strong>: Permission to change direction when new information arrives. Solo developers are <em>especially</em> vulnerable to sunk-cost thinking — no one is there to say &quot;this isn&apos;t working, pivot.&quot;</li></ul><p>The Sprint is the container that makes all three happen. The Scrum Guide:</p><blockquote><p>Scrum employs an iterative, incremental approach to optimize predictability and to control risk.</p></blockquote><p>For a project like Butler — building an AI agent with unknown unknowns (LLM behavior, tool-calling edge cases, memory system design) — iterative delivery is the only sensible approach.</p><hr /><h2 id="accountabilities-(solo-edition)">Accountabilities (Solo Edition)</h2><p>The Scrum Guide defines three accountabilities:</p><table><thead><tr><th>Role</th><th>Responsibility</th><th>Who Plays It</th></tr></thead><tbody><tr><td><strong>Product Owner</strong></td><td>Maximizes value of the product. Owns the Product Backlog, the Product Goal, and ordering of work.</td><td><strong>Me</strong> — I decide what features matter most, what &quot;done&quot; means for each release, and what gets cut.</td></tr><tr><td><strong>Developers</strong></td><td>Creates the Increment each Sprint. Owns the Sprint Backlog, Definition of Done, and daily adaptation.</td><td><strong>Me</strong> — I write the Clojure code, set quality standards, and adjust the plan.</td></tr><tr><td><strong>Scrum Master</strong></td><td>Ensures Scrum is understood and enacted. Removes impediments.</td><td><strong>Me</strong> — I enforce the discipline of the framework, step back to assess process, and unblock myself.</td></tr></tbody></table><p>Three roles, one person. The key insight from the course: <strong>these aren&apos;t hats you switch — they&apos;re accountability boundaries.</strong> When I&apos;m the Product Owner, I only decide <em>what</em> to build, not <em>how</em>. When I&apos;m a Developer, I only build and inspect, not change scope. The Scrum Master watches the clock and asks &quot;are we actually doing Scrum right now?&quot;</p><p>This separation is harder solo than in a team. The Sprint boundary helps enforce it.</p><hr /><h2 id="the-product-backlog">The Product Backlog</h2><p>The Product Goal: <strong>A personal AI butler that manages finances, coaches life decisions, schedules automations, and improves through use — all under my control, running on any LLM backend I choose.</strong></p><p>The Product Backlog (ordered by value):</p><table><thead><tr><th>Priority</th><th>Item</th><th>Notes</th></tr></thead><tbody><tr><td>P0</td><td>LLM router — multi-provider, tool-calling loop</td><td>✅ Done (Naraya + OpenRouter)</td></tr><tr><td>P0</td><td>Rule engine — <code>can-afford?</code> with financial snapshot</td><td>✅ Done</td></tr><tr><td>P0</td><td>MCP server — expose tools to any agent</td><td>✅ Done</td></tr><tr><td>P1</td><td>SQLite FTS5 persistent memory — cross-session recall</td><td>Next sprint</td></tr><tr><td>P1</td><td>Profile context loader — reads LDC files as session base</td><td>Next sprint</td></tr><tr><td>P2</td><td>Skill generation — &quot;do, learn, improve&quot; loop</td><td></td></tr><tr><td>P2</td><td>Cron scheduler — recurring tasks and automations</td><td></td></tr><tr><td>P3</td><td>Telegram gateway — interact via chat</td><td></td></tr><tr><td>P3</td><td>Skill evolution — DSPy/GEPA-style trace-based optimization</td><td></td></tr></tbody></table><p>The backlog is transparent by being on GitHub. Classmates and faculty can see what&apos;s planned, what&apos;s in progress, and what&apos;s done.</p><hr /><h2 id="the-sprint">The Sprint</h2><p>I&apos;m running <strong>1-week sprints</strong> synchronized with the APM course timeline (SOC 19-Jun, final submission 30-Jun).</p><h3 id="sprint-planning">Sprint Planning</h3><p>At sprint start, I select items from the Product Backlog and define a <strong>Sprint Goal</strong>. For Sprint 1 (22 Jun – 29 Jun):</p><blockquote><p>Sprint Goal: Core infrastructure — LLM routing, financial rules, MCP server, transaction persistence. First deployable Increment.</p></blockquote><p>The Sprint Backlog:</p><ul><li>Namespace rename and repo setup (<code>financial-butler</code> → <code>butler</code>)</li><li>LLM tool-calling loop with can_afford tool</li><li>MCP server for external agent integration</li><li>Transaction history with EDN persistence</li><li>README documentation</li></ul><h3 id="daily-scrum-(self)">Daily Scrum (Self)</h3><p>The Scrum Guide:</p><blockquote><p>The Daily Scrum&apos;s purpose is to inspect progress toward the Sprint Goal and adapt the Sprint Backlog as necessary.</p></blockquote><p>Solo version, 5 minutes:</p><ol start="1"><li>What did I finish since yesterday?</li><li>What am I working on today?</li><li>Is anything blocking the Sprint Goal?</li></ol><p>This replaces the &quot;morning coffee + check GitHub&quot; loop with a deliberate question. The key is <strong>adaptation</strong>: if I realize today that the MCP server needs a tool I didn&apos;t plan, I adjust the Sprint Backlog.</p><h3 id="sprint-review">Sprint Review</h3><p>At sprint end, I demo the Increment — in this case, publishing the blog post and deploying the demo. The Sprint Review answers: did we deliver value? Is the Product Backlog still correct based on what we learned?</p><p>For Butler, the first Sprint Review revealed:</p><ul><li>The LLM tool-calling loop works but needs timeout handling</li><li>Hermes Agent killed custom endpoints — confirms the architectural bet on multi-provider routing was correct</li><li>The namespace rename was mechanical but had 10+ files to update — automate this next time</li></ul><h3 id="sprint-retrospective">Sprint Retrospective</h3><blockquote><p>The Sprint Retrospective&apos;s purpose is to plan ways to increase quality and effectiveness.</p></blockquote><p>Solo retrospective, three questions:</p><ol start="1"><li><strong>What&apos;s working?</strong> — Babashka makes CLI tools trivial. Clojure&apos;s data orientation makes prompt construction and tool dispatch natural.</li><li><strong>What&apos;s not working?</strong> — I&apos;m context-switching between APM course, blog writing, and coding. Need bounded sessions.</li><li><strong>What will I change?</strong> — Dedicated coding blocks 4-7am (peak productivity). No context switching within a Sprint.</li></ol><hr /><h2 id="definition-of-done">Definition of Done</h2><p>For Butler, &quot;Done&quot; means:</p><ul class="contains-task-list"><li><input type="checkbox" />Code compiles (<code>bb task</code> / <code>clojure -M -e ...</code>)</li><li><input type="checkbox" />CLI command works with sample input</li><li><input type="checkbox" />REPL command works for interactive use</li><li><input type="checkbox" />Error cases handled (missing config, API timeout, invalid input)</li><li><input type="checkbox" />At least one test (even a REPL smoke test)</li><li><input type="checkbox" />README updated if behavior changed</li><li><input type="checkbox" />Blog post published for major features</li></ul><p>This is deliberately lightweight. The Scrum Guide says the Definition of Done is team-defined and exists to <strong>instill quality</strong>. For a solo project, the DoD is what prevents &quot;it works on my machine&quot; from being the standard.</p><hr /><h2 id="license-choice:-mit">License Choice: MIT</h2><p>Butler is licensed under <strong>MIT</strong> — same as Hermes Agent. Why:</p><ol start="1"><li><strong>Reciprocity</strong>: Hermes is MIT. A derivative that also targets open-source agent infrastructure should match.</li><li><strong>Adoption</strong>: MIT is the most permissive license. Classmates can fork it, companies can use it, no legal friction.</li><li><strong>Business model</strong>: I&apos;m not selling software licenses. My business sells services and custom deployments. MIT maximizes distribution.</li><li><strong>No vendor lock</strong>: The entire point of this project is that users control their own agent. A restrictive license would contradict the architecture.</li></ol><p>The AGENTS.md in the repo documents this explicitly — the license choice is a design decision, not an afterthought.</p><hr /><h2 id="what-this-means-for-classmates">What This Means for Classmates</h2><p>We&apos;re learning Scrum in class. Most examples are about team projects — 5-9 people, a Product Owner, a Scrum Master, daily standups. That&apos;s valuable but it can feel abstract if you&apos;re a solo developer or freelancer.</p><p>A <strong>sole developer working on open-source</strong> can use Scrum without modifying the framework. The accountabilities still exist (they&apos;re just collapsed into one person). The events still happen (they&apos;re just faster). The artifacts are still transparent (they&apos;re on GitHub).</p><p>The critical difference is <strong>external accountability</strong>. In a team, your peers hold you accountable. Solo, you must substitute that with:</p><ul><li>The Sprint cadence itself (a deadline is a deadline)</li><li>Published artifacts (the backlog on GitHub, the Increment in commits)</li><li>Writing — like this blog post — which forces you to articulate what you built and why</li></ul><p>If you&apos;re building a personal project during the APM course, try mapping it to Scrum. The Product Backlog is a <code>README.md</code> or GitHub Issues. The Sprint Backlog is a checklist. The Sprint Review is a demo post. The Retrospective is a note to your future self.</p><p>The Scrum framework isn&apos;t cargo cult — it&apos;s a feedback loop. Even for one person.</p><hr /><p><em>Built with <a href="https://babashka.org/">Babashka</a> and the 2020 Scrum Guide. Course: PDWD-APM-0226, Lithan Academy. Repo: <a href="https://github.com/nurazhardotcom/butler">github.com/nurazhardotcom/butler</a></em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/agile.html">agile</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/clojure.html">clojure</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/lithan.html">lithan</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai-agents.html">ai-agents</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/project-management.html">project-management</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/methodology.html">methodology</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/butler.html">butler</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/scrum.html">scrum</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
