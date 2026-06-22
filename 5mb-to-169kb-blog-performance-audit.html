@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>5.2 MB to 169 KB — Performance Auditing a Static Blog — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="5.2 MB to 169 KB — Performance Auditing a Static Blog">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css"></noscript>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="5.2 MB to 169 KB — Performance Auditing a Static Blog">
+    <meta name="twitter:title" content="5.2 MB to 169 KB — Performance Auditing a Static Blog">
+    <meta property="og:title" content="5.2 MB to 169 KB — Performance Auditing a Static Blog">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="My blog&#39;s homepage was 5.2 MB. The fix was a 5-line template change. Here&#39;s the audit, the fix, and the general lesson about static site performance.">
+    <meta name="twitter:description" content="My blog&#39;s homepage was 5.2 MB. The fix was a 5-line template change. Here&#39;s the audit, the fix, and the general lesson about static site performance.">
+    <meta property="og:description" content="My blog&#39;s homepage was 5.2 MB. The fix was a 5-line template change. Here&#39;s the audit, the fix, and the general lesson about static site performance.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/5mb-to-169kb-blog-performance-audit.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/5mb-to-169kb-blog-performance-audit.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "5.2 MB to 169 KB — Performance Auditing a Static Blog",
+  "description": "My blog&#39;s homepage was 5.2 MB. The fix was a 5-line template change. Here&#39;s the audit, the fix, and the general lesson about static site performance.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/5mb-to-169kb-blog-performance-audit.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/5mb-to-169kb-blog-performance-audit.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  5.2 MB to 169 KB — Performance Auditing a Static Blog
+  
+</h1>
+<div><hr /><p>I checked my blog&apos;s homepage recently:</p><pre><code>$ curl -s -o /dev/null -w &quot;Size: %{size_download} bytes | TTFB: %{time_starttransfer}s\n&quot; blog.nurazhar.com
+Size: 5,255,649 bytes | TTFB: 0.718s
+</code></pre><p><strong>5.2 MB for a text blog.</strong></p><p>Individual post pages were fine (~41 KB, ~0.29s). But the homepage was inlining the full body content of all 107 posts — including all D2 SVG diagrams, comparison tables, and code blocks.</p><hr /><h2 id="the-root-cause">The Root Cause</h2><p>The index template was rendering <code>{{post.body | safe}}</code> for every post. For 107 posts with D2 diagrams, this ballooned to 5.2 MB.</p><p>The fix was trivial — show only metadata on the index:</p><pre><code>Title + Description + Date + Tags
+</code></pre><p>No body content. No SVGs. No code blocks.</p><p>Result:</p><pre><code>Size: 168,695 bytes | TTFB: 0.187s
+</code></pre><p><strong>97% reduction.</strong> From 5.2 MB to 169 KB. TTFB dropped from 718ms to 187ms.</p><hr /><h2 id="the-scale-question">The Scale Question</h2><p>My config has <code>:num-index-posts 365</code>. I initially worried this would be a bottleneck at scale. It&apos;s not:</p><table><thead><tr><th>Format</th><th>Size per post</th><th>107 posts</th><th>1,000 posts</th></tr></thead><tbody><tr><td>Full body (old)</td><td>~49 KB avg</td><td>5.2 MB</td><td>~49 MB</td></tr><tr><td>Title + desc + tags (new)</td><td>~200 bytes</td><td>21 KB</td><td>~200 KB</td></tr></tbody></table><p>Even at 1,000 posts, the index page is ~200 KB — smaller than a single post with one D2 diagram. The bottleneck was never the number of posts; it was inlining the content. Metadata scales linearly with negligible cost.</p><hr /><h2 id="other-fixes">Other Fixes</h2><h3 id="code-block-readability">Code Block Readability</h3><p>The blog had syntax highlighting colors for dark mode only. Light mode users saw plain black-on-white code. Added a full light mode token color scheme — keywords in purple, strings in green, functions in amber, comments in muted gray.</p><h3 id="render-blocking-scripts">Render-Blocking Scripts</h3><p>Prism.js syntax highlighter and its CSS were loaded synchronously in <code>&lt;head&gt;</code>, blocking first paint. Changed to:</p><ul><li>Prism.js: <code>defer</code> (loads after HTML parsing)</li><li>Prism CSS: <code>preload</code> with async swap-in (prevents render block)</li></ul><h3 id="mobile">Mobile</h3><ul><li>Code blocks and tables: horizontal scroll on overflow</li><li>Navigation: centered and wraps on small screens</li><li>Padding: reduced from 24px to 16px on mobile</li><li>D2 SVGs: scroll at render width so text stays readable</li></ul><hr /><h2 id="the-lesson">The Lesson</h2><p>For a blog, the index page should be a <strong>catalogue</strong>, not a firehose. Title, date, description, tags. That&apos;s it. The full content belongs on individual post pages, where they&apos;re cached and served independently.</p><p>The highest-impact optimization on this blog was a template change — bigger than any CDN, caching strategy, or script deferral. Sometimes the best performance fix is showing less data.</p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/web.html">web</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/css.html">css</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/static-site.html">static-site</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/optimization.html">optimization</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/performance.html">performance</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/blogging.html">blogging</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
