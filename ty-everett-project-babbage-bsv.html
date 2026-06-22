@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Ty Everett and Project Babbage — Shipping Through Adversity — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Ty Everett and Project Babbage — Shipping Through Adversity">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css"></noscript>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Ty Everett and Project Babbage — Shipping Through Adversity">
+    <meta name="twitter:title" content="Ty Everett and Project Babbage — Shipping Through Adversity">
+    <meta property="og:title" content="Ty Everett and Project Babbage — Shipping Through Adversity">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Ty Everett builds the Project Babbage infrastructure stack — Metanet identity, PeerMail, Gateway.Cash, Bitcoin CPU — while shipping through personal adversity.">
+    <meta name="twitter:description" content="Ty Everett builds the Project Babbage infrastructure stack — Metanet identity, PeerMail, Gateway.Cash, Bitcoin CPU — while shipping through personal adversity.">
+    <meta property="og:description" content="Ty Everett builds the Project Babbage infrastructure stack — Metanet identity, PeerMail, Gateway.Cash, Bitcoin CPU — while shipping through personal adversity.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/ty-everett-project-babbage-bsv.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/ty-everett-project-babbage-bsv.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Ty Everett and Project Babbage — Shipping Through Adversity",
+  "description": "Ty Everett builds the Project Babbage infrastructure stack — Metanet identity, PeerMail, Gateway.Cash, Bitcoin CPU — while shipping through personal adversity.",
+  "datePublished": "2026-06-21",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/ty-everett-project-babbage-bsv.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/ty-everett-project-babbage-bsv.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Ty Everett and Project Babbage — Shipping Through Adversity
+  
+</h1>
+<div><hr /><p>BSV has no shortage of builders who ship code. But some ship through conditions that would stop most people cold.</p><p>Ty Everett is the founding president of Project Babbage — a framework for building Bitcoin apps that puts user identity at the center. His company builds the stack that developers use to create decentralized apps on BSV: Metanet identity, PeerMail encrypted messaging, Gateway.Cash payment buttons, and the Bitcoin CPU that lets you run Ethereum applications on BSV.</p><p>He also has a disability that would qualify as OKU in Malaysia. He ships anyway.</p><h2 id="what-babbage-built">What Babbage Built</h2><p>Project Babbage is not a single product. It is a constellation of infrastructure:</p><p><strong>Metanet Desktop</strong> — A wallet and identity manager that serves as the entry point for building on BSV. It handles permissions, trust, and identity functions across applications. Users own their data, not the platform.</p><p><strong>IdentiCert</strong> — A third-party identity certification system. When you receive an encrypted PeerMail, it arrives with an identity badge from a certifier you trust. This makes phishing and impersonation structurally impossible — the authentication is built into the protocol, not bolted on as an afterthought.</p><p><strong>Gateway.Cash</strong> — Embeddable payment buttons for websites. A blogger adds a WordPress plugin, configures a button ID and style, and visitors can pay in satoshis without accounts, without KYC, without intermediaries. The button is tied to the creator&apos;s Metanet identity.</p><p><strong>Bitcoin CPU</strong> — An EVM compatibility layer that lets developers run Ethereum applications on BSV. Announced at BSV DevCon 2024 in London. &quot;We can build some cool stuff on top of the Bitcoin CPU, even if people weren&apos;t on BSV to begin with,&quot; Everett said.</p><p><strong>BSV Hackathon</strong> — In April 2025, Babbage organized the Texas BSV Hackathon with $50,000 in prizes. The goal was not just to award prize money but to establish a reusable developer stack — wallets, identity, overlay networks, micropayments — that the entire BSV ecosystem owns.</p><h2 id="computing-with-integrity">Computing With Integrity</h2><p>Babbage&apos;s tagline is &quot;Computing With Integrity.&quot; This is not marketing. It is a design philosophy:</p><blockquote><p>&quot;Bitcoin was the missing piece that made ancient economic concepts possible in the digital world — without trusted third parties.&quot;</p></blockquote><p>The problem Babbage solves is that the internet was built without a native identity layer. Accounts are siloed per platform. Your data is held hostage when a service shuts down. Micropayments require intermediaries that make sub-cent transactions uneconomical.</p><p>Babbage&apos;s answer: make the user the center of every equation. The wallet is the user&apos;s agent. Applications request permission through the wallet, not the other way around. Identity is portable across platforms because it is anchored to the user&apos;s key, not the platform&apos;s database.</p><h2 id="keep-building,-and-they-will-come">Keep Building, and They Will Come</h2><p>In a 2024 interview at BSV DevCon, Everett said something that echoes the attitude of everyone building on the original protocol:</p><blockquote><p>&quot;The superior technology always prevails. Just keep building things, keep in between the ditches.&quot;</p></blockquote><p>He acknowledged that BSV has faced resistance from an establishment invested in competing visions of Bitcoin. His response was not to argue. It was to ship more code.</p><blockquote><p>&quot;We&apos;re not trying to stop things from being built on other chains. We&apos;re trying to show how to build them on this chain and how to do it in a way that&apos;s going to put users at the center of every equation.&quot;</p></blockquote><h2 id="why-this-story-matters">Why This Story Matters</h2><p>The software industry has a cult of the &quot;10x engineer&quot; — the able-bodied, sleep-deprived prodigy who ships at inhuman velocity. It rewards brute force output. It does not reward resilience.</p><p>Everett built a company and an open-source ecosystem while managing a disability. He organized a hackathon, rebuilt the entire Babbage stack, presented at three conferences in a single year, and published a paper on &quot;Computing with Integrity&quot; that he submitted to Craig Wright for review.</p><p>The metric that matters is not how fast you can code. It is whether you keep shipping when the conditions are against you.</p><blockquote><p>&quot;I think there&apos;s been a lot of potential that has existed for some time in BSV, but we&apos;re finally in a place where we&apos;re making that into a reality.&quot;</p></blockquote><p>Project Babbage is at <code>projectbabbage.com</code>. The stack is on GitHub at <code>github.com/ProjectBabbage</code>. Ty Everett is at <code>github.com/ty-everett</code>.</p></div>
+
+<p><i>Published: 2026-06-21</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/metanet.html">metanet</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/identity.html">identity</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bitcoin.html">bitcoin</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bsv.html">bsv</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/project-babbage.html">project-babbage</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

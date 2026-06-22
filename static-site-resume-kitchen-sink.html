@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Static Site Resume and Kitchen Sink — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Static Site Resume and Kitchen Sink">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css"></noscript>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Static Site Resume and Kitchen Sink">
+    <meta name="twitter:title" content="Static Site Resume and Kitchen Sink">
+    <meta property="og:title" content="Static Site Resume and Kitchen Sink">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="A static blog with live metrics serves as both portfolio and credibility signal — kanban board and stats page walkthrough.">
+    <meta name="twitter:description" content="A static blog with live metrics serves as both portfolio and credibility signal — kanban board and stats page walkthrough.">
+    <meta property="og:description" content="A static blog with live metrics serves as both portfolio and credibility signal — kanban board and stats page walkthrough.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/static-site-resume-kitchen-sink.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/static-site-resume-kitchen-sink.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Static Site Resume and Kitchen Sink",
+  "description": "A static blog with live metrics serves as both portfolio and credibility signal — kanban board and stats page walkthrough.",
+  "datePublished": "2026-06-21",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/static-site-resume-kitchen-sink.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/static-site-resume-kitchen-sink.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Static Site Resume and Kitchen Sink
+  
+</h1>
+<div><hr /><p>As a software engineer, your resume is only as strong as your ability to demonstrate real work. A static blog with live metrics serves as both portfolio and credibility signal.</p><p>I recently cleaned up two pages on my static blog that serve this purpose — the Kanban board and the stats page.</p><h2 id="the-kanban-board">The Kanban Board</h2><p>A static kanban board from a JSON file. No database, no server runtime. The tasks are compiled directly into the HTML during the build step.</p><pre><code class="language-clojure">;; From bb.edn — compiled at render time
+(let [kanban-body (slurp &quot;templates/kanban.html&quot;)
+      kanban-state (slurp &quot;kanban_state.json&quot;)
+      kanban-rendered (clean-template
+        (-&gt; base
+            (clojure.string/replace &quot;{{body | safe }}&quot; kanban-body)
+            ...))]
+  (spit &quot;public/kanban.html&quot; kanban-rendered))
+</code></pre><p>The state is injected as a JSON blob in the HTML, and JavaScript renders the columns client-side. No API calls, no loading states — just a snapshot of current tasks, version-controlled alongside the code.</p><p>This is useful for a resume because it shows:</p><ul><li>You track work systematically</li><li>You understand the difference between build-time and runtime</li><li>Your project management is transparent and visible</li></ul><h2 id="the-stats-page">The Stats Page</h2><p>The original stats page had three summary boxes (Total Views, Tracked Pages, Primary Country), a top-pages table, a referrer table, and a country distribution chart. Three data sources, five visual elements — too much noise.</p><p>I stripped it to just the country distribution:</p><pre><code class="language-html">&lt;div id=&quot;analytics-app&quot;&gt;
+  &lt;h2&gt;Visitor Geography&lt;/h2&gt;
+  &lt;div id=&quot;countries-list&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+</code></pre><p>Why just countries? Because for a personal resume blog, the single most informative metric is geographic diversity of readership. Page view counts and referrer sources are vanity metrics — they don&apos;t tell an employer anything useful. But seeing readers from 15+ countries signals reach that a static personal blog doesn&apos;t naturally have.</p><p>The API call is unchanged (a Cloud Function behind the scenes), but the rendering is minimal:</p><pre><code class="language-javascript">renderCountries(data) {
+  const maxViews = Math.max(...data.countries.map(c =&gt; parseInt(c.views, 10)));
+  data.countries.forEach(c =&gt; {
+    const pct = (views / maxViews) * 100;
+    // Render country name, view count, horizontal bar
+  });
+}
+</code></pre><p>No charts library. No dependencies. Just CSS bars proportional to the max.</p><h2 id="the-resume-signal">The Resume Signal</h2><p>Both of these pages sit at <code>blog.nurazhar.com</code> — my static blog. They demonstrate:</p><table><thead><tr><th>Signal</th><th>What it proves</th></tr></thead><tbody><tr><td>Static site generation</td><td>You understand build pipelines</td></tr><tr><td>Cloud Function integration</td><td>You can wire serverless backends to static frontends</td></tr><tr><td>API design</td><td>You choose what data to expose and how</td></tr><tr><td>Constraints-driven UI</td><td>You strip features, not add them</td></tr></tbody></table><p>The kanban page is at <code>/kanban.html</code>. The stats page is at <code>/stats.html</code>. Both are generated from the same Clojure Babashka build script that renders the rest of the blog.</p><p>Most engineers build up. Building down — removing features, simplifying data, reducing dependencies — is harder and more valuable.</p></div>
+
+<p><i>Published: 2026-06-21</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/static-site.html">static-site</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/meta.html">meta</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/engineering.html">engineering</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/portfolio.html">portfolio</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
