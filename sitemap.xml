@@ -53,6 +53,7 @@
 <url><loc>https://blog.nurazhar.com/how-to-read-submarine-cable-map-singapore.html</loc></url>
 <url><loc>https://blog.nurazhar.com/humans-are-bottleneck-agent-dao-governance.html</loc></url>
 <url><loc>https://blog.nurazhar.com/humans-are-the-glue-ai-intent-jobs.html</loc></url>
+<url><loc>https://blog.nurazhar.com/hurricane-electric-internet-backbone-explained.html</loc></url>
 <url><loc>https://blog.nurazhar.com/hyperliquid-bsv-architecture.html</loc></url>
 <url><loc>https://blog.nurazhar.com/integrating-aur-audit-into-paru.html</loc></url>
 <url><loc>https://blog.nurazhar.com/leaky-layout-abstractions.html</loc></url>
@@ -112,6 +113,7 @@
 <url><loc>https://blog.nurazhar.com/tags/awesome-list.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/babashka.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/babbage.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/backbone.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/beam.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bgp.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/bip39.html</loc></url>
@@ -143,6 +145,7 @@
 <url><loc>https://blog.nurazhar.com/tags/cloudflare.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/cognition.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/cognitive-load.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/colocation.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/compilers.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/compliance-as-code.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/composability.html</loc></url>
@@ -212,8 +215,10 @@
 <url><loc>https://blog.nurazhar.com/tags/gpon.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/guide.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hardware.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/he-net.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hermes.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/htmx.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/hurricane-electric.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hyperliquid.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/hyperscale.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/identity.html</loc></url>
@@ -222,6 +227,7 @@
 <url><loc>https://blog.nurazhar.com/tags/inference.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/infrastructure.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/intent.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/ip-transit.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/ipv6.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/javascript.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/json-ld.html</loc></url>
@@ -271,6 +277,7 @@
 <url><loc>https://blog.nurazhar.com/tags/parsing.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/pdf.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/pdpa.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/peering.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/performance.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/pgp.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/philosophy.html</loc></url>

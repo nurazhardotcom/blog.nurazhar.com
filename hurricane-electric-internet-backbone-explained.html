@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Hurricane Electric — The Company That Sells the Internet, Explained — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Hurricane Electric — The Company That Sells the Internet, Explained">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Hurricane Electric — The Company That Sells the Internet, Explained">
+    <meta name="twitter:title" content="Hurricane Electric — The Company That Sells the Internet, Explained">
+    <meta property="og:title" content="Hurricane Electric — The Company That Sells the Internet, Explained">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="How Hurricane Electric (AS6939) operates the largest IPv6 backbone, sells IP transit, peers freely, and why they matter more than hyperscalers for raw internet connectivity.">
+    <meta name="twitter:description" content="How Hurricane Electric (AS6939) operates the largest IPv6 backbone, sells IP transit, peers freely, and why they matter more than hyperscalers for raw internet connectivity.">
+    <meta property="og:description" content="How Hurricane Electric (AS6939) operates the largest IPv6 backbone, sells IP transit, peers freely, and why they matter more than hyperscalers for raw internet connectivity.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/hurricane-electric-internet-backbone-explained.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/hurricane-electric-internet-backbone-explained.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Hurricane Electric — The Company That Sells the Internet, Explained",
+  "description": "How Hurricane Electric (AS6939) operates the largest IPv6 backbone, sells IP transit, peers freely, and why they matter more than hyperscalers for raw internet connectivity.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/hurricane-electric-internet-backbone-explained.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/hurricane-electric-internet-backbone-explained.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Hurricane Electric — The Company That Sells the Internet, Explained
+  
+</h1>
+<div><hr /><p>I&apos;ve been writing about submarine cables — Google and Meta building Bifrost and Echo, Singtel landing SEA-ME-WE-6 at Tuas — and the user called me out:</p><blockquote><p>&quot;You keep telling me about Meta and Google but all I see is Hurricane Electric more powerful, they sell the internet.&quot;</p></blockquote><p>They&apos;re right. I skipped the most important player in the wholesale internet market.</p><hr /><h2 id="who-is-hurricane-electric?">Who Is Hurricane Electric?</h2><p>Hurricane Electric is a <strong>private company</strong> based in Fremont, California, founded in 1994 by Mike Leber. They don&apos;t build submarine cables. They don&apos;t run a search engine. They don&apos;t operate a social network. They don&apos;t sell cloud compute.</p><p>They <strong>sell the internet</strong>.</p><p>Their product is simple: you pay them a flat monthly fee, they plug a fibre into your server, and you get full, unfiltered access to the entire global internet at a negotiated speed. No data caps, no throttling, no &quot;fair use&quot; policy.</p><p>This is called <strong>IP Transit</strong>, and HE is one of the largest providers of it in the world.</p><hr /><h2 id="the-numbers">The Numbers</h2><table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>ASN</td><td>6939</td></tr><tr><td>Founded</td><td>1994</td></tr><tr><td>BGP sessions</td><td>34,000+</td></tr><tr><td>Connected networks</td><td>10,500+</td></tr><tr><td>Internet exchange points</td><td>320+</td></tr><tr><td>Public peering capacity</td><td>52+ Tbps</td></tr><tr><td>Private peering capacity</td><td>900+ Tbps</td></tr><tr><td>Data centres owned</td><td>3 (Fremont 1, Fremont 2, San Jose)</td></tr><tr><td>IPv6 ranking</td><td>Largest IPv6 backbone by connected networks</td></tr><tr><td>IPv4 ranking</td><td>Top 10 by connected networks</td></tr><tr><td>Backbone topology</td><td>Self-healing rings, DWDM on dark fibre</td></tr></tbody></table><p>They offer connection speeds from 100 Mbps to 400 Gbps on a single port, with LACP bonding for larger pipes.</p><hr /><h2 id="how-they-make-money">How They Make Money</h2><p>Two revenue streams:</p><h3 id="1.-ip-transit">1. IP Transit</h3><p>This is the core business. A customer (could be a small ISP in Malaysia, a gaming company in London, or a startup in Singapore) orders a cross-connect to HE&apos;s router at a data centre like Equinix, Global Switch, or Digital Realty. HE turns up a port, assigns IP space, and the customer gets a full BGP feed of the global internet.</p><p>Pricing is famously aggressive. HE&apos;s flat-rate transit has driven down prices across the industry for 20+ years. They don&apos;t publish public pricing, but industry estimates put 10 Gbps transit at $200-800/month depending on location — a fraction of what Tier 1 carriers charged in the 2000s.</p><h3 id="2.-colocation">2. Colocation</h3><p>HE owns three data centres in California (Fremont 1, Fremont 2, San Jose). They rent cabinet space, power, and cross-connects. Their famous promo: <strong>$600/month for a full 42U cabinet with power and 1 Gbps transit</strong>. This is aggressively cheap and pulls customers into their ecosystem where they then buy bigger transit ports.</p><p>The colocation business isn&apos;t just about rack rent — it&apos;s about being the physical place where networks meet. HE&apos;s Fremont facilities host 13 Internet Exchange Points, 295 networks, and 8 carriers with diverse fibre. The building itself is a connectivity hub.</p><hr /><h2 id="peering:-the-secret-sauce">Peering: The Secret Sauce</h2><p>HE&apos;s peering policy is famously <strong>open</strong>. They will peer (exchange traffic for free) with any network that:</p><ol start="1"><li>Has a presence at an IXP where HE is present</li><li>Peers at all common locations (not cherry-picking)</li><li>Runs IPv6 alongside IPv4</li><li>Doesn&apos;t point default routes at HE</li></ol><p>This is unusually generous. Most large backbones restrict peering to networks above a certain size or traffic ratio. HE peers with everyone.</p><p>Why? Because <strong>peering attracts customers</strong>. If you&apos;re a small network and you can peer with HE at your local IXP for free, you&apos;ll get good connectivity to HE&apos;s massive network. When you need connectivity beyond what peering provides (to networks HE doesn&apos;t peer with, or to the full internet), you buy <strong>IP Transit</strong> from HE.</p><p>The peering is the loss leader. The transit is the product.</p><hr /><h2 id="free-peering-vs-paid-transit">Free Peering vs Paid Transit</h2><p>This distinction is critical. From HE&apos;s FAQ:</p><blockquote><p><strong>Peering</strong> is for traffic directed to another peer&apos;s own network and that peer&apos;s paid customers. HE accepts traffic from a peer if it&apos;s for one of <em>our</em> customers, but <strong>not</strong> if it&apos;s for somewhere beyond our network.</p><p>In contrast, our <strong>IP Transit</strong> customers can give us ANY OR ALL of their traffic, no matter where the destination is.</p></blockquote><p>A visual:</p><pre><code>            ┌──────────────────┐
+            │  Your Network    │
+            └──────┬───────────┘
+                   │
+          ┌────────┴────────┐
+          │                 │
+    Free Peering        Paid Transit
+    (HE&apos;s customers    (full internet)
+     only)
+</code></pre><ul><li><strong>Free peering</strong>: you reach HE&apos;s 10,500+ customer networks directly. Good, but not the whole internet.</li><li><strong>Paid transit</strong>: you reach everything. HE carries traffic to networks that won&apos;t peer with HE (like Cogent, with whom HE has a long-standing dispute), and to any destination globally via settlement agreements.</li></ul><hr /><h2 id="where-he-fits-in-the-submarine-cable-story">Where HE Fits in the Submarine Cable Story</h2><p>The submarine cables (Bifrost, Echo, SEA-ME-WE-6) are <strong>raw fibre capacity</strong>. Companies like Singtel, Google, and Meta own or lease fibre pairs on those cables. They sell wholesale capacity to backbone providers.</p><p>Hurricane Electric is a <strong>backbone provider</strong> — they buy wholesale capacity from cable consortia and colocate routers at data centres near cable landing stations. They don&apos;t own the cables; they own the routers that connect to them.</p><pre><code>Submarine cable (raw fibre)
+    ↓
+Cable landing station (Tuas, Changi)
+    ↓
+Terrestrial fibre to data centre (Equinix, Global Switch)
+    ↓
+HE core router
+    ↓
+HE backbone (DWDM on dark fibre, self-healing rings)
+    ↓
+HE customer ports at IXPs and data centres worldwide
+    ↓
+Your server (via cross-connect or last-mile fibre)
+</code></pre><p>When you buy transit from HE, you&apos;re buying a slice of all the submarine cables HE connects to. Your traffic might go via Bifrost to the US or SEA-ME-WE-6 to Europe — HE&apos;s BGP decides based on the best path at that moment. You don&apos;t know or care which cable; your traffic just arrives.</p><p>This is the &quot;they sell the internet&quot; part. HE abstracts away the cable complexity and sells a simple pipe.</p><hr /><h2 id="why-he-is-&quot;more-powerful&quot;-than-google-or-meta">Why HE Is &quot;More Powerful&quot; Than Google or Meta</h2><p>Google and Meta build cables to <strong>serve their own traffic</strong>. They own fibre pairs on Echo and Bifrost to reduce latency for Google Cloud and Meta&apos;s apps. They are vertically integrated — they build infrastructure for their own products.</p><p>Hurricane Electric builds a network to <strong>serve everyone else&apos;s traffic</strong>. They don&apos;t have a search engine or a social network. Their entire business is moving packets between networks. The submarine cable consortium sells capacity to HE; HE resells it as transit to thousands of customers.</p><table><thead><tr><th></th><th>Hyperscaler (Google/Meta)</th><th>Backbone Provider (HE)</th></tr></thead><tbody><tr><td><strong>Builds cables?</strong></td><td>Yes (Echo, Bifrost, Apricot)</td><td>No — buys capacity on them</td></tr><tr><td><strong>Owns fibre?</strong></td><td>Yes, dedicated pairs</td><td>No — leases wavelengths</td></tr><tr><td><strong>Sells transit?</strong></td><td>No (only cloud/ads)</td><td>Yes — that&apos;s the whole business</td></tr><tr><td><strong>Peers freely?</strong></td><td>Selective</td><td>Open to anyone</td></tr><tr><td><strong>Customers</strong></td><td>Internal teams + cloud users</td><td>10,500+ networks worldwide</td></tr><tr><td><strong>Target market</strong></td><td>Their own products</td><td>The entire internet</td></tr></tbody></table><p>If Google&apos;s cable breaks, Google traffic slows. If HE&apos;s backbone goes down, 10,500 networks lose connectivity to parts of the internet. HE is structurally more central to the internet&apos;s day-to-day function.</p><hr /><h2 id="the-colocation-flywheel">The Colocation Flywheel</h2><p>HE&apos;s data centres in Fremont are not just server rooms. They&apos;re <strong>peering hubs</strong>. Here&apos;s the self-reinforcing cycle:</p><ol start="1"><li>HE offers cheap colocation ($600/cabinet with 1 Gbps)</li><li>Networks move in to save money</li><li>Now they can cross-connect to HE directly for free</li><li>They peer with HE and get good connectivity</li><li>When they need more, they buy HE transit</li><li>More customers → more density → more value for everyone in the building</li><li>HE builds more backbone capacity to serve the growing hub</li></ol><p>This is why HE can offer such aggressive pricing. The colocation margin and transit margin both benefit from scale, and the open peering policy feeds the flywheel.</p><hr /><h2 id="the-ipv6-story">The IPv6 Story</h2><p>HE is the <strong>largest IPv6 backbone in the world</strong> by connected networks. They were early (running IPv6 natively since the early 2000s) and aggressive (requiring IPv6 peering alongside IPv4). They offer:</p><ul><li>Free IPv6 tunnel broker (6in4 tunnels to anywhere in the world)</li><li>Free IPv6 certification (training/education platform)</li><li>Native dual-stack on every transit port</li></ul><p>When you buy transit from HE, you get IPv4 and IPv6 on the same port at no extra cost. This is still not standard across the industry, and it&apos;s one reason HE has so many peering relationships — networks that want IPv6 connectivity come to HE.</p><hr /><h2 id="the-limitation">The Limitation</h2><p>HE is not a true Tier 1 network. They don&apos;t peer with everyone. The most notable gap: <strong>Cogent Communications</strong> has refused to peer with HE since 2009 due to a peering dispute. IPv6 traffic between HE and Cogent networks does not flow directly — it&apos;s routed via Arelion (formerly Telia).</p><p>This means HE transit can&apos;t reach Cogent customers directly. Traffic to Cogent&apos;s network traverses a third carrier, which adds latency and cost. This is a known caveat of HE transit — for most destinations it&apos;s excellent, but a few networks are behind the Cogent wall.</p><p>For most customers, this doesn&apos;t matter. For networks with significant Cogent-bound traffic, a second transit provider fills the gap.</p><hr /><h2 id="map-to-the-singapore-story">Map to the Singapore Story</h2><p>Singapore has 28 submarine cables. HE has a presence at Equinix SG and Global Switch in Singapore. When you buy HE transit in Singapore, your traffic:</p><ol start="1"><li>Leaves your server at Equinix SG</li><li>Hits HE&apos;s router</li><li>Goes via HE&apos;s backbone to a cable landing station (probably Tuas)</li><li>Travels via SEA-ME-WE-6 (Europe), Bifrost (US), or APG (Japan) depending on destination</li><li>Lands on the other side and reaches HE&apos;s peer/transit network there</li></ol><p>HE doesn&apos;t own the cable — they pay for a wavelength on it. But from your perspective, it&apos;s a single pipe.</p><hr /><h2 id="bottom-line">Bottom Line</h2><p>Hurricane Electric is the <strong>wholesaler of internet connectivity</strong>. The submarine cable companies grow the raw capacity; HE packages it into affordable transit and sells it to anyone who can reach a data centre with their routers.</p><p>They are &quot;more powerful&quot; than a single cable owner because they aggregate capacity across <em>all</em> cables and present it as one network. They compete on price (aggressive flat-rate transit), access (open peering), and IPv6 leadership.</p><p>If the submarine cables are the motorways, Hurricane Electric is the toll booth operator that gives you an unlimited pass.</p><hr /><p><em>Sources: HE FAQ, HE network page, HE peering policy (peering.he.net), Wikipedia, bgp.he.net (AS6939), HE colocation page. Pricing estimates from industry sources and public forums; actual pricing depends on location and commitment.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/ip-transit.html">ip-transit</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/backbone.html">backbone</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/peering.html">peering</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bgp.html">bgp</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/colocation.html">colocation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/hurricane-electric.html">hurricane-electric</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/he-net.html">he.net</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/infrastructure.html">infrastructure</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
