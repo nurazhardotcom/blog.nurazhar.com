@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Making D2 Diagrams Mobile-Friendly — A Static Site Framework — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Making D2 Diagrams Mobile-Friendly — A Static Site Framework">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css"></noscript>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Making D2 Diagrams Mobile-Friendly — A Static Site Framework">
+    <meta name="twitter:title" content="Making D2 Diagrams Mobile-Friendly — A Static Site Framework">
+    <meta property="og:title" content="Making D2 Diagrams Mobile-Friendly — A Static Site Framework">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="How we built an automated framework for D2 diagrams on a static blog — auto-fixing v0.6.9 quirks at compile time, scaling SVGs on mobile, and replacing simple diagrams with responsive HTML cards.">
+    <meta name="twitter:description" content="How we built an automated framework for D2 diagrams on a static blog — auto-fixing v0.6.9 quirks at compile time, scaling SVGs on mobile, and replacing simple diagrams with responsive HTML cards.">
+    <meta property="og:description" content="How we built an automated framework for D2 diagrams on a static blog — auto-fixing v0.6.9 quirks at compile time, scaling SVGs on mobile, and replacing simple diagrams with responsive HTML cards.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/making-d2-diagrams-mobile-friendly-framework.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/making-d2-diagrams-mobile-friendly-framework.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Making D2 Diagrams Mobile-Friendly — A Static Site Framework",
+  "description": "How we built an automated framework for D2 diagrams on a static blog — auto-fixing v0.6.9 quirks at compile time, scaling SVGs on mobile, and replacing simple diagrams with responsive HTML cards.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/making-d2-diagrams-mobile-friendly-framework.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/making-d2-diagrams-mobile-friendly-framework.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Making D2 Diagrams Mobile-Friendly — A Static Site Framework
+  
+</h1>
+<div><hr /><p>This blog uses <a href="https://d2lang.com/">D2</a> for diagrams — architecture flows, framework overviews, comparison matrices. It&apos;s a great tool for complex layouts, but we hit three problems:</p><ol start="1"><li><strong>D2 v0.6.9 treats <code>$</code> as a substitution prefix</strong> — diagrams with <code>$200/session</code> or <code>~$0.50/hr</code> fail to compile with &quot;substitutions must begin on {&quot;</li><li><strong>D2&apos;s layout engine places nodes side-by-side</strong> even with <code>direction: down</code>, producing 700px+ wide SVGs that scale to ~7px text on a 375px phone</li><li><strong>Every post needed manual fixes</strong> — escaping <code>$</code>, rewriting <code>\n</code>, checking mobile layouts</li></ol><p>The fix is a three-tier framework that decides how to render each diagram based on its complexity.</p><hr /><h2 id="tier-1:-simple-relationships-→-html-cards">Tier 1: Simple Relationships → HTML Cards</h2><p>For diagrams with 2-4 nodes and no meaningful connections (just a relationship), D2 is overkill. The SVG scales down to unreadable text on mobile. Instead, we render these as inline HTML cards:</p><div style="display: flex; flex-direction: column; gap: 8px; max-width: 380px; margin: 24px auto; font-size: 14px; line-height: 1.5;"><div style="border: 2px solid #0284c7; background: #e0f2fe; border-radius: 12px; padding: 14px; text-align: center;">
+  <strong style="font-size: 15px;">Human Coach</strong><br>
+  <span style="font-size: 12px; color: #475569;">Accountability · Emotional support</span>
+</div><div style="text-align: center; font-size: 20px; color: #64748b;">↓</div><div style="border: 2px solid #0ea5e9; background: #f0f9ff; border-radius: 12px; padding: 14px; text-align: center;">
+  <strong style="font-size: 15px;">AI Coach (LLM)</strong><br>
+  <span style="font-size: 12px; color: #475569;">Data-driven analysis · 24/7 availability</span>
+</div><div style="text-align: center; font-size: 20px; color: #64748b;">↓</div><div style="border: 2px dashed #10b981; background: #d5f5e3; border-radius: 12px; padding: 14px; text-align: center;">
+  <strong style="font-size: 15px;">Best Together</strong><br>
+  <span style="font-size: 12px; color: #475569;">AI does the audit. Human does the grounding.</span>
+</div></div><p>Cards naturally stack vertically, the text stays readable at any width, and there&apos;s zero dependency on SVG rendering. We converted 5 posts to this pattern.</p><hr /><h2 id="tier-2:-complex-diagrams-→-d2-+-css-scaling">Tier 2: Complex Diagrams → D2 + CSS Scaling</h2><p>For architecture diagrams, framework overviews, and process flows with 5+ nodes and labeled connections, D2&apos;s layout engine is the right tool. We keep these as compiled SVGs but fixed the CSS to make them scale:</p><pre><code class="language-css">/* Before: diagrams overflowed on mobile */
+@media (max-width: 768px) {
+  .d2-diagram svg {
+    max-width: none;  /* ← bug: full width, user must scroll */
+  }
+}
+
+/* After: diagrams scale to fit */
+.d2-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+</code></pre><p>With <code>preserveAspectRatio=&quot;xMinYMin meet&quot;</code> and <code>viewBox</code> on the D2 output, the SVG now scales down proportionally. Complex diagrams become smaller but remain readable — users can pinch-zoom for detail.</p><hr /><h2 id="tier-3:-data-comparisons-→-markdown-tables">Tier 3: Data Comparisons → Markdown Tables</h2><p>For dimension-by-dimension comparisons, D2 containers with many sub-items force a wide grid layout. A markdown table scrolls horizontally on mobile and keeps everything readable:</p><table><thead><tr><th>Dimension</th><th>Human Coach</th><th>AI Coach</th></tr></thead><tbody><tr><td>Cost</td><td>$200-500/session</td><td>~$0.50/hr API</td></tr><tr><td>Context</td><td>~50 min memory</td><td>1M token context</td></tr><tr><td>Availability</td><td>Weekly sessions</td><td>24/7</td></tr></tbody></table><p>The CSS already handles <code>overflow-x: auto</code> on tables, so no extra work needed.</p><hr /><h2 id="the-auto-fix-layer">The Auto-Fix Layer</h2><p>The trickiest part was D2 v0.6.9&apos;s <code>$</code> substitution. Every post with money amounts (<code>$200</code>, <code>$0.50</code>) would fail at compile time. Instead of manually escaping every post, we added a preprocessing step in <code>preprocess_d2.py</code> that auto-fixes D2 code before passing it to the compiler:</p><pre><code class="language-python">def fix_d2_for_v069(d2_code):
+    # Escape $ → \$ (d2 v0.6.9 treats $ as substitution prefix)
+    d2_code = re.sub(r&apos;(?&lt;!\\)\$&apos;, r&apos;\\$&apos;, d2_code)
+    # Join multi-line strings: lines inside &quot;...&quot; get \n-joined
+    # ...
+    return d2_code
+</code></pre><p>This runs at compile time — source files stay clean with natural <code>$</code> signs. We also added a validator that scans for bare <code>direction:</code> directives outside code fences, catching corrupted D2 blocks before they reach production:</p><pre><code>WARNING: broken D2 blocks detected (will show raw source in HTML):
+  ⚠ filename.md:42: bare &apos;direction:&apos; directive (missing ```d2 fence?)
+</code></pre><hr /><h2 id="the-decision-framework">The Decision Framework</h2><table><thead><tr><th>Diagram type</th><th>Tool</th><th>Mobile behavior</th><th>Example</th></tr></thead><tbody><tr><td>Simple relationship (2-4 nodes)</td><td>HTML cards</td><td>Vertical stack, readable at any width</td><td>AI vs Human Coach comparison</td></tr><tr><td>Complex diagram (5+ nodes, connections)</td><td>D2 SVG</td><td>Scales with <code>max-width: 100%</code>, pinch-zoom</td><td>Scrum Framework, architecture flows</td></tr><tr><td>Data comparison</td><td>Markdown table</td><td>Horizontal scroll via <code>overflow-x: auto</code></td><td>Feature comparison matrices</td></tr></tbody></table><p>The framework is documented in <code>AGENTS.md</code> so any AI agent working on the blog follows the same rules automatically. No more manual fixes, no more broken diagrams, no more unreadable mobile layouts.</p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/ux.html">ux</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/automation.html">automation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/css.html">css</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/d2.html">d2</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/static-site.html">static-site</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/meta.html">meta</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/mobile.html">mobile</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/engineering.html">engineering</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
