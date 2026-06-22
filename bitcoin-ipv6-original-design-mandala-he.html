@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala">
+    <meta name="twitter:title" content="Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala">
+    <meta property="og:title" content="Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Bitcoin v0.1 already had IPv6 in the protocol. BSV&#39;s Mandala network needs it. Hurricane Electric provides it. The three-part story of how the original design maps to modern infrastructure.">
+    <meta name="twitter:description" content="Bitcoin v0.1 already had IPv6 in the protocol. BSV&#39;s Mandala network needs it. Hurricane Electric provides it. The three-part story of how the original design maps to modern infrastructure.">
+    <meta property="og:description" content="Bitcoin v0.1 already had IPv6 in the protocol. BSV&#39;s Mandala network needs it. Hurricane Electric provides it. The three-part story of how the original design maps to modern infrastructure.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/bitcoin-ipv6-original-design-mandala-he.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/bitcoin-ipv6-original-design-mandala-he.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala",
+  "description": "Bitcoin v0.1 already had IPv6 in the protocol. BSV&#39;s Mandala network needs it. Hurricane Electric provides it. The three-part story of how the original design maps to modern infrastructure.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/bitcoin-ipv6-original-design-mandala-he.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/bitcoin-ipv6-original-design-mandala-he.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Why Bitcoin&#39;s Original Design Needed IPv6 — And How Hurricane Electric Powers the Mandala
+  
+</h1>
+<div><hr /><p>Three things connect that I haven&apos;t connected yet:</p><ol start="1"><li><strong>Bitcoin v0.1 (Satoshi&apos;s original protocol)</strong> used 16-byte IPv6 addresses in the <code>addr</code> message from day one</li><li><strong>BSV&apos;s Mandala network</strong> needs densely-connected core routing where IPv6 eliminates NAT barriers</li><li><strong>Hurricane Electric</strong> runs the world&apos;s largest IPv6 backbone and provides the transit infrastructure that makes Mandala&apos;s core viable</li></ol><p>Here&apos;s the full map.</p><hr /><h2 id="part-1:-bitcoin-v0.1-—-ipv6-was-in-the-original-protocol">Part 1: Bitcoin v0.1 — IPv6 Was in the Original Protocol</h2><p>Open the Bitcoin v0.1 source code from January 2009. In <code>net.h</code>, the <code>CAddress</code> class:</p><pre><code class="language-cpp">class CAddress
+{
+    ...
+    char pchReserved[12];  // 12-byte prefix for IPv4-mapped IPv6
+    unsigned int ip;       // 4 bytes of actual IP
+    unsigned short port;   // port number
+    ...
+    
+    bool IsIPv4() const
+    {
+        return (memcmp(pchReserved, pchIPv4, sizeof(pchIPv4)) == 0);
+    }
+};
+</code></pre><p>The <code>addr</code> message format in the P2P protocol uses a <strong>16-byte IPv6 address field</strong>:</p><pre><code>Field Size  Description     Data type    Comments
+4           time            uint32       timestamp
+8           services        uint64       service flags
+16          IPv6/4          char[16]     IPv6 address (network byte order)
+2           port            uint16       port number
+</code></pre><p>IPv4 addresses are stored as <strong>IPv4-mapped IPv6 addresses</strong> (<code>::ffff:x.x.x.x</code>). The wire format always used 16 bytes.</p><p>From the BSV Wiki:</p><blockquote><p>The original client only supported IPv4 and only read the last 4 bytes to get the IPv4 address. However, the IPv4 address is written into the message as a 16 byte IPv4-mapped IPv6 address (12 bytes <code>00 00 00 00 00 00 00 00 00 00 FF FF</code>, followed by the 4 bytes of the IPv4 address).</p></blockquote><p>This means <strong>Satoshi designed the protocol for IPv6 from the beginning</strong>. The wire format supports it. The address relay supports it. The node discovery supports it. The only missing piece in 2009 was that IPv6 wasn&apos;t widely deployed, so clients only read IPv4. But the protocol was ready.</p><p>By 2012, Bitcoin Core (via Pieter Wuille&apos;s pull request #1021) enabled IPv6 at compile time. Today, BSV&apos;s protocol supports native IPv6 peer addresses in the <code>addrv2</code> message (BIP155), with network ID <code>0x02</code> for IPv6.</p><h3 id="what-ipv6-enables-at-the-protocol-level">What IPv6 Enables at the Protocol Level</h3><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+Title: "Bitcoin P2P Address Evolution" {
+  shape: text
+  style.font-size: 16
+}
+#
+V01: "v0.1 (2009)\n16-byte IPv6 field\n(IPv4-mapped only)" {
+  style.fill: "#f9e79f"
+}
+#
+V07: "v0.7 (2012)\nNative IPv6 support\nUSE_IPV6 compile flag" {
+  style.fill: "#85c1e9"
+}
+#
+Today: "BSV (2026)\nNative IPv6 + IPv4\naddrv2 (BIP155)\nMandala overlay" {
+  style.fill: "#82e0aa"
+}
+#
+V01 -> V07 -> Today
+#
+Note: "Protocol supported IPv6\naddressing since day one.\nOnly the client implementation\nneeded to catch up." {
+  shape: square
+  style.stroke-dash: 2
+  style.font-size: 11
+}
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 743 651"><svg class="d2-3996171945 d2-svg" width="743" height="651" viewBox="-21 -21 743 651"><rect x="-21.000000" y="-21.000000" width="743.000000" height="651.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3996171945 .text {
+	font-family: "d2-3996171945-font-regular";
+}
+@font-face {
+	font-family: d2-3996171945-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-3996171945 .text-bold {
+	font-family: "d2-3996171945-font-bold";
+}
+@font-face {
+	font-family: d2-3996171945-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-3996171945 .fill-N1{fill:#0A0F25;}
+		.d2-3996171945 .fill-N2{fill:#676C7E;}
+		.d2-3996171945 .fill-N3{fill:#9499AB;}
+		.d2-3996171945 .fill-N4{fill:#CFD2DD;}
+		.d2-3996171945 .fill-N5{fill:#DEE1EB;}
+		.d2-3996171945 .fill-N6{fill:#EEF1F8;}
+		.d2-3996171945 .fill-N7{fill:#FFFFFF;}
+		.d2-3996171945 .fill-B1{fill:#0D32B2;}
+		.d2-3996171945 .fill-B2{fill:#0D32B2;}
+		.d2-3996171945 .fill-B3{fill:#E3E9FD;}
+		.d2-3996171945 .fill-B4{fill:#E3E9FD;}
+		.d2-3996171945 .fill-B5{fill:#EDF0FD;}
+		.d2-3996171945 .fill-B6{fill:#F7F8FE;}
+		.d2-3996171945 .fill-AA2{fill:#4A6FF3;}
+		.d2-3996171945 .fill-AA4{fill:#EDF0FD;}
+		.d2-3996171945 .fill-AA5{fill:#F7F8FE;}
+		.d2-3996171945 .fill-AB4{fill:#EDF0FD;}
+		.d2-3996171945 .fill-AB5{fill:#F7F8FE;}
+		.d2-3996171945 .stroke-N1{stroke:#0A0F25;}
+		.d2-3996171945 .stroke-N2{stroke:#676C7E;}
+		.d2-3996171945 .stroke-N3{stroke:#9499AB;}
+		.d2-3996171945 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3996171945 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3996171945 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3996171945 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3996171945 .stroke-B1{stroke:#0D32B2;}
+		.d2-3996171945 .stroke-B2{stroke:#0D32B2;}
+		.d2-3996171945 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3996171945 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3996171945 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3996171945 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3996171945 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3996171945 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3996171945 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3996171945 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3996171945 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3996171945 .background-color-N1{background-color:#0A0F25;}
+		.d2-3996171945 .background-color-N2{background-color:#676C7E;}
+		.d2-3996171945 .background-color-N3{background-color:#9499AB;}
+		.d2-3996171945 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3996171945 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3996171945 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3996171945 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3996171945 .background-color-B1{background-color:#0D32B2;}
+		.d2-3996171945 .background-color-B2{background-color:#0D32B2;}
+		.d2-3996171945 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3996171945 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3996171945 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3996171945 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3996171945 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3996171945 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3996171945 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3996171945 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3996171945 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3996171945 .color-N1{color:#0A0F25;}
+		.d2-3996171945 .color-N2{color:#676C7E;}
+		.d2-3996171945 .color-N3{color:#9499AB;}
+		.d2-3996171945 .color-N4{color:#CFD2DD;}
+		.d2-3996171945 .color-N5{color:#DEE1EB;}
+		.d2-3996171945 .color-N6{color:#EEF1F8;}
+		.d2-3996171945 .color-N7{color:#FFFFFF;}
+		.d2-3996171945 .color-B1{color:#0D32B2;}
+		.d2-3996171945 .color-B2{color:#0D32B2;}
+		.d2-3996171945 .color-B3{color:#E3E9FD;}
+		.d2-3996171945 .color-B4{color:#E3E9FD;}
+		.d2-3996171945 .color-B5{color:#EDF0FD;}
+		.d2-3996171945 .color-B6{color:#F7F8FE;}
+		.d2-3996171945 .color-AA2{color:#4A6FF3;}
+		.d2-3996171945 .color-AA4{color:#EDF0FD;}
+		.d2-3996171945 .color-AA5{color:#F7F8FE;}
+		.d2-3996171945 .color-AB4{color:#EDF0FD;}
+		.d2-3996171945 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3996171945);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3996171945);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3996171945);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3996171945);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3996171945);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3996171945);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3996171945);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3996171945);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="VGl0bGU="><g class="shape" ></g><text x="99.500000" y="104.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:16px">Bitcoin P2P Address Evolution</text></g><g class="VjAx"><g class="shape" ><rect x="259.000000" y="50.000000" width="185.000000" height="98.000000" stroke="#0D32B2" fill="#f9e79f" class=" stroke-B1" style="stroke-width:2;" /></g><text x="351.500000" y="88.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="351.500000" dy="0.000000">v0.1 (2009)</tspan><tspan x="351.500000" dy="17.666667">16-byte IPv6 field</tspan><tspan x="351.500000" dy="17.666667">(IPv4-mapped only)</tspan></text></g><g class="VjA3"><g class="shape" ><rect x="250.000000" y="297.000000" width="204.000000" height="98.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="352.000000" y="335.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="352.000000" dy="0.000000">v0.7 (2012)</tspan><tspan x="352.000000" dy="17.666667">Native IPv6 support</tspan><tspan x="352.000000" dy="17.666667">USE_IPV6 compile flag</tspan></text></g><g class="VG9kYXk="><g class="shape" ><rect x="265.000000" y="495.000000" width="173.000000" height="114.000000" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="351.500000" y="533.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="351.500000" dy="0.000000">BSV (2026)</tspan><tspan x="351.500000" dy="17.250000">Native IPv6 + IPv4</tspan><tspan x="351.500000" dy="17.250000">addrv2 (BIP155)</tspan><tspan x="351.500000" dy="17.250000">Mandala overlay</tspan></text></g><g class="Tm90ZQ=="><g class="shape" ><rect x="504.000000" y="0.000000" width="197.000000" height="197.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="602.500000" y="86.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="602.500000" dy="0.000000">Protocol supported IPv6</tspan><tspan x="602.500000" dy="11.750000">addressing since day one.</tspan><tspan x="602.500000" dy="11.750000">Only the client implementation</tspan><tspan x="602.500000" dy="11.750000">needed to catch up.</tspan></text></g><g class="KFYwMSAtJmd0OyBWMDcpWzBd"><marker id="mk-d2-3996171945-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 351.500000 150.500000 C 351.500000 227.300003 351.500000 257.000000 351.500000 293.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3996171945-3488378134)" mask="url(#d2-3996171945)" /></g><g class="KFYwNyAtJmd0OyBUb2RheSlbMF0="><path d="M 351.500000 397.000000 C 351.500000 435.000000 351.500000 455.000000 351.500000 491.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3996171945-3488378134)" mask="url(#d2-3996171945)" /></g><mask id="d2-3996171945" maskUnits="userSpaceOnUse" x="-21" y="-21" width="743" height="651">
+<rect x="-21" y="-21" width="743" height="651" fill="white"></rect><p></mask></svg></svg></p></div><hr /><h2 id="part-2:-why-ipv6-matters-for-the-mandala-network">Part 2: Why IPv6 Matters for the Mandala Network</h2><p>Recall the Mandala architecturdirection: down</p><p>App1: &quot;App / Wallet&quot; { shape: oval style.fill: &quot;#82e0aa&quot; } App2: &quot;App / Wallet&quot; { shape: oval style.fill: &quot;#82e0aa&quot; }</p><p>Overlay1: &quot;Overlay Service&quot; { shape: rectangle style.fill: &quot;#85c1e9&quot; } Overlay2: &quot;Overlay Service&quot; { shape: rectangle style.fill: &quot;#85c1e9&quot; }</p><p>Core1: &quot;Teranode&quot; { shape: diamond style.fill: &quot;#f1948a&quot; } Core2: &quot;Teranode&quot; { shape: diamond style.fill: &quot;#f1948a&quot; } Core3: &quot;Teranode&quot; { shape: diamond style.fill: &quot;#f1948a&quot; } Core4: &quot;Teranode&quot; { shape: diamond style.fill: &quot;#f1948a&quot; } Core5: &quot;Teranode&quot; { shape: diamond style.fill: &quot;#f1948a&quot; }</p><p>App1 -&gt; Overlay1 -&gt; Core1 App2 -&gt; Overlay1 -&gt; Core2 App2 -&gt; Overlay2 -&gt; Core3 Overlay1 -&gt; Core4 Overlay2 -&gt; Core5</p><p>Core1 -&gt; Core2 -&gt; Core3 -&gt; Core4 -&gt; Core5 -&gt; Core1 Core1 -&gt; Core3 -&gt; Core5 -&gt; Core2 -&gt; Core4 -&gt; Core1</p><p>CoreLabel: &quot;Core: ~1.3 hop dense mesh\nEvery Teranode peers with\nevery other Teranode&quot; { shape: text style.font-size: 11 } ize: 11 }</p><pre><code>
+The core layer requires **every Teranode to connect to almost every other Teranode**. This is a nearly-complete graph where N nodes maintain O(N²) connections.
+
+IPv4 makes this hard:
+
+- **NAT exhaustion**: Residential and many data centre IPs are behind NAT. You cannot establishe direct P2P connections without UPnP, STUN, or relay servers. Every NAT traversal adds latency and failure modes.
+- **Port scarcity**: Each node needs a public IP. IPv4 addresses cost $40-60 each on the secondary market. A Teranode farm with 1000 nodes needs 1000 public IPv4 addresses.
+- **Carrier-grade NAT (CGNAT)**: Many ISPs (including Singtel) use CGNAT, where a single public IPv4 is shared across hundreds of customers. No incoming P2P connections possible.
+
+IPv6 solves all of this:
+
+- **Every node gets a globally routable /64 subnet**: No NAT, no port forwarding, no STUN. Direct P2P by default.
+- **No address scarcity**: 2¹²⁸ addresses means every Teranode, every overlay service, every wallet can have a globally unique address.
+- **End-to-end connectivity**: The Mandala core&apos;s dense mesh works because every Teranode can directly connect to every other Teranode without intermediaries.
+- **Multicast support**: An IETF presentation (Jake Jones, 2024) proposed using IPv6 multicast for block propagation — a single packet reaches all nodes in the core simultaneously, rather than relaying sequentially.
+
+### Without IPv6
+
+</code></pre><p>Teranode A (NAT) → STUN server → Teranode B (NAT) ↕                                           ↕ Relay proxy (cost, latency, failure point)</p><pre><code>
+The Mandala core&apos;s 1.3-hop ideal degrades because nodes behind NAT must route through relays, adding hops.
+
+### With IPv6
+
+</code></pre><p>Teranode A (2001:db8::a) ←→ Teranode B (2001:db8::b) ↕                           ↕ Teranode C (2001:db8::c) ←→ Teranode D (2001:db8::d)</p><pre><code>
+Direct connections. No relays. True dense mesh. The 1.3-hop property is preserved.
+
+---
+
+## Part 3: Hurricane Electric — The IPv6 Backbone That Makes It Real
+
+This is where the infrastructure economics connect.
+
+Hurricane Electric (AS6939) is the **world&apos;s largest IPv6 backbone** by connected networks. From the earlier post:
+
+| Metric | Value |
+|--------|-------|
+| Connected networks | 10,500+ |
+| BGP sessions | 34,000+ |
+| IXP connections | 320+ |
+| IPv6 ranking | #1 by connected networks |
+| Public peering capacity | 52+ Tbps |
+
+When BSV&apos;s Teranodes need IPv6 transit, HE is the natural provider because:
+
+1. **HE requires IPv6 peering alongside IPv4** — any network that peers with HE must support both protocols. This means every network in HE&apos;s 10,500+ peer list is IPv6-capable.
+
+2. **HE&apos;s open peering policy** means a Teranode operator can peer with HE at any of 320+ IXPs worldwide without negotiation. Direct connectivity to 10,500+ networks.
+
+3. **HE offers native dual-stack on every transit port** — IPv4 and IPv6 on the same connection at no extra cost. A Teranode farm in Fremont, Singapore, London, or Tokyo gets both addresses.
+
+4. **HE&apos;s backbone is self-healing rings** — 5+ redundant 100G paths across North America, separate 100G paths between US and Europe, 100G rings in Europe and Asia. This matches the Mandala&apos;s resilience requirement.
+
+### The Connectiondirection: down
+
+Title: &quot;BSV Mandala + Hurricane Electric = IPv6-Native Core&quot; {
+  shape: text
+  style.font-size: 16
+}
+
+Teranodes: &quot;BSV Teranode Core&quot; {
+  shape: diamond
+  style.fill: &quot;#f1948a&quot;
+}
+
+HE: &quot;Hurricane Electric\nBackbone (AS6939)\nWorld&apos;s largest IPv6 network&quot; {
+  shape: rectangle
+  style.fill: &quot;#f9ab00&quot;
+}
+
+IXP: &quot;320+ Internet Exchange Points\n(London, Frankfurt, Tokyo,\nSingapore, NYC, etc)&quot; {
+  shape: hexagon
+  style.fill: &quot;#85c1e9&quot;
+}
+
+Peers: &quot;10,500+ peered networks\nAll IPv6-capable&quot; {
+  shape: rectangle
+  style.fill: &quot;#82e0aa&quot;
+}
+
+SubCables: &quot;Submarine Cables\n(Bifrost, SEA-ME-WE-6, APG,\nEcho, etc)&quot; {
+  shape: rectangle
+  style.fill: &quot;#aeb6bf&quot;
+}
+
+Mandala: &quot;Mandala Property:\n~1.3 hop core achieved\nvia direct P2P IPv6\nconnections through HE&quot; {
+  shape: square
+  style.stroke-dash: 2
+  style.font-size: 11
+}
+
+Teranodes -&gt; HE: &quot;Buy IP transit\nfrom HE (IPv4+IPv6)&quot;
+Teranodes -&gt; IXP: &quot;Or peer at IXPs&quot;
+HE -&gt; IXP: &quot;Present at 320+ IXPs&quot;
+HE -&gt; Peers: &quot;Peers with everyone&quot;
+HE -&gt; SubCables: &quot;Leases capacity on\nall major cables&quot;
+Teranodes -&gt; Mandala
+HE -&gt; Mandala: &quot;Provides the\nIPv6 transit layer&quot;
+nsit layer&quot;
+</code></pre><h3 id="what-this-means-for-a-bsv-teranode-operator">What This Means for a BSV Teranode Operator</h3><p>If you&apos;re running a Teranode as part of the Mandala core:</p><ol start="1"><li><strong>Order a cross-connect to HE</strong> at your data centre (Equinix SG, Global Switch, etc.)</li><li><strong>Get a /48 IPv6 prefix</strong> from HE (or bring your own)</li><li><strong>Assign every Teranode a unique /64</strong> — globally routable, no NAT</li><li><strong>Peer with other Teranodes directly</strong> via IPv6 — no relays, no STUN</li><li><strong>Connect to the Mandala core</strong> with direct P2P links</li></ol><p>The result: every Teranode reaches every other Teranode in ~1 hop. The core forms a true nearly-complete graph. Block propagation latency drops to the physical limit of the longest fibre path.</p><hr /><h2 id="the-full-map:-satosdirection:-right">The Full Map: Satosdirection: right</h2><p>Satoshi: &quot;Satoshi (2009)\nIPv6-ready protocol\n16-byte addr field&quot; { style.fill: &quot;#f9e79f&quot; }</p><p>BSV: &quot;BSV (2026)\nOriginal protocol\nMandala upgrade\nTeranode core&quot; { style.fill: &quot;#82e0aa&quot; }</p><p>HE: &quot;Hurricane Electric\nIPv6 backbone\n10,500+ networks\n320+ IXPs&quot; { style.fill: &quot;#f9ab00&quot; }</p><p>Internet: &quot;Global Internet\nIPv6-native P2P\nDense mesh core\n~1.3 hop routing&quot; { style.fill: &quot;#85c1e9&quot; }</p><p>Satoshi -&gt; BSV: &quot;Same protocol\nIPv6 field same\nas 2009 design&quot; BSV -&gt; HE: &quot;Teranodes need\nIPv6 transit&quot; HE -&gt; Internet: &quot;HE provides the\nbackbone that makes\nthe Mandala core possible&quot; e Mandala core possible&quot;</p><pre><code>
+The chain:
+
+1. **Satoshi designed** the Bitcoin protocol with IPv6 addressing from the start. The `addr` message uses a 16-byte IPv6 field. IPv4 is stored as IPv4-mapped IPv6 (`::ffff:x.x.x.x`).
+2. **BSV maintains** this original protocol and extends it with the Mandala upgrade. The Teranode core needs a dense mesh where every node reaches every other node in ~1.3 hops.
+3. **That dense mesh requires IPv6** — because IPv4 NAT prevents direct P2P connectivity at scale. IPv6 gives every Teranode a globally routable address.
+4. **Hurricane Electric provides** the world&apos;s largest IPv6 backbone. Their open peering policy, native dual-stack transit, and presence at 320+ IXPs makes them the natural transit provider for a global Teranode network.
+5. **The result**: a Bitcoin network that operates as Satoshi designed — IPv6-native P2P, no NAT barriers, direct connections between every node in the core, and block propagation at the speed of light.
+
+---
+
+## Summary
+
+| Layer | What | Why IPv6 Matters |
+|-------|------|-----------------|
+| **Protocol** | Bitcoin v0.1 `addr` message | 16-byte IPv6 field from day one — Satoshi designed for it |
+| **Network** | BSV Mandala core (Teranodes) | Dense mesh requires direct P2P — IPv6 eliminates NAT |
+| **Transit** | Hurricane Electric (AS6939) | World&apos;s largest IPv6 backbone — 10,500+ IPv6-capable peers |
+| **Result** | ~1.3 hop core + global connectivity | True P2P mesh at scale, block propagation at physical limits |
+
+The original Bitcoin protocol was designed for a world where every node has a globally routable address and can connect directly to any other node. That world is IPv6. Hurricane Electric is the infrastructure provider that makes that world accessible to the Mandala network today.
+
+---
+
+*Sources: Bitcoin v0.1 source code (net.h), BSV Wiki (Peer-To-Peer Protocol, CAddress), BSV Blockchain docs (Mandala Upgrade), Hurricane Electric network page and peering policy, BIP155 (addrv2), IETF 121 presentation on IPv6 multicast in BSV (Jake Jones), Pieter Wuille&apos;s IPv6 PR #1021 (2012).*
+</code></pre></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/teranode.html">teranode</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ipv6.html">ipv6</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/mandala.html">mandala</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/satoshi.html">satoshi</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bitcoin.html">bitcoin</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bsv.html">bsv</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/network-topology.html">network-topology</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/hurricane-electric.html">hurricane-electric</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

@@ -169,124 +169,325 @@ After iPhone (2010):
   Apps: 300,000+ in App Store
   Touch: Capacitive, multi-touch
   Market: Everyone
-</code></pre><p>The threshold that mattered was not a single feature. It was the <strong>intersection of price, capability, and distribution</strong> reaching a point where new behaviours became economically rational.</p><p>Uber launched in 2009 — it needed GPS + 3G + app store + payment API. None of these existed at scale before 2007-2009. The iPhone didn&apos;t create ride-sharing. It created the conditions for ride-sharing to be viable.</p><p>The token price collapse will do the same for cognitive labor.</p><hr /><h2 id="the-token-price-trajectory">The Token Price Trajectory</h2><pre><code class="language-d2">direction: right
-
-Title: &quot;Frontier Reasoning Token Price ($/M tokens)&quot; {
+</code></pre><p>The threshold that mattered was not a single feature. It was the <strong>intersection of price, capability, and distribution</strong> reaching a point where new behaviours became economically rational.</p><p>Uber launched in 2009 — it needed GPS + 3G + app store + payment API. None of these existed at scale before 2007-2009. The iPhone didn&apos;t create ride-sharing. It created the conditions for ride-sharing to be viable.</p><p>The token price collapse will do the same for cognitive labor.</p><hr /><h2 id="the-token-price-trajectory">The Token Price Trajectory</h2><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+Title: "Frontier Reasoning Token Price (\$/M tokens)" {
   shape: text
   style.font-size: 16
 }
-
-Year2020: &quot;2020
-(GPT-3)
-~$100/M&quot; {
-  style.fill: &quot;#f1948a&quot;
+#
+Year2020: "2020\n(GPT-3)\n~\$100/M" {
+  style.fill: "#f1948a"
+}
+#
+Year2022: "2022\n(GPT-3.5)\n~\$3/M" {
+  style.fill: "#f9e79f"
+}
+#
+Year2024: "2024\n(GPT-4o mini)\n~\$0.15/M" {
+  style.fill: "#82e0aa"
+}
+#
+Year2026: "2026\n(Frontier)\n~\$2-5/M" {
+  style.fill: "#85c1e9"
+}
+#
+Year2029: "2029\n(Frontier)\n~\$0.02-0.50/M" {
+  style.fill: "#82e0aa"
+}
+#
+2020 -> 2022: "30x drop"
+2022 -> 2024: "20x drop"
+2024 -> 2026: "stable frontier\n(new capability level)"
+2026 -> 2029: "10-100x drop\nprojected"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1712 979"><svg class="d2-2804811200 d2-svg" width="1712" height="979" viewBox="-21 -21 1712 979"><rect x="-21.000000" y="-21.000000" width="1712.000000" height="979.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2804811200 .text {
+	font-family: "d2-2804811200-font-regular";
+}
+@font-face {
+	font-family: d2-2804811200-font-regular;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAABG8AAoAAAAAGpgAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXd/Vo2NtYXAAAAFUAAAAwAAAAQ4FqQZxZ2x5ZgAAAhQAAArUAAAOqGpipC9oZWFkAAAM6AAAADYAAAA2G4Ue32hoZWEAAA0gAAAAJAAAACQKhAXyaG10eAAADUQAAACvAAAAwFR2CIhsb2NhAAAN9AAAAGIAAABiXWRZ6G1heHAAAA5YAAAAIAAAACAASAD2bmFtZQAADngAAAMjAAAIFAbDVU1wb3N0AAARnAAAAB0AAAAg/9EAMgADAgkBkAAFAAACigJYAAAASwKKAlgAAAFeADIBIwAAAgsFAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPAEAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAeYClAAAACAAA3icjM67LoNxHIDh599+Woc6n88fqlrnSdIbYJKIuAGT2EREYnE1DpsFsbgZu5iF4ScaMfedn+FFUpRQkaUCanKZklxVw4ZNW3Y07dl34NCRE2cuXLmOoOXqf25b0+6/O3bq3OWvizdl4is+4zs+4j1e4yWe4yke4z7u4jZu4qF10U7JmrqGFTWr5szLLVi0pGpZQVGmQ0lZpy7delT06tNvwKAhw0aMGjNuwqQp02bMWucHAAD//wEAAP//ktAvAHicdFd9cBv1mX5/q7VkW5LtjbRaSdbnrq3VlyXbq92VLVmyZUl2HNuSZTuOndhOYscOJPERH5DjEhLmyCU5LndnvuaYOwZCoVOYwhDKNMAwdFooaWhLO8xQPgrJUDpjGMgfxTUthXjV2ZXsODD9azU7v32f3/u8z/u8r6ACxgEwHnsAVFAFtbAFSACOcBONbpZlNCInigylEllEaMbRh9ISQlsjuCDgLanPU3ecOIF2HMceWDvYfnJ+/vWpI0ek/1r+VGpFv/kUEEwAoLexJahS4pFukiMZYgL9q/T+119jS9krWen3AIAgUlzFPNjD4AKooD0ePiIIXKuJ0ng8DK1Wk0YT1yqIPMNzhFqNdm0/1T94Ziw9aQtZUq2pvfzhm5hOw3++67xJN/TQgZsfKnAOwdrQdXvh2L3klh9mpKvuAJTugt2JLYFdvgtnMJkoThBEA0cwREQQGY2KUbGMyUQSE7PHdZQO15G6Y/sGK1V45Jh4LIKrNNiS9D06Q9MZGk2t3YJuCh4IPCg9jUYeDBwISv8LAJiCocWWQAtGBaXVZCKNaoYhCK5V4CMehpl4uW8hcergwb3bh8e2T2FLDaO987PSNdTble0RN2K4sCWoAWpTDI2BUW0O82b3/lg+/YOpR44sDBQKAwvYEjOU7p8kpI8RKX2OxpOdXRFQuLUBoGvYEmjkaAzvJhni44voo4tYXza7dgEUzEhxFT2HVsAKDQAULRdAjCjka1ilFCTBsIxazcplUAryasfQ//w/EfD6++wueqZ9PJ/WqOghE5Ng7tjTqtvalR8lnFHGZWwz+Q7tlN5pt/lTtPN0bTzsawQMCsVV9A12CQzlirOMhiE4UlPCMipAcp60WkOaTMhHb3WpNKkC5s55p/fGprPxXCzj7GRcSZ3b3opdenWHnT11ePj2RGZ+Ij9Du4o2qpR7qLiKnkUrMgf/WFeUWo22dO6Pdx1INGcsfjJsD2bY4W663dTgzuvii/nCYpymBIM5PBodnrcbRbtb5ixcXEXvr+dQ4kwJzvLcOlkivwH01c6F2B7Rn3Dhw2mNytZv6Yw72xxs0pPV/fsduX9OOKzDL69F22y+TLdko8LD0bEZwJT7/xKtgBmcN2QgC8JtWr+9yq1QhaiumxPJWXFyH8KkFyvGskys3u7M/QrhyTZuSNexmMsvJo7t11uqBnaRhGB0IE/fQE7hyQGAktjbpb5neJGPlHliaFLp2d2pVGYr5a/bUm9Lz8+jxxMVA31jVZqkbmqgW5oEABU0FV3oKlqBFuiAgQ0V8Z5NDyUoRzKKotUMzZZqUK65ar3mpNFkKOuc9pTO/GX8Fo97i4U2mNnWkRZjg/6pWYJqzreytH5LY8vU6Gh8od/fEQ8E4h1CdoQLj9S466zmbR+lk842E6712pwhPW5MB/hBv6YiWcc7I/0+QltvpBxiR1N/GD2X5Pl4nOeT0pkOD23FcYOfZEMAxSJkAOB57ALmgSYAUEPoGMjvi+8VWfiR8j5cen+0pLkCAFrGLoFO6V6CM3AaA8NqyMKQ6rc7H39p4r93YpckB4LXpMuf3XxX+ZviKryHXYLaEm8ER2xI86mQr1BThWs02kqTro3H5tYeMBAIJXC8hIV9gVbArWDJhiYzvN6xhMymZuNZSGtUrv5ANFnrGQxu21oIhoR0IRgW0mg5y4Rbgr7Inknp18iXTmyTzpUf5XzeRStlRytjrEdXl8Iyg60DPYVgc2OsUQm2HsjTKJ2Dso7/hFagFupv0PGNvU4aTag2Np9Mzsfic8nkXDw5MJBMDA6WezC+WMgvxtPzwyP7948Mz4PiIxz6Bq2Ue/D67RR1eViKNGz2Efmm7lxgam9sOkp309gRxUaSDe7Em9jzUZv39OHC7QmHdfQJpP6Wj8gcTKEVIDZxUHaREgGWXp+dqtMZa53dFrS8IyRU9+J4a0K6VPbg4iq6G62AX6kvKyqty0c8HjaEbfRamQIT5cDkBN6KTDE+VzrQ3Ozm6umUfzzXNGjzWgRXKOBormfSTb6cjrWJFneT00JT1Xo374vlXFTEYPbbKDup1bvFEJvyKvjm4irKYAvyRFH0xfCiyCmNvaGzzwc7evurM3ff7fbrHbo6Y1g30Yv0iYozZ7qllaaWKjyh0SqxdADoF2gZ9ACcatMcVb387OguLaXFtVT1rqGn0bJ0taGXYXobkFGyyncAwC6gZUWrm7/bFIFReTyyc2pUj54e6a2s0eCVdVXb8v1VRCVeWavpGfy32WxVbRVeWVedRsvSJ3Q3TXfTyLLplxVVMOnGxgwjXQMENQDoPFoGCwAnshxVhhI5DcWwZSxNzaP3j3dpzXpca9LGtt//yHiP3lqD6826lPTpAYPfaPQbDnzx5WFTkCQD1OESB8WwwkH95nqK4g101GATdXZdXaWxyifUal8bndFatLjWWD2Wf4EIZ95S411YRaypAX0i/dnZS7t7XUi/ttLc3yTrOlhcRa9j94B2vWKRsqw398rfdh86tHv60KHpaDodjWYyumfOPfbkk4+deyZ14uzZo0fPnj2h3DUHgF7Ajit+JI8mXhBEjuDI3H23BrusyZNp9A5fSdWtXUyXtNoAgH6O3SPnxvEJrNw+7EZjyUOaI727T2XjHd60LezdmRif676t3xq1vNSy+97bODHb5AoH+fnR+NHTOQzvAQTW4ir6CXbPd/XP8K2C8G0IuVdlpKv9cy6/fTDa3seO96dzdIzzdtuDjRPR4YOdkfZ8dFonMoIj1Ml72lxJl+AOCw32CNM0OtDeZ8T1w6loIQiY3LPod9hxqJIdTOTkaSSX3cC7eSTzwJD7L+EI11lrOOkPiNg1NrbykrXXQgUpKXJeQA9Jt6bOy7xYiqvoZ9jx8rS/noNydYObZDTXLe2z/lm3194fjQ31Jdxhe5BEyb8SVMgujgsde3WCW7A15bpTfUaDDXE9r+hqAjsymT2tpV2subiK3lBq7wVAtFqzDqT67gZzfWFCFc5eR2VPR7gzFknMtmf+KRnZVh8yRB1NfWHMkWeHZyKjqNcbnNw7kExslZ5O/8fcXQ/3sHaOqueO7GsMzOzt2BVR8L3FVfTTdXxDyR8UNMNG1oKo+OtmE78tFnP1OCt7O0JdO7gBa8goOuS56sh7CzORUS4525ZZQK8ktnqbJvcMrH3F2iKULfIvc56gApw+M3/Xwz0l/XUVV+FFWATtjcq/08IwFjPD6Jh6O8PY6xn5rA8+QLXICioAkedI3/IHyWRpnuZRFfah7FFUaQGhlDWCeieRzSa49ra29vP7Lp88eWXWPH15cfHyNCDwFPNwufwNq4hSzpY0qseV81wimz1fPm2evXLy5GVAUF3cjYawizI+hThUjbRx6ctzqrlr/wfl/zX3oR9jV+XNgeI910UTwpWliCNN143fgSvSv9I84fK4BkJR0dvZ0+nNd8Wbu+uDNt4XEpQXIz0LMxUBe5uNbQv5Ih4m0NnSPV69b6bCb2+pd0SCDWGabsoKPZPV+8r9jBB6E90vOwmiQ9hGpzmw9eU37wh7WdLkIUL1Kdem3whZaIvd5W72K0867C/PQngCLcs5y/tNoYCWZX8vvoH1gYhdkOtGbKqb2ek0m51OrM9uMTscZosdACm70/fRcnnfWadFXnvULlOjnqgy6xvMhfj7lRUJVQUXxOxrf+zb8XcAAAD//wEAAP//dKUUdAABAAAAAguFTEFPn18PPPUAAwPoAAAAANhdoKEAAAAA3WYvNv46/tsIbwPIAAAAAwACAAAAAAAAAAEAAAPY/u8AAAiY/jr+OghvAAEAAAAAAAAAAAAAAAAAAAAweJwczaFOw2AUR/HzvzhCSHCFNDU0hAZoEQ0EgUCgSa7jI8HzMDwF74HuzMzE9hTbruk61aVzR/ySY7980oHWJPuhtSXJnkj2QrKMXAOtVbg6aruj0ZZaJYUGHuh5ZzeutMEZ8ZNX3K5xK47W9YXrj1xOpgVnNifTP+dTK7hX8KGgVHCl4ELBpYJHBbfsedMzlRpcDTf65lRBO3l6HMbZ9D4AAAD//wEAAP//0wQtLwAAAAAsACwAQAByAKQAxgDuAQABOAFsAZoBzAIAAiICjgKaAqYCwALcAw4DMANcA5ADsAPwBBYEMgRsBJgEyATuBQYFMAVuBZIFxgYGBkYGXAZoBoIGnAasBu4HFgciBzgHVAAAAAEAAAAwAIwADABmAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyU3U4bVxSFPwfbbVQ1FxWKyA06l22VjN0IogSuTAmKVYRTj9Mfqao0eMY/Yjwz8gxQqj5Ar/sWfYtc9Tn6EFWvq7O8DTaqFIEQsM6cvfdZZ6+1D7DJv2xQqz8E/mr+YLjGdnPP8AMeNZ8a3uC48bfh+kpMg7jxm+EmXzb6hj/iff0Pwx+zU//Z8EO26keGP+F5fdPwpxuOfww/Yof3C1yDl/xuuMYWheEHbPKT4Q0eYzVrdR7TNtzgM7YNN9kGBkypSJmSMcYxYsqYc+YklIQkzJkyIiHG0aVDSqWvGZGQY/y/XyNCKuZEqjihwpESkhJRMrGKvyor561OHGk1t70OFRMiTpVxRkSGI2dMTkbCmepUVBTs0aJFyVB8CypKAkqmpATkzBnToscRxwyYMKXEcaRKnllIzoiKSyKd7yzCd2ZIQkZprM7JiMXTiV+i7C7HOHoUil2tfLxW4SmO75TtueWK/YpAv26F2fq5SzYRF+pnqq6k2rmUghPt+nM7fCtcsYe7V3/WmXy4R7H+V6p8yrn0j6VUJiYZzm3RIZSDQvcEx4HWXUJ15Hu6DHhDj3cMtO7Qp0+HEwZ0ea3cHn0cX9PjhENldIUXe0dyzAk/4viGrmJ87cT6s1As4RcKc3cpjnPdY0ahnnvmge6a6IZ3V9jPUL7mjlI5Q82Rj3TSL9OcRYzNFYUYztTLpTdK619sjpjpLl7bm30/DRc2e8spviLXDHu3Ljh55RaMPqRqcMszl/oJiIjJOVXEkJwZLSquxPstEeekOA7VvTeakorOdY4/50ouSZiJQZdMdeYU+huZb0LjPlzzvbO3JFa+Z3p2fav7nOLUqxuN3ql7y73QupysKNAyVfMVNw3FNTPvJ5qpVf6hcku9bjnP6JNI9VQ3uP0OPCegzQ677DPROUPtXNgb0dY70eYV++rBGYmiRnJ1YhV2CXjBLru84sVazQ6HHNBj/w4cF1k9Dnh9a2ddp2UVZ3X+FJu2+DqeXa9e3luvz+/gyy80UTcvY1/a+G5fWLUb/58QMfNc3NbqndwTgv8AAAD//wEAAP//B1tMMAB4nGJgZgCD/+cYjBiwAAAAAAD//wEAAP//LwECAwAAAA==");
+}
+.d2-2804811200 .text-bold {
+	font-family: "d2-2804811200-font-bold";
+}
+@font-face {
+	font-family: d2-2804811200-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-2804811200 .text-italic {
+	font-family: "d2-2804811200-font-italic";
+}
+@font-face {
+	font-family: d2-2804811200-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-Year2022: &quot;2022
-(GPT-3.5)
-~$3/M&quot; {
-  style.fill: &quot;#f9e79f&quot;
-}
+		.d2-2804811200 .fill-N1{fill:#0A0F25;}
+		.d2-2804811200 .fill-N2{fill:#676C7E;}
+		.d2-2804811200 .fill-N3{fill:#9499AB;}
+		.d2-2804811200 .fill-N4{fill:#CFD2DD;}
+		.d2-2804811200 .fill-N5{fill:#DEE1EB;}
+		.d2-2804811200 .fill-N6{fill:#EEF1F8;}
+		.d2-2804811200 .fill-N7{fill:#FFFFFF;}
+		.d2-2804811200 .fill-B1{fill:#0D32B2;}
+		.d2-2804811200 .fill-B2{fill:#0D32B2;}
+		.d2-2804811200 .fill-B3{fill:#E3E9FD;}
+		.d2-2804811200 .fill-B4{fill:#E3E9FD;}
+		.d2-2804811200 .fill-B5{fill:#EDF0FD;}
+		.d2-2804811200 .fill-B6{fill:#F7F8FE;}
+		.d2-2804811200 .fill-AA2{fill:#4A6FF3;}
+		.d2-2804811200 .fill-AA4{fill:#EDF0FD;}
+		.d2-2804811200 .fill-AA5{fill:#F7F8FE;}
+		.d2-2804811200 .fill-AB4{fill:#EDF0FD;}
+		.d2-2804811200 .fill-AB5{fill:#F7F8FE;}
+		.d2-2804811200 .stroke-N1{stroke:#0A0F25;}
+		.d2-2804811200 .stroke-N2{stroke:#676C7E;}
+		.d2-2804811200 .stroke-N3{stroke:#9499AB;}
+		.d2-2804811200 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2804811200 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2804811200 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2804811200 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2804811200 .stroke-B1{stroke:#0D32B2;}
+		.d2-2804811200 .stroke-B2{stroke:#0D32B2;}
+		.d2-2804811200 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2804811200 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2804811200 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2804811200 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2804811200 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2804811200 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2804811200 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2804811200 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2804811200 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2804811200 .background-color-N1{background-color:#0A0F25;}
+		.d2-2804811200 .background-color-N2{background-color:#676C7E;}
+		.d2-2804811200 .background-color-N3{background-color:#9499AB;}
+		.d2-2804811200 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2804811200 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2804811200 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2804811200 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2804811200 .background-color-B1{background-color:#0D32B2;}
+		.d2-2804811200 .background-color-B2{background-color:#0D32B2;}
+		.d2-2804811200 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2804811200 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2804811200 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2804811200 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2804811200 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2804811200 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2804811200 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2804811200 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2804811200 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2804811200 .color-N1{color:#0A0F25;}
+		.d2-2804811200 .color-N2{color:#676C7E;}
+		.d2-2804811200 .color-N3{color:#9499AB;}
+		.d2-2804811200 .color-N4{color:#CFD2DD;}
+		.d2-2804811200 .color-N5{color:#DEE1EB;}
+		.d2-2804811200 .color-N6{color:#EEF1F8;}
+		.d2-2804811200 .color-N7{color:#FFFFFF;}
+		.d2-2804811200 .color-B1{color:#0D32B2;}
+		.d2-2804811200 .color-B2{color:#0D32B2;}
+		.d2-2804811200 .color-B3{color:#E3E9FD;}
+		.d2-2804811200 .color-B4{color:#E3E9FD;}
+		.d2-2804811200 .color-B5{color:#EDF0FD;}
+		.d2-2804811200 .color-B6{color:#F7F8FE;}
+		.d2-2804811200 .color-AA2{color:#4A6FF3;}
+		.d2-2804811200 .color-AA4{color:#EDF0FD;}
+		.d2-2804811200 .color-AA5{color:#F7F8FE;}
+		.d2-2804811200 .color-AB4{color:#EDF0FD;}
+		.d2-2804811200 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2804811200);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2804811200);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2804811200);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2804811200);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2804811200);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2804811200);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2804811200);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2804811200);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="VGl0bGU="><g class="shape" ></g><text x="147.000000" y="16.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:16px">Frontier Reasoning Token Price ($/M tokens)</text></g><g class="WWVhcjIwMjA="><g class="shape" ><rect x="95.000000" y="81.000000" width="104.000000" height="98.000000" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="147.000000" y="119.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="147.000000" dy="0.000000">2020</tspan><tspan x="147.000000" dy="17.666667">(GPT-3)</tspan><tspan x="147.000000" dy="17.666667">~$100/M</tspan></text></g><g class="WWVhcjIwMjI="><g class="shape" ><rect x="91.000000" y="239.000000" width="112.000000" height="98.000000" stroke="#0D32B2" fill="#f9e79f" class=" stroke-B1" style="stroke-width:2;" /></g><text x="147.000000" y="277.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="147.000000" dy="0.000000">2022</tspan><tspan x="147.000000" dy="17.666667">(GPT-3.5)</tspan><tspan x="147.000000" dy="17.666667">~$3/M</tspan></text></g><g class="WWVhcjIwMjQ="><g class="shape" ><rect x="76.000000" y="397.000000" width="142.000000" height="98.000000" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="147.000000" y="435.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="147.000000" dy="0.000000">2024</tspan><tspan x="147.000000" dy="17.666667">(GPT-4o mini)</tspan><tspan x="147.000000" dy="17.666667">~$0.15/M</tspan></text></g><g class="WWVhcjIwMjY="><g class="shape" ><rect x="90.000000" y="555.000000" width="114.000000" height="98.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="147.000000" y="593.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="147.000000" dy="0.000000">2026</tspan><tspan x="147.000000" dy="17.666667">(Frontier)</tspan><tspan x="147.000000" dy="17.666667">~$2-5/M</tspan></text></g><g class="WWVhcjIwMjk="><g class="shape" ><rect x="75.000000" y="713.000000" width="144.000000" height="98.000000" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="147.000000" y="751.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="147.000000" dy="0.000000">2029</tspan><tspan x="147.000000" dy="17.666667">(Frontier)</tspan><tspan x="147.000000" dy="17.666667">~$0.02-0.50/M</tspan></text></g><g class="MjAyMA=="><g class="shape" ><rect x="108.000000" y="871.000000" width="79.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="147.500000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">2020</text></g><g class="MjAyMg=="><g class="shape" ><rect x="531.000000" y="871.000000" width="79.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="570.500000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">2022</text></g><g class="MjAyNA=="><g class="shape" ><rect x="847.000000" y="871.000000" width="80.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="887.000000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">2024</text></g><g class="MjAyNg=="><g class="shape" ><rect x="1247.000000" y="871.000000" width="79.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1286.500000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">2026</text></g><g class="MjAyOQ=="><g class="shape" ><rect x="1591.000000" y="871.000000" width="79.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1630.500000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">2029</text></g><g class="KDIwMjAgLSZndDsgMjAyMilbMF0="><marker id="mk-d2-2804811200-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 189.500000 904.000000 C 367.500000 904.000000 436.299988 904.000000 527.500000 904.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2804811200-3488378134)" mask="url(#d2-2804811200)" /><text x="359.500000" y="910.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">30x drop</text></g><g class="KDIwMjIgLSZndDsgMjAyNClbMF0="><path d="M 611.500000 904.000000 C 704.700012 904.000000 752.299988 904.000000 843.500000 904.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2804811200-3488378134)" mask="url(#d2-2804811200)" /><text x="728.500000" y="910.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">20x drop</text></g><g class="KDIwMjQgLSZndDsgMjAyNilbMF0="><path d="M 929.000000 904.000000 C 1055.000000 904.000000 1119.000000 904.000000 1243.000000 904.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2804811200-3488378134)" mask="url(#d2-2804811200)" /><text x="1087.000000" y="902.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1087.000000" dy="0.000000">stable frontier</tspan><tspan x="1087.000000" dy="18.500000">(new capability level)</tspan></text></g><g class="KDIwMjYgLSZndDsgMjAyOSlbMF0="><path d="M 1327.500000 904.000000 C 1431.900024 904.000000 1485.099976 904.000000 1587.500000 904.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2804811200-3488378134)" mask="url(#d2-2804811200)" /><text x="1458.500000" y="902.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="1458.500000" dy="0.000000">10-100x drop</tspan><tspan x="1458.500000" dy="18.500000">projected</tspan></text></g><mask id="d2-2804811200" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1712" height="979">
+<rect x="-21" y="-21" width="1712" height="979" fill="white"></rect>
+<rect x="329.000000" y="894.000000" width="61" height="21" fill="black"></rect>
+<rect x="698.000000" y="894.000000" width="61" height="21" fill="black"></rect>
+<rect x="1015.000000" y="886.000000" width="144" height="37" fill="black"></rect>
+<rect x="1414.000000" y="886.000000" width="89" height="37" fill="black"></rect>
+</mask></svg></svg>
+</div><p>This is not linear. Each generation of models is more capable than the last, so the price per unit of &quot;reasoning quality&quot; drops faster than the raw token price. A 2029 frontier model at $0.50/M tokens will be as capable as a 2026 model that doesn&apos;t exist yet.</p><hr /><h2 id="the-cognitive-cost-curve">The Cognitive Cost Curve</h2><p>The critical frame: **what does it cost to do a unit of cognitidirection: down</p><p>Title: &quot;Cost of One Hour of Cognitive Output&quot; { shape: text style.font-size: 16 }</p><p>Human: &quot;Human Worker\n(1 hour of analysis)&quot; { style.fill: &quot;#f1948a&quot; cost: &quot;$50-500/hr&quot; }</p><p>LLM2024: &quot;LLM (2024)\n(1 hour of human-equivalent\nthinking at ~100 tok/s)&quot; { style.fill: &quot;#f9e79f&quot; cost: &quot;$0.05-0.50/hr&quot; }</p><p>LLM2026: &quot;LLM (2026)\n(Same, frontier)&quot; { style.fill: &quot;#85c1e9&quot; cost: &quot;$0.10-1.00/hr&quot; }</p><p>LLM2029: &quot;LLM (2029)\n(Same, frontier, 10-100x\ncheaper through\nefficiency gains)&quot; { style.fill: &quot;#82e0aa&quot; cost: &quot;$0.001-0.10/hr&quot; }</p><p>Human -&gt; LLM2024: &quot;1000x cheaper\n(but less capable)&quot; LLM2024 -&gt; LLM2026: &quot;capability gap\nnarrowing&quot; LLM2026 -&gt; LLM2029: &quot;10-100x cheaper\nper unit of reasoning&quot; nit of reasoning&quot;</p><pre><code>
+At $0.001-0.10 per hour of cognitive output, the marginal cost of &quot;thinking&quot; approaches the marginal cost of compute — essentially zero.
 
-Year2024: &quot;2024
-(GPT-4o mini)
-~$0.15/M&quot; {
-  style.fill: &quot;#82e0aa&quot;
-}
+This is the threshold. When thinking costs near-zero, the question is no longer &quot;should I use AI for this?&quot; but &quot;why wouldn&apos;t I?&quot;
 
-Year2026: &quot;2026
-(Frontier)
-~$2-5/M&quot; {
-  style.fill: &quot;#85c1e9&quot;
-}
+---
 
-Year2029: &quot;2029
-(Frontier)
-~$0.02-0.50/M&quot; {
-  style.fill: &quot;#82e0aa&quot;
-}
+## Phase 1 (2024-2026): Augmentation — The Copilot Era
 
-2020 -&gt; 2022: &quot;30x drop&quot;
-2022 -&gt; 2024: &quot;20x drop&quot;
-2024 -&gt; 2026: &quot;stable frontier
-(new capability level)&quot;
-2026 -&gt; 2029: &quot;10-100x drop
-projected&quot;
-</code></pre><p>This is not linear. Each generation of models is more capable than the last, so the price per unit of &quot;reasoning quality&quot; drops faster than the raw token price. A 2029 frontier model at $0.50/M tokens will be as capable as a 2026 model that doesn&apos;t exist yet.</p><hr /><h2 id="the-cognitive-cost-curve">The Cognitive Cost Curve</h2><p>The critical frame: <strong>what does it cost to do a unit of cognitive work?</strong></p><pre><code class="language-d2">direction: down
-
-Title: &quot;Cost of One Hour of Cognitive Output&quot; {
-  shape: text
-  style.font-size: 16
-}
-
-Human: &quot;Human Worker
-(1 hour of analysis)&quot; {
-  style.fill: &quot;#f1948a&quot;
-  cost: &quot;$50-500/hr&quot;
-}
-
-LLM2024: &quot;LLM (2024)
-(1 hour of human-equivalent
-thinking at ~100 tok/s)&quot; {
-  style.fill: &quot;#f9e79f&quot;
-  cost: &quot;$0.05-0.50/hr&quot;
-}
-
-LLM2026: &quot;LLM (2026)
-(Same, frontier)&quot; {
-  style.fill: &quot;#85c1e9&quot;
-  cost: &quot;$0.10-1.00/hr&quot;
-}
-
-LLM2029: &quot;LLM (2029)
-(Same, frontier, 10-100x
-cheaper through
-efficiency gains)&quot; {
-  style.fill: &quot;#82e0aa&quot;
-  cost: &quot;$0.001-0.10/hr&quot;
-}
-
-Human -&gt; LLM2024: &quot;1000x cheaper
-(but less capable)&quot;
-LLM2024 -&gt; LLM2026: &quot;capability gap
-narrowing&quot;
-LLM2026 -&gt; LLM2029: &quot;10-100x cheaper
-per unit of reasoning&quot;
-</code></pre><p>At $0.001-0.10 per hour of cognitive output, the marginal cost of &quot;thinking&quot; approaches the marginal cost of compute — essentially zero.</p><p>This is the threshold. When thinking costs near-zero, the question is no longer &quot;should I use AI for this?&quot; but &quot;why wouldn&apos;t I?&quot;</p><hr /><h2 id="phase-1-(2024-2026):-augmentation-—-the-copilot-era">Phase 1 (2024-2026): Augmentation — The Copilot Era</h2><pre><code class="language-d2">direction: down
-
+&lt;div class=&quot;d2-diagram&quot;&gt;
+&lt;!-- D2:
+direction: down
+#
 Title: &quot;Phase 1: Augmentation&quot; {
   shape: text
   style.font-size: 16
 }
-
+#
 Worker: &quot;Human Worker&quot; {
   style.fill: &quot;#85c1e9&quot;
   shape: person
 }
-
+#
 LLM: &quot;LLM (Copilot)&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
-
-Output: &quot;Output
-(3x productivity)&quot; {
+#
+Output: &quot;Output\n(3x productivity)&quot; {
   style.fill: &quot;#f9e79f&quot;
 }
-
+#
 Worker -&gt; LLM: &quot;Prompt / task&quot;
-LLM -&gt; Output: &quot;Draft, analyze,
-summarize&quot;
-Worker -&gt; Output: &quot;Review, edit,
-approve&quot;
-
-Note: &quot;Human + LLM together
-produce 3x more
-than human alone&quot; {
+LLM -&gt; Output: &quot;Draft, analyze,\nsummarize&quot;
+Worker -&gt; Output: &quot;Review, edit,\napprove&quot;
+#
+Note: &quot;Human + LLM together\nproduce 3x more\nthan human alone&quot; {
   shape: square
   style.stroke-dash: 2
   style.font-size: 11
 }
-</code></pre><p><strong>Today.</strong> The human does the work; the LLM accelerates it. A lawyer writes a brief with AI drafting. A consultant builds a model with AI generating code. An analyst reviews AI-generated insights.</p><p><strong>Impact on roles:</strong></p><ul><li>Junior roles compressed (less need for &quot;ground work&quot;)</li><li>Senior roles amplified (they direct AI instead of juniors)</li><li>Headcount may stay flat but output increases 2-5x</li></ul><p><strong>Who loses:</strong> Entry-level knowledge workers who traditionally spent 1-3 years learning by doing grunt work. That grunt work is now done by AI, so the training pipeline is disrupted.</p><p><strong>Signs:</strong></p><ul><li>&quot;We&apos;re not hiring juniors this year. We&apos;ll use AI.&quot;</li><li>&quot;Every analyst now produces director-level output.&quot;</li><li>Billable hours models under strain.</li></ul><hr /><h2 id="phase-2-(2026-2028):-agentification-—-the-delegation-era">Phase 2 (2026-2028): Agentification — The Delegation Era</h2><pre><code class="language-d2">direction: down
+--&gt;
+&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; data-d2-version=&quot;v0.7.1&quot; preserveAspectRatio=&quot;xMinYMin meet&quot; viewBox=&quot;0 0 592 604&quot;&gt;&lt;svg class=&quot;d2-3297063616 d2-svg&quot; width=&quot;592&quot; height=&quot;604&quot; viewBox=&quot;-21 -21 592 604&quot;&gt;&lt;rect x=&quot;-21.000000&quot; y=&quot;-21.000000&quot; width=&quot;592.000000&quot; height=&quot;604.000000&quot; rx=&quot;0.000000&quot; fill=&quot;#FFFFFF&quot; class=&quot; fill-N7&quot; stroke-width=&quot;0&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;&lt;![CDATA[
+.d2-3297063616 .text {
+	font-family: &quot;d2-3297063616-font-regular&quot;;
+}
+@font-face {
+	font-family: d2-3297063616-font-regular;
+	src: url(&quot;data:application/font-woff;base64,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&quot;);
+}
+.d2-3297063616 .text-bold {
+	font-family: &quot;d2-3297063616-font-bold&quot;;
+}
+@font-face {
+	font-family: d2-3297063616-font-bold;
+	src: url(&quot;data:application/font-woff;base64,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&quot;);
+}
+.d2-3297063616 .text-italic {
+	font-family: &quot;d2-3297063616-font-italic&quot;;
+}
+@font-face {
+	font-family: d2-3297063616-font-italic;
+	src: url(&quot;data:application/font-woff;base64,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&quot;);
+}]]&gt;&lt;/style&gt;&lt;style type=&quot;text/css&quot;&gt;&lt;![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-3297063616 .fill-N1{fill:#0A0F25;}
+		.d2-3297063616 .fill-N2{fill:#676C7E;}
+		.d2-3297063616 .fill-N3{fill:#9499AB;}
+		.d2-3297063616 .fill-N4{fill:#CFD2DD;}
+		.d2-3297063616 .fill-N5{fill:#DEE1EB;}
+		.d2-3297063616 .fill-N6{fill:#EEF1F8;}
+		.d2-3297063616 .fill-N7{fill:#FFFFFF;}
+		.d2-3297063616 .fill-B1{fill:#0D32B2;}
+		.d2-3297063616 .fill-B2{fill:#0D32B2;}
+		.d2-3297063616 .fill-B3{fill:#E3E9FD;}
+		.d2-3297063616 .fill-B4{fill:#E3E9FD;}
+		.d2-3297063616 .fill-B5{fill:#EDF0FD;}
+		.d2-3297063616 .fill-B6{fill:#F7F8FE;}
+		.d2-3297063616 .fill-AA2{fill:#4A6FF3;}
+		.d2-3297063616 .fill-AA4{fill:#EDF0FD;}
+		.d2-3297063616 .fill-AA5{fill:#F7F8FE;}
+		.d2-3297063616 .fill-AB4{fill:#EDF0FD;}
+		.d2-3297063616 .fill-AB5{fill:#F7F8FE;}
+		.d2-3297063616 .stroke-N1{stroke:#0A0F25;}
+		.d2-3297063616 .stroke-N2{stroke:#676C7E;}
+		.d2-3297063616 .stroke-N3{stroke:#9499AB;}
+		.d2-3297063616 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3297063616 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3297063616 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3297063616 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3297063616 .stroke-B1{stroke:#0D32B2;}
+		.d2-3297063616 .stroke-B2{stroke:#0D32B2;}
+		.d2-3297063616 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3297063616 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3297063616 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3297063616 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3297063616 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3297063616 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3297063616 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3297063616 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3297063616 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3297063616 .background-color-N1{background-color:#0A0F25;}
+		.d2-3297063616 .background-color-N2{background-color:#676C7E;}
+		.d2-3297063616 .background-color-N3{background-color:#9499AB;}
+		.d2-3297063616 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3297063616 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3297063616 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3297063616 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3297063616 .background-color-B1{background-color:#0D32B2;}
+		.d2-3297063616 .background-color-B2{background-color:#0D32B2;}
+		.d2-3297063616 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3297063616 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3297063616 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3297063616 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3297063616 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3297063616 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3297063616 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3297063616 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3297063616 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3297063616 .color-N1{color:#0A0F25;}
+		.d2-3297063616 .color-N2{color:#676C7E;}
+		.d2-3297063616 .color-N3{color:#9499AB;}
+		.d2-3297063616 .color-N4{color:#CFD2DD;}
+		.d2-3297063616 .color-N5{color:#DEE1EB;}
+		.d2-3297063616 .color-N6{color:#EEF1F8;}
+		.d2-3297063616 .color-N7{color:#FFFFFF;}
+		.d2-3297063616 .color-B1{color:#0D32B2;}
+		.d2-3297063616 .color-B2{color:#0D32B2;}
+		.d2-3297063616 .color-B3{color:#E3E9FD;}
+		.d2-3297063616 .color-B4{color:#E3E9FD;}
+		.d2-3297063616 .color-B5{color:#EDF0FD;}
+		.d2-3297063616 .color-B6{color:#F7F8FE;}
+		.d2-3297063616 .color-AA2{color:#4A6FF3;}
+		.d2-3297063616 .color-AA4{color:#EDF0FD;}
+		.d2-3297063616 .color-AA5{color:#F7F8FE;}
+		.d2-3297063616 .color-AB4{color:#EDF0FD;}
+		.d2-3297063616 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3297063616);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3297063616);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3297063616);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3297063616);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3297063616);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3297063616);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3297063616);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3297063616);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]&gt;&lt;/style&gt;&lt;g class=&quot;VGl0bGU=&quot;&gt;&lt;g class=&quot;shape&quot; &gt;&lt;/g&gt;&lt;text x=&quot;76.500000&quot; y=&quot;84.000000&quot; fill=&quot;#0A0F25&quot; class=&quot;text fill-N1&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;Phase 1: Augmentation&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;V29ya2Vy&quot;&gt;&lt;g class=&quot;shape&quot; &gt;&lt;path d=&quot;M 334 119 H 213 V 118 C 213 104 226 92 247 86 C 236 81 229 73 229 64 C 229 50 249 38 273 38 C 298 38 318 50 318 64 C 318 73 311 80 300 85 C 321 91 334 103 334 117 V 118 H 334 Z&quot; stroke=&quot;#0D32B2&quot; fill=&quot;#85c1e9&quot; class=&quot; stroke-B1&quot; style=&quot;stroke-width:2;&quot; /&gt;&lt;/g&gt;&lt;text x=&quot;273.500000&quot; y=&quot;140.000000&quot; fill=&quot;#0A0F25&quot; class=&quot;text-bold fill-N1&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;Human Worker&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;TExN&quot;&gt;&lt;g class=&quot;shape&quot; &gt;&lt;rect x=&quot;130.000000&quot; y=&quot;277.000000&quot; width=&quot;138.000000&quot; height=&quot;66.000000&quot; stroke=&quot;#0D32B2&quot; fill=&quot;#82e0aa&quot; class=&quot; stroke-B1&quot; style=&quot;stroke-width:2;&quot; /&gt;&lt;/g&gt;&lt;text x=&quot;199.000000&quot; y=&quot;315.500000&quot; fill=&quot;#0A0F25&quot; class=&quot;text-bold fill-N1&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;LLM (Copilot)&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;T3V0cHV0&quot;&gt;&lt;g class=&quot;shape&quot; &gt;&lt;rect x=&quot;192.000000&quot; y=&quot;480.000000&quot; width=&quot;164.000000&quot; height=&quot;82.000000&quot; stroke=&quot;#0D32B2&quot; fill=&quot;#f9e79f&quot; class=&quot; stroke-B1&quot; style=&quot;stroke-width:2;&quot; /&gt;&lt;/g&gt;&lt;text x=&quot;274.000000&quot; y=&quot;518.500000&quot; fill=&quot;#0A0F25&quot; class=&quot;text-bold fill-N1&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;&lt;tspan x=&quot;274.000000&quot; dy=&quot;0.000000&quot;&gt;Output&lt;/tspan&gt;&lt;tspan x=&quot;274.000000&quot; dy=&quot;18.500000&quot;&gt;(3x productivity)&lt;/tspan&gt;&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;Tm90ZQ==&quot;&gt;&lt;g class=&quot;shape&quot; &gt;&lt;rect x=&quot;394.000000&quot; y=&quot;0.000000&quot; width=&quot;156.000000&quot; height=&quot;156.000000&quot; stroke=&quot;#0D32B2&quot; fill=&quot;#F7F8FE&quot; class=&quot; stroke-B2 fill-B6&quot; style=&quot;stroke-width:2;stroke-dasharray:4.000000,3.946256;&quot; /&gt;&lt;/g&gt;&lt;text x=&quot;472.000000&quot; y=&quot;71.000000&quot; fill=&quot;#0A0F25&quot; class=&quot;text-bold fill-N1&quot; style=&quot;text-anchor:middle;font-size:11px&quot;&gt;&lt;tspan x=&quot;472.000000&quot; dy=&quot;0.000000&quot;&gt;Human + LLM together&lt;/tspan&gt;&lt;tspan x=&quot;472.000000&quot; dy=&quot;12.000000&quot;&gt;produce 3x more&lt;/tspan&gt;&lt;tspan x=&quot;472.000000&quot; dy=&quot;12.000000&quot;&gt;than human alone&lt;/tspan&gt;&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;KFdvcmtlciAtJmd0OyBMTE0pWzBd&quot;&gt;&lt;marker id=&quot;mk-d2-3297063616-3488378134&quot; markerWidth=&quot;10.000000&quot; markerHeight=&quot;12.000000&quot; refX=&quot;7.000000&quot; refY=&quot;6.000000&quot; viewBox=&quot;0.000000 0.000000 10.000000 12.000000&quot; orient=&quot;auto&quot; markerUnits=&quot;userSpaceOnUse&quot;&gt; &lt;polygon points=&quot;0.000000,0.000000 10.000000,6.000000 0.000000,12.000000&quot; fill=&quot;#0D32B2&quot; class=&quot;connection fill-B1&quot; stroke-width=&quot;2&quot; /&gt; &lt;/marker&gt;&lt;path d=&quot;M 236.547434 146.258584 C 206.300003 202.100006 198.500000 228.699997 198.500000 273.500000&quot; stroke=&quot;#0D32B2&quot; fill=&quot;none&quot; class=&quot;connection stroke-B1&quot; style=&quot;stroke-width:2;&quot; marker-end=&quot;url(#mk-d2-3297063616-3488378134)&quot; mask=&quot;url(#d2-3297063616)&quot; /&gt;&lt;text x=&quot;205.000000&quot; y=&quot;213.000000&quot; fill=&quot;#676C7E&quot; class=&quot;text-italic fill-N2&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;Prompt / task&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;KExMTSAtJmd0OyBPdXRwdXQpWzBd&quot;&gt;&lt;path d=&quot;M 198.500000 344.500000 C 198.500000 397.700012 207.899994 425.299988 243.248140 477.194077&quot; stroke=&quot;#0D32B2&quot; fill=&quot;none&quot; class=&quot;connection stroke-B1&quot; style=&quot;stroke-width:2;&quot; marker-end=&quot;url(#mk-d2-3297063616-3488378134)&quot; mask=&quot;url(#d2-3297063616)&quot; /&gt;&lt;text x=&quot;205.000000&quot; y=&quot;414.000000&quot; fill=&quot;#676C7E&quot; class=&quot;text-italic fill-N2&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;&lt;tspan x=&quot;205.000000&quot; dy=&quot;0.000000&quot;&gt;Draft, analyze,&lt;/tspan&gt;&lt;tspan x=&quot;205.000000&quot; dy=&quot;18.500000&quot;&gt;summarize&lt;/tspan&gt;&lt;/text&gt;&lt;/g&gt;&lt;g class=&quot;KFdvcmtlciAtJmd0OyBPdXRwdXQpWzBd&quot;&gt;&lt;path d=&quot;M 310.452567 146.258584 C 340.700012 202.100006 348.500000 235.199997 348.500000 263.250000 C 348.500000 291.299988 339.100006 425.299988 303.751860 477.194077&quot; stroke=&quot;#0D32B2&quot; fill=&quot;none&quot; class=&quot;connection stroke-B1&quot; style=&quot;stroke-width:2;&quot; marker-end=&quot;url(#mk-d2-3297063616-3488378134)&quot; mask=&quot;url(#d2-3297063616)&quot; /&gt;&lt;text x=&quot;347.000000&quot; y=&quot;311.000000&quot; fill=&quot;#676C7E&quot; class=&quot;text-italic fill-N2&quot; style=&quot;text-anchor:middle;font-size:16px&quot;&gt;&lt;tspan x=&quot;347.000000&quot; dy=&quot;0.000000&quot;&gt;Review, edit,&lt;/tspan&gt;&lt;tspan x=&quot;347.000000&quot; dy=&quot;18.500000&quot;&gt;approve&lt;/tspan&gt;&lt;/text&gt;&lt;/g&gt;&lt;mask id=&quot;d2-3297063616&quot; maskUnits=&quot;userSpaceOnUse&quot; x=&quot;-21&quot; y=&quot;-21&quot; width=&quot;592&quot; height=&quot;604&quot;&gt;
+&lt;rect x=&quot;-21&quot; y=&quot;-21&quot; width=&quot;592&quot; height=&quot;604&quot; fill=&quot;white&quot;&gt;&lt;/rect&gt;
+&lt;rect x=&quot;158.000000&quot; y=&quot;197.000000&quot; width=&quot;94&quot; height=&quot;21&quot; fill=&quot;black&quot;&gt;&lt;/rect&gt;
+&lt;rect x=&quot;155.000000&quot; y=&quot;398.000000&quot; width=&quot;100&quot; height=&quot;37&quot; fill=&quot;black&quot;&gt;&lt;/rect&gt;
+&lt;rect x=&quot;304.000000&quot; y=&quot;295.000000&quot; width=&quot;86&quot; height=&quot;37&quot; fill=&quot;black&quot;&gt;&lt;/rect&gt;
+&lt;/mask&gt;&lt;/svg&gt;&lt;/svg&gt;
+&lt;/div&gt;
+
+**Today.** The human does the work; the LLM accelerates it. A lawyer writes a brief with AI drafting. A consultant builds a model with AI generating code. An analyst reviews AI-generated insights.
+
+**Impact on roles:**
+- Junior roles compressed (less need for &quot;ground work&quot;)
+- Senior roles amplified (they direct AI instead of juniors)
+- Headcount may stay flat but output increases 2-5x
+
+**Who loses:** Entry-level knowledge workers who traditionally spent 1-3 years learning by doing grunt work. That grunt work is now done by AI, so the training pipeline is disrupted.
+
+**Signs:**
+- &quot;We&apos;re not hiring juniors this year. We&apos;ll use AI.&quot;
+- &quot;Every analyst now produces director-level output.&quot;
+- Billable hours models under strain.
+
+---
+
+## Phase 2 (2026-2028): Agentification — The Delegation Era
+
+`direction: down
 
 Title: &quot;Phase 2: Agentification&quot; {
   shape: text
@@ -298,18 +499,15 @@ Worker: &quot;Human (Supervisor)&quot; {
   shape: person
 }
 
-Agent1: &quot;Agent A:
-(Research)&quot; {
+Agent1: &quot;Agent A:\n(Research)&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
 
-Agent2: &quot;Agent B:
-(Analysis)&quot; {
+Agent2: &quot;Agent B:\n(Analysis)&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
 
-Agent3: &quot;Agent C:
-(Output Generation)&quot; {
+Agent3: &quot;Agent C:\n(Output Generation)&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
 
@@ -324,183 +522,148 @@ Agent1 -&gt; Agent2: &quot;passes findings&quot;
 Agent2 -&gt; Agent3: &quot;passes analysis&quot;
 Agent3 -&gt; Output
 
-Note: &quot;Human manages agents
-exception-based review
-10-50x output multiplier&quot; {
+Note: &quot;Human manages agents\nexception-based review\n10-50x output multiplier&quot; {
   shape: square
   style.stroke-dash: 2
   style.font-size: 11
 }
-</code></pre><p><strong>2026-2028.</strong> Token prices drop enough that running multiple agents for hours on a single problem is economical. The human shifts from &quot;doing&quot; to &quot;directing.&quot;</p><p>A single senior analyst now manages 3-5 AI agents that:</p><ul><li>Monitor industry news across 100+ sources</li><li>Generate weekly reports in natural language</li><li>Surface anomalies requiring human attention</li><li>Draft responses, recommendations, and briefs</li></ul><p><strong>Impact on roles:</strong></p><ul><li>Middle management layer thins (AI tracks project status, generates reports, schedules)</li><li>Specialist roles (research analyst, compliance reviewer, data analyst) compress</li><li>Generalist roles that coordinate specialists become more valuable</li><li>The &quot;10x engineer&quot; becomes &quot;100x engineer with 5 agents&quot;</li></ul><p><strong>Who loses:</strong></p><ul><li>Mid-level managers whose primary job is information aggregation and reporting</li><li>Specialists whose expertise is narrow and learnable</li><li>Any role where 80% of the job is &quot;read, summarize, write&quot;</li></ul><p><strong>Signs:</strong></p><ul><li>&quot;We run 50 agents per team. Humans handle exceptions.&quot;</li><li>&quot;my job went from writing reports to writing prompts and verifying outputs.&quot;</li><li>Companies announce &quot;AI-native&quot; org structures with flat hierarchies.</li></ul><hr /><h2 id="phase-3-(2029+):-structural-shift-—-the-thinking-as-commodity-era">Phase 3 (2029+): Structural Shift — The Thinking-as-Commodity Era</h2><pre><code class="language-d2">direction: down
-
-Title: &quot;Phase 3: Structural Shift&quot; {
-  shape: text
-  style.font-size: 16
+11
 }
+</code></pre><p><strong>2026-2028.</strong> Token prices drop enough that running multiple agents for hours on a single problem is economical. The human shifts from &quot;doing&quot; to &quot;directing.&quot;</p><p>A single senior analyst now manages 3-5 AI agents that:</p><ul><li>Monitor industry news across 100+ sources</li><li>Generate weekly reports in natural language</li><li>Surface anomalies requiring human attention</li><li>Draft responses, recommendations, and briefs</li></ul><p><strong>Impact on roles:</strong></p><ul><li>Middle management layer thins (AI tracks project status, generates reports, schedules)</li><li>Specialist roles (research analyst, compliance reviewer, data analyst) compress</li><li>Generalist roles that coordinate specialists become more valuable</li><li>The &quot;10x engineer&quot; becomes &quot;100x engineer with 5 agents&quot;</li></ul><p><strong>Who loses:</strong></p><ul><li>Mid-level managers whose primary job is information aggregation and reporting</li><li>Specialists whose expertise is narrow and learnable</li><li>Any role where 80% of the job is &quot;read, summarize, write&quot;</li></ul><p><strong>Signs:</strong></p><ul><li>&quot;We run 50 agents per team. Humans handle exceptions.&quot;</li><li>&quot;my job went from writing reports to writing prompts and verifying outputs.&quot;</li><li>Companies announce &quot;AI-native&quot; org structures with flat hierarchies.</li></ul><hr /><h2 id="phase-3-(2029+):-structural-shift-—-the-thinking-as-commodity-edirection:-down">Phase 3 (2029+): Structural Shift — The Thinking-as-Commodity Edirection: down</h2><p>Title: &quot;Phase 3: Structural Shift&quot; { shape: text style.font-size: 16 }</p><p>OldLayers: &quot;Old White-Collar Stack&quot; { shape: text style.font-size: 14 }</p><p>Exec: &quot;Executive (strategy)&quot; { style.fill: &quot;#f1948a&quot; }</p><p>Manager: &quot;Manager (coordination)&quot; { style.fill: &quot;#f9e79f&quot; }</p><p>Analyst: &quot;Analyst (execution)&quot; { style.fill: &quot;#85c1e9&quot; }</p><p>Associate: &quot;Associate (grunt work)&quot; { style.fill: &quot;#aeb6bf&quot; }</p><p>Exec -&gt; Manager -&gt; Analyst -&gt; Associate</p><p>NewLayers: &quot;New White-Collar Stack&quot; { shape: text style.font-size: 14 }</p><p>NewExec: &quot;Strategist (what to do)&quot; { style.fill: &quot;#f1948a&quot; }</p><p>Builder: &quot;Builder (create tools/\nagents/guardrails)&quot; { style.fill: &quot;#82e0aa&quot; }</p><p>Verifier: &quot;Verifier (check\nAI output)&quot; { style.fill: &quot;#85c1e9&quot; }</p><p>AgentLayer: &quot;AI Agents (execution)&quot; { style.fill: &quot;#aeb6bf&quot; style.stroke-dash: 3 }</p><p>NewExec -&gt; Builder -&gt; Verifier -&gt; AgentLayer gentLayer</p><pre><code>
+By 2029, when frontier reasoning costs 10-100x less than today, the organizational structure of knowledge work inverts:
 
-OldLayers: &quot;Old White-Collar Stack&quot; {
-  shape: text
-  style.font-size: 14
-}
+**The old stack** (pyramid):
+- Few executives at top
+- Layers of managers, analysts, associates
+- Each layer adds cost and delay
+- Information flows up, decisions flow down
 
-Exec: &quot;Executive (strategy)&quot; {
-  style.fill: &quot;#f1948a&quot;
-}
+**The new stack** (thin):
+- **Strategists** define goals and constraints (small, high-value)
+- **Builders** create the agent systems, prompts, and guardrails (medium)
+- **Verifiers** sample-check AI output for quality (small)
+- **AI agents** do the actual analysis, writing, coordination, execution (massive)
 
-Manager: &quot;Manager (coordination)&quot; {
-  style.fill: &quot;#f9e79f&quot;
-}
+The &quot;middle&quot; of the pyramid — the analysts, associates, coordinators, reviewers — compresses because the AI agent layer absorbs their function.
 
-Analyst: &quot;Analyst (execution)&quot; {
-  style.fill: &quot;#85c1e9&quot;
-}
+---
 
-Associate: &quot;Associate (grunt work)&quot; {
-  style.fill: &quot;#aeb6bf&quot;
-}
+## The iPhone Moment for Knowledge Work
 
-Exec -&gt; Manager -&gt; Analyst -&gt; Associate
+The iPhone didn&apos;t kill the mobile phone industry. It killed:
+- Standalone GPS devices (TomTom)
+- Standalone MP3 players (iPod)
+- Point-and-shoot cameras
+- Physical keyboards (Blackberry)
+- Printed maps
 
-NewLayers: &quot;New White-Collar Stack&quot; {
-  shape: text
-  style.font-size: 14
-}
+But it also created:
+- App economy (iOS developer, QA, designer)
+- Gig economy (Uber driver, Deliveroo)
+- Creator economy (Instagram influencer, YouTuber)
+- Mobile-first banking, payments, health, dating
 
-NewExec: &quot;Strategist (what to do)&quot; {
-  style.fill: &quot;#f1948a&quot;
-}
+The common pattern: **specific devices/roles got absorbed into a general platform.** The iPhone didn&apos;t replace &quot;having a phone.&quot; It replaced &quot;having a separate device for each function.&quot;
 
-Builder: &quot;Builder (create tools/
-agents/guardrails)&quot; {
-  style.fill: &quot;#82e0aa&quot;
-}
+The token price collapse does the same for cognitive labor:
 
-Verifier: &quot;Verifier (check
-AI output)&quot; {
-  style.fill: &quot;#85c1e9&quot;
-}
+**Roles that get absorbed:**
+- Research analyst
+- Compliance reviewer
+- Data analyst (basic)
+- Legal associate (document review)
+- Accounting clerk
+- Customer support (tier 1-2)
+- Report writer
+- Content moderator
 
-AgentLayer: &quot;AI Agents (execution)&quot; {
-  style.fill: &quot;#aeb6bf&quot;
-  style.stroke-dash: 3
-}
+**Roles that bifurcate:**
+- Software engineer → Strategist + Verifier + Builder
+- Lawyer → Strategist + Verifier + Builder
+- Consultant → Strategist + Verifier + Builder
+- Accountant → Strategist + Verifier + Builder
 
-NewExec -&gt; Builder -&gt; Verifier -&gt; AgentLayer
-</code></pre><p>By 2029, when frontier reasoning costs 10-100x less than today, the organizational structure of knowledge work inverts:</p><p><strong>The old stack</strong> (pyramid):</p><ul><li>Few executives at top</li><li>Layers of managers, analysts, associates</li><li>Each layer adds cost and delay</li><li>Information flows up, decisions flow down</li></ul><p><strong>The new stack</strong> (thin):</p><ul><li><strong>Strategists</strong> define goals and constraints (small, high-value)</li><li><strong>Builders</strong> create the agent systems, prompts, and guardrails (medium)</li><li><strong>Verifiers</strong> sample-check AI output for quality (small)</li><li><strong>AI agents</strong> do the actual analysis, writing, coordination, execution (massive)</li></ul><p>The &quot;middle&quot; of the pyramid — the analysts, associates, coordinators, reviewers — compresses because the AI agent layer absorbs their function.</p><hr /><h2 id="the-iphone-moment-for-knowledge-work">The iPhone Moment for Knowledge Work</h2><p>The iPhone didn&apos;t kill the mobile phone industry. It killed:</p><ul><li>Standalone GPS devices (TomTom)</li><li>Standalone MP3 players (iPod)</li><li>Point-and-shoot cameras</li><li>Physical keyboards (Blackberry)</li><li>Printed maps</li></ul><p>But it also created:</p><ul><li>App economy (iOS developer, QA, designer)</li><li>Gig economy (Uber driver, Deliveroo)</li><li>Creator economy (Instagram influencer, YouTuber)</li><li>Mobile-first banking, payments, health, dating</li></ul><p>The common pattern: <strong>specific devices/roles got absorbed into a general platform.</strong> The iPhone didn&apos;t replace &quot;having a phone.&quot; It replaced &quot;having a separate device for each function.&quot;</p><p>The token price collapse does the same for cognitive labor:</p><p><strong>Roles that get absorbed:</strong></p><ul><li>Research analyst</li><li>Compliance reviewer</li><li>Data analyst (basic)</li><li>Legal associate (document review)</li><li>Accounting clerk</li><li>Customer support (tier 1-2)</li><li>Report writer</li><li>Content moderator</li></ul><p><strong>Roles that bifurcate:</strong></p><ul><li>Software engineer → Strategist + Verifier + Builder</li><li>Lawyer → Strategist + Verifier + Builder</li><li>Consultant → Strategist + Verifier + Builder</li><li>Accountant → Strategist + Verifier + Builder</li></ul><p><strong>Roles that strengthen:</strong></p><ul><li>The person who defines what to do (domain expert + strategist)</li><li>The person who validates AI output (domain expert + verifier)</li><li>The person who builds the agent system (engineer + domain expert)</li><li>The person who owns the relationship (sales, BD, therapy, negotiation)</li></ul><hr /><h2 id="demand-elasticity-—-the-missing-piece">Demand Elasticity — The Missing Piece</h2><p>Here&apos;s the counter-argument everyone misses:</p><p>When token prices drop 10-100x, <strong>demand for cognitive output explodes.</strong></p><p>Think about bandwidth:</p><pre><code>1995: 56k modem → people browsed text
-2005: 10 Mbps → people watched YouTube
-2015: 100 Mbps → people streamed 4K
-2025: 1 Gbps → people run 50 devices
-</code></pre><p>Bandwidth didn&apos;t get cheaper and people stopped using the internet. People used <em>more</em> internet because new use-cases became viable.</p><p>Same for tokens:</p><pre><code class="language-d2">direction: right
+**Roles that strengthen:**
+- The person who defines what to do (domain expert + strategist)
+- The person who validates AI output (domain expert + verifier)
+- The person who builds the agent system (engineer + domain expert)
+- The person who owns the relationship (sales, BD, therapy, negotiation)
+
+---
+
+## Demand Elasticity — The Missing Piece
+
+Here&apos;s the counter-argument everyone misses:
+
+When token prices drop 10-100x, **demand for cognitive output explodes.**
+
+Think about bandwidth:
+
+</code></pre><p>1995: 56k modem → people browsed text 2005: 10 Mbps → people watched YouTube 2015: 100 Mbps → people streamed 4K 2025: 1 Gbps → people run 50 devices</p><pre><code>
+Bandwidth didn&apos;t get cheaper and people stopped using the internet. People used *more* internet because new use-cases became vdirection: right
 
 Title: &quot;Demand Elasticity for Cognitive Work&quot; {
   shape: text
   style.font-size: 16
 }
 
-Phase1: &quot;2024
-$1/M tok
-Use: Chat, code
-Market: ~$10B&quot; {
+Phase1: &quot;2024\n\$1/M tok\nUse: Chat, code\nMarket: ~\$10B&quot; {
   style.fill: &quot;#f9e79f&quot;
 }
 
-Phase2: &quot;2026
-$0.10/M tok
-Use: Agents, RAG,
-content gen
-Market: ~$100B&quot; {
+Phase2: &quot;2026\n\$0.10/M tok\nUse: Agents, RAG,\ncontent gen\nMarket: ~\$100B&quot; {
   style.fill: &quot;#85c1e9&quot;
 }
 
-Phase3: &quot;2029
-$0.01/M tok
-Use: Ambient agents,
-personal AI, enterprise
-workflow integration
-Market: ~$1T+&quot; {
+Phase3: &quot;2029\n\$0.01/M tok\nUse: Ambient agents,\npersonal AI, enterprise\nworkflow integration\nMarket: ~\$1T+&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
 
-Phase1 -&gt; Phase2: &quot;10x cheaper
-10x more usage&quot;
-Phase2 -&gt; Phase3: &quot;10x cheaper
-10x more usage&quot;
+Phase1 -&gt; Phase2: &quot;10x cheaper\n10x more usage&quot;
+Phase2 -&gt; Phase3: &quot;10x cheaper\n10x more usage&quot;
 
-Note: &quot;Total token spend grows
-even as per-token cost drops.
-New use-cases emerge at
-each price threshold.&quot; {
+Note: &quot;Total token spend grows\neven as per-token cost drops.\nNew use-cases emerge at\neach price threshold.&quot; {
   shape: square
   style.stroke-dash: 2
   style.font-size: 11
 }
-</code></pre><p>At today&apos;s prices, you use AI for important tasks. At 10x cheaper, you use AI for <em>every</em> task. At 100x cheaper, you use AI for tasks you didn&apos;t even know existed because they weren&apos;t worth doing manually.</p><p><strong>This means:</strong></p><ul><li>Total token consumption grows 100-1000x as price drops 10-100x</li><li>The number of &quot;AI workers&quot; (agents) explodes</li><li>The demand for <em>humans who can direct, verify, and build agents</em> grows with it</li><li>The total labor market may not shrink — but the composition shifts radically</li></ul><hr /><h2 id="the-three-scenarios">The Three Scenarios</h2><pre><code class="language-d2">direction: right
-
-Title: &quot;White-Collar Employment 2029&quot; {
-  shape: text
-  style.font-size: 16
+dash: 2
+  style.font-size: 11
 }
+</code></pre><p>At today&apos;s prices, you use AI for important tasks. At 10x cheaper, you use AI for <em>every</em> task. At 100x cheaper, you use AI for tasks you didn&apos;t even know existed because they weren&apos;t worth doing manually.</p><p><strong>This means:</strong></p><ul><li>Total token consumption grows 100-1000x as price drops 10-100x</li><li>The number of &quot;AI workers&quot; (agents) explodes</li><li>The demand for <em>humans who can direct, verify, and build agents</em> grows with it</li><li>The total labor market may not shrink — but the composition shifts radically</li></ul><hr /><h2 id="the-three-scenadirection:-right">The Three Scenadirection: right</h2><p>Title: &quot;White-Collar Employment 2029&quot; { shape: text style.font-size: 16 }</p><p>Bear: &quot;Bear Case (-20%)\nAI replaces 20% of\nwhite-collar jobs\nRemaining roles:\nstrategist + verifier&quot; { style.fill: &quot;#f1948a&quot; }</p><p>Base: &quot;Base Case (0%)\nJobs destroyed ≈\nnew jobs created\nShift in composition&quot; { style.fill: &quot;#f9e79f&quot; }</p><p>Bull: &quot;Bull Case (+30%)\nDemand elasticity creates\nmore cognitive work\nthan AI replaces&quot; { style.fill: &quot;#82e0aa&quot; }</p><p>MyView: &quot;My View:\nBetween Base and Bull.\nCompression of middle layers\nbut expansion at the edges\n(supervision, integration,\nnew use-cases).&quot; { shape: square style.stroke-dash: 2 style.font-size: 12 } -size: 12 }</p><pre><code>
+My assessment: between Base and Bull.
 
-Bear: &quot;Bear Case (-20%)
-AI replaces 20% of
-white-collar jobs
-Remaining roles:
-strategist + verifier&quot; {
-  style.fill: &quot;#f1948a&quot;
-}
+The analogies that give me confidence:
 
-Base: &quot;Base Case (0%)
-Jobs destroyed ≈
-new jobs created
-Shift in composition&quot; {
-  style.fill: &quot;#f9e79f&quot;
-}
+1. **Excel didn&apos;t kill accountants.** It killed bookkeepers and created financial analysts. The number of accounting jobs *increased* after spreadsheets because cheap calculation made analysis economical.
+2. **Google didn&apos;t kill researchers.** It killed librarians and created SEO specialists, data journalists, and information architects.
+3. **AWS didn&apos;t kill sysadmins.** It killed server rackers and created cloud architects, SREs, and DevOps engineers.
 
-Bull: &quot;Bull Case (+30%)
-Demand elasticity creates
-more cognitive work
-than AI replaces&quot; {
-  style.fill: &quot;#82e0aa&quot;
-}
+Each wave of automation expanded the scope of the domain while compressing the execution layer.
 
-MyView: &quot;My View:
-Between Base and Bull.
-Compression of middle layers
-but expansion at the edges
-(supervision, integration,
-new use-cases).&quot; {
-  shape: square
-  style.stroke-dash: 2
-  style.font-size: 12
-}
-</code></pre><p>My assessment: between Base and Bull.</p><p>The analogies that give me confidence:</p><ol start="1"><li><strong>Excel didn&apos;t kill accountants.</strong> It killed bookkeepers and created financial analysts. The number of accounting jobs <em>increased</em> after spreadsheets because cheap calculation made analysis economical.</li><li><strong>Google didn&apos;t kill researchers.</strong> It killed librarians and created SEO specialists, data journalists, and information architects.</li><li><strong>AWS didn&apos;t kill sysadmins.</strong> It killed server rackers and created cloud architects, SREs, and DevOps engineers.</li></ol><p>Each wave of automation expanded the scope of the domain while compressing the execution layer.</p><hr /><h2 id="what-i&apos;d-tell-someone-starting-their-career-today">What I&apos;d Tell Someone Starting Their Career Today</h2><pre><code class="language-d2">direction: down
+---
+
+## What I&apos;d Tell Someone Startingdirection: down
 
 Title: &quot;Advice for 2026 Grad&quot; {
   shape: text
   style.font-size: 16
 }
 
-Dont: &quot;Don&apos;t specialize in:
-- Pure analysis (AI does this)
-- Pure writing (AI does this)
-- Pure coding (AI does this)
-- Compliance checking (AI does this)
-- Report generation (AI does this)&quot; {
+Dont: &quot;Don&apos;t specialize in:\n- Pure analysis (AI does this)\n- Pure writing (AI does this)\n- Pure coding (AI does this)\n- Compliance checking (AI does this)\n- Report generation (AI does this)&quot; {
   style.fill: &quot;#f1948a&quot;
 }
 
-Do: &quot;Do specialize in:
-- Domain expertise + AI orchestration
-- Building and validating AI systems
-- Relationship ownership (clients, stakeholders)
-- Cross-domain synthesis
-- Real-world verification (is the AI right?)
-- Ethics, governance, and AI policy&quot; {
+Do: &quot;Do specialize in:\n- Domain expertise + AI orchestration\n- Building and validating AI systems\n- Relationship ownership (clients, stakeholders)\n- Cross-domain synthesis\n- Real-world verification (is the AI right?)\n- Ethics, governance, and AI policy&quot; {
   style.fill: &quot;#82e0aa&quot;
 }
 
 Arrow: &quot;&quot; {
   style.stroke: &quot;transparent&quot;
+}
+
+Dont -&gt; Arrow -&gt; Do
+nt&quot;
 }
 
 Dont -&gt; Arrow -&gt; Do

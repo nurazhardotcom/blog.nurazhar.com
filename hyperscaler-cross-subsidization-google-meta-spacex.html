@@ -165,327 +165,471 @@ Vertically-Integrated Hyperscaler:
   AI Product → User engagement → Core business revenue
   Profit = (Core revenue) − (AI costs + everything else)
   → Can give AI away if engagement → core profit
-</code></pre><p>This is not dumping or predatory pricing — it&apos;s portfolio economics. The hyperscaler calculates ROI across the entire ecosystem, not per-product.</p><hr /><h2 id="case-study-1:-google-—-gemini-protects-the-search/ads/cloud-moat">Case Study 1: Google — Gemini Protects the Search/Ads/Cloud Moat</h2><pre><code class="language-d2">direction: right
-
-Google: &quot;Google&quot; {
+</code></pre><p>This is not dumping or predatory pricing — it&apos;s portfolio economics. The hyperscaler calculates ROI across the entire ecosystem, not per-product.</p><hr /><h2 id="case-study-1:-google-—-gemini-protects-the-search/ads/cloud-moat">Case Study 1: Google — Gemini Protects the Search/Ads/Cloud Moat</h2><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+Google: "Google" {
   shape: diamond
-  style.fill: &quot;#4285f4&quot;
+  style.fill: "#4285f4"
 }
-
-Gemini: &quot;Gemini AI
-(API + Assistant)&quot; {
-  style.fill: &quot;#ea4335&quot;
-  style.stroke: &quot;#4285f4&quot;
+#
+Gemini: "Gemini AI\n(API + Assistant)" {
+  style.fill: "#ea4335"
+  style.stroke: "#4285f4"
 }
-
-Search: &quot;Search
-(%90+ of revenue)&quot; {
-  style.fill: &quot;#34a853&quot;
+#
+Search: "Search\n(%90+ of revenue)" {
+  style.fill: "#34a853"
 }
-
-Cloud: &quot;Google Cloud
-(Infrastructure)&quot; {
-  style.fill: &quot;#fbbc04&quot;
+#
+Cloud: "Google Cloud\n(Infrastructure)" {
+  style.fill: "#fbbc04"
 }
-
-Android: &quot;Android / Chrome
-(Ecosystem)&quot; {
-  style.fill: &quot;#4285f4&quot;
+#
+Android: "Android / Chrome\n(Ecosystem)" {
+  style.fill: "#4285f4"
 }
-
-Moat: &quot;Defense Moat:
-AI capability prevents
-users from switching
-to ChatGPT/Bing/etc&quot; {
+#
+Moat: "Defense Moat:\nAI capability prevents\nusers from switching\nto ChatGPT/Bing/etc" {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
 }
-
-Gemini -&gt; Search: &quot;AI Overviews keep users
-in Google search results&quot;
-Gemini -&gt; Cloud: &quot;Gemini API drives
-GCP adoption (Vertex AI)&quot;
-Gemini -&gt; Android: &quot;Gemini Nano on-device
-keeps Android competitive&quot;
-Gemini -&gt; Moat: &quot;Loss leader&quot;
-
-PurePlay: &quot;Pure-Play AI
-(OpenAI/Anthropic)&quot; {
-  style.fill: &quot;#ea4335&quot;
+#
+Gemini -> Search: "AI Overviews keep users\nin Google search results"
+Gemini -> Cloud: "Gemini API drives\nGCP adoption (Vertex AI)"
+Gemini -> Android: "Gemini Nano on-device\nkeeps Android competitive"
+Gemini -> Moat: "Loss leader"
+#
+PurePlay: "Pure-Play AI\n(OpenAI/Anthropic)" {
+  style.fill: "#ea4335"
   style.stroke-dash: 3
-  style.stroke: &quot;#666&quot;
+  style.stroke: "#666"
 }
-
-Revenue: &quot;Revenue:
-API fees only&quot; {
+#
+Revenue: "Revenue:\nAPI fees only" {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
-  style.stroke: &quot;#666&quot;
+  style.stroke: "#666"
+}
+#
+PurePlay -> Revenue: "Must cover:\n\$ training\n\$ inference\n\$ salaries\n\$ infrastructure"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 786 789"><svg class="d2-1355712911 d2-svg" width="786" height="789" viewBox="-21 -21 786 789"><rect x="-21.000000" y="-21.000000" width="786.000000" height="789.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1355712911 .text-bold {
+	font-family: "d2-1355712911-font-bold";
+}
+@font-face {
+	font-family: d2-1355712911-font-bold;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAABLIAAoAAAAAHCgAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXxHXrmNtYXAAAAFUAAAAvwAAARIFgwcpZ2x5ZgAAAhQAAAuwAAAP7FtDwFxoZWFkAAANxAAAADYAAAA2G38e1GhoZWEAAA38AAAAJAAAACQKfwX3aG10eAAADiAAAADJAAAA4GzPCMVsb2NhAAAO7AAAAHIAAAByeAp0fm1heHAAAA9gAAAAIAAAACAAUAD3bmFtZQAAD4AAAAMoAAAIKgjwVkFwb3N0AAASqAAAAB0AAAAg/9EAMgADAioCvAAFAAACigJYAAAASwKKAlgAAAFeADIBKQAAAgsHAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPACAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAfAClAAAACAAA3ichM27LkMBHIDx39HT1uW43+8Hp7SqWjY2g4jEICLdjWIRm6fCjOBRPILR9BcdrL75l3xIlCTIpEkFhVwqlatpaGpp6zh07MSpc5e6rt26j0CuUP9TB4566syFris37iLiU6as+uvjO77iI97jLV7jJZ7jKR7joff/v0THnpZd+3a0NWxr6lOSKquo6jdg0JDMsBGjxoybMGnKtBmz5sxbsGjJshWrcmvWbSjUbNpS5wcAAP//AQAA///IxymZAHichFdrcBvXdT73YokVweUDj8UCIN4L7AIgCYJYLMAHKJAiAFIUwaf4UAw+xCoSLVI0I1ER7Up1ZyInrQNXjqi4VJw6riaepq7dsavpjJqG6bTTONVEPzq1U/1pZKftqNN4xmYymEztkEDnLsCX2pn8wN6Zxe6553zn+75zFypgGADP41uggkqoBR2wAJLWpfVKosjTMSkW4zlVTERaehjrCm98V/RTfj8VcG44npudRZkZfGtn6anM/PyvZzs6Cq/9zfcLL6FL3wfAxc8BcA/OQSVoAfS0JAqCyKvVKr2k50Weflz39drq+mqKMX/+4N0H3/b92If64/GWZSlyofACzu2svvoqAIAKMgA4jnOgBQu4SW5S2GhkDWqaVRY1r5LCUTki8LxWCitr5sPkUleTL9yTvNg7m4q2hCPpsWfjnWM4Z0snGsZqqeoT3T0n/ehrAV5wFqamGrwACILFPA7hDagHqHALghyJRqWwkaMFgXer1azBKIWjMU6NpkdfHBt/aTRxxjVojvGNxxsm+nwJ0+AoM/DNC0u3RyT3DGcLzxw7s+IxZ+cAK/kP4BxoSsiWs1fzohSOkrxJwvfO3BwZvjHXZG0dCwbHWq04l7yxsnKz94ovOzh4ygskvwwA+hTnoErpD+tiJZZnXWwGbRR+8+gRqsW5q1/53Veuwm4tSbwBjv+vlnIpMi9LWrUaXTj1jfHJlyd7zzoz5tbAwFz2KYPALH3i/lK5oIhrxmhfmT+zotGsrBU+cAVLucBHOAcqpSJtZp00rJzjv+McVJTuu9jMOsI4t7NF0ir9j9/GOZKXpJX0RiMnRaMxvaTlSYoxnqZ5UeTtmGUzf/q0RqehNFrNude/SleqKHl6ZDpCUUdonCs8sh61249akXtn9VPn0LDj1c8+e9UxPOT8dHcPgre+tAcnCYIsS1peJfJGI8tm/vjNLoqqyZGlohrnCj94OfL77Y93VlHqj6JX2/8LALCC3+/hDah9gg1K58QS3RQg0cTUCydOvDBVuvYMDvb0DA4yo7fPL35zaOiV8+dvjz6/Oj+/vDw/vwplLoRwDhgwHOICz+5x96O+y+n0amqkb60rnsQ5MTs0MN/8MzS6IAUAdmOM4RzUAHdQDURUJEpJCpmPUxeTCfnWG9dGBto7O9sHcM47Ndg3zRV+8/HHaK4lFBIIVnwxjzV4AwJKlWLMaCwFEMUg/j+k4bhStsjQ9Xz4JD/hCzZJDeOuuNDxdLJ1JXDC2SUKTW2Bkx3p9mUmFPyiXXDbHDadp6Y53RydijQGps31DqvdrnWbTqai2VZAYAbAepwDmlTCyy6W1z64iz6/i+uuXt3ZUjhT/AwASzgH1QCS6gBnVD/80bcHa7laqsZUk3nlH3Gu8M/y2Wj0rIxCO6uAIVDMow/QNpiBB+DcpIUxpRRaVApjtTzxoxiRgqLvHyaHr69j3u/o8sjNi+2zZ9c0lKP3iNmrH4w7mMnE4FStSzSxp22e5YuF/5Ss/EVOP6lpsJk4pS/dxTw24k0wlFUn8jSvlVj6CeLwbmJcKOXqsVHMpXXKlnTHp5rjs1NCdKLRb/AxLqeMN98asNiOfmlg/NnEWnrgq00/0dUo+vEU82gTbYPlSV3vy5pTq5E59Ux335eTwV5rinfKiUTIFNS3eyeYzsujY6uddm7WNtDdlWFr55z1JU6JxTzaxpugB+cuVkpgkQhnD6VdIvwq+0zHbMTfalavr2koSxqbRJ2+wcBHm5mvPzty+ajVNPDnOz0tFn7NYP6Jrqan93gKsJL7z9E2mJ5wJYW9LsI8krtKUqSFHL0Xj/UsdfRON1O48FCTbpGjLcLMt+6Kje4oc3R1dGQ1kVhM6r2VUcl1ymJH7X65ueQxJgC0iu+TlXAq9gSPiW1qv3DsmGe4xxGpq6+2MPX2U6fQtQsV9fJEhFEvVVS4BPulwlfI7HEXmzCNtqEZOqBfQUaQIwQIQiZ5twROYvmykN2i0gdCL4NarTrgFPqyMt2C8siv2mdae/X1TpPF3z4jN7r+eoiujEzFbA6d2z+cPZ282m8TRZtNFP3hLtErmV1Mfef7ltbGuI+q9jnqw3WULtkQH/Ixi1VuQ1u/R1Nr1Os6eqSRILof8It+n88fKKx7zFydSmUyW20lbLpJsxWOEucoc5PV8lolS1rbvU5bT4RHjq/bnFafCW++dcrcsDhdeIBcUZ+ZK7wLxSLEAOBn+H0sgAQANETgxb3YdrwJTMn7pZhEPIlmu29Qf/L6X/7td1YSeLOw/KMHhX/7+97nyPPFPNLhTagtMU4rafcI/E8DHevaygparWO8zFMnML/zkNMhdKGCLu2jsqFtcCn7EDMg3T1UCb23dhMNp1vkbr2rv2X4xLrN6Q2RSzPa6nI0NfjcLbvlhQrvlpddnNB2GafyHgdxWtNQzsweUGgrYW86hFOJ7wp3fvsMMSaeSSafSSSWk8nlRFMw2BRsaiprtXN1bPRy55VMV/cAkWzJZ/qwEW2DHuwA3H52Cv0EkWP1+zZD8rQdF7+wEJ+NOuOWiiEhOtEQMPju4e+1WPg/vDS+lqg3D30DefZMRqkd3UDboDuEb0k9pcrrBwTWqjFVm+usnQa0NRluqah4nqL84cJHgIAt5tF30DaISl/3Z4pQmil7wchEsWPWoH6/5ZxwzJ1wuOy2oMXe4Xt6vG3SccwSsbS1Cc5O/wIjOLLmek6vNeo1jKfNn5oQTVMGo2gy11TxbcGe6RK3tcU8WsarZCpWuAVZ5uVYTFIOSfvGCNmh5ID2uStXeBtj1nD6GHN+4v4F9fXrl34c8KqpRTVTihUv5tH/oC3S/0Pc1Jbt8F9Hjq/bnVbBuL5WpXL0M4vTKFL4UPZbbKivUJfyNgIiOkBFtFWeW1x5bsUk1d0/u9Wl0WuoSr2m+6U7aOsX3owoZry/KNTt+hfeQlsKvw++dyACXz5L0/StqzdDao2aoqsrY8+3VtbSFF1JN//Blbea6GqaoqvoRrT12NsnCP38Y2Xt8z4u1L3Hp32+NP+esh9peh5tkVks6cUD29Dc/j41Gzdea9QYNdQR3RH3xsu3XwsxHENVGipFhD8ZZhtYtoEdLv5ylG1k2QbjKInLFI+iHbRF2L/Pg1jsEBQ1eM3oqrXQuiNen4b+u1u9VToNdURbGX/pLa516B/U1Aqq8Ngs6D9+6k57+V7+p4Wqo+Plc5C3mEcf469BVVlfJW6xBqKt0rm6dGw3oiNnr107S35mH8f5zCafyeRj3rxz54037tx586J3ZnIy63ZnJydnvCSuu5hHj5W4fgB9qe9KMP1eFdGYorVDiv5eyGOW9JqY2xnqTEzbB+uiVk+bB5uP26Lj4fa5tqPLqeOX0V+FAzb3ibaWAhO0T+nqvZP9Dk9gsufYnNT94sqXbx8vFqGzmIdP0S+xCDIASoKarICgAe4jF2ohZ+6YLLENv76/sEDu9xUzyIc/JDzjSoOJU+rmHiRSqUQ2Fg7H7p57dP36o3PC6YeL5x/OA4JQMYPqyu+IClqkMtagzmVbw+HWbCKVuivMPzy/+PC0oLwLCKqLcyiK3yP7c3pJVX1/7v7rqrPb3yI5iMWb6AP839AIwMlCGSY5EqSUOSmxxv1jpJ1Svt0eNp7mu4SUZ0SIJ+PCaPp0qM/WXx92egTlxlBm+UyF6Pwdqz1l8TrdjYmm/tM1575INzpOms12t8lldwa7Q33ntAtAZpKlmFd14Q0QIQqA1CBCDF1TplMU/RxKmnbDDPoER8n3k/LtI5fM4V/eeWfpnXdm7i3cu7dwr+x/8AHa2v226V5HW4U6QMW3cRuM4ffJ+9oDbPMGg15vMIjbAjwfID8SQ+khvE2e5Q48+4ogSYIgSYws+mTZJ8qEb5ZiHs2im1BFnIs7zOO9GfGDdDab7s1me808bzbzPLM8P7+0ND+/PNqaTkej6XSrclYeL+YROc+rAGgkob9Ac+OF1xn83Z0sAPwvAAAA//8BAAD//1eqZVUAAQAAAAILhf4UzulfDzz1AAED6AAAAADYXaCEAAAAAN1mLzb+N/7ECG0D8QABAAMAAgAAAAAAAAABAAAD2P7vAAAImP43/jcIbQABAAAAAAAAAAAAAAAAAAAAOHicHMoxSgNRFIbR7/4DQTHqCFFiCos4EjDPwU7BvOI2YuEFQQNJIdi4B0HQHdi7B21s3YC9qzHNE6Y+R1/c8APKZaV7Qpe0eibUEHqhtRNCPUIrQu+EPmh1R+iRUOJQiX2l8qdtjpVx+6VRZqIejc0Zao+xLnAbcKYGtwO8WuKa4Zp21+0Nt2927ZUdnTPTBv1qjaHEltbpq+ZINWNLZLtmaguubMGp3bKpmkm1ZNT5AIfy2b0nRjyU+T8AAAD//wEAAP//4gsg6gAAAAAAACwALABQAIQAsADUAOoBGgEmATYBaAGKAbYB2AH+Aj4CUAJsAqQC1gMCAzQDaAOOA/YEGAQkBDwEWASKBKwE2AUIBSgFZAWKBawFyAYABiwGXAaIBsgG1AbgBvoHFAciB2IHdAeIB5QHqgfAB+YH9gAAAAEAAAA4AJAADABjAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyUz24bVRTGf05s0wrBAkVVuonugkWR6NhUSdU2K4fUikUUB48LQkJIE8/4jzKeGXkmDuEJWPMWvEVXPATPgVij+Xzs2AXRJoqSfHfu+fOdc75zgR3+ZptK9SHwRz0xXGGvfm54iwf1E8PbtOtbhqs8qf1puEZYmxuu83mtZ/gj3lZ/M/yA/epPhh+yW20b/phn1R3Dn2w7/jL8Kfu8XeAKvOBXwxV2yQxvscOPhrd5hMWsVHlE03CNz9gzXGcP6DOhIGZCwgjHkAkjrpgRkeMTMWPCkIgQR4cWMYW+JgRCjtF/fg3wKZgRKOKYAkeMT0xAztgi/iKvlHNlHOo0s7sWBWMCLuRxSUCCI2VESkLEpeIUFGS8okGDnIH4ZhTkeORMiPFImTGiQZc2p/QZMyHH0VakkplPypCCawLld2ZRdmZAREJurK5ICMXTiV8k7w6nOLpksl2PfLoR4Usc38m75JbK9is8/bo1Zpt5l2wC5upnrK7EurnWBMe6LfO2+Fa44BXuXv3ZZPL+HoX6XyjyBVeaf6hJJWKS4NwuLXwpyHePcRzp3MFXR76nQ58Turyhr3OLHj1anNGnw2v5dunh+JouZxzLoyO8uGtLMWf8gOMbOrIpY0fWn8XEIn4mM3Xn4jhTHVMy9bxk7qnWSBXefcLlDqUb6sjlM9AelZZO80u0ZwEjU0UmhlP1cqmN3PoXmiKmqqWc7e19uQ1z273lFt+QaodLtS44lZNbMHrfVL13NHOtH4+AkJQLWQxImdKg4Ea8zwm4IsZxrO6daEsKWiufMs+NVBIxFYMOieLMyPQ3MN34xn2woXtnb0ko/5Lp5aqq+2Rx6tXtjN6oe8s737ocrU2gYVNN19Q0ENfEtB9pp9b5+/LN9bqlPOWIlJjwXy/AMzya7HPAIWNlGOhmbq9DUy9Ek5ccqvpLIlkNpefIIhzg8ZwDDnjJ83f6uGTijItbcVnP3eKYI7ocflAVC/suR7xeffv/rL+LaVO1OJ6uTi/uPcUnd1DrF9qz2/eyp4mVk5hbtNutOCNgWnJxu+s1ucd4/wAAAP//AQAA///0t09ReJxiYGYAg//nGIwYsAAAAAAA//8BAAD//y8BAgMAAAA=");
+}
+.d2-1355712911 .text-italic {
+	font-family: "d2-1355712911-font-italic";
+}
+@font-face {
+	font-family: d2-1355712911-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-PurePlay -&gt; Revenue: &quot;Must cover:
-$ training
-$ inference
-$ salaries
-$ infrastructure&quot;
-</code></pre><h3 id="how-it-works">How It Works</h3><p>Google&apos;s core business is <strong>Search advertising</strong> ($200B+/year). Every user query is a monetizable event. Gemini&apos;s purpose is not to sell tokens — it&apos;s to keep users searching on Google instead of opening ChatGPT or Perplexity.</p><p><strong>The calculation:</strong></p><table><thead><tr><th>Item</th><th>Cost/Impact</th></tr></thead><tbody><tr><td>Gemini API cost per query</td><td>~$0.001-0.01</td></tr><tr><td>Lost Search ad revenue per query if user goes to ChatGPT</td><td>~$0.05-0.20</td></tr><tr><td><strong>Net benefit of keeping user on Google</strong></td><td><strong>$0.04-0.19 per query</strong></td></tr></tbody></table><p>Google can subsidize Gemini because losing Search dominance would cost 10-100x more than running Gemini at a loss.</p><p><strong>Same logic applies to Google Cloud:</strong></p><ul><li>Pure-play AI inference providers (Together, Fireworks, Replicate) must cover GPU costs + margin</li><li>Google Cloud offers GPU/TPU access as part of a broader cloud ecosystem</li><li>If Gemini API brings a customer into Vertex AI, that customer then buys BigQuery, Spanner, Cloud Storage — high-margin services</li><li>The AI is the loss leader; the platform is the product</li></ul><h3 id="comparison-table">Comparison Table</h3><table><thead><tr><th></th><th>Pure-Play AI (OpenAI)</th><th>Google (Gemini)</th></tr></thead><tbody><tr><td><strong>Revenue sources</strong></td><td>API fees only</td><td>Search ads, Cloud, Android, YouTube</td></tr><tr><td><strong>AI pricing floor</strong></td><td>Marginal cost + margin</td><td>Potentially zero (subsidized by Search)</td></tr><tr><td><strong>Customer lock-in</strong></td><td>None (you can switch APIs)</td><td>Deep (Cloud ecosystem, Android, Workspace)</td></tr><tr><td><strong>Training cost recoup</strong></td><td>Must amortize via tokens</td><td>Can amortize across entire business</td></tr><tr><td><strong>Can they win a price war?</strong></td><td>No — no other revenue</td><td>Yes — AI is a rounding error on Search revenue</td></tr></tbody></table><p>This is why Gemini Flash costs less than GPT-4o mini despite comparable capability — Google doesn&apos;t need Gemini to be profitable.</p><hr /><h2 id="case-study-2:-meta-—-llama-protects-the-social-graph">Case Study 2: Meta — Llama Protects the Social Graph</h2><pre><code class="language-d2">direction: right
-
-Meta: &quot;Meta&quot; {
+		.d2-1355712911 .fill-N1{fill:#0A0F25;}
+		.d2-1355712911 .fill-N2{fill:#676C7E;}
+		.d2-1355712911 .fill-N3{fill:#9499AB;}
+		.d2-1355712911 .fill-N4{fill:#CFD2DD;}
+		.d2-1355712911 .fill-N5{fill:#DEE1EB;}
+		.d2-1355712911 .fill-N6{fill:#EEF1F8;}
+		.d2-1355712911 .fill-N7{fill:#FFFFFF;}
+		.d2-1355712911 .fill-B1{fill:#0D32B2;}
+		.d2-1355712911 .fill-B2{fill:#0D32B2;}
+		.d2-1355712911 .fill-B3{fill:#E3E9FD;}
+		.d2-1355712911 .fill-B4{fill:#E3E9FD;}
+		.d2-1355712911 .fill-B5{fill:#EDF0FD;}
+		.d2-1355712911 .fill-B6{fill:#F7F8FE;}
+		.d2-1355712911 .fill-AA2{fill:#4A6FF3;}
+		.d2-1355712911 .fill-AA4{fill:#EDF0FD;}
+		.d2-1355712911 .fill-AA5{fill:#F7F8FE;}
+		.d2-1355712911 .fill-AB4{fill:#EDF0FD;}
+		.d2-1355712911 .fill-AB5{fill:#F7F8FE;}
+		.d2-1355712911 .stroke-N1{stroke:#0A0F25;}
+		.d2-1355712911 .stroke-N2{stroke:#676C7E;}
+		.d2-1355712911 .stroke-N3{stroke:#9499AB;}
+		.d2-1355712911 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1355712911 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1355712911 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1355712911 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1355712911 .stroke-B1{stroke:#0D32B2;}
+		.d2-1355712911 .stroke-B2{stroke:#0D32B2;}
+		.d2-1355712911 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1355712911 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1355712911 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1355712911 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1355712911 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1355712911 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1355712911 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1355712911 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1355712911 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1355712911 .background-color-N1{background-color:#0A0F25;}
+		.d2-1355712911 .background-color-N2{background-color:#676C7E;}
+		.d2-1355712911 .background-color-N3{background-color:#9499AB;}
+		.d2-1355712911 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1355712911 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1355712911 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1355712911 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1355712911 .background-color-B1{background-color:#0D32B2;}
+		.d2-1355712911 .background-color-B2{background-color:#0D32B2;}
+		.d2-1355712911 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1355712911 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1355712911 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1355712911 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1355712911 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1355712911 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1355712911 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1355712911 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1355712911 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1355712911 .color-N1{color:#0A0F25;}
+		.d2-1355712911 .color-N2{color:#676C7E;}
+		.d2-1355712911 .color-N3{color:#9499AB;}
+		.d2-1355712911 .color-N4{color:#CFD2DD;}
+		.d2-1355712911 .color-N5{color:#DEE1EB;}
+		.d2-1355712911 .color-N6{color:#EEF1F8;}
+		.d2-1355712911 .color-N7{color:#FFFFFF;}
+		.d2-1355712911 .color-B1{color:#0D32B2;}
+		.d2-1355712911 .color-B2{color:#0D32B2;}
+		.d2-1355712911 .color-B3{color:#E3E9FD;}
+		.d2-1355712911 .color-B4{color:#E3E9FD;}
+		.d2-1355712911 .color-B5{color:#EDF0FD;}
+		.d2-1355712911 .color-B6{color:#F7F8FE;}
+		.d2-1355712911 .color-AA2{color:#4A6FF3;}
+		.d2-1355712911 .color-AA4{color:#EDF0FD;}
+		.d2-1355712911 .color-AA5{color:#F7F8FE;}
+		.d2-1355712911 .color-AB4{color:#EDF0FD;}
+		.d2-1355712911 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1355712911);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1355712911);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1355712911);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1355712911);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1355712911);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1355712911);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1355712911);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1355712911);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="R29vZ2xl"><g class="shape" ><path d="M 91 153 C 90 153 90 153 90 153 L 27 108 C 26 108 26 107 27 106 L 90 61 C 91 61 92 61 92 61 L 155 106 C 156 106 156 107 155 108 L 92 153 C 92 153 92 153 91 153 Z" stroke="#0D32B2" fill="#4285f4" class=" stroke-B1" style="stroke-width:2;" /></g><text x="91.000000" y="112.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Google</text></g><g class="R2VtaW5p"><g class="shape" ><rect x="12.000000" y="213.000000" width="159.000000" height="82.000000" stroke="#4285f4" fill="#ea4335" style="stroke-width:2;" /></g><text x="91.500000" y="251.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="91.500000" dy="0.000000">Gemini AI</tspan><tspan x="91.500000" dy="18.500000">(API + Assistant)</tspan></text></g><g class="U2VhcmNo"><g class="shape" ><rect x="570.000000" y="0.000000" width="174.000000" height="82.000000" stroke="#0D32B2" fill="#34a853" class=" stroke-B1" style="stroke-width:2;" /></g><text x="657.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="657.000000" dy="0.000000">Search</tspan><tspan x="657.000000" dy="18.500000">(%90+ of revenue)</tspan></text></g><g class="Q2xvdWQ="><g class="shape" ><rect x="579.000000" y="142.000000" width="156.000000" height="82.000000" stroke="#0D32B2" fill="#fbbc04" class=" stroke-B1" style="stroke-width:2;" /></g><text x="657.000000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="657.000000" dy="0.000000">Google Cloud</tspan><tspan x="657.000000" dy="18.500000">(Infrastructure)</tspan></text></g><g class="QW5kcm9pZA=="><g class="shape" ><rect x="572.000000" y="284.000000" width="170.000000" height="82.000000" stroke="#0D32B2" fill="#4285f4" class=" stroke-B1" style="stroke-width:2;" /></g><text x="657.000000" y="322.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="657.000000" dy="0.000000">Android / Chrome</tspan><tspan x="657.000000" dy="18.500000">(Ecosystem)</tspan></text></g><g class="TW9hdA=="><g class="shape" ><rect x="581.000000" y="426.000000" width="152.000000" height="152.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="657.000000" y="489.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="657.000000" dy="0.000000">Defense Moat:</tspan><tspan x="657.000000" dy="11.750000">AI capability prevents</tspan><tspan x="657.000000" dy="11.750000">users from switching</tspan><tspan x="657.000000" dy="11.750000">to ChatGPT/Bing/etc</tspan></text></g><g class="UHVyZVBsYXk="><g class="shape" ><rect x="0.000000" y="652.000000" width="182.000000" height="82.000000" stroke="#666" fill="#ea4335" style="stroke-width:2;stroke-dasharray:6.000000,5.919384;" /></g><text x="91.000000" y="690.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="91.000000" dy="0.000000">Pure-Play AI</tspan><tspan x="91.000000" dy="18.500000">(OpenAI/Anthropic)</tspan></text></g><g class="UmV2ZW51ZQ=="><g class="shape" ><rect x="603.000000" y="638.000000" width="109.000000" height="109.000000" stroke="#666" fill="#F7F8FE" class=" fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="657.500000" y="691.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="657.500000" dy="0.000000">Revenue:</tspan><tspan x="657.500000" dy="12.500000">API fees only</tspan></text></g><g class="KEdlbWluaSAtJmd0OyBTZWFyY2gpWzBd"><marker id="mk-d2-1355712911-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 147.601670 211.802230 C 330.000000 75.400002 414.799988 41.000000 566.000000 41.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1355712911-3488378134)" mask="url(#d2-1355712911)" /><text x="337.500000" y="70.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="337.500000" dy="0.000000">AI Overviews keep users</tspan><tspan x="337.500000" dy="18.500000">in Google search results</tspan></text></g><g class="KEdlbWluaSAtJmd0OyBDbG91ZClbMF0="><path d="M 173.440129 233.708304 C 335.100006 193.238007 416.600006 183.000000 575.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1355712911-3488378134)" mask="url(#d2-1355712911)" /><text x="373.000000" y="186.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="373.000000" dy="0.000000">Gemini API drives</tspan><tspan x="373.000000" dy="18.500000">GCP adoption (Vertex AI)</tspan></text></g><g class="KEdlbWluaSAtJmd0OyBBbmRyb2lkKVswXQ=="><path d="M 173.440129 274.290689 C 335.100006 314.760986 415.200012 325.000000 568.000000 325.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1355712911-3488378134)" mask="url(#d2-1355712911)" /><text x="369.000000" y="317.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="369.000000" dy="0.000000">Gemini Nano on-device</tspan><tspan x="369.000000" dy="18.500000">keeps Android competitive</tspan></text></g><g class="KEdlbWluaSAtJmd0OyBNb2F0KVswXQ=="><path d="M 139.509074 296.312514 C 328.399994 460.600006 417.000000 502.000000 577.000000 502.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1355712911-3488378134)" mask="url(#d2-1355712911)" /><text x="333.000000" y="468.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Loss leader</text></g><g class="KFB1cmVQbGF5IC0mZ3Q7IFJldmVudWUpWzBd"><path d="M 184.000000 692.500000 C 337.200012 692.500000 421.299988 692.500000 598.500000 692.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1355712911-3488378134)" mask="url(#d2-1355712911)" /><text x="392.000000" y="666.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="392.000000" dy="0.000000">Must cover:</tspan><tspan x="392.000000" dy="17.000000">$ training</tspan><tspan x="392.000000" dy="17.000000">$ inference</tspan><tspan x="392.000000" dy="17.000000">$ salaries</tspan><tspan x="392.000000" dy="17.000000">$ infrastructure</tspan></text></g><mask id="d2-1355712911" maskUnits="userSpaceOnUse" x="-21" y="-21" width="786" height="789">
+<rect x="-21" y="-21" width="786" height="789" fill="white"></rect>
+<rect x="257.000000" y="54.000000" width="161" height="37" fill="black"></rect>
+<rect x="292.000000" y="170.000000" width="162" height="37" fill="black"></rect>
+<rect x="280.000000" y="301.000000" width="178" height="37" fill="black"></rect>
+<rect x="293.000000" y="452.000000" width="80" height="21" fill="black"></rect>
+<rect x="339.000000" y="650.000000" width="106" height="85" fill="black"></rect>
+</mask></svg></svg>
+</div><h3 id="how-it-works">How It Works</h3><p>Google&apos;s core business is <strong>Search advertising</strong> ($200B+/year). Every user query is a monetizable event. Gemini&apos;s purpose is not to sell tokens — it&apos;s to keep users searching on Google instead of opening ChatGPT or Perplexity.</p><p><strong>The calculation:</strong></p><table><thead><tr><th>Item</th><th>Cost/Impact</th></tr></thead><tbody><tr><td>Gemini API cost per query</td><td>~$0.001-0.01</td></tr><tr><td>Lost Search ad revenue per query if user goes to ChatGPT</td><td>~$0.05-0.20</td></tr><tr><td><strong>Net benefit of keeping user on Google</strong></td><td><strong>$0.04-0.19 per query</strong></td></tr></tbody></table><p>Google can subsidize Gemini because losing Search dominance would cost 10-100x more than running Gemini at a loss.</p><p><strong>Same logic applies to Google Cloud:</strong></p><ul><li>Pure-play AI inference providers (Together, Fireworks, Replicate) must cover GPU costs + margin</li><li>Google Cloud offers GPU/TPU access as part of a broader cloud ecosystem</li><li>If Gemini API brings a customer into Vertex AI, that customer then buys BigQuery, Spanner, Cloud Storage — high-margin services</li><li>The AI is the loss leader; the platform is the product</li></ul><h3 id="comparison-table">Comparison Table</h3><table><thead><tr><th></th><th>Pure-Play AI (OpenAI)</th><th>Google (Gemini)</th></tr></thead><tbody><tr><td><strong>Revenue sources</strong></td><td>API fees only</td><td>Search ads, Cloud, Android, YouTube</td></tr><tr><td><strong>AI pricing floor</strong></td><td>Marginal cost + margin</td><td>Potentially zero (subsidized by Search)</td></tr><tr><td><strong>Customer lock-in</strong></td><td>None (you can switch APIs)</td><td>Deep (Cloud ecosystem, Android, Workspace)</td></tr><tr><td><strong>Training cost recoup</strong></td><td>Must amortize via tokens</td><td>Can amortize across entire business</td></tr><tr><td><strong>Can they win a price war?</strong></td><td>No — no other revenue</td><td>Yes — AI is a rounding error on Search revenue</td></tr></tbody></table><p>This is why Gemini Flash costs less than GPT-4o mini despite comparable capability — Google doesn&apos;t need Gemini to be profitable.</p><hr /><h2 id="case-study-2:-meta-—-llama-protects-the-social-graph">Case Study 2: Meta — Llama Protects the Social Graph</h2><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+Meta: "Meta" {
   shape: diamond
-  style.fill: &quot;#1877f2&quot;
+  style.fill: "#1877f2"
 }
-
-Llama: &quot;Llama Models
-(Open Source)&quot; {
-  style.fill: &quot;#00c300&quot;
-  style.stroke: &quot;#1877f2&quot;
+#
+Llama: "Llama Models\n(Open Source)" {
+  style.fill: "#00c300"
+  style.stroke: "#1877f2"
 }
-
-Social: &quot;Facebook/Instagram
-(Social Graph)&quot; {
-  style.fill: &quot;#1877f2&quot;
+#
+Social: "Facebook/Instagram\n(Social Graph)" {
+  style.fill: "#1877f2"
 }
-
-Ads: &quot;Ad Network
-(%98 of revenue)&quot; {
-  style.fill: &quot;#f5a623&quot;
+#
+Ads: "Ad Network\n(%98 of revenue)" {
+  style.fill: "#f5a623"
 }
-
-WhatsApp: &quot;WhatsApp/Messenger
-(Communication)&quot; {
-  style.fill: &quot;#25D366&quot;
+#
+WhatsApp: "WhatsApp/Messenger\n(Communication)" {
+  style.fill: "#25D366"
 }
-
-Moat: &quot;Defense Moat:
-Open-source AI prevents
-competitors from owning
-the reasoning layer&quot; {
+#
+Moat: "Defense Moat:\nOpen-source AI prevents\ncompetitors from owning\nthe reasoning layer" {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
 }
-
-Llama -&gt; Social: &quot;AI features in feed/reels
-keep users engaged longer&quot;
-Llama -&gt; Ads: &quot;AI improves ad targeting
-(Advantage+ / Lattice)&quot;
-Llama -&gt; WhatsApp: &quot;AI assistants in
-WhatsApp Business&quot;
-Llama -&gt; Moat: &quot;Free (zero revenue)&quot;
-
-PurePlay: &quot;Pure-Play AI
-(OpenAI/Anthropic)&quot; {
-  style.fill: &quot;#ea4335&quot;
+#
+Llama -> Social: "AI features in feed/reels\nkeep users engaged longer"
+Llama -> Ads: "AI improves ad targeting\n(Advantage+ / Lattice)"
+Llama -> WhatsApp: "AI assistants in\nWhatsApp Business"
+Llama -> Moat: "Free (zero revenue)"
+#
+PurePlay: "Pure-Play AI\n(OpenAI/Anthropic)" {
+  style.fill: "#ea4335"
   style.stroke-dash: 3
-  style.stroke: &quot;#666&quot;
+  style.stroke: "#666"
 }
-
-Revenue: &quot;Revenue:
-API fees (must charge)&quot; {
+#
+Revenue: "Revenue:\nAPI fees (must charge)" {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
-  style.stroke: &quot;#666&quot;
+  style.stroke: "#666"
 }
-
-Competitor: &quot;Other Social Networks
-(TikTok, X, Snapchat)&quot; {
+#
+Competitor: "Other Social Networks\n(TikTok, X, Snapchat)" {
   style.stroke-dash: 3
 }
-
-PurePlay -&gt; Revenue
-Competitor -&gt; Revenue: &quot;Must charge for
-AI features or
-lose margins&quot;
-</code></pre><h3 id="how-it-works-2">How It Works</h3><p>Meta&apos;s core business is <strong>advertising on its social platforms</strong> ($130B+/year). The social graph — who you know, what you like, where you go — is the moat. Llama&apos;s purpose is not to sell models — it&apos;s to ensure no competitor controls the AI layer that sits between Meta and its users.</p><p><strong>Why give Llama away for free:</strong></p><ol start="1"><li><p><strong>Commoditize the model layer</strong> — If everyone has access to Llama-class models, no single company (OpenAI, Anthropic, Google) can become the &quot;AI gatekeeper&quot; that Meta must pay or partner with.</p></li><li><p><strong>Drive adoption of Meta&apos;s ecosystem</strong> — Llama powers AI features inside WhatsApp Business, Facebook Feed ranking, Instagram Reels recommendations. These keep users engaged, which drives ad revenue.</p></li><li><p><strong>Crowdsource innovation</strong> — Open-source Llama means thousands of developers build tools, fine-tunes, and integrations. Meta gets the ecosystem benefit without paying for the R&amp;D.</p></li><li><p><strong>Defend against platform shift</strong> — If AI assistants become the primary interface (replacing browsers/apps), Meta needs its own model to insert into that interface. Giving Llama away ensures it becomes the default for third-party tools.</p></li></ol><p><strong>The calculation:</strong></p><table><thead><tr><th>Item</th><th>Cost/Impact</th></tr></thead><tbody><tr><td>Llama R&amp;D cost</td><td>~$100M-1B per generation</td></tr><tr><td>Value of defending ad revenue</td><td>$130B+/year</td></tr><tr><td>Cost of being locked out of AI layer</td><td>Potentially existential</td></tr><tr><td><strong>Net value of open-sourcing Llama</strong></td><td><strong>Massively positive</strong> if it prevents platform displacement</td></tr></tbody></table><h3 id="comparison-table-2">Comparison Table</h3><table><thead><tr><th></th><th>Pure-Play AI (OpenAI)</th><th>Meta (Llama)</th></tr></thead><tbody><tr><td><strong>Model pricing</strong></td><td>API per-token</td><td>Free (open weights)</td></tr><tr><td><strong>Revenue source</strong></td><td>Token sales</td><td>Social platform ads</td></tr><tr><td><strong>Open-source incentive</strong></td><td>None (undermines API sales)</td><td>Strong (commoditizes competitors)</td></tr><tr><td><strong>Customer relationship</strong></td><td>API customer</td><td>Social platform user</td></tr><tr><td><strong>Can they match $0?</strong></td><td>No</td><td>Yes — and they do</td></tr></tbody></table><p>Meta can permanently offer Llama at $0 because the model itself is not the product — the social graph is. Every Llama download makes the AI layer less ownable by competitors.</p><hr /><h2 id="case-study-3:-spacex-—-starlink-protects-the-mars-ambition">Case Study 3: SpaceX — Starlink Protects the Mars Ambition</h2><pre><code class="language-d2">direction: right
-
-SpaceX: &quot;SpaceX&quot; {
-  shape: diamond
-  style.fill: &quot;#f9ab00&quot;
+#
+PurePlay -> Revenue
+Competitor -> Revenue: "Must charge for\nAI features or\nlose margins"
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 842 886"><svg class="d2-715853666 d2-svg" width="842" height="886" viewBox="-21 -21 842 886"><rect x="-21.000000" y="-21.000000" width="842.000000" height="886.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-715853666 .text-bold {
+	font-family: "d2-715853666-font-bold";
+}
+@font-face {
+	font-family: d2-715853666-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-715853666 .text-italic {
+	font-family: "d2-715853666-font-italic";
+}
+@font-face {
+	font-family: d2-715853666-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-Starlink: &quot;Starlink
-(LEO Broadband)&quot; {
-  style.fill: &quot;#005288&quot;
-  style.stroke: &quot;#f9ab00&quot;
-}
+		.d2-715853666 .fill-N1{fill:#0A0F25;}
+		.d2-715853666 .fill-N2{fill:#676C7E;}
+		.d2-715853666 .fill-N3{fill:#9499AB;}
+		.d2-715853666 .fill-N4{fill:#CFD2DD;}
+		.d2-715853666 .fill-N5{fill:#DEE1EB;}
+		.d2-715853666 .fill-N6{fill:#EEF1F8;}
+		.d2-715853666 .fill-N7{fill:#FFFFFF;}
+		.d2-715853666 .fill-B1{fill:#0D32B2;}
+		.d2-715853666 .fill-B2{fill:#0D32B2;}
+		.d2-715853666 .fill-B3{fill:#E3E9FD;}
+		.d2-715853666 .fill-B4{fill:#E3E9FD;}
+		.d2-715853666 .fill-B5{fill:#EDF0FD;}
+		.d2-715853666 .fill-B6{fill:#F7F8FE;}
+		.d2-715853666 .fill-AA2{fill:#4A6FF3;}
+		.d2-715853666 .fill-AA4{fill:#EDF0FD;}
+		.d2-715853666 .fill-AA5{fill:#F7F8FE;}
+		.d2-715853666 .fill-AB4{fill:#EDF0FD;}
+		.d2-715853666 .fill-AB5{fill:#F7F8FE;}
+		.d2-715853666 .stroke-N1{stroke:#0A0F25;}
+		.d2-715853666 .stroke-N2{stroke:#676C7E;}
+		.d2-715853666 .stroke-N3{stroke:#9499AB;}
+		.d2-715853666 .stroke-N4{stroke:#CFD2DD;}
+		.d2-715853666 .stroke-N5{stroke:#DEE1EB;}
+		.d2-715853666 .stroke-N6{stroke:#EEF1F8;}
+		.d2-715853666 .stroke-N7{stroke:#FFFFFF;}
+		.d2-715853666 .stroke-B1{stroke:#0D32B2;}
+		.d2-715853666 .stroke-B2{stroke:#0D32B2;}
+		.d2-715853666 .stroke-B3{stroke:#E3E9FD;}
+		.d2-715853666 .stroke-B4{stroke:#E3E9FD;}
+		.d2-715853666 .stroke-B5{stroke:#EDF0FD;}
+		.d2-715853666 .stroke-B6{stroke:#F7F8FE;}
+		.d2-715853666 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-715853666 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-715853666 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-715853666 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-715853666 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-715853666 .background-color-N1{background-color:#0A0F25;}
+		.d2-715853666 .background-color-N2{background-color:#676C7E;}
+		.d2-715853666 .background-color-N3{background-color:#9499AB;}
+		.d2-715853666 .background-color-N4{background-color:#CFD2DD;}
+		.d2-715853666 .background-color-N5{background-color:#DEE1EB;}
+		.d2-715853666 .background-color-N6{background-color:#EEF1F8;}
+		.d2-715853666 .background-color-N7{background-color:#FFFFFF;}
+		.d2-715853666 .background-color-B1{background-color:#0D32B2;}
+		.d2-715853666 .background-color-B2{background-color:#0D32B2;}
+		.d2-715853666 .background-color-B3{background-color:#E3E9FD;}
+		.d2-715853666 .background-color-B4{background-color:#E3E9FD;}
+		.d2-715853666 .background-color-B5{background-color:#EDF0FD;}
+		.d2-715853666 .background-color-B6{background-color:#F7F8FE;}
+		.d2-715853666 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-715853666 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-715853666 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-715853666 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-715853666 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-715853666 .color-N1{color:#0A0F25;}
+		.d2-715853666 .color-N2{color:#676C7E;}
+		.d2-715853666 .color-N3{color:#9499AB;}
+		.d2-715853666 .color-N4{color:#CFD2DD;}
+		.d2-715853666 .color-N5{color:#DEE1EB;}
+		.d2-715853666 .color-N6{color:#EEF1F8;}
+		.d2-715853666 .color-N7{color:#FFFFFF;}
+		.d2-715853666 .color-B1{color:#0D32B2;}
+		.d2-715853666 .color-B2{color:#0D32B2;}
+		.d2-715853666 .color-B3{color:#E3E9FD;}
+		.d2-715853666 .color-B4{color:#E3E9FD;}
+		.d2-715853666 .color-B5{color:#EDF0FD;}
+		.d2-715853666 .color-B6{color:#F7F8FE;}
+		.d2-715853666 .color-AA2{color:#4A6FF3;}
+		.d2-715853666 .color-AA4{color:#EDF0FD;}
+		.d2-715853666 .color-AA5{color:#F7F8FE;}
+		.d2-715853666 .color-AB4{color:#EDF0FD;}
+		.d2-715853666 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-715853666);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-715853666);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-715853666);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-715853666);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-715853666);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-715853666);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-715853666);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-715853666);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="TWV0YQ=="><g class="shape" ><path d="M 102 153 C 102 153 101 153 101 153 L 53 108 C 52 108 52 107 53 106 L 101 61 C 102 61 102 61 103 61 L 151 106 C 152 106 152 107 151 108 L 103 153 C 103 153 102 153 102 153 Z" stroke="#0D32B2" fill="#1877f2" class=" stroke-B1" style="stroke-width:2;" /></g><text x="102.000000" y="112.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Meta</text></g><g class="TGxhbWE="><g class="shape" ><rect x="30.000000" y="213.000000" width="145.000000" height="82.000000" stroke="#1877f2" fill="#00c300" style="stroke-width:2;" /></g><text x="102.500000" y="251.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="102.500000" dy="0.000000">Llama Models</tspan><tspan x="102.500000" dy="18.500000">(Open Source)</tspan></text></g><g class="U29jaWFs"><g class="shape" ><rect x="606.000000" y="0.000000" width="190.000000" height="82.000000" stroke="#0D32B2" fill="#1877f2" class=" stroke-B1" style="stroke-width:2;" /></g><text x="701.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="701.000000" dy="0.000000">Facebook/Instagram</tspan><tspan x="701.000000" dy="18.500000">(Social Graph)</tspan></text></g><g class="QWRz"><g class="shape" ><rect x="618.000000" y="142.000000" width="166.000000" height="82.000000" stroke="#0D32B2" fill="#f5a623" class=" stroke-B1" style="stroke-width:2;" /></g><text x="701.000000" y="180.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="701.000000" dy="0.000000">Ad Network</tspan><tspan x="701.000000" dy="18.500000">(%98 of revenue)</tspan></text></g><g class="V2hhdHNBcHA="><g class="shape" ><rect x="602.000000" y="284.000000" width="198.000000" height="82.000000" stroke="#0D32B2" fill="#25D366" class=" stroke-B1" style="stroke-width:2;" /></g><text x="701.000000" y="322.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="701.000000" dy="0.000000">WhatsApp/Messenger</tspan><tspan x="701.000000" dy="18.500000">(Communication)</tspan></text></g><g class="TW9hdA=="><g class="shape" ><rect x="617.000000" y="426.000000" width="169.000000" height="169.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="701.500000" y="498.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="701.500000" dy="0.000000">Defense Moat:</tspan><tspan x="701.500000" dy="11.750000">Open-source AI prevents</tspan><tspan x="701.500000" dy="11.750000">competitors from owning</tspan><tspan x="701.500000" dy="11.750000">the reasoning layer</tspan></text></g><g class="UHVyZVBsYXk="><g class="shape" ><rect x="11.000000" y="620.000000" width="182.000000" height="82.000000" stroke="#666" fill="#ea4335" style="stroke-width:2;stroke-dasharray:6.000000,5.919384;" /></g><text x="102.000000" y="658.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="102.000000" dy="0.000000">Pure-Play AI</tspan><tspan x="102.000000" dy="18.500000">(OpenAI/Anthropic)</tspan></text></g><g class="UmV2ZW51ZQ=="><g class="shape" ><rect x="624.000000" y="655.000000" width="154.000000" height="154.000000" stroke="#666" fill="#F7F8FE" class=" fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="701.000000" y="730.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="701.000000" dy="0.000000">Revenue:</tspan><tspan x="701.000000" dy="12.500000">API fees (must charge)</tspan></text></g><g class="Q29tcGV0aXRvcg=="><g class="shape" ><rect x="0.000000" y="762.000000" width="204.000000" height="82.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:6.000000,5.919384;" /></g><text x="102.000000" y="800.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="102.000000" dy="0.000000">Other Social Networks</tspan><tspan x="102.000000" dy="18.500000">(TikTok, X, Snapchat)</tspan></text></g><g class="KExsYW1hIC0mZ3Q7IFNvY2lhbClbMF0="><marker id="mk-d2-715853666-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 161.632445 211.844525 C 354.399994 75.400002 443.600006 41.000000 602.000000 41.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /><text x="363.500000" y="69.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="363.500000" dy="0.000000">AI features in feed/reels</tspan><tspan x="363.500000" dy="18.500000">keep users engaged longer</tspan></text></g><g class="KExsYW1hIC0mZ3Q7IEFkcylbMF0="><path d="M 177.446128 236.436923 C 357.500000 193.779007 446.000000 183.000000 614.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /><text x="394.500000" y="187.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="394.500000" dy="0.000000">AI improves ad targeting</tspan><tspan x="394.500000" dy="18.500000">(Advantage+ / Lattice)</tspan></text></g><g class="KExsYW1hIC0mZ3Q7IFdoYXRzQXBwKVswXQ=="><path d="M 177.446128 271.562085 C 357.500000 314.220001 442.799988 325.000000 598.000000 325.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /><text x="386.000000" y="315.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="386.000000" dy="0.000000">AI assistants in</tspan><tspan x="386.000000" dy="18.500000">WhatsApp Business</tspan></text></g><g class="KExsYW1hIC0mZ3Q7IE1vYXQpWzBd"><path d="M 151.521057 295.798610 C 352.399994 467.299988 445.700012 510.500000 612.500000 510.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /><text x="355.500000" y="474.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Free (zero revenue)</text></g><g class="KFB1cmVQbGF5IC0mZ3Q7IFJldmVudWUpWzBd"><path d="M 195.000000 661.000000 C 361.000000 661.000000 447.200012 671.599976 620.110291 713.067173" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /></g><g class="KENvbXBldGl0b3IgLSZndDsgUmV2ZW51ZSlbMF0="><path d="M 206.000000 803.000000 C 363.200012 803.000000 447.200012 792.400024 620.110291 750.932827" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-715853666-3488378134)" mask="url(#d2-715853666)" /><text x="416.500000" y="786.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px"><tspan x="416.500000" dy="0.000000">Must charge for</tspan><tspan x="416.500000" dy="17.666667">AI features or</tspan><tspan x="416.500000" dy="17.666667">lose margins</tspan></text></g><mask id="d2-715853666" maskUnits="userSpaceOnUse" x="-21" y="-21" width="842" height="886">
+<rect x="-21" y="-21" width="842" height="886" fill="white"></rect>
+<rect x="272.000000" y="53.000000" width="183" height="37" fill="black"></rect>
+<rect x="312.000000" y="171.000000" width="165" height="37" fill="black"></rect>
+<rect x="320.000000" y="299.000000" width="132" height="37" fill="black"></rect>
+<rect x="291.000000" y="458.000000" width="129" height="21" fill="black"></rect>
+<rect x="362.000000" y="770.000000" width="109" height="53" fill="black"></rect>
+</mask></svg></svg>
+</div><h3 id="how-it-works-2">How It Works</h3><p>Meta&apos;s core business is <strong>advertising on its social platforms</strong> ($130B+/year). The social graph — who you know, what you like, where you go — is the moat. Llama&apos;s purpose is not to sell models — it&apos;s to ensure no competitor controls the AI layer that sits between Meta and its users.</p><p><strong>Why give Llama away for free:</strong></p><ol start="1"><li><p><strong>Commoditize the model layer</strong> — If everyone has access to Llama-class models, no single company (OpenAI, Anthropic, Google) can become the &quot;AI gatekeeper&quot; that Meta must pay or partner with.</p></li><li><p><strong>Drive adoption of Meta&apos;s ecosystem</strong> — Llama powers AI features inside WhatsApp Business, Facebook Feed ranking, Instagram Reels recommendations. These keep users engaged, which drives ad revenue.</p></li><li><p><strong>Crowdsource innovation</strong> — Open-source Llama means thousands of developers build tools, fine-tunes, and integrations. Meta gets the ecosystem benefit without paying for the R&amp;D.</p></li><li><p><strong>Defend against platform shift</strong> — If AI assistants become the primary interface (replacing browsers/apps), Meta needs its own model to insert into that interface. Giving Llama away ensures it becomes the default for third-party tools.</p></li></ol><p><strong>The calculation:</strong></p><table><thead><tr><th>Item</th><th>Cost/Impact</th></tr></thead><tbody><tr><td>Llama R&amp;D cost</td><td>~$100M-1B per generation</td></tr><tr><td>Value of defending ad revenue</td><td>$130B+/year</td></tr><tr><td>Cost of being locked out of AI layer</td><td>Potentially existential</td></tr><tr><td><strong>Net value of open-sourcing Llama</strong></td><td><strong>Massively positive</strong> if it prevents platform displacement</td></tr></tbody></table><h3 id="comparison-table-2">Comparison Table</h3><table><thead><tr><th></th><th>Pure-Play AI (OpenAI)</th><th>Meta (Llama)</th></tr></thead><tbody><tr><td><strong>Model pricing</strong></td><td>API per-token</td><td>Free (open weights)</td></tr><tr><td><strong>Revenue source</strong></td><td>Token sales</td><td>Social platform ads</td></tr><tr><td><strong>Open-source incentive</strong></td><td>None (undermines API sales)</td><td>Strong (commoditizes competitors)</td></tr><tr><td><strong>Customer relationship</strong></td><td>API customer</td><td>Social platform user</td></tr><tr><td><strong>Can they match $0?</strong></td><td>No</td><td>Yes — and they do</td></tr></tbody></table><p>Meta can permanently offer Llama at $0 because the model itself is not the product — the social graph is. Every Llama download makes the AI layer less ownable by competitors.</p><hr /><h2 id="case-study-3:-spacex-—-starlink-protects-the-mdirection:-right">Case Study 3: SpaceX — Starlink Protects the Mdirection: right</h2><p>SpaceX: &quot;SpaceX&quot; { shape: diamond style.fill: &quot;#f9ab00&quot; }</p><p>Starlink: &quot;Starlink\n(LEO Broadband)&quot; { style.fill: &quot;#005288&quot; style.stroke: &quot;#f9ab00&quot; }</p><p>Launch: &quot;Launch Services\n(Falcon 9 / Starship)&quot; { style.fill: &quot;#f9ab00&quot; }</p><p>Mars: &quot;Mars Colonization\n(Core Mission)&quot; { style.fill: &quot;#e85d26&quot; }</p><p>Gov: &quot;Government Contracts\n(DoD, NASA)&quot; { style.fill: &quot;#4b7bec&quot; }</p><p>Moat: &quot;Defense Moat:\nStarlink revenue funds\nStarship development,\nwhich enables Mars&quot; { style.font-size: 11 shape: square style.stroke-dash: 2 }</p><p>Starlink -&gt; Launch: &quot;Starlink revenue ($6B+/yr)\nfunds Starship R&amp;D&quot; Starlink -&gt; Mars: &quot;Mars depends on\nStarship + in-space\nrefueling&quot; Starlink -&gt; Gov: &quot;Starshield (military)\nderived from Starlink&quot; Launch -&gt; Mars: &quot;Starship is the only\nvehicle that can\ndeliver Mars payload&quot;</p><p>PurePlay: &quot;Pure-Play ISP\n(Singtel, Comcast, etc)&quot; { style.stroke-dash: 3 style.stroke: &quot;#666&quot; }</p><p>Revenue: &quot;Revenue:\nMonthly subscription\n(must cover\nnetwork cost)&quot; { style.font-size: 11 shape: square style.stroke-dash: 2 style.stroke: &quot;#666&quot; }</p><p>PurePlay -&gt; Revenue: &quot;Must maintain\nprofit margin on\nevery subscriber&quot; n every subscriber&quot;</p><pre><code>
+### How It Works
 
-Launch: &quot;Launch Services
-(Falcon 9 / Starship)&quot; {
-  style.fill: &quot;#f9ab00&quot;
-}
+SpaceX&apos;s stated mission is **Mars colonization**. Everything else — Falcon 9, Starlink, Dragon, Starship — serves that goal. Starlink is the revenue engine that funds Starship development.
 
-Mars: &quot;Mars Colonization
-(Core Mission)&quot; {
-  style.fill: &quot;#e85d26&quot;
-}
+**The key insight:** Starlink is not a telecom company that happens to do rockets. It&apos;s a rocket company that built a telecom to fund its rockets.
 
-Gov: &quot;Government Contracts
-(DoD, NASA)&quot; {
-  style.fill: &quot;#4b7bec&quot;
-}
+**Cross-subsidization in action:**
 
-Moat: &quot;Defense Moat:
-Starlink revenue funds
-Starship development,
-which enables Mars&quot; {
-  style.font-size: 11
-  shape: square
-  style.stroke-dash: 2
-}
+| Revenue Stream | Use | Margin |
+|---------------|-----|--------|
+| Starlink consumer ($120/mo) | Funds Starship R&amp;D | High (vertically integrated — SpaceX builds the satellites, launches them on their own rockets, and operates the network) |
+| Starlink enterprise/government | Premium pricing for defense/commercial | Very high (Starshield contracts) |
+| Falcon 9 launch services | Covers operational costs | Medium |
+| NASA/DoD contracts | Funds advanced R&amp;D | High margin, long-term |
 
-Starlink -&gt; Launch: &quot;Starlink revenue ($6B+/yr)
-funds Starship R&amp;D&quot;
-Starlink -&gt; Mars: &quot;Mars depends on
-Starship + in-space
-refueling&quot;
-Starlink -&gt; Gov: &quot;Starshield (military)
-derived from Starlink&quot;
-Launch -&gt; Mars: &quot;Starship is the only
-vehicle that can
-deliver Mars payload&quot;
+**Why Starlink can undercut traditional ISPs:**
 
-PurePlay: &quot;Pure-Play ISP
-(Singtel, Comcast, etc)&quot; {
-  style.stroke-dash: 3
-  style.stroke: &quot;#666&quot;
-}
+- Traditional ISPs (Singtel, Comcast, BT) must cover: fibre buildout, last-mile infrastructure, regulatory compliance, shareholder returns
+- Starlink&apos;s marginal cost is: building a satellite ($500K), launching it ($15M for 60 satellites = $250K each), and operating the network
+- Starlink doesn&apos;t need to maximize ISP profit — it needs enough cash flow to build Starship
+- If Starship achieves full reusability, launch costs drop 10x, making Starlink economics even better
 
-Revenue: &quot;Revenue:
-Monthly subscription
-(must cover
-network cost)&quot; {
-  style.font-size: 11
-  shape: square
-  style.stroke-dash: 2
-  style.stroke: &quot;#666&quot;
-}
+**The pure-play ISP cannot win this game:**
 
-PurePlay -&gt; Revenue: &quot;Must maintain
-profit margin on
-every subscriber&quot;
-</code></pre><h3 id="how-it-works-3">How It Works</h3><p>SpaceX&apos;s stated mission is <strong>Mars colonization</strong>. Everything else — Falcon 9, Starlink, Dragon, Starship — serves that goal. Starlink is the revenue engine that funds Starship development.</p><p><strong>The key insight:</strong> Starlink is not a telecom company that happens to do rockets. It&apos;s a rocket company that built a telecom to fund its rockets.</p><p><strong>Cross-subsidization in action:</strong></p><table><thead><tr><th>Revenue Stream</th><th>Use</th><th>Margin</th></tr></thead><tbody><tr><td>Starlink consumer ($120/mo)</td><td>Funds Starship R&amp;D</td><td>High (vertically integrated — SpaceX builds the satellites, launches them on their own rockets, and operates the network)</td></tr><tr><td>Starlink enterprise/government</td><td>Premium pricing for defense/commercial</td><td>Very high (Starshield contracts)</td></tr><tr><td>Falcon 9 launch services</td><td>Covers operational costs</td><td>Medium</td></tr><tr><td>NASA/DoD contracts</td><td>Funds advanced R&amp;D</td><td>High margin, long-term</td></tr></tbody></table><p><strong>Why Starlink can undercut traditional ISPs:</strong></p><ul><li>Traditional ISPs (Singtel, Comcast, BT) must cover: fibre buildout, last-mile infrastructure, regulatory compliance, shareholder returns</li><li>Starlink&apos;s marginal cost is: building a satellite (<span class="formula">500K), launching it (</span>15M for 60 satellites = $250K each), and operating the network</li><li>Starlink doesn&apos;t need to maximize ISP profit — it needs enough cash flow to build Starship</li><li>If Starship achieves full reusability, launch costs drop 10x, making Starlink economics even better</li></ul><p><strong>The pure-play ISP cannot win this game:</strong></p><table><thead><tr><th></th><th>Pure-Play ISP (Singtel)</th><th>SpaceX (Starlink)</th></tr></thead><tbody><tr><td><strong>Infrastructure cost</strong></td><td>Fibre trenching, landing stations, last-mile</td><td>Satellite manufacturing + launch</td></tr><tr><td><strong>Revenue mandate</strong></td><td>Profit on connectivity</td><td>Fund Mars / Starship development</td></tr><tr><td><strong>Can they price below cost?</strong></td><td>No (regulatory + shareholder)</td><td>Yes (mission-driven, private company)</td></tr><tr><td><strong>Vertical integration</strong></td><td>Low (buys equipment from vendors)</td><td>Extreme (builds satellites, rockets, ground stations, user terminals)</td></tr><tr><td><strong>Unit economics</strong></td><td>Must improve every quarter</td><td>Acceptable if Starship timeline advances</td></tr></tbody></table><p>This is why Starlink pricing has already dropped from <span class="formula">99/mo (beta) to </span>90/mo for standard, with promotional discounts — and why traditional ISPs can&apos;t match it without destroying their own margins.</p><hr /><h2 id="case-study-4:-submarine-cables-—-google-and-meta-build-their-own">Case Study 4: Submarine Cables — Google and Meta Build Their Own</h2><pre><code class="language-d2">direction: right
+| | Pure-Play ISP (Singtel) | SpaceX (Starlink) |
+|--|------------------------|-------------------|
+| **Infrastructure cost** | Fibre trenching, landing stations, last-mile | Satellite manufacturing + launch |
+| **Revenue mandate** | Profit on connectivity | Fund Mars / Starship development |
+| **Can they price below cost?** | No (regulatory + shareholder) | Yes (mission-driven, private company) |
+| **Vertical integration** | Low (buys equipment from vendors) | Extreme (builds satellites, rockets, ground stations, user terminals) |
+| **Unit economics** | Must improve every quarter | Acceptable if Starship timeline advances |
+
+This is why Starlink pricing has already dropped from $99/mo (beta) to $90/mo for standard, with promotional discounts — and why traditional ISPs can&apos;t match it without destroying their own margins.
+
+---
+
+## Case Study 4: Submarine Cables — Google and Meta Build Thdirection: right
 
 Hyperscaler: &quot;Google / Meta&quot; {
   shape: diamond
   style.fill: &quot;#4285f4&quot;
 }
 
-Cable: &quot;Private Submarine
-Cable (Echo, Bifrost,
-Apricot)&quot; {
+Cable: &quot;Private Submarine\nCable (Echo, Bifrost,\nApricot)&quot; {
   style.fill: &quot;#34a853&quot;
   style.stroke: &quot;#4285f4&quot;
 }
 
-Cloud: &quot;Cloud Revenue
-(Google Cloud / AWS)&quot; {
+Cloud: &quot;Cloud Revenue\n(Google Cloud / AWS)&quot; {
   style.fill: &quot;#4285f4&quot;
 }
 
-Ad: &quot;Ad Revenue
-(Search / Social)&quot; {
+Ad: &quot;Ad Revenue\n(Search / Social)&quot; {
   style.fill: &quot;#fbbc04&quot;
 }
 
-Users: &quot;User Experience
-(Lower latency)&quot; {
+Users: &quot;User Experience\n(Lower latency)&quot; {
   style.fill: &quot;#ea4335&quot;
 }
 
-Partner: &quot;Partners get
-capacity at cost&quot; {
+Partner: &quot;Partners get\ncapacity at cost&quot; {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
 }
 
-Cable -&gt; Cloud: &quot;Dedicated fibre pairs
-for cloud traffic&quot;
-Cable -&gt; Ad: &quot;Faster page load →
-higher ad revenue&quot;
-Cable -&gt; Users: &quot;Lower latency for
-all services&quot;
-Cable -&gt; Partner: &quot;Builds ecosystem
-goodwill&quot;
+Cable -&gt; Cloud: &quot;Dedicated fibre pairs\nfor cloud traffic&quot;
+Cable -&gt; Ad: &quot;Faster page load →\nhigher ad revenue&quot;
+Cable -&gt; Users: &quot;Lower latency for\nall services&quot;
+Cable -&gt; Partner: &quot;Builds ecosystem\ngoodwill&quot;
 
-PurePlay: &quot;Telecom Consortium
-(SEA-ME-WE-6)&quot; {
+PurePlay: &quot;Telecom Consortium\n(SEA-ME-WE-6)&quot; {
   style.stroke-dash: 3
   style.stroke: &quot;#666&quot;
 }
 
-Revenue: &quot;Revenue:
-Sell capacity to carriers
-(must return
-on investment)&quot; {
+Revenue: &quot;Revenue:\nSell capacity to carriers\n(must return\non investment)&quot; {
   style.font-size: 11
   shape: square
   style.stroke-dash: 2
   style.stroke: &quot;#666&quot;
 }
 
-PurePlay -&gt; Revenue: &quot;30+ carriers share
-cost and revenue
-= higher prices&quot;
-</code></pre><p>Submarine cable economics follow the same pattern:</p><table><thead><tr><th></th><th>Consortium Cable (SEA-ME-WE-6)</th><th>Hyperscaler Cable (Echo/Bifrost)</th></tr></thead><tbody><tr><td><strong>Cost</strong></td><td>$300-700M shared across 30+ carriers</td><td>$300-700M paid by Google/Meta</td></tr><tr><td><strong>Purpose</strong></td><td>Sell capacity at a profit</td><td>Serve internal traffic</td></tr><tr><td><strong>Capacity allocation</strong></td><td>Pro-rata by investment</td><td>100% owned</td></tr><tr><td><strong>Pricing</strong></td><td>Market rates (must return on investment)</td><td>Internal transfer price (zero if unused)</td></tr><tr><td><strong>Competitive impact</strong></td><td>Sets wholesale floor</td><td>Sets no floor — excess given to partners</td></tr></tbody></table><p>When Google builds Echo, they don&apos;t need to make a profit on the cable. They need lower latency for Google services → better user experience → more ad revenue. The cable itself is a rounding error on Google&apos;s balance sheet.</p><hr /><h2 id="the-unified-pattern">The Unified Pattern</h2><pre><code class="language-d2">direction: down
+PurePlay -&gt; Revenue: &quot;30+ carriers share\ncost and revenue\n= higher prices&quot;
+higher prices&quot;
+</code></pre><p>Submarine cable economics follow the same pattern:</p><table><thead><tr><th></th><th>Consortium Cable (SEA-ME-WE-6)</th><th>Hyperscaler Cable (Echo/Bifrost)</th></tr></thead><tbody><tr><td><strong>Cost</strong></td><td>$300-700M shared across 30+ carriers</td><td>$300-700M paid by Google/Meta</td></tr><tr><td><strong>Purpose</strong></td><td>Sell capacity at a profit</td><td>Serve internal traffic</td></tr><tr><td><strong>Capacity allocation</strong></td><td>Pro-rata by investment</td><td>100% owned</td></tr><tr><td><strong>Pricing</strong></td><td>Market rates (must return on investment)</td><td>Internal transfer price (zero if unused)</td></tr><tr><td><strong>Competitive impact</strong></td><td>Sets wholesale floor</td><td>Sets no floor — excess given to partners</td></tr></tbody></table><p>When Google builds Echo, they don&apos;t need to make a profit on the cable. They need lower latency for Google services → better user experience → more ad revenue. The cable itself is a rounding error on Google&apos;s balance shedirection: down</p><p>Title: &quot;The Cross-Subsidization Moat&quot; { shape: text style.font-size: 16 }</p><p>Layer1: &quot;Company&quot; { style.stroke: &quot;#333&quot; style.fill: transparent }</p><p>G: &quot;Google&quot; { style.fill: &quot;#4285f4&quot; } M: &quot;Meta&quot; { style.fill: &quot;#1877f2&quot; } X: &quot;SpaceX&quot; { style.fill: &quot;#f9ab00&quot; }</p><p>Layer2: &quot;Loss Leader&quot; { style.stroke: &quot;#333&quot; style.fill: transparent }</p><p>GL: &quot;Gemini (cheap API)&quot; { style.fill: &quot;#ea4335&quot; } ML: &quot;Llama (free)&quot; { style.fill: &quot;#00c300&quot; } XL: &quot;Starlink (cheap ISP)&quot; { style.fill: &quot;#005288&quot; }</p><p>Layer3: &quot;Protected Revenue&quot; { style.stroke: &quot;#333&quot; style.fill: transparent }</p><p>GR: &quot;Search Ads ($200B+)&quot; { style.fill: &quot;#34a853&quot; } MR: &quot;Social Ads ($130B+)&quot; { style.fill: &quot;#f5a623&quot; } XR: &quot;Mars / Defense ($B+)&quot; { style.fill: &quot;#e85d26&quot; }</p><p>G -&gt; GL -&gt; GR M -&gt; ML -&gt; MR X -&gt; XL -&gt; XR -&gt; GL -&gt; GR M -&gt; ML -&gt; MR X -&gt; XL -&gt; XR</p><pre><code>
+Every example follows the same architecture:
 
-Title: &quot;The Cross-Subsidization Moat&quot; {
-  shape: text
-  style.font-size: 16
-}
+1. **Core business** generates massive, defensible revenue (Search ads, social graph, space access)
+2. **Loss leader** is priced at or below cost (Gemini, Llama, Starlink)
+3. **Loss leader protects core** by preventing competitors from disrupting the moat
+4. **Pure-play competitors cannot match the price** because they lack the adjacent revenue
 
-Layer1: &quot;Company&quot; {
-  style.stroke: &quot;#333&quot;
-  style.fill: transparent
-}
+---
 
-G: &quot;Google&quot; {
-  style.fill: &quot;#4285f4&quot;
-}
-M: &quot;Meta&quot; {
-  style.fill: &quot;#1877f2&quot;
-}
-X: &quot;SpaceX&quot; {
-  style.fill: &quot;#f9ab00&quot;
-}
+## What This Means for Consumers
 
-Layer2: &quot;Loss Leader&quot; {
-  style.stroke: &quot;#333&quot;
-  style.fill: transparent
-}
+| When you buy... | You&apos;re paying | But the company actually makes money from... |
+|----------------|--------------|---------------------------------------------|
+| Gemini API tokens | Below cost | Search ads and Google Cloud |
+| Llama model weights | Nothing | Facebook/Instagram ad targeting |
+| Starlink subscription | Near cost | Starship development and defense contracts |
+| Google/Meta submarine cable capacity | Below wholesale | Cloud and ad revenue |
 
-GL: &quot;Gemini (cheap API)&quot; {
-  style.fill: &quot;#ea4335&quot;
-}
-ML: &quot;Llama (free)&quot; {
-  style.fill: &quot;#00c300&quot;
-}
-XL: &quot;Starlink (cheap ISP)&quot; {
-  style.fill: &quot;#005288&quot;
-}
+You are not the customer of the loss leader. You are the **means to an end** — more engagement, more data, more ad inventory, more Mars progress.
 
-Layer3: &quot;Protected Revenue&quot; {
-  style.stroke: &quot;#333&quot;
-  style.fill: transparent
-}
+---
 
-GR: &quot;Search Ads ($200B+)&quot; {
-  style.fill: &quot;#34a853&quot;
-}
-MR: &quot;Social Ads ($130B+)&quot; {
-  style.fill: &quot;#f5a623&quot;
-}
-XR: &quot;Mars / Defense ($B+)&quot; {
-  style.fill: &quot;#e85d26&quot;
-}
+## What This Means for Competitors
 
-G -&gt; GL -&gt; GR
-M -&gt; ML -&gt; MR
-X -&gt; XL -&gt; XR
-</code></pre><p>Every example follows the same architecture:</p><ol start="1"><li><strong>Core business</strong> generates massive, defensible revenue (Search ads, social graph, space access)</li><li><strong>Loss leader</strong> is priced at or below cost (Gemini, Llama, Starlink)</li><li><strong>Loss leader protects core</strong> by preventing competitors from disrupting the moat</li><li><strong>Pure-play competitors cannot match the price</strong> because they lack the adjacent revenue</li></ol><hr /><h2 id="what-this-means-for-consumers">What This Means for Consumers</h2><table><thead><tr><th>When you buy...</th><th>You&apos;re paying</th><th>But the company actually makes money from...</th></tr></thead><tbody><tr><td>Gemini API tokens</td><td>Below cost</td><td>Search ads and Google Cloud</td></tr><tr><td>Llama model weights</td><td>Nothing</td><td>Facebook/Instagram ad targeting</td></tr><tr><td>Starlink subscription</td><td>Near cost</td><td>Starship development and defense contracts</td></tr><tr><td>Google/Meta submarine cable capacity</td><td>Below wholesale</td><td>Cloud and ad revenue</td></tr></tbody></table><p>You are not the customer of the loss leader. You are the <strong>means to an end</strong> — more engagement, more data, more ad inventory, more Mars progress.</p><hr /><h2 id="what-this-means-for-competitors">What This Means for Competitors</h2><p>If you are a pure-play AI company (OpenAI, Anthropic, Mistral) competing against Google or Meta:</p><ul><li><strong>You cannot win on price.</strong> Google can offer Gemini at zero and still profit via Search. Meta already offers Llama at zero.</li><li><strong>You must win on differentiation.</strong> Better reasoning, better safety, better at a specific vertical — something Google/Meta cannot replicate by subsidizing.</li><li><strong>You must build your own moat.</strong> For OpenAI, that might be enterprise trust (Microsoft partnership, Azure exclusivity). For Anthropic, it might be safety certification. For Mistral, it might be on-device efficiency.</li></ul><p>The hyperscalers have already won the price war before it started. The only winning move is not to play it.</p><hr /><h2 id="what-this-means-for-you">What This Means for You</h2><p>When evaluating infrastructure or API pricing:</p><ol start="1"><li><strong>Ask why it&apos;s cheap.</strong> If Google sells tokens below OpenAI&apos;s cost, the answer is not &quot;Google is generous&quot; — it&apos;s that Google makes money elsewhere.</li><li><strong>Model switching costs.</strong> Free Llama weights today → Meta&apos;s platform dependency tomorrow. No free lunch.</li><li><strong>Map the moat.</strong> Every company has a primary profit engine. Everything else is a loss leader or a side effect. Find the actual product.</li><li><strong>Don&apos;t race to the bottom.</strong> If you compete against a cross-subsidized product, compete on something the subsidizer can&apos;t easily replicate — trust, niche, vertical integration.</li></ol><hr /><h2 id="bottom-line">Bottom Line</h2><p>Google, Meta, and SpaceX can sell below cost because the product is not the product. The product is Search ads, the social graph, and Mars. AI, connectivity, and open-source models are just means to those ends.</p><p>Pure-play competitors are structurally disadvantaged — they must profit on the product itself, while hyperscalers treat it as a marketing expense.</p><p>This is not unfair competition. It&apos;s portfolio economics at scale. And it applies to everything from submarine cables to LLM tokens.</p><hr /><p><em>The Google vs SpaceX architecture comparison in a previous post (June 17, 2026) established the infrastructure value framework. This post extends the economics into cross-subsidization. Revenue figures are approximate based on public filings.</em></p></div>
+If you are a pure-play AI company (OpenAI, Anthropic, Mistral) competing against Google or Meta:
+
+- **You cannot win on price.** Google can offer Gemini at zero and still profit via Search. Meta already offers Llama at zero.
+- **You must win on differentiation.** Better reasoning, better safety, better at a specific vertical — something Google/Meta cannot replicate by subsidizing.
+- **You must build your own moat.** For OpenAI, that might be enterprise trust (Microsoft partnership, Azure exclusivity). For Anthropic, it might be safety certification. For Mistral, it might be on-device efficiency.
+
+The hyperscalers have already won the price war before it started. The only winning move is not to play it.
+
+---
+
+## What This Means for You
+
+When evaluating infrastructure or API pricing:
+
+1. **Ask why it&apos;s cheap.** If Google sells tokens below OpenAI&apos;s cost, the answer is not &quot;Google is generous&quot; — it&apos;s that Google makes money elsewhere.
+2. **Model switching costs.** Free Llama weights today → Meta&apos;s platform dependency tomorrow. No free lunch.
+3. **Map the moat.** Every company has a primary profit engine. Everything else is a loss leader or a side effect. Find the actual product.
+4. **Don&apos;t race to the bottom.** If you compete against a cross-subsidized product, compete on something the subsidizer can&apos;t easily replicate — trust, niche, vertical integration.
+
+---
+
+## Bottom Line
+
+Google, Meta, and SpaceX can sell below cost because the product is not the product. The product is Search ads, the social graph, and Mars. AI, connectivity, and open-source models are just means to those ends.
+
+Pure-play competitors are structurally disadvantaged — they must profit on the product itself, while hyperscalers treat it as a marketing expense.
+
+This is not unfair competition. It&apos;s portfolio economics at scale. And it applies to everything from submarine cables to LLM tokens.
+
+---
+
+*The Google vs SpaceX architecture comparison in a previous post (June 17, 2026) established the infrastructure value framework. This post extends the economics into cross-subsidization. Revenue figures are approximate based on public filings.*
+</code></pre></div>
 
 <p><i>Published: 2026-06-22</i></p>
 

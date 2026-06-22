@@ -157,118 +157,316 @@
   
 </h1>
 <div><hr /><p>Two network topology concepts drive BSV&apos;s architecture: <strong>small world networks</strong> and the <strong>Mandala</strong> topology. Together they enable a blockchain where any node can reach any other node in ~2 hops, regardless of network size.</p><p>Here&apos;s how they work and how BTC compares.</p><hr /><h2 id="small-world-networks">Small World Networks</h2><p>A <strong>small world network</strong> is one where the minimum distance between any two nodes (in hops) grows logarithmically with the number of nodes:</p><pre><code>L ∝ log N
-</code></pre><p>Double the nodes → one more hop. A billion nodes → ~30 hops. This property emerges naturally in networks that balance local clustering with a few long-range connections.</p><p>The classic example is &quot;six degrees of separation&quot; — any two humans are ~6 social connections apart. Same principle.</p><p>In a blockchain context, small world means:</p><ul><li><strong>Miners</strong> are incentivised to connect to other miners directly (they need blocks fast to avoid orphan risk)</li><li>Over time, this drives the miner subnetwork toward a <strong>nearly complete graph</strong> — every miner connected to almost every other miner</li><li>The average distance between any two miner nodes converges toward <strong>1.3 hops</strong></li></ul><p>This is not by protocol design — it&apos;s emergent. Miners economically optimise their connectivity to minimise block propagation latency, and the topology self-organises into a small world.</p><hr /><h2 id="the-mandala-topology">The Mandala Topology</h2><p>The Mandala is a <strong>layered, recursive network</strong> named after the concentric circular patterns. It stacks layers (or &quot;shells&quot;) where:</p><ol start="1"><li><p><strong>Core — Teranodes (Transaction Processors)</strong></p><ul><li>Densely interconnected mesh — the &quot;giant node&quot;</li><li>All core nodes connected to almost all other core nodes</li><li>Handle block assembly, proof-of-work, transaction ordering</li></ul></li><li><p><strong>Middle — Overlay Services</strong></p><ul><li>Specialised services built on top of the core</li><li>Token tracking, key-value stores, data indexing</li><li>Can encapsulate each other (layers within layers)</li><li>Each overlay connects to multiple core nodes</li></ul></li><li><p><strong>Edge — Applications / Wallets (Transacting Parties)</strong></p><ul><li>SPV wallets, business applications</li><li>Connect to one or more overlay services</li><li>Validate via Merkle proofs (SPV) — no need to run a full node</li></ul></li></ol><pre><code class="language-d2">direction: down
-
-App1: &quot;App / Wallet&quot; {
+</code></pre><p>Double the nodes → one more hop. A billion nodes → ~30 hops. This property emerges naturally in networks that balance local clustering with a few long-range connections.</p><p>The classic example is &quot;six degrees of separation&quot; — any two humans are ~6 social connections apart. Same principle.</p><p>In a blockchain context, small world means:</p><ul><li><strong>Miners</strong> are incentivised to connect to other miners directly (they need blocks fast to avoid orphan risk)</li><li>Over time, this drives the miner subnetwork toward a <strong>nearly complete graph</strong> — every miner connected to almost every other miner</li><li>The average distance between any two miner nodes converges toward <strong>1.3 hops</strong></li></ul><p>This is not by protocol design — it&apos;s emergent. Miners economically optimise their connectivity to minimise block propagation latency, and the topology self-organises into a small world.</p><hr /><h2 id="the-mandala-topology">The Mandala Topology</h2><p>The Mandala is a <strong>layered, recursive network</strong> named after the concentric circular patterns. It stacks layers (or &quot;shells&quot;) where:</p><ol start="1"><li><p><strong>Core — Teranodes (Transaction Processors)</strong></p><ul><li>Densely interconnected mesh — the &quot;giant node&quot;</li><li>All core nodes connected to almost all other core nodes</li><li>Handle block assembly, proof-of-work, transaction ordering</li></ul></li><li><p><strong>Middle — Overlay Services</strong></p><ul><li>Specialised services built on top of the core</li><li>Token tracking, key-value stores, data indexing</li><li>Can encapsulate each other (layers within layers)</li><li>Each overlay connects to multiple core nodes</li></ul></li><li><p><strong>Edge — Applications / Wallets (Transacting Parties)</strong></p><ul><li>SPV wallets, business applications</li><li>Connect to one or more overlay services</li><li>Validate via Merkle proofs (SPV) — no need to run a full node</li></ul></li></ol><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+App1: "App / Wallet" {
   shape: oval
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-App2: &quot;App / Wallet&quot; {
+App2: "App / Wallet" {
   shape: oval
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-App3: &quot;App / Wallet&quot; {
+App3: "App / Wallet" {
   shape: oval
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-
-Overlay1: &quot;Token Overlay&quot; {
+#
+Overlay1: "Token Overlay" {
   shape: rectangle
-  style.fill: &quot;#85c1e9&quot;
+  style.fill: "#85c1e9"
 }
-Overlay2: &quot;Data Index&quot; {
+Overlay2: "Data Index" {
   shape: rectangle
-  style.fill: &quot;#85c1e9&quot;
+  style.fill: "#85c1e9"
 }
-
-Core1: &quot;Teranode A&quot; {
+#
+Core1: "Teranode A" {
   shape: diamond
-  style.fill: &quot;#f1948a&quot;
+  style.fill: "#f1948a"
 }
-Core2: &quot;Teranode B&quot; {
+Core2: "Teranode B" {
   shape: diamond
-  style.fill: &quot;#f1948a&quot;
+  style.fill: "#f1948a"
 }
-Core3: &quot;Teranode C&quot; {
+Core3: "Teranode C" {
   shape: diamond
-  style.fill: &quot;#f1948a&quot;
+  style.fill: "#f1948a"
 }
-
-Edge: &quot;Edge Layer (Apps)&quot; {
+#
+Edge: "Edge Layer (Apps)" {
   shape: text
   style.font-size: 11
 }
-Middle: &quot;Overlay Layer&quot; {
+Middle: "Overlay Layer" {
   shape: text
   style.font-size: 11
 }
-Core: &quot;Core Layer (Teranodes)
-~1.3 hop internal distance&quot; {
+Core: "Core Layer (Teranodes)\n~1.3 hop internal distance" {
   shape: text
   style.font-size: 11
 }
+#
+App1 -> Overlay1
+App2 -> Overlay1
+App3 -> Overlay2
+#
+Overlay1 -> Core1
+Overlay1 -> Core2
+Overlay2 -> Core2
+Overlay2 -> Core3
+#
+Core1 -> Core2
+Core2 -> Core3
+Core1 -> Core3
+#
+Edge -> Middle -> Core
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 847 845"><svg class="d2-129625660 d2-svg" width="847" height="845" viewBox="-21 -21 847 845"><rect x="-21.000000" y="-21.000000" width="847.000000" height="845.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-129625660 .text {
+	font-family: "d2-129625660-font-regular";
+}
+@font-face {
+	font-family: d2-129625660-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-129625660 .text-bold {
+	font-family: "d2-129625660-font-bold";
+}
+@font-face {
+	font-family: d2-129625660-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
 
-App1 -&gt; Overlay1
-App2 -&gt; Overlay1
-App3 -&gt; Overlay2
-
-Overlay1 -&gt; Core1
-Overlay1 -&gt; Core2
-Overlay2 -&gt; Core2
-Overlay2 -&gt; Core3
-
-Core1 -&gt; Core2
-Core2 -&gt; Core3
-Core1 -&gt; Core3
-
-Edge -&gt; Middle -&gt; Core
-</code></pre><p>The critical property: <strong>the topology is recursive</strong>. Each overlay can itself contain sub-overlays in the same concentric pattern. This allows the network to scale unboundedly — new layers stack on top without congesting the core.</p><hr /><h2 id="how-2-hop-routing-works">How 2-Hop Routing Works</h2><p>In a Mandala network, any edge node reaches any other node in <strong>at most 2 hops</strong>:</p><pre><code class="language-d2">direction: right
-
-EdgeA: &quot;Edge A
-(Waller)&quot; {
+		.d2-129625660 .fill-N1{fill:#0A0F25;}
+		.d2-129625660 .fill-N2{fill:#676C7E;}
+		.d2-129625660 .fill-N3{fill:#9499AB;}
+		.d2-129625660 .fill-N4{fill:#CFD2DD;}
+		.d2-129625660 .fill-N5{fill:#DEE1EB;}
+		.d2-129625660 .fill-N6{fill:#EEF1F8;}
+		.d2-129625660 .fill-N7{fill:#FFFFFF;}
+		.d2-129625660 .fill-B1{fill:#0D32B2;}
+		.d2-129625660 .fill-B2{fill:#0D32B2;}
+		.d2-129625660 .fill-B3{fill:#E3E9FD;}
+		.d2-129625660 .fill-B4{fill:#E3E9FD;}
+		.d2-129625660 .fill-B5{fill:#EDF0FD;}
+		.d2-129625660 .fill-B6{fill:#F7F8FE;}
+		.d2-129625660 .fill-AA2{fill:#4A6FF3;}
+		.d2-129625660 .fill-AA4{fill:#EDF0FD;}
+		.d2-129625660 .fill-AA5{fill:#F7F8FE;}
+		.d2-129625660 .fill-AB4{fill:#EDF0FD;}
+		.d2-129625660 .fill-AB5{fill:#F7F8FE;}
+		.d2-129625660 .stroke-N1{stroke:#0A0F25;}
+		.d2-129625660 .stroke-N2{stroke:#676C7E;}
+		.d2-129625660 .stroke-N3{stroke:#9499AB;}
+		.d2-129625660 .stroke-N4{stroke:#CFD2DD;}
+		.d2-129625660 .stroke-N5{stroke:#DEE1EB;}
+		.d2-129625660 .stroke-N6{stroke:#EEF1F8;}
+		.d2-129625660 .stroke-N7{stroke:#FFFFFF;}
+		.d2-129625660 .stroke-B1{stroke:#0D32B2;}
+		.d2-129625660 .stroke-B2{stroke:#0D32B2;}
+		.d2-129625660 .stroke-B3{stroke:#E3E9FD;}
+		.d2-129625660 .stroke-B4{stroke:#E3E9FD;}
+		.d2-129625660 .stroke-B5{stroke:#EDF0FD;}
+		.d2-129625660 .stroke-B6{stroke:#F7F8FE;}
+		.d2-129625660 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-129625660 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-129625660 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-129625660 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-129625660 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-129625660 .background-color-N1{background-color:#0A0F25;}
+		.d2-129625660 .background-color-N2{background-color:#676C7E;}
+		.d2-129625660 .background-color-N3{background-color:#9499AB;}
+		.d2-129625660 .background-color-N4{background-color:#CFD2DD;}
+		.d2-129625660 .background-color-N5{background-color:#DEE1EB;}
+		.d2-129625660 .background-color-N6{background-color:#EEF1F8;}
+		.d2-129625660 .background-color-N7{background-color:#FFFFFF;}
+		.d2-129625660 .background-color-B1{background-color:#0D32B2;}
+		.d2-129625660 .background-color-B2{background-color:#0D32B2;}
+		.d2-129625660 .background-color-B3{background-color:#E3E9FD;}
+		.d2-129625660 .background-color-B4{background-color:#E3E9FD;}
+		.d2-129625660 .background-color-B5{background-color:#EDF0FD;}
+		.d2-129625660 .background-color-B6{background-color:#F7F8FE;}
+		.d2-129625660 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-129625660 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-129625660 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-129625660 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-129625660 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-129625660 .color-N1{color:#0A0F25;}
+		.d2-129625660 .color-N2{color:#676C7E;}
+		.d2-129625660 .color-N3{color:#9499AB;}
+		.d2-129625660 .color-N4{color:#CFD2DD;}
+		.d2-129625660 .color-N5{color:#DEE1EB;}
+		.d2-129625660 .color-N6{color:#EEF1F8;}
+		.d2-129625660 .color-N7{color:#FFFFFF;}
+		.d2-129625660 .color-B1{color:#0D32B2;}
+		.d2-129625660 .color-B2{color:#0D32B2;}
+		.d2-129625660 .color-B3{color:#E3E9FD;}
+		.d2-129625660 .color-B4{color:#E3E9FD;}
+		.d2-129625660 .color-B5{color:#EDF0FD;}
+		.d2-129625660 .color-B6{color:#F7F8FE;}
+		.d2-129625660 .color-AA2{color:#4A6FF3;}
+		.d2-129625660 .color-AA4{color:#EDF0FD;}
+		.d2-129625660 .color-AA5{color:#F7F8FE;}
+		.d2-129625660 .color-AB4{color:#EDF0FD;}
+		.d2-129625660 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-129625660);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-129625660);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-129625660);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-129625660);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-129625660);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-129625660);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-129625660);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-129625660);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="QXBwMQ=="><g class="shape" ><ellipse rx="92.000000" ry="30.500000" cx="336.000000" cy="30.500000" stroke="#0D32B2" fill="#82e0aa" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="336.000000" y="36.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">App / Wallet</text></g><g class="QXBwMg=="><g class="shape" ><ellipse rx="92.000000" ry="30.500000" cx="92.000000" cy="30.500000" stroke="#0D32B2" fill="#82e0aa" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="92.000000" y="36.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">App / Wallet</text></g><g class="QXBwMw=="><g class="shape" ><ellipse rx="92.000000" ry="30.500000" cx="713.000000" cy="194.500000" stroke="#0D32B2" fill="#82e0aa" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="713.000000" y="200.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">App / Wallet</text></g><g class="T3ZlcmxheTE="><g class="shape" ><rect x="140.000000" y="161.000000" width="149.000000" height="66.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="214.500000" y="199.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Token Overlay</text></g><g class="T3ZlcmxheTI="><g class="shape" ><rect x="653.000000" y="340.000000" width="120.000000" height="66.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="713.000000" y="378.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Data Index</text></g><g class="Q29yZTE="><g class="shape" ><path d="M 146 419 C 145 419 145 419 144 419 L 51 374 C 50 374 50 373 51 372 L 144 327 C 145 327 146 327 147 327 L 241 372 C 242 372 242 373 241 374 L 148 419 C 147 419 147 419 146 419 Z" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="146.000000" y="378.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Teranode A</text></g><g class="Q29yZTI="><g class="shape" ><path d="M 363 611 C 362 611 362 611 361 611 L 268 566 C 267 566 267 565 268 564 L 361 519 C 362 519 363 519 364 519 L 458 564 C 459 564 459 565 458 566 L 365 611 C 364 611 364 611 363 611 Z" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="363.000000" y="570.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Teranode B</text></g><g class="Q29yZTM="><g class="shape" ><path d="M 363 803 C 362 803 362 803 361 803 L 269 758 C 268 758 268 757 269 756 L 361 711 C 362 711 363 711 364 711 L 457 756 C 458 756 458 757 457 758 L 365 803 C 364 803 364 803 363 803 Z" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="363.000000" y="762.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Teranode C</text></g><g class="RWRnZQ=="><g class="shape" ></g><text x="529.000000" y="35.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:11px">Edge Layer (Apps)</text></g><g class="TWlkZGxl"><g class="shape" ></g><text x="529.500000" y="198.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:11px">Overlay Layer</text></g><g class="Q29yZQ=="><g class="shape" ></g><text x="529.000000" y="372.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="529.000000" dy="0.000000">Core Layer (Teranodes)</tspan><tspan x="529.000000" dy="12.500000">~1.3 hop internal distance</tspan></text></g><g class="KEFwcDEgLSZndDsgT3ZlcmxheTEpWzBd"><marker id="mk-d2-129625660-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 336.000000 63.000000 C 336.000000 101.000000 321.399994 121.000000 266.300120 158.739644" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KEFwcDIgLSZndDsgT3ZlcmxheTEpWzBd"><path d="M 92.000000 63.000000 C 92.000000 101.000000 106.599998 121.000000 161.699880 158.739644" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KEFwcDMgLSZndDsgT3ZlcmxheTIpWzBd"><path d="M 712.980769 226.999908 C 712.599976 266.600006 712.500000 289.600006 712.500000 336.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KE92ZXJsYXkxIC0mZ3Q7IENvcmUxKVswXQ=="><path d="M 185.731841 228.546536 C 154.199997 267.000000 146.000000 287.000000 146.000000 323.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KE92ZXJsYXkxIC0mZ3Q7IENvcmUyKVswXQ=="><path d="M 282.295841 227.880314 C 362.100006 267.000000 382.500000 296.200012 382.500000 325.000000 C 382.500000 353.799988 380.399994 479.799988 372.763478 519.073538" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KE92ZXJsYXkyIC0mZ3Q7IENvcmUyKVswXQ=="><path d="M 650.571237 389.986031 C 420.500000 453.091003 362.600006 479.000000 362.960003 515.000200" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KE92ZXJsYXkyIC0mZ3Q7IENvcmUzKVswXQ=="><path d="M 712.500000 408.000000 C 712.500000 456.399994 712.500000 488.200012 712.500000 517.000000 C 712.500000 545.799988 654.799988 676.799988 427.857973 738.943570" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KENvcmUxIC0mZ3Q7IENvcmUyKVswXQ=="><path d="M 189.678506 401.087483 C 273.200012 455.200012 303.000000 481.200012 334.713378 526.718025" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KENvcmUyIC0mZ3Q7IENvcmUzKVswXQ=="><path d="M 362.980001 612.999900 C 362.600006 651.000000 362.600006 671.000000 362.960003 707.000200" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KENvcmUxIC0mZ3Q7IENvcmUzKVswXQ=="><path d="M 140.804857 419.990457 C 137.000000 458.799988 136.000000 488.200012 136.000000 517.000000 C 136.000000 545.799988 171.000000 675.799988 307.315841 733.442127" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KEVkZ2UgLSZndDsgTWlkZGxlKVswXQ=="><path d="M 529.000000 40.500000 C 529.000000 96.500000 529.000000 126.199997 529.000000 183.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><g class="KE1pZGRsZSAtJmd0OyBDb3JlKVswXQ=="><path d="M 529.000000 203.000000 C 529.000000 261.799988 529.000000 293.700012 529.000000 356.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-129625660-3488378134)" mask="url(#d2-129625660)" /></g><mask id="d2-129625660" maskUnits="userSpaceOnUse" x="-21" y="-21" width="847" height="845">
+<rect x="-21" y="-21" width="847" height="845" fill="white"></rect><p></mask></svg></svg></p></div><p>The critical property: <strong>the topology is recursive</strong>. Each overlay can itself contain sub-overlays in the same concentric pattern. This allows the network to scale unboundedly — new layers stack on top without congesting the core.</p><hr /><h2 id="how-2-hop-routing-works">How 2-Hop Routing Works</h2><p>In a Mandala network, any edge node reaches any other node in <strong>at most 2 hops</strong>:</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+EdgeA: "Edge A\n(Waller)" {
   shape: oval
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-
-OverlayA: &quot;Overlay&quot; {
+#
+OverlayA: "Overlay" {
   shape: rectangle
-  style.fill: &quot;#85c1e9&quot;
+  style.fill: "#85c1e9"
 }
-
-CoreNode: &quot;Teranode Core
-(~1.3 hop internal)&quot; {
+#
+CoreNode: "Teranode Core\n(~1.3 hop internal)" {
   shape: diamond
-  style.fill: &quot;#f1948a&quot;
+  style.fill: "#f1948a"
 }
-
-OverlayB: &quot;Overlay&quot; {
+#
+OverlayB: "Overlay" {
   shape: rectangle
-  style.fill: &quot;#85c1e9&quot;
+  style.fill: "#85c1e9"
 }
-
-EdgeB: &quot;Edge B
-(App)&quot; {
+#
+EdgeB: "Edge B\n(App)" {
   shape: oval
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-
-Hop1: &quot;Hop 1
-(Edge → Core)&quot; {
+#
+Hop1: "Hop 1\n(Edge → Core)" {
   shape: text
   style.font-size: 10
 }
-Hop2: &quot;Hop 2
-(Core → Edge)&quot; {
+Hop2: "Hop 2\n(Core → Edge)" {
   shape: text
   style.font-size: 10
 }
-
-EdgeA -&gt; OverlayA -&gt; CoreNode -&gt; OverlayB -&gt; EdgeB
-
-Hop1 -&gt; Hop1: &quot;&quot; {
+#
+EdgeA -> OverlayA -> CoreNode -> OverlayB -> EdgeB
+#
+Hop1 -> Hop1: "" {
   style.stroke: transparent
 }
-</code></pre><p>Broken down:</p><ol start="1"><li><strong>Edge to core</strong>: Your SPV wallet is connected to an overlay service, which is connected to one (or a few) Teranodes in the core. That&apos;s 1 hop from edge to core.</li><li><strong>Core to target</strong>: The Teranode core is a nearly complete graph — every core node is ~1.3 hops from every other core node. For practical purposes, 1 hop.</li><li><strong>Core to target&apos;s edge</strong>: The target&apos;s overlay/application is similarly 1 hop up from a core node.</li></ol><p><strong>Total: 2 hops edge-to-edge.</strong> This is bounded and constant — it does not grow with network size.</p><p>This works because:</p><ul><li>The core is <strong>densely connected</strong> (miners maximise their peer count)</li><li>Edge nodes don&apos;t need to find each other — they route through the core</li><li>The overlay layer abstracts the discovery problem</li></ul><p>Contrast with a flat P2P network where a node has 8 random peers, and reaching a specific node across 10,000 nodes might take 5-10 hops.</p><hr /><h2 id="the-&quot;giant-node&quot;-emergence">The &quot;Giant Node&quot; Emergence</h2><p>As miners compete, they naturally optimise connectivity:</p><ol start="1"><li>A miner with more peers gets blocks faster → lower orphan risk → higher profitability</li><li>This incentivises each miner to peer with every other miner</li><li>The result is a <strong>nearly complete graph</strong> at the core</li><li>The core behaves as a single &quot;giant node&quot; with extremely low internal latency</li></ol><p>From the BSV Wiki:</p><blockquote><p>&quot;The typical distance between any two nodes in the Bitcoin Core Network is just 1.3. This property is emergent over time as Miners learn how to optimise the network topology to create more efficient communication between nodes.&quot;</p></blockquote><p>The giant node is the centre of the Mandala. Everything else connects to it.</p><hr /><h2 id="comparison-to-bitcoin-core-(btc)">Comparison to Bitcoin Core (BTC)</h2><p>Bitcoin Core uses a <strong>flat P2P mesh</strong> topology. Here&apos;s how it differs:</p><table><thead><tr><th>Property</th><th>BSV (Mandala)</th><th>BTC (Flat P2P)</th></tr></thead><tbody><tr><td><strong>Network structure</strong></td><td>Layered (core/middle/edge)</td><td>Flat mesh</td></tr><tr><td><strong>Node peer count</strong></td><td>Core: unlimited (economic incentive to maximise)</td><td>Default 8-12 outbound</td></tr><tr><td><strong>Typical hop count</strong></td><td>~2 (bounded, constant)</td><td>O(log N) ~5-10 for 10k nodes</td></tr><tr><td><strong>Propagation latency</strong></td><td>~1 second (giant node + SPV)</td><td>~10-30 seconds (block propagation via relay)</td></tr><tr><td><strong>Node roles</strong></td><td>Specialised (miners, overlays, wallets)</td><td>Monolithic (every node does everything)</td></tr><tr><td><strong>Validation</strong></td><td>Tiered (core validates fully, edges use SPV)</td><td>Every full node validates all transactions</td></tr><tr><td><strong>Scaling model</strong></td><td>Horizontal (add more layers)</td><td>Vertical (bigger nodes, bigger blocks)</td></tr><tr><td><strong>Incentive for connectivity</strong></td><td>Direct (economic: orphan risk)</td><td>Weak (no economic penalty for slow propagation)</td></tr><tr><td><strong>Topology control</strong></td><td>Emergent + protocol guided</td><td>Random peer selection</td></tr><tr><td><strong>Resilience to partitioning</strong></td><td>High (multiple paths through core)</td><td>Moderate (relies on mesh redundancy)</td></tr><tr><td><strong>SPV adoption</strong></td><td>Core design pattern (all wallets use SPV)</td><td>Minimal (most wallets trust third-party APIs)</td></tr></tbody></table><h3 id="key-differences-explained">Key Differences Explained</h3><p><strong>BTC&apos;s 8-12 peer limit</strong>: Bitcoin Core caps outbound connections at 8 (with some additional inbound). This prevents the network from forming a dense core. A transaction or block must ripple through the mesh node-by-node. This is a deliberate design choice to reduce bandwidth for low-resource nodes, but it limits propagation speed.</p><p><strong>BSV&apos;s core density</strong>: There&apos;s no artificial peer limit. Miners are incentivised to maximise peers. The Mandala formalises this into a layered architecture where the core is expected to be dense, and the edge is expected to be light (SPV-only).</p><p><strong>Monolithic vs specialised</strong>: Every BTC full node stores the entire UTXO set, validates all scripts, and relays all transactions. In BSV&apos;s Mandala, the Teranode layer handles block assembly and consensus, overlay services handle specialised data, and wallets handle only their own transactions via SPV. This division of labour is what enables unbounded scaling.</p><p><strong>Propagation</strong>: A BTC block takes ~10-30 seconds to propagate across the network (via FIBRE, compact blocks, relay networks). A BSV block in the Mandala propagates in &lt;1 second because the core is a nearly-complete graph — every miner receives it in 1-2 hops.</p><hr /><h2 id="why-this-matters-for-scale">Why This Matters for Scale</h2><p>The Mandala&apos;s bounded hop count is essential for BSV&apos;s throughput targets (1.1 million TPS with Teranode). If hop count grew with network size, propagation latency would eventually exceed the block interval, making the chain unsafe.</p><p>With ~2-hop routing:</p><ul><li><strong>Latency is constant</strong>, not a function of network size</li><li><strong>Throughput scales horizontally</strong> by adding more overlay layers without congesting the core</li><li><strong>Edge nodes are lightweight</strong> — SPV means a phone can validate without syncing the full chain</li><li><strong>Resilience is high</strong> — the dense core means multiple redundant paths; a partition that would split a flat mesh still has cross-connections through the core</li></ul><p>BTC solves the scaling problem differently — bigger blocks, segwit, lightning. These work but don&apos;t preserve the P2P validation model at the edge. Light clients in BTC still depend on third-party servers (or assume the sender is honest).</p><hr /><h2 id="summary">Summary</h2><table><thead><tr><th>Concept</th><th>What It Means</th></tr></thead><tbody><tr><td><strong>Small world network</strong></td><td>Any two nodes reachable in ~log N hops; miners naturally form a dense core</td></tr><tr><td><strong>Mandala topology</strong></td><td>Concentric layers (core/middle/edge) where each layer provides services outward</td></tr><tr><td><strong>Giant node</strong></td><td>The core becomes a nearly-complete graph (~1.3 hops between any two miners)</td></tr><tr><td><strong>2-hop routing</strong></td><td>Edge → core → other edge in 2 hops, regardless of network size</td></tr><tr><td><strong>BSV approach</strong></td><td>Specialised layer + dense core + SPV edge</td></tr><tr><td><strong>BTC approach</strong></td><td>Flat mesh + monolithic nodes + capped peer count</td></tr></tbody></table><p>The Mandala isn&apos;t just a network topology — it&apos;s a scaling philosophy. By stratifying the network into specialised layers with a densely-connected core, BSV achieves constant-hop routing that doesn&apos;t degrade as the network grows. Bitcoin Core&apos;s flat mesh trades hop count for node simplicity, which works at current scale but doesn&apos;t provide a clear path to the throughput BSV targets.</p><hr /><p><em>Sources: BSV Wiki (Small World Network), BSV Blockchain docs (Mandala Upgrade), CoinGeek (Jerry Chan on Mandala networks), Bitcoin Wiki. The Mandala upgrade components (Teranode, Overlay Services, SPV Wallet) are in public beta as of 2026.</em></p></div>
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1186 336"><svg class="d2-1280757931 d2-svg" width="1186" height="336" viewBox="-21 -21 1186 336"><rect x="-21.000000" y="-21.000000" width="1186.000000" height="336.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1280757931 .text {
+	font-family: "d2-1280757931-font-regular";
+}
+@font-face {
+	font-family: d2-1280757931-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-1280757931 .text-bold {
+	font-family: "d2-1280757931-font-bold";
+}
+@font-face {
+	font-family: d2-1280757931-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-1280757931 .fill-N1{fill:#0A0F25;}
+		.d2-1280757931 .fill-N2{fill:#676C7E;}
+		.d2-1280757931 .fill-N3{fill:#9499AB;}
+		.d2-1280757931 .fill-N4{fill:#CFD2DD;}
+		.d2-1280757931 .fill-N5{fill:#DEE1EB;}
+		.d2-1280757931 .fill-N6{fill:#EEF1F8;}
+		.d2-1280757931 .fill-N7{fill:#FFFFFF;}
+		.d2-1280757931 .fill-B1{fill:#0D32B2;}
+		.d2-1280757931 .fill-B2{fill:#0D32B2;}
+		.d2-1280757931 .fill-B3{fill:#E3E9FD;}
+		.d2-1280757931 .fill-B4{fill:#E3E9FD;}
+		.d2-1280757931 .fill-B5{fill:#EDF0FD;}
+		.d2-1280757931 .fill-B6{fill:#F7F8FE;}
+		.d2-1280757931 .fill-AA2{fill:#4A6FF3;}
+		.d2-1280757931 .fill-AA4{fill:#EDF0FD;}
+		.d2-1280757931 .fill-AA5{fill:#F7F8FE;}
+		.d2-1280757931 .fill-AB4{fill:#EDF0FD;}
+		.d2-1280757931 .fill-AB5{fill:#F7F8FE;}
+		.d2-1280757931 .stroke-N1{stroke:#0A0F25;}
+		.d2-1280757931 .stroke-N2{stroke:#676C7E;}
+		.d2-1280757931 .stroke-N3{stroke:#9499AB;}
+		.d2-1280757931 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1280757931 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1280757931 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1280757931 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1280757931 .stroke-B1{stroke:#0D32B2;}
+		.d2-1280757931 .stroke-B2{stroke:#0D32B2;}
+		.d2-1280757931 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1280757931 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1280757931 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1280757931 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1280757931 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1280757931 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1280757931 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1280757931 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1280757931 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1280757931 .background-color-N1{background-color:#0A0F25;}
+		.d2-1280757931 .background-color-N2{background-color:#676C7E;}
+		.d2-1280757931 .background-color-N3{background-color:#9499AB;}
+		.d2-1280757931 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1280757931 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1280757931 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1280757931 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1280757931 .background-color-B1{background-color:#0D32B2;}
+		.d2-1280757931 .background-color-B2{background-color:#0D32B2;}
+		.d2-1280757931 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1280757931 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1280757931 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1280757931 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1280757931 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1280757931 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1280757931 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1280757931 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1280757931 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1280757931 .color-N1{color:#0A0F25;}
+		.d2-1280757931 .color-N2{color:#676C7E;}
+		.d2-1280757931 .color-N3{color:#9499AB;}
+		.d2-1280757931 .color-N4{color:#CFD2DD;}
+		.d2-1280757931 .color-N5{color:#DEE1EB;}
+		.d2-1280757931 .color-N6{color:#EEF1F8;}
+		.d2-1280757931 .color-N7{color:#FFFFFF;}
+		.d2-1280757931 .color-B1{color:#0D32B2;}
+		.d2-1280757931 .color-B2{color:#0D32B2;}
+		.d2-1280757931 .color-B3{color:#E3E9FD;}
+		.d2-1280757931 .color-B4{color:#E3E9FD;}
+		.d2-1280757931 .color-B5{color:#EDF0FD;}
+		.d2-1280757931 .color-B6{color:#F7F8FE;}
+		.d2-1280757931 .color-AA2{color:#4A6FF3;}
+		.d2-1280757931 .color-AA4{color:#EDF0FD;}
+		.d2-1280757931 .color-AA5{color:#F7F8FE;}
+		.d2-1280757931 .color-AB4{color:#EDF0FD;}
+		.d2-1280757931 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1280757931);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1280757931);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1280757931);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1280757931);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1280757931);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1280757931);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1280757931);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1280757931);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="RWRnZUE="><g class="shape" ><ellipse rx="66.000000" ry="46.000000" cx="66.000000" cy="62.000000" stroke="#0D32B2" fill="#82e0aa" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="66.000000" y="59.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="66.000000" dy="0.000000">Edge A</tspan><tspan x="66.000000" dy="18.500000">(Waller)</tspan></text></g><g class="T3ZlcmxheUE="><g class="shape" ><rect x="232.000000" y="29.000000" width="101.000000" height="66.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="282.500000" y="67.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Overlay</text></g><g class="Q29yZU5vZGU="><g class="shape" ><path d="M 579 124 C 578 124 577 124 576 124 L 434 63 C 432 62 432 61 434 61 L 576 0 C 578 -1 580 -1 581 0 L 723 60 C 725 61 725 62 723 62 L 582 124 C 581 124 580 124 579 124 Z" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="579.000000" y="59.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="579.000000" dy="0.000000">Teranode Core</tspan><tspan x="579.000000" dy="18.500000">(~1.3 hop internal)</tspan></text></g><g class="T3ZlcmxheUI="><g class="shape" ><rect x="825.000000" y="29.000000" width="101.000000" height="66.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="875.500000" y="67.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Overlay</text></g><g class="RWRnZUI="><g class="shape" ><ellipse rx="59.000000" ry="47.500000" cx="1085.000000" cy="62.500000" stroke="#0D32B2" fill="#82e0aa" class="shape stroke-B1" style="stroke-width:2;" /></g><text x="1085.000000" y="60.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="1085.000000" dy="0.000000">Edge B</tspan><tspan x="1085.000000" dy="18.500000">(App)</tspan></text></g><g class="SG9wMQ=="><g class="shape" ></g><text x="66.500000" y="178.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:10px"><tspan x="66.500000" dy="0.000000">Hop 1</tspan><tspan x="66.500000" dy="11.500000">(Edge → Core)</tspan></text></g><g class="SG9wMg=="><g class="shape" ></g><text x="66.500000" y="281.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:10px"><tspan x="66.500000" dy="0.000000">Hop 2</tspan><tspan x="66.500000" dy="11.500000">(Core → Edge)</tspan></text></g><g class="KEVkZ2VBIC0mZ3Q7IE92ZXJsYXlBKVswXQ=="><marker id="mk-d2-1280757931-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 134.000000 62.000000 C 172.000000 62.000000 192.000000 62.000000 228.000000 62.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1280757931-3488378134)" mask="url(#d2-1280757931)" /></g><g class="KE92ZXJsYXlBIC0mZ3Q7IENvcmVOb2RlKVswXQ=="><path d="M 335.000000 62.000000 C 373.000000 62.000000 393.000000 62.000000 429.000000 62.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1280757931-3488378134)" mask="url(#d2-1280757931)" /></g><g class="KENvcmVOb2RlIC0mZ3Q7IE92ZXJsYXlCKVswXQ=="><path d="M 725.000000 62.000000 C 764.599976 62.000000 785.000000 62.000000 821.000000 62.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1280757931-3488378134)" mask="url(#d2-1280757931)" /></g><g class="KE92ZXJsYXlCIC0mZ3Q7IEVkZ2VCKVswXQ=="><path d="M 928.000000 62.000000 C 966.000000 62.000000 986.000000 62.000000 1022.000000 62.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1280757931-3488378134)" mask="url(#d2-1280757931)" /></g><g class="KEhvcDEgLSZndDsgSG9wMSlbMF0="><marker id="mk-d2-1280757931-2900356485" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="transparent" class="connection" stroke-width="2" /> </marker><path d="M 56.309545 192.273115 C 41.500000 212.266006 37.500000 219.000000 37.500000 221.000000 C 37.500000 223.000000 43.200001 225.666000 51.750000 227.666000 C 60.299999 229.666000 71.699997 229.666000 80.250000 227.666000 C 88.800003 225.666000 90.500000 212.266006 76.880910 193.880229" stroke="transparent" fill="none" class="connection" style="stroke-width:2;" marker-end="url(#mk-d2-1280757931-2900356485)" mask="url(#d2-1280757931)" /></g><mask id="d2-1280757931" maskUnits="userSpaceOnUse" x="-21" y="-21" width="1186" height="336">
+<rect x="-21" y="-21" width="1186" height="336" fill="white"></rect><p></mask></svg></svg></p></div><p>Broken down:</p><ol start="1"><li><strong>Edge to core</strong>: Your SPV wallet is connected to an overlay service, which is connected to one (or a few) Teranodes in the core. That&apos;s 1 hop from edge to core.</li><li><strong>Core to target</strong>: The Teranode core is a nearly complete graph — every core node is ~1.3 hops from every other core node. For practical purposes, 1 hop.</li><li><strong>Core to target&apos;s edge</strong>: The target&apos;s overlay/application is similarly 1 hop up from a core node.</li></ol><p><strong>Total: 2 hops edge-to-edge.</strong> This is bounded and constant — it does not grow with network size.</p><p>This works because:</p><ul><li>The core is <strong>densely connected</strong> (miners maximise their peer count)</li><li>Edge nodes don&apos;t need to find each other — they route through the core</li><li>The overlay layer abstracts the discovery problem</li></ul><p>Contrast with a flat P2P network where a node has 8 random peers, and reaching a specific node across 10,000 nodes might take 5-10 hops.</p><hr /><h2 id="the-&quot;giant-node&quot;-emergence">The &quot;Giant Node&quot; Emergence</h2><p>As miners compete, they naturally optimise connectivity:</p><ol start="1"><li>A miner with more peers gets blocks faster → lower orphan risk → higher profitability</li><li>This incentivises each miner to peer with every other miner</li><li>The result is a <strong>nearly complete graph</strong> at the core</li><li>The core behaves as a single &quot;giant node&quot; with extremely low internal latency</li></ol><p>From the BSV Wiki:</p><blockquote><p>&quot;The typical distance between any two nodes in the Bitcoin Core Network is just 1.3. This property is emergent over time as Miners learn how to optimise the network topology to create more efficient communication between nodes.&quot;</p></blockquote><p>The giant node is the centre of the Mandala. Everything else connects to it.</p><hr /><h2 id="comparison-to-bitcoin-core-(btc)">Comparison to Bitcoin Core (BTC)</h2><p>Bitcoin Core uses a <strong>flat P2P mesh</strong> topology. Here&apos;s how it differs:</p><table><thead><tr><th>Property</th><th>BSV (Mandala)</th><th>BTC (Flat P2P)</th></tr></thead><tbody><tr><td><strong>Network structure</strong></td><td>Layered (core/middle/edge)</td><td>Flat mesh</td></tr><tr><td><strong>Node peer count</strong></td><td>Core: unlimited (economic incentive to maximise)</td><td>Default 8-12 outbound</td></tr><tr><td><strong>Typical hop count</strong></td><td>~2 (bounded, constant)</td><td>O(log N) ~5-10 for 10k nodes</td></tr><tr><td><strong>Propagation latency</strong></td><td>~1 second (giant node + SPV)</td><td>~10-30 seconds (block propagation via relay)</td></tr><tr><td><strong>Node roles</strong></td><td>Specialised (miners, overlays, wallets)</td><td>Monolithic (every node does everything)</td></tr><tr><td><strong>Validation</strong></td><td>Tiered (core validates fully, edges use SPV)</td><td>Every full node validates all transactions</td></tr><tr><td><strong>Scaling model</strong></td><td>Horizontal (add more layers)</td><td>Vertical (bigger nodes, bigger blocks)</td></tr><tr><td><strong>Incentive for connectivity</strong></td><td>Direct (economic: orphan risk)</td><td>Weak (no economic penalty for slow propagation)</td></tr><tr><td><strong>Topology control</strong></td><td>Emergent + protocol guided</td><td>Random peer selection</td></tr><tr><td><strong>Resilience to partitioning</strong></td><td>High (multiple paths through core)</td><td>Moderate (relies on mesh redundancy)</td></tr><tr><td><strong>SPV adoption</strong></td><td>Core design pattern (all wallets use SPV)</td><td>Minimal (most wallets trust third-party APIs)</td></tr></tbody></table><h3 id="key-differences-explained">Key Differences Explained</h3><p><strong>BTC&apos;s 8-12 peer limit</strong>: Bitcoin Core caps outbound connections at 8 (with some additional inbound). This prevents the network from forming a dense core. A transaction or block must ripple through the mesh node-by-node. This is a deliberate design choice to reduce bandwidth for low-resource nodes, but it limits propagation speed.</p><p><strong>BSV&apos;s core density</strong>: There&apos;s no artificial peer limit. Miners are incentivised to maximise peers. The Mandala formalises this into a layered architecture where the core is expected to be dense, and the edge is expected to be light (SPV-only).</p><p><strong>Monolithic vs specialised</strong>: Every BTC full node stores the entire UTXO set, validates all scripts, and relays all transactions. In BSV&apos;s Mandala, the Teranode layer handles block assembly and consensus, overlay services handle specialised data, and wallets handle only their own transactions via SPV. This division of labour is what enables unbounded scaling.</p><p><strong>Propagation</strong>: A BTC block takes ~10-30 seconds to propagate across the network (via FIBRE, compact blocks, relay networks). A BSV block in the Mandala propagates in &lt;1 second because the core is a nearly-complete graph — every miner receives it in 1-2 hops.</p><hr /><h2 id="why-this-matters-for-scale">Why This Matters for Scale</h2><p>The Mandala&apos;s bounded hop count is essential for BSV&apos;s throughput targets (1.1 million TPS with Teranode). If hop count grew with network size, propagation latency would eventually exceed the block interval, making the chain unsafe.</p><p>With ~2-hop routing:</p><ul><li><strong>Latency is constant</strong>, not a function of network size</li><li><strong>Throughput scales horizontally</strong> by adding more overlay layers without congesting the core</li><li><strong>Edge nodes are lightweight</strong> — SPV means a phone can validate without syncing the full chain</li><li><strong>Resilience is high</strong> — the dense core means multiple redundant paths; a partition that would split a flat mesh still has cross-connections through the core</li></ul><p>BTC solves the scaling problem differently — bigger blocks, segwit, lightning. These work but don&apos;t preserve the P2P validation model at the edge. Light clients in BTC still depend on third-party servers (or assume the sender is honest).</p><hr /><h2 id="summary">Summary</h2><table><thead><tr><th>Concept</th><th>What It Means</th></tr></thead><tbody><tr><td><strong>Small world network</strong></td><td>Any two nodes reachable in ~log N hops; miners naturally form a dense core</td></tr><tr><td><strong>Mandala topology</strong></td><td>Concentric layers (core/middle/edge) where each layer provides services outward</td></tr><tr><td><strong>Giant node</strong></td><td>The core becomes a nearly-complete graph (~1.3 hops between any two miners)</td></tr><tr><td><strong>2-hop routing</strong></td><td>Edge → core → other edge in 2 hops, regardless of network size</td></tr><tr><td><strong>BSV approach</strong></td><td>Specialised layer + dense core + SPV edge</td></tr><tr><td><strong>BTC approach</strong></td><td>Flat mesh + monolithic nodes + capped peer count</td></tr></tbody></table><p>The Mandala isn&apos;t just a network topology — it&apos;s a scaling philosophy. By stratifying the network into specialised layers with a densely-connected core, BSV achieves constant-hop routing that doesn&apos;t degrade as the network grows. Bitcoin Core&apos;s flat mesh trades hop count for node simplicity, which works at current scale but doesn&apos;t provide a clear path to the throughput BSV targets.</p><hr /><p><em>Sources: BSV Wiki (Small World Network), BSV Blockchain docs (Mandala Upgrade), CoinGeek (Jerry Chan on Mandala networks), Bitcoin Wiki. The Mandala upgrade components (Teranode, Overlay Services, SPV Wallet) are in public beta as of 2026.</em></p></div>
 
 <p><i>Published: 2026-06-22</i></p>
 
