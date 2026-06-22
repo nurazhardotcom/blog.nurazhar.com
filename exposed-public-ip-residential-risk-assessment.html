@@ -157,44 +157,145 @@
   Your Public IP Was in a Blog Post — Now What? A Practical Risk Assessment
   
 </h1>
-<div><hr /><p>I published my home public IP (<code>116.15.188.9</code>) in two blog posts. This is bad for PDPA compliance (it&apos;s personal data), but <strong>how bad is it for actual security?</strong></p><p>Let&apos;s walk through the real threat model.</p><hr /><h2 id="what-they-see">What They See</h2><p>Your public IP is not a secret. It&apos;s visible to:</p><ul><li>Every website you visit (logged in server access logs)</li><li>Every CDN you hit (Cloudflare, Fastly, Akamai)</li><li>Every service you connect to (DNS resolvers, NTP servers, API endpoints)</li><li>BGP looking glasses, Shodan, Censys (which constantly scan the entire IPv4 space)</li><li>Torrent swarms (if you use them)</li><li>Anyone you send a direct message to on Discord/Telegram (peer-to-peer calls leak IPs)</li></ul><p>Your IP being in a blog post is, for most practical attackers, <em>no more useful</em> than your IP already being in Shodan&apos;s database — which it already is if your ISP delegates a public IP.</p><pre><code class="language-d2">direction: down
-
-Shodan: &quot;Shodan / Censys
-Scans entire IPv4 space
-every few hours&quot; {
+<div><hr /><p>I published my home public IP (<code>116.15.188.9</code>) in two blog posts. This is bad for PDPA compliance (it&apos;s personal data), but <strong>how bad is it for actual security?</strong></p><p>Let&apos;s walk through the real threat model.</p><hr /><h2 id="what-they-see">What They See</h2><p>Your public IP is not a secret. It&apos;s visible to:</p><ul><li>Every website you visit (logged in server access logs)</li><li>Every CDN you hit (Cloudflare, Fastly, Akamai)</li><li>Every service you connect to (DNS resolvers, NTP servers, API endpoints)</li><li>BGP looking glasses, Shodan, Censys (which constantly scan the entire IPv4 space)</li><li>Torrent swarms (if you use them)</li><li>Anyone you send a direct message to on Discord/Telegram (peer-to-peer calls leak IPs)</li></ul><p>Your IP being in a blog post is, for most practical attackers, <em>no more useful</em> than your IP already being in Shodan&apos;s database — which it already is if your ISP delegates a public IP.</p><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+Shodan: "Shodan / Censys\nScans entire IPv4 space\nevery few hours" {
   shape: rectangle
-  style.fill: &quot;#f1948a&quot;
+  style.fill: "#f1948a"
 }
-
-Blog: &quot;Blog post
-with your IP&quot; {
+#
+Blog: "Blog post\nwith your IP" {
   shape: rectangle  
-  style.fill: &quot;#f9e79f&quot;
+  style.fill: "#f9e79f"
 }
-
-Botnets: &quot;Botnets
-Constant port scans&quot; {
+#
+Botnets: "Botnets\nConstant port scans" {
   shape: rectangle
-  style.fill: &quot;#85c1e9&quot;
+  style.fill: "#85c1e9"
 }
-
-Attacker: &quot;Attacker&quot; {
+#
+Attacker: "Attacker" {
   shape: diamond
-  style.fill: &quot;#82e0aa&quot;
+  style.fill: "#82e0aa"
 }
-
-Shodan -&gt; Attacker: &quot;Already knows your IP&quot;
-Blog -&gt; Attacker: &quot;Same IP, no new info&quot;
-Botnets -&gt; Attacker: &quot;Already scanning it&quot;
-
-Note: &quot;For a residential IP, the blog post
-adds zero new attack surface.
-The bots already found you.&quot; {
+#
+Shodan -> Attacker: "Already knows your IP"
+Blog -> Attacker: "Same IP, no new info"
+Botnets -> Attacker: "Already scanning it"
+#
+Note: "For a residential IP, the blog post\nadds zero new attack surface.\nThe bots already found you." {
   shape: square
   style.stroke-dash: 2
   style.font-size: 11
 }
-</code></pre><hr /><h2 id="the-real-attack-surface-of-a-home-connection">The Real Attack Surface of a Home Connection</h2><p>Here&apos;s what an attacker can do with your IP, ranked by likelihood:</p><h3 id="1.-port-scanning-(already-happening)">1. Port scanning (already happening)</h3><p>Every public IP is scanned by multiple botnets within hours of going online. They probe for:</p><ul><li>Open SSH (port 22) with weak passwords</li><li>Telnet (port 23) — often left open on consumer routers</li><li>RDP (port 3389) — Windows remote desktop</li><li>UPnP (port 1900) — can expose internal services</li><li>Common IoT vulns (Mirai-style)</li></ul><p><strong>If you don&apos;t port forward, this is harmless.</strong> The ONT&apos;s NAT firewall drops inbound SYN packets that don&apos;t match an established connection. The scan sees nothing.</p><h3 id="2.-targeted-attacks-(requires-vulnerability)">2. Targeted attacks (requires vulnerability)</h3><p>Having your IP doesn&apos;t help an attacker compromise your devices. They need:</p><ul><li>A known vulnerability in your router firmware</li><li>Forwarded ports exposing an internal service</li><li>Weak credentials on a publicly accessible interface</li></ul><p><strong>If you keep firmware updated, don&apos;t port-forward, and don&apos;t expose admin panels to WAN, there&apos;s no viable attack path.</strong></p><h3 id="3.-ddos-(annoying,-not-dangerous)">3. DDoS (annoying, not dangerous)</h3><p>Someone can direct a DDoS at your IP. This will:</p><ul><li>Saturate your Singtel connection (500 Mbps down / 250 Mbps up for a typical Fibre plan)</li><li>Cause packet loss and high latency</li><li>Not compromise any device</li></ul><p>If this happens consistently, you can request a new IP from your ISP or use a DDoS-protected VPN tunnel.</p><h3 id="4.-geolocation-/-doxxing-(privacy,-not-security)">4. Geolocation / doxxing (privacy, not security)</h3><p>An IP reveals approximate location (usually the ISP&apos;s PoP, not your street address). For Singtel Fibre in Singapore, this typically resolves to:</p><pre><code>116.15.188.9
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 955 461"><svg class="d2-3864848504 d2-svg" width="955" height="461" viewBox="-21 -21 955 461"><rect x="-21.000000" y="-21.000000" width="955.000000" height="461.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-3864848504 .text-bold {
+	font-family: "d2-3864848504-font-bold";
+}
+@font-face {
+	font-family: d2-3864848504-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-3864848504 .text-italic {
+	font-family: "d2-3864848504-font-italic";
+}
+@font-face {
+	font-family: d2-3864848504-font-italic;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-3864848504 .fill-N1{fill:#0A0F25;}
+		.d2-3864848504 .fill-N2{fill:#676C7E;}
+		.d2-3864848504 .fill-N3{fill:#9499AB;}
+		.d2-3864848504 .fill-N4{fill:#CFD2DD;}
+		.d2-3864848504 .fill-N5{fill:#DEE1EB;}
+		.d2-3864848504 .fill-N6{fill:#EEF1F8;}
+		.d2-3864848504 .fill-N7{fill:#FFFFFF;}
+		.d2-3864848504 .fill-B1{fill:#0D32B2;}
+		.d2-3864848504 .fill-B2{fill:#0D32B2;}
+		.d2-3864848504 .fill-B3{fill:#E3E9FD;}
+		.d2-3864848504 .fill-B4{fill:#E3E9FD;}
+		.d2-3864848504 .fill-B5{fill:#EDF0FD;}
+		.d2-3864848504 .fill-B6{fill:#F7F8FE;}
+		.d2-3864848504 .fill-AA2{fill:#4A6FF3;}
+		.d2-3864848504 .fill-AA4{fill:#EDF0FD;}
+		.d2-3864848504 .fill-AA5{fill:#F7F8FE;}
+		.d2-3864848504 .fill-AB4{fill:#EDF0FD;}
+		.d2-3864848504 .fill-AB5{fill:#F7F8FE;}
+		.d2-3864848504 .stroke-N1{stroke:#0A0F25;}
+		.d2-3864848504 .stroke-N2{stroke:#676C7E;}
+		.d2-3864848504 .stroke-N3{stroke:#9499AB;}
+		.d2-3864848504 .stroke-N4{stroke:#CFD2DD;}
+		.d2-3864848504 .stroke-N5{stroke:#DEE1EB;}
+		.d2-3864848504 .stroke-N6{stroke:#EEF1F8;}
+		.d2-3864848504 .stroke-N7{stroke:#FFFFFF;}
+		.d2-3864848504 .stroke-B1{stroke:#0D32B2;}
+		.d2-3864848504 .stroke-B2{stroke:#0D32B2;}
+		.d2-3864848504 .stroke-B3{stroke:#E3E9FD;}
+		.d2-3864848504 .stroke-B4{stroke:#E3E9FD;}
+		.d2-3864848504 .stroke-B5{stroke:#EDF0FD;}
+		.d2-3864848504 .stroke-B6{stroke:#F7F8FE;}
+		.d2-3864848504 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-3864848504 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-3864848504 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-3864848504 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-3864848504 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-3864848504 .background-color-N1{background-color:#0A0F25;}
+		.d2-3864848504 .background-color-N2{background-color:#676C7E;}
+		.d2-3864848504 .background-color-N3{background-color:#9499AB;}
+		.d2-3864848504 .background-color-N4{background-color:#CFD2DD;}
+		.d2-3864848504 .background-color-N5{background-color:#DEE1EB;}
+		.d2-3864848504 .background-color-N6{background-color:#EEF1F8;}
+		.d2-3864848504 .background-color-N7{background-color:#FFFFFF;}
+		.d2-3864848504 .background-color-B1{background-color:#0D32B2;}
+		.d2-3864848504 .background-color-B2{background-color:#0D32B2;}
+		.d2-3864848504 .background-color-B3{background-color:#E3E9FD;}
+		.d2-3864848504 .background-color-B4{background-color:#E3E9FD;}
+		.d2-3864848504 .background-color-B5{background-color:#EDF0FD;}
+		.d2-3864848504 .background-color-B6{background-color:#F7F8FE;}
+		.d2-3864848504 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-3864848504 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-3864848504 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-3864848504 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-3864848504 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-3864848504 .color-N1{color:#0A0F25;}
+		.d2-3864848504 .color-N2{color:#676C7E;}
+		.d2-3864848504 .color-N3{color:#9499AB;}
+		.d2-3864848504 .color-N4{color:#CFD2DD;}
+		.d2-3864848504 .color-N5{color:#DEE1EB;}
+		.d2-3864848504 .color-N6{color:#EEF1F8;}
+		.d2-3864848504 .color-N7{color:#FFFFFF;}
+		.d2-3864848504 .color-B1{color:#0D32B2;}
+		.d2-3864848504 .color-B2{color:#0D32B2;}
+		.d2-3864848504 .color-B3{color:#E3E9FD;}
+		.d2-3864848504 .color-B4{color:#E3E9FD;}
+		.d2-3864848504 .color-B5{color:#EDF0FD;}
+		.d2-3864848504 .color-B6{color:#F7F8FE;}
+		.d2-3864848504 .color-AA2{color:#4A6FF3;}
+		.d2-3864848504 .color-AA4{color:#EDF0FD;}
+		.d2-3864848504 .color-AA5{color:#F7F8FE;}
+		.d2-3864848504 .color-AB4{color:#EDF0FD;}
+		.d2-3864848504 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-3864848504);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-3864848504);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-3864848504);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-3864848504);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-3864848504);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-3864848504);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-3864848504);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-3864848504);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="U2hvZGFu"><g class="shape" ><rect x="0.000000" y="54.000000" width="210.000000" height="98.000000" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="105.000000" y="92.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="105.000000" dy="0.000000">Shodan / Censys</tspan><tspan x="105.000000" dy="17.666667">Scans entire IPv4 space</tspan><tspan x="105.000000" dy="17.666667">every few hours</tspan></text></g><g class="QmxvZw=="><g class="shape" ><rect x="270.000000" y="62.000000" width="131.000000" height="82.000000" stroke="#0D32B2" fill="#f9e79f" class=" stroke-B1" style="stroke-width:2;" /></g><text x="335.500000" y="100.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="335.500000" dy="0.000000">Blog post</tspan><tspan x="335.500000" dy="18.500000">with your IP</tspan></text></g><g class="Qm90bmV0cw=="><g class="shape" ><rect x="461.000000" y="62.000000" width="186.000000" height="82.000000" stroke="#0D32B2" fill="#85c1e9" class=" stroke-B1" style="stroke-width:2;" /></g><text x="554.000000" y="100.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="554.000000" dy="0.000000">Botnets</tspan><tspan x="554.000000" dy="18.500000">Constant port scans</tspan></text></g><g class="QXR0YWNrZXI="><g class="shape" ><path d="M 336 419 C 335 419 335 419 335 419 L 259 374 C 258 374 258 373 259 372 L 335 327 C 336 327 337 327 338 327 L 414 372 C 415 372 415 373 414 374 L 337 419 C 337 419 337 419 336 419 Z" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="336.000000" y="378.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Attacker</text></g><g class="Tm90ZQ=="><g class="shape" ><rect x="707.000000" y="0.000000" width="206.000000" height="206.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B2 fill-B6" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="810.000000" y="96.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:11px"><tspan x="810.000000" dy="0.000000">For a residential IP, the blog post</tspan><tspan x="810.000000" dy="12.000000">adds zero new attack surface.</tspan><tspan x="810.000000" dy="12.000000">The bots already found you.</tspan></text></g><g class="KFNob2RhbiAtJmd0OyBBdHRhY2tlcilbMF0="><marker id="mk-d2-3864848504-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 105.000000 153.500000 C 105.000000 243.500000 142.399994 283.799988 288.369584 351.320690" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3864848504-3488378134)" mask="url(#d2-3864848504)" /><text x="150.500000" y="293.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Already knows your IP</text></g><g class="KEJsb2cgLSZndDsgQXR0YWNrZXIpWzBd"><path d="M 335.500000 145.500000 C 335.500000 241.899994 335.600006 278.600006 335.966944 323.000137" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3864848504-3488378134)" mask="url(#d2-3864848504)" /><text x="336.000000" y="241.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Same IP, no new info</text></g><g class="KEJvdG5ldHMgLSZndDsgQXR0YWNrZXIpWzBd"><path d="M 554.000000 145.500000 C 554.000000 241.899994 519.000000 283.399994 382.602068 349.260716" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-3864848504-3488378134)" mask="url(#d2-3864848504)" /><text x="517.500000" y="290.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Already scanning it</text></g><mask id="d2-3864848504" maskUnits="userSpaceOnUse" x="-21" y="-21" width="955" height="461">
+<rect x="-21" y="-21" width="955" height="461" fill="white"></rect>
+<rect x="76.000000" y="277.000000" width="149" height="21" fill="black"></rect>
+<rect x="266.000000" y="225.000000" width="140" height="21" fill="black"></rect>
+<rect x="452.000000" y="274.000000" width="131" height="21" fill="black"></rect>
+</mask></svg></svg>
+</div><hr /><h2 id="the-real-attack-surface-of-a-home-connection">The Real Attack Surface of a Home Connection</h2><p>Here&apos;s what an attacker can do with your IP, ranked by likelihood:</p><h3 id="1.-port-scanning-(already-happening)">1. Port scanning (already happening)</h3><p>Every public IP is scanned by multiple botnets within hours of going online. They probe for:</p><ul><li>Open SSH (port 22) with weak passwords</li><li>Telnet (port 23) — often left open on consumer routers</li><li>RDP (port 3389) — Windows remote desktop</li><li>UPnP (port 1900) — can expose internal services</li><li>Common IoT vulns (Mirai-style)</li></ul><p><strong>If you don&apos;t port forward, this is harmless.</strong> The ONT&apos;s NAT firewall drops inbound SYN packets that don&apos;t match an established connection. The scan sees nothing.</p><h3 id="2.-targeted-attacks-(requires-vulnerability)">2. Targeted attacks (requires vulnerability)</h3><p>Having your IP doesn&apos;t help an attacker compromise your devices. They need:</p><ul><li>A known vulnerability in your router firmware</li><li>Forwarded ports exposing an internal service</li><li>Weak credentials on a publicly accessible interface</li></ul><p><strong>If you keep firmware updated, don&apos;t port-forward, and don&apos;t expose admin panels to WAN, there&apos;s no viable attack path.</strong></p><h3 id="3.-ddos-(annoying,-not-dangerous)">3. DDoS (annoying, not dangerous)</h3><p>Someone can direct a DDoS at your IP. This will:</p><ul><li>Saturate your Singtel connection (500 Mbps down / 250 Mbps up for a typical Fibre plan)</li><li>Cause packet loss and high latency</li><li>Not compromise any device</li></ul><p>If this happens consistently, you can request a new IP from your ISP or use a DDoS-protected VPN tunnel.</p><h3 id="4.-geolocation-/-doxxing-(privacy,-not-security)">4. Geolocation / doxxing (privacy, not security)</h3><p>An IP reveals approximate location (usually the ISP&apos;s PoP, not your street address). For Singtel Fibre in Singapore, this typically resolves to:</p><pre><code>116.15.188.9
 City: Singapore
 ISP: Singtel Fibre (AS9506)
 Organization: Singapore Telecom
