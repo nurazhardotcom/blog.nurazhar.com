@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>I Published My Public IP on the Internet — Here&#39;s What I Did Wrong — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="I Published My Public IP on the Internet — Here&#39;s What I Did Wrong">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="I Published My Public IP on the Internet — Here&#39;s What I Did Wrong">
+    <meta name="twitter:title" content="I Published My Public IP on the Internet — Here&#39;s What I Did Wrong">
+    <meta property="og:title" content="I Published My Public IP on the Internet — Here&#39;s What I Did Wrong">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="How I accidentally hardcoded my public IP in two blog posts, the security implications, and why restarting my router was the real fix — not rewriting git history.">
+    <meta name="twitter:description" content="How I accidentally hardcoded my public IP in two blog posts, the security implications, and why restarting my router was the real fix — not rewriting git history.">
+    <meta property="og:description" content="How I accidentally hardcoded my public IP in two blog posts, the security implications, and why restarting my router was the real fix — not rewriting git history.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/never-publish-your-public-ip.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/never-publish-your-public-ip.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "I Published My Public IP on the Internet — Here&#39;s What I Did Wrong",
+  "description": "How I accidentally hardcoded my public IP in two blog posts, the security implications, and why restarting my router was the real fix — not rewriting git history.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/never-publish-your-public-ip.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/never-publish-your-public-ip.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  I Published My Public IP on the Internet — Here&#39;s What I Did Wrong
+  
+</h1>
+<div><hr /><p>I write technical blog posts. As part of that, I traced my machine&apos;s network path — GPON ONT, BRAS, DNS servers, submarine cables — and published the raw data. Including my public IP.</p><p>It was a copy-paste error. I didn&apos;t think about it because the IP was just a technical datapoint in a packet trace. But in Singapore, under PDPA, your public IP is <strong>personal data</strong> — it can identify you, your rough location (suburb level via WHOIS/GeoLite), your ISP, and can be correlated with your browsing history by your ISP or any intermediary.</p><p>Here&apos;s what I did to fix it, and why git history rewriting was overkill.</p><h2 id="the-problem">The Problem</h2><p>My public IP <code>116.15.188.x</code> appeared in two posts:</p><ol start="1"><li><strong>Where Your Prompt Goes</strong> — packet trace from Singtel Fibre, showing source IP in the path description and D2 network diagrams</li><li><strong>Why I Switched to Cloudflare DNS</strong> — DNS benchmark output showing the IP as context</li></ol><p>Both were published, indexed, and live.</p><h2 id="step-1:-check-current-exposure">Step 1: Check Current Exposure</h2><p>Immediately checked if the live pages still had the IP:</p><pre><code class="language-bash"># Check what GitHub Pages is serving
+curl -s https://blog.nurazhar.com/where-your-packet-goes-submarine-cables/ | grep -i &quot;116.15&quot;
+curl -s https://blog.nurazhar.com/switching-to-cloudflare-dns/ | grep -i &quot;116.15&quot;
+</code></pre><p>Github Pages deployments are declarative — whatever is in <code>gh-pages</code> branch is the published version. So I:</p><ol start="1"><li>Edited the Markdown files to replace the IP with <code>[redacted]</code></li><li>Committed and pushed to <code>main</code></li><li>CI rebuilt and deployed to <code>gh-pages</code></li></ol><p>Live site was clean.</p><h2 id="step-2:-does-git-history-matter?">Step 2: Does Git History Matter?</h2><p>The IP was now gone from the current revision. But the commit history still contained it. Anyone could <code>git log -p</code> and see the old IP.</p><p>This is where I over-engineered. I ran <code>git filter-branch</code> to rewrite history — essentially creating a parallel universe where the IP never existed. But:</p><ul><li><strong>GitHub already has the old history</strong> — you&apos;d need <code>git push --force --all --tags</code> and every collaborator to rebase</li><li><strong>The IP is dynamic</strong> — Singtel Fibre uses DHCP. Restarting the ONT assigns a new IP. The old one goes back into the ISP pool and gets reissued to someone else</li><li><strong>Anyone who already cloned the repo has the IP</strong> — you can&apos;t unsend a download</li></ul><h2 id="step-3:-the-real-fix-—-restart-the-router">Step 3: The Real Fix — Restart the Router</h2><pre><code class="language-bash"># No tool needed. Just unplug the Singtel ONT for 30 seconds
+# Plug back in. New IP.
+</code></pre><p>My Singtel Fibre ONT (ZTE F660, <code>192.168.1.254</code>) uses DHCP with a lease time of 24 hours typically. Power-cycling forces a new lease. New IP — the old one becomes someone else&apos;s problem.</p><p>This is the cheap, pragmatic security move. It&apos;s why you shouldn&apos;t treat residential IPs as persistent identifiers.</p><h2 id="lessons">Lessons</h2><ol start="1"><li><strong>Don&apos;t hardcode IPs in published content</strong> — use <code>[redacted]</code> from the start, or use environment variables in build scripts to inject/redact them</li><li><strong>Git history rewriting is usually the wrong answer for dynamic IPs</strong> — the IP loses value as soon as the device disconnects</li><li><strong>PDPA applies to blog posts</strong> — a public IP can identify you, especially when combined with neighbourhood-level geolocation, ISP, and timestamps</li><li><strong>If you do need to remove something from git history</strong> for persistent secrets (private keys, passwords), use <code>git filter-repo</code> or <code>git filter-branch</code> — but only for secrets that don&apos;t expire. Dynamic IPs expire on their own.</li><li><strong>Router restart is a valid security control</strong> — it&apos;s cheap, immediate, and terminates any lingering state tied to the old IP</li></ol><h2 id="timeline">Timeline</h2><ul><li><strong>09:00</strong> — Published packet trace post with hardcoded IP</li><li><strong>09:15</strong> — Published DNS post with same IP</li><li><strong>12:30</strong> — User (me) noticed and flagged it in the coding assistant session</li><li><strong>12:31</strong> — IP redacted in source files, committed, pushed, deployed</li><li><strong>12:35</strong> — <code>git filter-branch</code> experiment (reverted — unnecessary for dynamic IPs)</li><li><strong>12:40</strong> — Decision: restart ONT, don&apos;t force-push rewritten history</li></ul><p>The actual security fix took one minute. The over-engineering took ten.</p><h2 id="key-takeaway">Key Takeaway</h2><blockquote><p>A public IP is only a secret until your router reboots.</p></blockquote><p>Act fast, redact the content, restart the connection, and move on. Don&apos;t rewrite history for something that expires.</p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/pdpa.html">pdpa</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/privacy.html">privacy</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ops.html">ops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/networking.html">networking</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/singtel.html">singtel</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
