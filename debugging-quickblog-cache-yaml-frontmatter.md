@@ -9,24 +9,49 @@ I published a new post. Pushed to `main`. Watched GitHub Actions deploy succeed 
 
 ## The Investigation Trail
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Post published to main"]
-    B["Deploy workflow ran"]
-    subgraph C["gh-pages updated?"]
-    end
-    D["Check deploy logs"]
-    E["Post should work"]
-    F["Check which files deployed"]
-    G["Only atom.xml + planetclojure.xml"]
-    H["No HTML generated!"]
-    B --> C
-    C -->|"No"| D
-    C -->|"Yes"| E
-    D --> F
-    F --> G
-    G --> H
+```d2
+# Diagram 68
+direction: down
+
+A: "Post published to main" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "Deploy workflow ran" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+C: "gh-pages updated?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+D: "Check deploy logs" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+E: "Post should work" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+F: "Check which files deployed" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+G: "Only atom.xml + planetclojure.xml" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+H: "No HTML generated!" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+
+B -> C
+C -> D: "No"
+C -> E: "Yes"
+D -> F
+F -> G
+G -> H
 ```
 
 The deploy workflow ran fine — but the `gh-pages` branch only had two files changed: `atom.xml` and `planetclojure.xml`. No new HTML post. Worse, the workflow exit code was `0` (success), but `bb quickblog render` had silently skipped my post.
@@ -35,24 +60,49 @@ The deploy workflow ran fine — but the `gh-pages` branch only had two files ch
 
 Quickblog caches post metadata in `.work/prod/cache.edn`. When I checked, the cache had 54 posts — all created before my new post existed.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Post added to posts/"]
-    B["Quickblog scans posts/"]
-    subgraph C["Cache exists?"]
-    end
-    D["Loads old post list"]
-    E["Scans all posts fresh"]
-    F["New post invisible"]
-    G["Skipped during render"]
-    H["New post included"]
-    B --> C
-    C -->|"Yes - stale"| D
-    C -->|"No"| E
-    D --> F
-    F --> G
-    E --> H
+```d2
+# Diagram 69
+direction: down
+
+A: "Post added to posts/" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "Quickblog scans posts/" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+C: "Cache exists?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+D: "Loads old post list" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+E: "Scans all posts fresh" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+F: "New post invisible" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+G: "Skipped during render" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+H: "New post included" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+
+B -> C
+C -> D: "Yes - stale"
+C -> E: "No"
+D -> F
+F -> G
+E -> H
 ```
 
 Clearing `.work/` forced a fresh scan. The post now rendered — but hit a second error:
@@ -78,25 +128,54 @@ The `---` delimiters trigger SnakeYAML parsing. SnakeYAML interprets `date: 2026
 
 ## The Cascade Crash
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["YAML date: 2026-06-19"]
-    B["SnakeYAML parses as java.util.Date"]
-    C["sort-by :date crashes"]
-    D["ClassCastException on Mixed Types"]
-    E["post-by-tag fails"]
-    F["Tag pages corrupted"]
-    G["index.html not updated"]
-    H["archive.html not updated"]
-    I["Deploy succeeds but missing pages"]
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    E --> G
-    E --> H
-    F --> I
+```d2
+# Diagram 70
+direction: down
+
+A: "YAML date: 2026-06-19" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "SnakeYAML parses as java.util.Date" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+C: "sort-by :date crashes" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+D: "ClassCastException on Mixed Types" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+E: "post-by-tag fails" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+F: "Tag pages corrupted" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+G: "index.html not updated" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+H: "archive.html not updated" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+I: "Deploy succeeds but missing pages" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+
+B -> C
+C -> D
+D -> E
+E -> F
+E -> G
+E -> H
+F -> I
 ```
 
 Quoting the date (`date: "2026-06-19"`) seemed to fix it — but created a twist.
@@ -109,31 +188,54 @@ ClassCastException: java.lang.String cannot be cast to java.lang.Character
 
 ## The Render Lifecycle
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["bb quickblog render"]
-    B["Read post HTMLs"]
-    C["Write individual posts"]
-    subgraph D["write-post! x54"]
-    end
-    subgraph E["posts-by-tag - CRASH HERE"]
-    end
-    subgraph F["Write tag pages"]
-    end
-    subgraph G["Write index.html"]
-    end
-    subgraph H["Write archive.html"]
-    end
-    subgraph I["Write atom.xml"]
-    end
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    E --> G
-    E --> H
-    E --> I
+```d2
+# Diagram 71
+direction: down
+
+A: "bb quickblog render" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "Read post HTMLs" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+C: "Write individual posts" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+D: "write-post! x54" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+E: "posts-by-tag - CRASH HERE" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+F: "Write tag pages" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+G: "Write index.html" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+H: "Write archive.html" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+I: "Write atom.xml" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+
+B -> C
+C -> D
+D -> E
+E -> F
+E -> G
+E -> H
+E -> I
 ```
 
 The render wrote all 55 post HTMLs successfully — then crashed writing tag pages. I had raw HTML files but no `index.html`, no `archive.html`, no RSS feed.
@@ -184,53 +286,128 @@ git push --force origin HEAD:gh-pages
 | Index includes post | ✅ `grep -c aur-audit-pgp` in `index.html` |
 | RSS updated | ✅ `atom.xml` contains entry |
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Check HTML file"]
-    subgraph B["Exists?"]
-    end
-    C["Verify tags"]
-    D["Revert changes"]
-    subgraph E["Tags generated?"]
-    end
-    F["Check index.html"]
-    G["Fix format"]
-    subgraph H["Post listed?"]
-    end
-    I["SUCCESS"]
-    J["Check metadata"]
-    B -->|"Yes"| C
-    B -->|"No"| D
-    C --> E
-    E -->|"Yes"| F
-    E -->|"No"| G
-    F --> H
-    H -->|"Yes"| I
-    H -->|"No"| J
+```d2
+# Diagram 72
+direction: down
+
+A: "Check HTML file" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "Exists?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+C: "Verify tags" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+D: "Revert changes" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+E: "Tags generated?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+F: "Check index.html" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+G: "Fix format" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+H: "Post listed?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+I: "SUCCESS" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+J: "Check metadata" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+
+B -> C: "Yes"
+B -> D: "No"
+C -> E
+E -> F: "Yes"
+E -> G: "No"
+F -> H
+H -> I: "Yes"
+H -> J: "No"
 ```
 
 ## Lessons Learned
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph root["root"]
-        l1_1["root((War Story))"]
-        l2_2["Cache"]
-        l3_3[".work/ must be cleared on new posts"]
-        l3_4["Cache.edn hides missing content silently"]
-        l2_5["YAML"]
-        l3_6["date: YYYY-MM-DD becomes java.util.Date"]
-        l3_7["Breaks sort-by on mixed post types"]
-        l2_8["Format"]
-        l3_9["Old-style: Title:, Date:, Tags: (no delimiters)"]
-        l3_10["YAML-style: title:, date:, tags: with ---"]
-        l3_11["Cannot mix in same blog"]
-        l2_12["Render Order"]
-        l3_13["Individual posts render first"]
-        l3_14["Tag/index crash doesn't revert"]
-    end
+```d2
+# Diagram 73
+direction: down
+
+root: "root" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  l1_1: "War Story" {
+    style.fill: "#e8f4fd"
+    style.stroke: "#bbeeeb"
+  }
+  l2_2: "Cache" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+    l3_3: ".work/ must be cleared on new posts" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+    l3_4: "Cache.edn hides missing content silently" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+  }
+  l2_5: "YAML" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+    l3_6: "date: YYYY-MM-DD becomes java.util.Date" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+    l3_7: "Breaks sort-by on mixed post types" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+  }
+  l2_8: "Format" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+    l3_9: "Old-style: Title:, Date:, Tags: (no delimiters)" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+    l3_10: "YAML-style: title:, date:, tags: with ---" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+    l3_11: "Cannot mix in same blog" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+  }
+  l2_12: "Render Order" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+    l3_13: "Individual posts render first" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+    l3_14: "Tag/index crash doesn't revert" {
+      style.fill: "#ffffff"
+      style.stroke: "#ffeeba"
+    }
+  }
+}
 ```
 
 1. **Clear `.work/` on new posts** — stale cache hides content

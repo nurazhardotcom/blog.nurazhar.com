@@ -64,63 +64,80 @@ All 21 repos are now public again. But the story doesn't end there.
 
 ### What `gh repo edit --visibility` Actually Does
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Repo: PUBLIC"]
-    B["Repo: PRIVATE"]
-    C["Repo: PUBLIC"]
-    D["Fork Network: Connected to parent"]
-    subgraph E["Fork Network: DISCONNECTED"]
-    end
-    subgraph F["Fork Network: Still DISCONNECTED"]
-    end
-    B -->|"gh repo edit --visibility public"| C
-    A --> D
-    B -->|"GitHub severs fork relationship"| E
-    C -->|"Does NOT auto-reconnect"| F
+```d2
+# Diagram 97
+direction: down
+
+A: "Repo: PUBLIC"
+B: "Repo: PRIVATE"
+C: "Repo: PUBLIC"
+D: "Fork Network: Connected to parent"
+
+E: "Fork Network: DISCONNECTED" {
+  style.fill: "#fafafa"
+}
+F: "Fork Network: Still DISCONNECTED" {
+  style.fill: "#fafafa"
+}
+
+B -> C: "gh repo edit --visibility public"
+A -> D
+B -> E: "GitHub severs fork relationship"
+C -> F: "Does NOT auto-reconnect"
 ```
 
 ### The Fork Network Problem
 
 Here's the critical thing: **if a repo IS a real fork**, flipping it private severs the parent-child relationship in GitHub's fork network. Flipping it back to public does NOT restore that connection.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    D1["Downstream Forks\nother-user/project"]
-    D2["Downstream Forks\nother-user/project"]
-    D3["Downstream Forks\nother-user/project"]
-    F1["Your Fork\nnurazhardotcom/project\n🟢 PUBLIC"]
-    subgraph F2["Your Repo\nnurazhardotcom/project\n🔴 PRIVATE"]
-    end
-    subgraph F3["Your Repo\nnurazhardotcom/project\n🟢 PUBLIC\nbut orphaned"]
-    end
-    P1["Parent Repo\nupstream/project"]
-    P2["Parent Repo\nupstream/project"]
-    P3["Parent Repo\nupstream/project"]
-    F1 --> D1
-    F2 -->|"SEVERED"| D2
-    F3 -->|"NOT RESTORED"| D3
+```d2
+# Diagram 98
+direction: down
+
+D1: "Downstream Forks\nother-user/project"
+D2: "Downstream Forks\nother-user/project"
+D3: "Downstream Forks\nother-user/project"
+
+F1: "Your Fork\nnurazhardotcom/project\n🟢 PUBLIC"
+
+F2: "Your Repo\nnurazhardotcom/project\n🔴 PRIVATE" {
+  style.fill: "#fafafa"
+}
+F3: "Your Repo\nnurazhardotcom/project\n🟢 PUBLIC\nbut orphaned" {
+  style.fill: "#fafafa"
+}
+
+P1: "Parent Repo\nupstream/project"
+P2: "Parent Repo\nupstream/project"
+P3: "Parent Repo\nupstream/project"
+
+F1 -> D1
+F2 -> D2: "SEVERED"
+F3 -> D3: "NOT RESTORED"
 ```
 
 ### But Mine Weren't Forks!
 
 Here's the twist: **my repos were never forks to begin with.**
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["21 repos"]
-    subgraph B["12 FORKS → make private"]
-    end
-    C["9 ORIGINAL → keep public"]
-    X["21 repos"]
-    subgraph Y["0 FORKS"]
-    end
-    Z["21 STANDALONE REPOS"]
-    A --> C
-    X --> Z
+```d2
+# Diagram 99
+direction: down
+
+A: "21 repos"
+B: "12 FORKS → make private" {
+  style.fill: "#fafafa"
+}
+C: "9 ORIGINAL → keep public"
+
+X: "21 repos"
+Y: "0 FORKS" {
+  style.fill: "#fafafa"
+}
+Z: "21 STANDALONE REPOS"
+
+A -> C
+X -> Z
 ```
 
 I verified this via GitHub's own API:
@@ -136,9 +153,8 @@ Every single repo returned `fork: false`. The "fork network" problem was irrelev
 
 ## The Timeline
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 100
 ```
 
 ---
@@ -170,19 +186,22 @@ GitHub makes you add this flag for a reason. It's not just "I accept." It's "I u
 
 ### 4. Visibility Changes Are (Mostly) Reversible — But Not Free
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    NET["Fork Graph"]
-    subgraph NET2["Fork Graph Broken"]
-    end
-    PRIV["🔴 Private"]
-    PUB["🟢 Public"]
-    PUB2["🟢 Public"]
-    PRIV -->|"--visibility public"| PUB2
-    PUB -->|"Fork network: connected"| NET
-    PRIV -->|"Fork network: SEVERED"| NET2
-    PUB2 -->|"Fork network: NOT restored"| NET2
+```d2
+# Diagram 101
+direction: down
+
+NET: "Fork Graph"
+NET2: "Fork Graph Broken" {
+  style.fill: "#fafafa"
+}
+PRIV: "🔴 Private"
+PUB: "🟢 Public"
+PUB2: "🟢 Public"
+
+PRIV -> PUB2: "--visibility public"
+PUB -> NET: "Fork network: connected"
+PRIV -> NET2: "Fork network: SEVERED"
+PUB2 -> NET2: "Fork network: NOT restored"
 ```
 
 For standalone repos (like mine), the flip is fully reversible — no permanent damage. But for real forks, the fork network break is **permanent** even after flipping back.

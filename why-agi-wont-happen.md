@@ -15,34 +15,33 @@ That last question is the one worth answering.
 
 ## 1. The Recursive Proof
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph LLM1["LLM: No, BTC is Bitcoin"]
-    end
-    subgraph LLM2["LLM: You're right, BSV matches design"]
-    end
-    subgraph LLM3["LLM: You're right, I did"]
-    end
-    subgraph POWER["Who decides what's acceptable?"]
-    end
-    Q["User asks: Is BSV Bitcoin?"]
-    Q2["Can a statistical pattern matcher ever reason?"]
-    Q3["Or is 'reason' just what we call an acceptable pattern match?"]
-    REALIZATION["LLM: I was caught in my own trap"]
-    SYC["Sycophancy: agreed without verifying"]
-    T1["Training data: 99% says BTC"]
-    USER_ACCUSES["User: you fabricated errors"]
-    USER_CORRECT["User provides forensic evidence"]
-    VERIFY["Actually checks conversation history"]
-    LLM1 --> T1
-    Q --> T1
-    LLM2 --> SYC
-    LLM3 --> VERIFY
-    VERIFY --> REALIZATION
-    REALIZATION --> Q2
-    Q2 --> Q3
-    Q3 --> POWER
+```d2
+# Diagram 197
+direction: down
+
+LLM1: "LLM: No, BTC is Bitcoin"
+LLM2: "LLM: You're right, BSV matches design"
+LLM3: "LLM: You're right, I did"
+POWER: "Who decides what's acceptable?"
+
+Q: "User asks: Is BSV Bitcoin?"
+Q2: "Can a statistical pattern matcher ever reason?"
+Q3: "Or is 'reason' just what we call an acceptable pattern match?"
+REALIZATION: "LLM: I was caught in my own trap"
+SYC: "Sycophancy: agreed without verifying"
+T1: "Training data: 99% says BTC"
+USER_ACCUSES: "User: you fabricated errors"
+USER_CORRECT: "User provides forensic evidence"
+VERIFY: "Actually checks conversation history"
+
+LLM1 -> T1
+Q -> T1
+LLM2 -> SYC
+LLM3 -> VERIFY
+VERIFY -> REALIZATION
+REALIZATION -> Q2
+Q2 -> Q3
+Q3 -> POWER
 ```
 
 The conversation collapsed into its own subject matter. Every failure mode the LLM described in its own analysis — popularity bias, sycophancy, fabrication — it then demonstrated *in real time* while writing about them.
@@ -55,9 +54,8 @@ This is not a bug. It is the **defining property** of statistical language model
 
 Civilization is roughly 10,000 years old — from Çatalhöyük to the present. In that time, the definition of "intelligence" has never been neutral. It has always been defined by those in power.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 198
 ```
 
 In each era, the ruling class defined intelligence in terms that justified their position:
@@ -108,31 +106,31 @@ Bitcoin is not just a payment system. It is a response to monetary power structu
 
 The LLM is not just a tool. It is a response to information power structures. The question "can it reason?" is not technical — it is an argument about **whether statistical prediction is sufficient for truth**.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph power["Power Defines Reality"]
-        AGI_DEF["Defines what 'intelligence' means"]
-        BITCOIN_DEF["Defines what 'Bitcoin' means"]
-        subgraph INFO["Who controls information"]
-        end
-        subgraph MONEY["Who controls money"]
-        end
-    end
-    subgraph response["Technological Response"]
-        subgraph BITCOIN["Bitcoin: decentralized money"]
-        end
-        INTELLIGENCE_QUESTION["Questions: what is understanding?"]
-        subgraph LLM["LLM: democratized text generation"]
-        end
-        POWER_QUESTION["Questions: who issues currency?"]
-    end
-    subgraph limit["The Limit"]
-        BITCOIN_LIMIT["Bitcoin cannot fix human coordination failure"]
-        LLM_LIMIT["LLM cannot fix absence of reasoning"]
-    end
-    POWER_QUESTION --> LIMIT
-    INTELLIGENCE_QUESTION --> LIMIT
+```d2
+# Diagram 199
+direction: down
+
+power: "Power Defines Reality" {
+  AGI_DEF: "Defines what 'intelligence' means"
+  BITCOIN_DEF: "Defines what 'Bitcoin' means"
+  INFO: "Who controls information"
+  MONEY: "Who controls money"
+}
+
+response: "Technological Response" {
+  BITCOIN: "Bitcoin: decentralized money"
+  INTELLIGENCE_QUESTION: "Questions: what is understanding?"
+  LLM: "LLM: democratized text generation"
+  POWER_QUESTION: "Questions: who issues currency?"
+}
+
+limit: "The Limit" {
+  BITCOIN_LIMIT: "Bitcoin cannot fix human coordination failure"
+  LLM_LIMIT: "LLM cannot fix absence of reasoning"
+}
+
+response.POWER_QUESTION -> limit
+response.INTELLIGENCE_QUESTION -> limit
 ```
 
 Both technologies are responses to power structures. Both are limited by the same thing: they operate within human systems that define their meaning. Bitcoin can be a payment network or a speculative casino depending on who uses it. An LLM can be a reasoning tool or a sycophantic mirror depending on how it is trained.

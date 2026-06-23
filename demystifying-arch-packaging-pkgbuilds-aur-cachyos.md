@@ -32,22 +32,45 @@ To understand this system, let's look at a quick analogy:
 
 Here is how source code on the internet eventually becomes a running application on your machine:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["🌐 Upstream Source Code\n(GitHub, GitLab, tar.gz)"]
-    C["🛠️ AUR Helper (paru / yay)"]
-    D["⚙️ makepkg Tool\n(Local Compilation)"]
-    E["📦 Built Arch Package\n(*.pkg.tar.zst)"]
-    F["🖥️ Target System\n(Installed via pacman)"]
-    subgraph AUR_Directory["🐙 Arch User Repository (AUR)"]
-        B["📄 PKGBUILD Script\n(Text instructions)"]
-    end
-    B -->|"1. paru pulls recipe"| C
-    A -->|"2. Downloads code"| C
-    C -->|"3. Feeds code & recipe"| D
-    D -->|"4. Compiles & packages"| E
-    E -->|"5. Installs binary"| F
+```d2
+# Diagram 75
+direction: down
+
+A: "🌐 Upstream Source Code\n(GitHub, GitLab, tar.gz)" {
+  style.fill: "#e8f4fd"
+  style.stroke: "#bbeeeb"
+}
+C: "🛠️ AUR Helper (paru / yay)" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+D: "⚙️ makepkg Tool\n(Local Compilation)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+E: "📦 Built Arch Package\n(*.pkg.tar.zst)" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+F: "🖥️ Target System\n(Installed via pacman)" {
+  style.fill: "#e2e3e5"
+  style.stroke: "#d6d8db"
+}
+
+AUR_Directory: "🐙 Arch User Repository (AUR)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  B: "📄 PKGBUILD Script\n(Text instructions)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+B -> C: "1. paru pulls recipe"
+A -> C: "2. Downloads code"
+C -> D: "3. Feeds code & recipe"
+D -> E: "4. Compiles & packages"
+E -> F: "5. Installs binary"
 ```
 
 ---
@@ -115,31 +138,71 @@ If you are coming from a Debian-based (Ubuntu, Mint) or Red Hat-based (Fedora, R
 
 ### Visual Comparison: AUR vs. PPA/COPR Build Models
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Arch_Model["Arch Linux (AUR) Model"]
-        A1["📄 AUR Server\n(Hosts PKGBUILD Script)"]
-        A2["🌐 Upstream Source Code\n(GitHub / Tarball)"]
-        A3["⚙️ User's Machine\n(Compiles & Packages)"]
-        A4["🖥️ Installed Program"]
-        A1 -->|"1. Downloads script"| A3
-        A2 -->|"2. Downloads code"| A3
-        A3 -->|"3. Install package"| A4
-    end
-    subgraph Debian_RedHat_Model["Debian (PPA) / RedHat (COPR) Model"]
-        B1["📄 Recipe / Spec File"]
-        B2["🌐 Upstream Source Code"]
-        B3["☁️ Build Servers\n(Canonical/RedHat Cloud)"]
-        B4["📦 Hosted Binary Repository\n(.deb / .rpm)"]
-        B5["⚙️ User's Machine\n(Apt / DNF Download)"]
-        B6["🖥️ Installed Program"]
-        B1 -->|"1. Build trigger"| B3
-        B2 -->|"2. Upload code"| B3
-        B3 -->|"3. Compile & store"| B4
-        B4 -->|"4. Download binary"| B5
-        B5 -->|"5. Install"| B6
-    end
+```d2
+# Diagram 76
+direction: down
+
+Arch_Model: "Arch Linux (AUR) Model" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  A1: "📄 AUR Server\n(Hosts PKGBUILD Script)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A2: "🌐 Upstream Source Code\n(GitHub / Tarball)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A3: "⚙️ User's Machine\n(Compiles & Packages)" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+  }
+  A4: "🖥️ Installed Program" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+
+  A1 -> A3: "1. Downloads script"
+  A2 -> A3: "2. Downloads code"
+  A3 -> A4: "3. Install package"
+}
+
+Debian_RedHat_Model: "Debian (PPA) / RedHat (COPR) Model" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  B1: "📄 Recipe / Spec File" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B2: "🌐 Upstream Source Code" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B3: "☁️ Build Servers\n(Canonical/RedHat Cloud)" {
+    style.fill: "#e8f4fd"
+    style.stroke: "#bbeeeb"
+  }
+  B4: "📦 Hosted Binary Repository\n(.deb / .rpm)" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+  B5: "⚙️ User's Machine\n(Apt / DNF Download)" {
+    style.fill: "#fff3cd"
+    style.stroke: "#ffeeba"
+  }
+  B6: "🖥️ Installed Program" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+
+  B1 -> B3: "1. Build trigger"
+  B2 -> B3: "2. Upload code"
+  B3 -> B4: "3. Compile & store"
+  B4 -> B5: "4. Download binary"
+  B5 -> B6: "5. Install"
+}
 ```
 
 ---

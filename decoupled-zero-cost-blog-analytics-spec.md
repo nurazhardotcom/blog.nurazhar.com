@@ -15,20 +15,43 @@ To ensure maximum security and database boundary isolation, this system is **com
 
 The blog remains 100% static on GitHub Pages. It communicates with a dedicated, isolated Cloud Function that stores data in a separate Neon database.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Blog["blog.nurazhar.com \n GitHub Pages"]
-    end
-    subgraph CF["GCP Cloud Function \n blog-analytics-api"]
-    end
-    subgraph DB["(Postgres DB \n blog_analytics)"]
-    end
-    Stats["Stats Dashboard \n /stats.html"]
-    track --> CF
-    views --> DB
-    stats --> CF
-    stats --> DB
+```d2
+# Diagram 74
+direction: down
+
+Blog: "blog.nurazhar.com \n GitHub Pages" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+CF: "GCP Cloud Function \n blog-analytics-api" {
+  style.fill: "#e8f4fd"
+  style.stroke: "#bbeeeb"
+}
+DB: "(Postgres DB \n blog_analytics)" {
+  style.fill: "#e2e3e5"
+  style.stroke: "#d6d8db"
+}
+Stats: "Stats Dashboard \n /stats.html" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+track: "track" {
+  style.fill: "#ffffff"
+  style.stroke: "#dee2e6"
+}
+views: "views" {
+  style.fill: "#ffffff"
+  style.stroke: "#dee2e6"
+}
+stats: "stats" {
+  style.fill: "#ffffff"
+  style.stroke: "#dee2e6"
+}
+
+track -> CF
+views -> DB
+stats -> CF
+stats -> DB
 ```
 
 ---

@@ -24,23 +24,23 @@ The 2008 whitepaper describes two transaction mechanisms:
 
 Here is the original IP-to-IP transaction flow described in the whitepaper:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    ALICE["Alice wants to pay Bob"]
-    BOB_VER["Bob verifies signature against Alice's public key"]
-    BROAD["Bob broadcasts transaction to miners"]
-    CONFIRM["Miners confirm in block"]
-    DNS["Alice's wallet resolves Bob's IP address"]
-    subgraph IP["Direct IP-to-IP connection established"]
-    end
-    subgraph TX["Alice sends signed transaction directly to Bob"]
-    end
-    DNS --> IP
-    IP --> TX
-    TX --> BOB_VER
-    BOB_VER --> BROAD
-    BROAD --> CONFIRM
+```d2
+# Diagram 46
+direction: down
+
+ALICE: "Alice wants to pay Bob"
+BOB_VER: "Bob verifies signature against Alice's public key"
+BROAD: "Bob broadcasts transaction to miners"
+CONFIRM: "Miners confirm in block"
+DNS: "Alice's wallet resolves Bob's IP address"
+IP: "Direct IP-to-IP connection established"
+TX: "Alice sends signed transaction directly to Bob"
+
+DNS -> IP
+IP -> TX
+TX -> BOB_VER
+BOB_VER -> BROAD
+BROAD -> CONFIRM
 ```
 
 This is not a peer-to-peer network of wallets connecting to miners. This is a **network of users** where payment is initiated by direct host-to-host communication — exactly how the internet was designed to work.
@@ -71,26 +71,24 @@ IPv6 Address = Network Prefix (64 bits) | Hash62(Public Key) (64 bits)
 
 This means: **your IPv6 address is your public key.** Your network identity and your payment identity can be the same.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph DIRECT["Direct P2P payment over IPv6"]
-    end
-    subgraph FALLBACK["Blockchain broadcast (fallback)"]
-    end
-    HASH["SHA-256 Hash"]
-    INTERFACE["64-bit Interface Identifier"]
-    subgraph IPV6["Full IPv6 Address"]
-    end
-    subgraph PAYMENT["Bitcoin Address (Hash160 of Public Key)"]
-    end
-    PK["User's Public Key"]
-    PREFIX["Network Prefix"]
-    HASH --> INTERFACE
-    INTERFACE --> IPV6
-    PK --> PAYMENT
-    IPV6 --> DIRECT
-    PAYMENT --> FALLBACK
+```d2
+# Diagram 47
+direction: down
+
+DIRECT: "Direct P2P payment over IPv6"
+FALLBACK: "Blockchain broadcast (fallback)"
+HASH: "SHA-256 Hash"
+INTERFACE: "64-bit Interface Identifier"
+IPV6: "Full IPv6 Address"
+PAYMENT: "Bitcoin Address (Hash160 of Public Key)"
+PK: "User's Public Key"
+PREFIX: "Network Prefix"
+
+HASH -> INTERFACE
+INTERFACE -> IPV6
+PK -> PAYMENT
+IPV6 -> DIRECT
+PAYMENT -> FALLBACK
 ```
 
 A CGA IPv6 address can serve two functions simultaneously:
@@ -143,33 +141,36 @@ But a fascinating pattern emerges from his technical writings that is independen
 
 This is not copy-paste blockchain commentary. This is network protocol engineering at the IETF specification level.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph cga["CGA Address Binding"]
-        subgraph ADDR["IPv6 Address (128-bit)"]
-        end
-        BTCADDR["Bitcoin Address (Hash160)"]
-        HASHFN["Hash Function (SHA-1)"]
-        ID["64-bit Interface ID"]
-        IPSEC["IPSec Encrypted Channel"]
-        PREFIX["IPv6 Network Prefix"]
-        subgraph PUBKEY["Public Key"]
-        end
-        HASHFN --> ID
-        ID --> ADDR
-        ADDR --> IPSEC
-        PUBKEY --> BTCADDR
-    end
-    subgraph payment["Direct Payment Flow"]
-        BTCPAY["Fallback: broadcast to chain"]
-        PAY["Send signed transaction directly"]
-        SETTLE["Miner confirmation"]
-        IPSEC --> PAY
-        BTCADDR --> BTCPAY
-        PAY --> SETTLE
-        BTCPAY --> SETTLE
-    end
+```d2
+# Diagram 48
+direction: down
+
+cga: "CGA Address Binding" {
+  ADDR: "IPv6 Address (128-bit)"
+  BTCADDR: "Bitcoin Address (Hash160)"
+  HASHFN: "Hash Function (SHA-1)"
+  ID: "64-bit Interface ID"
+  IPSEC: "IPSec Encrypted Channel"
+  PREFIX: "IPv6 Network Prefix"
+  PUBKEY: "Public Key"
+
+  HASHFN -> ID
+  ID -> ADDR
+  ADDR -> IPSEC
+  PUBKEY -> BTCADDR
+}
+
+payment: "Direct Payment Flow" {
+  BTCPAY: "Fallback: broadcast to chain"
+  PAY: "Send signed transaction directly"
+  SETTLE: "Miner confirmation"
+
+  PAY -> SETTLE
+  BTCPAY -> SETTLE
+}
+
+cga.IPSEC -> payment.PAY
+cga.BTCADDR -> payment.BTCPAY
 ```
 
 When combined with the ETSI (European Telecommunications Standards Institute) report **GR IPE 012** — a formal specification on IPv6-based Blockchain that explicitly describes IP-to-IP Bitcoin transactions using CGA addresses — the picture becomes coherent. An international standards body is specifying exactly what Satoshi designed in 2008 but could not implement with IPv4.

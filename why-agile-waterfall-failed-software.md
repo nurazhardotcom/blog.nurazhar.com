@@ -15,27 +15,25 @@ This post covers the foundation you need before studying Scrum: why the old mode
 
 Waterfall has five sequential phases:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Waterfall Model"]
-    end
-    subgraph Req["Requirements\n(all defined upfront)"]
-    end
-    subgraph Design["Design\n(system architecture)"]
-    end
-    subgraph Impl["Implementation\n(writing code)"]
-    end
-    subgraph Test["Testing\n(verification)"]
-    end
-    subgraph Ops["Deploy & Maintain"]
-    end
-    Req --> Design
-    Design --> Impl
-    Impl --> Test
-    Test --> Ops
-    subgraph Note["Each phase finishes before\nthe next begins. Feedback only\narrives at the end."]
-    end
+```d2
+# Diagram 195
+direction: down
+
+Title: "Waterfall Model"
+Req: "Requirements\n(all defined upfront)"
+Design: "Design\n(system architecture)"
+Impl: "Implementation\n(writing code)"
+Test: "Testing\n(verification)"
+Ops: "Deploy & Maintain"
+
+Req -> Design
+Design -> Impl
+Impl -> Test
+Test -> Ops
+
+Note: "Each phase finishes before\nthe next begins. Feedback only\narrives at the end." {
+  style.fill: "#fffbc8"
+}
 ```
 
 This works when:
@@ -102,27 +100,25 @@ A 2-week Sprint means you never go more than 14 days without showing working sof
 
 Waterfall is a methodology. Agile is a philosophy. Multiple frameworks implement Agile principles:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Agile Frameworks"]
-    end
-    subgraph Agile["Agile Philosophy\n(Manifesto + Principles)"]
-    end
-    subgraph Scrum["Scrum\nRoles + Events + Artifacts\nMost widely used"]
-    end
-    subgraph Kanban["Kanban\nVisual flow, WIP limits\nContinuous delivery"]
-    end
-    subgraph XP["Extreme Programming (XP)\nTechnical practices\nTDD, pair programming"]
-    end
-    subgraph Lean["Lean\nEliminate waste\nOptimise the whole"]
-    end
-    Agile -->|"defines the framework"| Scrum
-    Agile -->|"inspired by"| Kanban
-    Agile -->|"technical companion"| XP
-    Agile -->|"originated from Toyota"| Lean
-    subgraph Note["Scrum is the most adopted framework.\nThe 2020 Scrum Guide is the reference."]
-    end
+```d2
+# Diagram 196
+direction: down
+
+Title: "Agile Frameworks"
+Agile: "Agile Philosophy\n(Manifesto + Principles)"
+Scrum: "Scrum\nRoles + Events + Artifacts\nMost widely used"
+Kanban: "Kanban\nVisual flow, WIP limits\nContinuous delivery"
+XP: "Extreme Programming (XP)\nTechnical practices\nTDD, pair programming"
+Lean: "Lean\nEliminate waste\nOptimise the whole"
+
+Agile -> Scrum: "defines the framework"
+Agile -> Kanban: "inspired by"
+Agile -> XP: "technical companion"
+Agile -> Lean: "originated from Toyota"
+
+Note: "Scrum is the most adopted framework.\nThe 2020 Scrum Guide is the reference." {
+  style.fill: "#fffbc8"
+}
 ```
 
 Your course covers **Scrum** specifically, with the 2020 Scrum Guide as the definitive reference.

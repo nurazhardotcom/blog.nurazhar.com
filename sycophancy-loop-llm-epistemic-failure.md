@@ -60,31 +60,31 @@ The argument: Satoshi's Section 5 (Network) and Section 6 (Incentives) describe 
 
 ## Where This Lands
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A1["If yes → BSV is Bitcoin"]
-    A2["If no → the definition requires both"]
-    A3["If yes → only BTC qualifies"]
-    A4["If no → security model is irrelevant"]
-    BLU["Blueprint (code/opcodes)"]
-    subgraph BSV_WIN["BSV: 7/7 restored"]
-    end
-    subgraph BTC_WIN["BTC: dominant hash rate, distributed nodes"]
-    end
-    GAM["Game Theory (security/incentives)"]
-    Q1["Is code-level restoration sufficient to claim 'Bitcoin'?"]
-    Q2["Is hash rate dominance necessary to claim 'Bitcoin'?"]
-    SAT["Satoshi's Design"]
-    SAT --> GAM
-    BLU --> BSV_WIN
-    GAM --> BTC_WIN
-    BSV_WIN --> Q1
-    BTC_WIN --> Q2
-    Q1 --> A1
-    Q1 --> A2
-    Q2 --> A3
-    Q2 --> A4
+```d2
+# Diagram 170
+direction: down
+
+A1: "If yes → BSV is Bitcoin"
+A2: "If no → the definition requires both"
+A3: "If yes → only BTC qualifies"
+A4: "If no → security model is irrelevant"
+BLU: "Blueprint (code/opcodes)"
+BSV_WIN: "BSV: 7/7 restored"
+BTC_WIN: "BTC: dominant hash rate, distributed nodes"
+GAM: "Game Theory (security/incentives)"
+Q1: "Is code-level restoration sufficient to claim 'Bitcoin'?"
+Q2: "Is hash rate dominance necessary to claim 'Bitcoin'?"
+SAT: "Satoshi's Design"
+
+SAT -> GAM
+BLU -> BSV_WIN
+GAM -> BTC_WIN
+BSV_WIN -> Q1
+BTC_WIN -> Q2
+Q1 -> A1
+Q1 -> A2
+Q2 -> A3
+Q2 -> A4
 ```
 
 Both definitions are grounded in Satoshi's writings. Neither is sufficient alone.

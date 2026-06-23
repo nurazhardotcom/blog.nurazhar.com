@@ -38,23 +38,29 @@ Let’s look at the governance architectures of three major blockchain projects�
 
 To put these blockchain models in perspective, let’s look at how the legacy software engines that power the world's infrastructure handle governance.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph linux["Linux (Lieutenants)"]
-        L_Core["Linus Torvalds"]
-        L_Devs["Global Contributors"]
-        L_Lieut["Subsystem Maintainers"]
-        L_Lieut --> L_Devs
-    end
-    subgraph jvm["JVM (Specifications)"]
-        J_Impl["IBM, Amazon, RedHat Impls"]
-        J_JCP["Java Community Process"]
-        J_OpenJDK["OpenJDK (Reference)"]
-        J_Oracle["Owner"]
-        J_Oracle --> J_OpenJDK
-        J_OpenJDK --> J_Impl
-    end
+```d2
+# Diagram 111
+direction: down
+
+linux: {
+  label: "Linux (Lieutenants)"
+  l_core: "Linus Torvalds"
+  l_devs: "Global Contributors"
+  l_lieut: "Subsystem Maintainers"
+
+  l_lieut -> l_devs
+}
+
+jvm: {
+  label: "JVM (Specifications)"
+  j_impl: "IBM, Amazon, RedHat Impls"
+  j_jcp: "Java Community Process"
+  j_openjdk: "OpenJDK (Reference)"
+  j_oracle: "Owner"
+
+  j_oracle -> j_openjdk
+  j_openjdk -> j_impl
+}
 ```
 
 ### The Linux Kernel: The Benevolent Dictator Model

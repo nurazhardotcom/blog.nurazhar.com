@@ -23,45 +23,41 @@ In Bitcoin (original design), composability means something more fundamental:
 
 This is **transaction-level composability**. It does not require a VM. It does not require shared state. It only requires that the base layer accept arbitrary data payloads and settle them permanently.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BRC20["BSV-20: token protocol"]
-    end
-    subgraph BRIDGE["indelible.bridge-registry"]
-    end
-    subgraph COT1["COT1: encrypted AI memory"]
-    end
-    INPUTS["Inputs: reference previous UTXOs"]
-    MEMORY["AI agent persistent memory"]
-    NFTs["Non-fungible inscriptions"]
-    subgraph OP_RETURN["OP_RETURN output (arbitrary data)"]
-    end
-    subgraph ORD["Ordinals: inscriptions"]
-    end
-    OUTPUTS["Outputs: create new UTXOs"]
-    OVERLAY["Overlay network discovery"]
-    P2PKH["Payment output (BSV value)"]
-    RELAY["Federated SPV relay mesh"]
-    subgraph SHIP["SHIP/SLAP: overlay advertisements"]
-    end
-    TOKENS["Fungible tokens"]
-    TX["Bitcoin Transaction"]
-    YOURS["Your protocol: anything"]
-    TX --> OUTPUTS
-    OUTPUTS --> P2PKH
-    OUTPUTS --> OP_RETURN
-    OP_RETURN --> COT1
-    OP_RETURN --> BRC20
-    OP_RETURN --> ORD
-    OP_RETURN --> BRIDGE
-    OP_RETURN --> SHIP
-    OP_RETURN --> YOURS
-    COT1 --> MEMORY
-    BRC20 --> TOKENS
-    ORD --> NFTs
-    BRIDGE --> RELAY
-    SHIP --> OVERLAY
+```d2
+# Diagram 43
+direction: down
+
+BRC20: "BSV-20: token protocol"
+BRIDGE: "indelible.bridge-registry"
+COT1: "COT1: encrypted AI memory"
+INPUTS: "Inputs: reference previous UTXOs"
+MEMORY: "AI agent persistent memory"
+NFTs: "Non-fungible inscriptions"
+OP_RETURN: "OP_RETURN output (arbitrary data)"
+ORD: "Ordinals: inscriptions"
+OUTPUTS: "Outputs: create new UTXOs"
+OVERLAY: "Overlay network discovery"
+P2PKH: "Payment output (BSV value)"
+RELAY: "Federated SPV relay mesh"
+SHIP: "SHIP/SLAP: overlay advertisements"
+TOKENS: "Fungible tokens"
+TX: "Bitcoin Transaction"
+YOURS: "Your protocol: anything"
+
+TX -> OUTPUTS
+OUTPUTS -> P2PKH
+OUTPUTS -> OP_RETURN
+OP_RETURN -> COT1
+OP_RETURN -> BRC20
+OP_RETURN -> ORD
+OP_RETURN -> BRIDGE
+OP_RETURN -> SHIP
+OP_RETURN -> YOURS
+COT1 -> MEMORY
+BRC20 -> TOKENS
+ORD -> NFTs
+BRIDGE -> RELAY
+SHIP -> OVERLAY
 ```
 
 All of these protocols coexist in the same transaction graph. They do not compete for blockspace in the way Ethereum contracts compete for gas. They are settled in parallel, permanently, on the same chain.
@@ -76,47 +72,52 @@ This is what "Bitcoin is composable" means: **the base layer does not need to kn
 
 The architecture reveals the pattern:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BLOCKCHAIN["BSV Blockchain"]
-    end
-    subgraph indelible["Indelible Platform"]
-        API["API Layer"]
-        APP["Indelible App"]
-        COT1_PROTO["COT1 Protocol (encrypted OP_RETURN)"]
-        subgraph RELAY_MESH["Federated SPV Relay Mesh"]
-        end
-        TX_BUILD["Transaction Builder"]
-        API --> COT1_PROTO
-        COT1_PROTO --> TX_BUILD
-        TX_BUILD --> RELAY_MESH
-    end
-    subgraph relay["Relay Federation"]
-        BRIDGE1["Bridge Dallas"]
-        BRIDGE2["Bridge NJ"]
-        BRIDGE3["Bridge Chicago"]
-        BRIDGE4["Bridge SV"]
-        BRIDGE5["Bridge Atlanta"]
-        BRIDGE6["Bridge +2"]
-        subgraph BSV_NODE["BSV Node P2P Network (port 8333)"]
-        end
-        SEED["seed.indelible.one (26+ peers)"]
-        RELAY_MESH --> BRIDGE1
-        RELAY_MESH --> BRIDGE2
-        RELAY_MESH --> BRIDGE3
-        RELAY_MESH --> BRIDGE4
-        RELAY_MESH --> BRIDGE5
-        RELAY_MESH --> BRIDGE6
-        BRIDGE1 --> BSV_NODE
-        BRIDGE2 --> BSV_NODE
-        BRIDGE3 --> BSV_NODE
-        BRIDGE4 --> BSV_NODE
-        BRIDGE5 --> BSV_NODE
-        BRIDGE6 --> BSV_NODE
-        RELAY_MESH --> SEED
-    end
-    BSV_NODE --> BLOCKCHAIN
+```d2
+# Diagram 44
+direction: down
+
+BLOCKCHAIN: "BSV Blockchain"
+
+indelible: "Indelible Platform" {
+  API: "API Layer"
+  APP: "Indelible App"
+  COT1_PROTO: "COT1 Protocol (encrypted OP_RETURN)"
+  RELAY_MESH: "Federated SPV Relay Mesh"
+  TX_BUILD: "Transaction Builder"
+
+  API -> COT1_PROTO
+  COT1_PROTO -> TX_BUILD
+  TX_BUILD -> RELAY_MESH
+}
+
+relay: "Relay Federation" {
+  BRIDGE1: "Bridge Dallas"
+  BRIDGE2: "Bridge NJ"
+  BRIDGE3: "Bridge Chicago"
+  BRIDGE4: "Bridge SV"
+  BRIDGE5: "Bridge Atlanta"
+  BRIDGE6: "Bridge +2"
+  BSV_NODE: "BSV Node P2P Network (port 8333)"
+  SEED: "seed.indelible.one (26+ peers)"
+}
+
+indelible.RELAY_MESH -> relay.BRIDGE1
+indelible.RELAY_MESH -> relay.BRIDGE2
+indelible.RELAY_MESH -> relay.BRIDGE3
+indelible.RELAY_MESH -> relay.BRIDGE4
+indelible.RELAY_MESH -> relay.BRIDGE5
+indelible.RELAY_MESH -> relay.BRIDGE6
+
+relay.BRIDGE1 -> relay.BSV_NODE
+relay.BRIDGE2 -> relay.BSV_NODE
+relay.BRIDGE3 -> relay.BSV_NODE
+relay.BRIDGE4 -> relay.BSV_NODE
+relay.BRIDGE5 -> relay.BSV_NODE
+relay.BRIDGE6 -> relay.BSV_NODE
+
+indelible.RELAY_MESH -> relay.SEED
+
+relay.BSV_NODE -> BLOCKCHAIN
 ```
 
 **Key architectural properties:**
@@ -195,28 +196,29 @@ And the relay mesh means your agents do not depend on any third-party API. No ra
 
 Here is what a single transaction from an agent using this stack looks like:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    B["Agent B receives payment"]
-    DISCOVER["Other agents discover Agent A's service"]
-    MEM["Agent A remembers the conversation"]
-    subgraph tx["Agent A → Agent B Transaction"]
-        INP["Input: Agent A's UTXO"]
-        subgraph OUT1["Output 1: Payment to Agent B (500 sats)"]
-        end
-        OUT2["Output 2: Change to Agent A"]
-        subgraph OUT3["Output 3: OP_RETURN (COT1 encrypted memory)"]
-        end
-        subgraph OUT4["Output 4: OP_RETURN (SHIP advertisement)"]
-        end
-        INP --> OUT2
-        INP --> OUT3
-        INP --> OUT4
-    end
-    OUT1 --> B
-    OUT3 --> MEM
-    OUT4 --> DISCOVER
+```d2
+# Diagram 45
+direction: down
+
+B: "Agent B receives payment"
+DISCOVER: "Other agents discover Agent A's service"
+MEM: "Agent A remembers the conversation"
+
+tx: "Agent A → Agent B Transaction" {
+  INP: "Input: Agent A's UTXO"
+  OUT1: "Output 1: Payment to Agent B (500 sats)"
+  OUT2: "Output 2: Change to Agent A"
+  OUT3: "Output 3: OP_RETURN (COT1 encrypted memory)"
+  OUT4: "Output 4: OP_RETURN (SHIP advertisement)"
+
+  INP -> OUT2
+  INP -> OUT3
+  INP -> OUT4
+}
+
+tx.OUT1 -> B
+tx.OUT3 -> MEM
+tx.OUT4 -> DISCOVER
 ```
 
 Four outputs. One transaction. Payment, memory, and discovery all settled in a single atomic operation on the same base layer. This is what composability looks like when it is designed at the transaction level rather than the contract level.

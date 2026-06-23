@@ -23,18 +23,16 @@ When I hear "fork," I think of real divergences — projects that split and beca
 
 ### Linux Distributions
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 90
 ```
 
 Ubuntu forked Debian. They went separate ways — different package managers (apt vs dpkg directly), different release cycles, different communities. The fork created **two independent projects** that never merge back.
 
 ### Bitcoin
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 91
 ```
 
 **Critical correction:** The common narrative says "BTC = Bitcoin's whitepaper." That's wrong.
@@ -51,9 +49,8 @@ BSV is not a departure from Bitcoin. BSV **is** Bitcoin — the protocol as orig
 
 ### The Pattern
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 92
 ```
 
 Every traditional fork follows this pattern:
@@ -67,9 +64,8 @@ That's what I thought a GitHub fork was. And that's why I didn't want one. I did
 
 A GitHub fork is the **opposite** of a divergence. It's a **link that points back to the original**.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 93
 ```
 
 A GitHub fork is like a **branch that lives in your own namespace**. You can push to it freely, but the original project can still see it and accept changes from it.
@@ -80,9 +76,8 @@ The key difference: **GitHub knows the two repos are connected**.
 
 I created a **standalone repo** and pushed code to it. From the outside, it looked the same. But GitHub saw this:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 94
 ```
 
 GitHub had no idea these two repos were related. Same commits, same code — but no link. When I tried to open a PR from my repo to upstream, GitHub said:
@@ -93,9 +88,8 @@ Because GitHub's PR system works by comparing branches **across linked repos**. 
 
 ## The Three Ways This Can Go
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 95
 ```
 
 ### Option 1: Delete & Re-Fork (Cleanest)
@@ -140,9 +134,8 @@ A GitHub fork is really a **branch that lives in your own namespace**. Not a dep
 
 On a proper GitHub fork, GitHub shows a "Fetch upstream" button:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 96
 ```
 
 This syncs the latest changes from the original project into your fork. Your fork stays up-to-date with upstream while you work on your feature branch. **This is why a GitHub fork is "contribute" not "diverge."**

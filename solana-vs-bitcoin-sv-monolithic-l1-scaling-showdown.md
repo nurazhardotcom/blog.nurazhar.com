@@ -19,29 +19,42 @@ Here is a deep-dive systems engineering comparison of Solana's account-based par
 
 To process tens of thousands of transactions per second, a blockchain cannot run transactions sequentially on a single thread. It must execute them concurrently. How they achieve concurrency is the core difference between the two architectures.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph solana["Solana (Account Locks)"]
-        exec1["Thread 1"]
-        exec2["Thread 2"]
-        lockA["Lock Account A"]
-        lockB["Lock Account B"]
-        tx1["Tx 1: Read/Write Acc A"]
-        tx2["Tx 2: Read/Write Acc B"]
-        tx3["Tx 3: Read/Write Acc A"]
-        wait["Wait for Lock A"]
-        lockA --> exec1
-        lockB --> exec2
-    end
-    subgraph bsv["BSV (UTXO Independence)"]
-        execA["Thread 1"]
-        execB["Thread 2"]
-        execC["Thread 3"]
-        txA["Tx A: Spend UTXO 1"]
-        txB["Tx B: Spend UTXO 2"]
-        txC["Tx C: Spend UTXO 3"]
-    end
+```d2
+# Diagram 166
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+solana: {
+  label: "Solana (Account Locks)"
+  
+  exec1: "Thread 1"
+  exec2: "Thread 2"
+  lockA: "Lock Account A"
+  lockB: "Lock Account B"
+  tx1: "Tx 1: Read/Write Acc A"
+  tx2: "Tx 2: Read/Write Acc B"
+  tx3: "Tx 3: Read/Write Acc A"
+  wait: "Wait for Lock A"
+  
+  lockA -> exec1
+  lockB -> exec2
+}
+
+bsv: {
+  label: "BSV (UTXO Independence)"
+  
+  execA: "Thread 1"
+  execB: "Thread 2"
+  execC: "Thread 3"
+  txA: "Tx A: Spend UTXO 1"
+  txB: "Tx B: Spend UTXO 2"
+  txC: "Tx C: Spend UTXO 3"
+}
 ```
 
 ### Solana: Sealevel and Account Access Lists

@@ -4,6 +4,7 @@ pages:
   stage: deploy
   before_script:
     - apk add --no-cache bash curl pandoc openjdk17-jre-headless
+    - curl -fsSL https://d2lang.com/install.sh | sh --
     - curl -sL https://raw.githubusercontent.com/babashka/babashka/master/install | bash
   script:
     - bb build

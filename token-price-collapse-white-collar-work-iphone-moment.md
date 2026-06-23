@@ -43,25 +43,22 @@ The token price collapse will do the same for cognitive labor.
 
 ## The Token Price Trajectory
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Frontier Reasoning Token Price (\$/M tokens)"]
-    end
-    subgraph Year2020["2020\n(GPT-3)\n~\$100/M"]
-    end
-    subgraph Year2022["2022\n(GPT-3.5)\n~\$3/M"]
-    end
-    subgraph Year2024["2024\n(GPT-4o mini)\n~\$0.15/M"]
-    end
-    subgraph Year2026["2026\n(Frontier)\n~\$2-5/M"]
-    end
-    subgraph Year2029["2029\n(Frontier)\n~\$0.02-0.50/M"]
-    end
-    2020 -->|"30x drop"| 2022
-    2022 -->|"20x drop"| 2024
-    2024 -->|"stable frontier\n(new capability level)"| 2026
-    2026 -->|"10-100x drop\nprojected"| 2029
+```d2
+# Diagram 177
+direction: down
+
+Title: "Frontier Reasoning Token Price ($/M tokens)"
+
+Year2020: "2020\n(GPT-3)\n~$100/M"
+Year2022: "2022\n(GPT-3.5)\n~$3/M"
+Year2024: "2024\n(GPT-4o mini)\n~$0.15/M"
+Year2026: "2026\n(Frontier)\n~$2-5/M"
+Year2029: "2029\n(Frontier)\n~$0.02-0.50/M"
+
+Year2020 -> Year2022: "30x drop"
+Year2022 -> Year2024: "20x drop"
+Year2024 -> Year2026: "stable frontier\n(new capability level)"
+Year2026 -> Year2029: "10-100x drop\nprojected"
 ```
 
 This is not linear. Each generation of models is more capable than the last, so the price per unit of "reasoning quality" drops faster than the raw token price. A 2029 frontier model at $0.50/M tokens will be as capable as a 2026 model that doesn't exist yet.
@@ -72,26 +69,28 @@ This is not linear. Each generation of models is more capable than the last, so 
 
 The critical frame: **what does it cost to do a unit of cognitive work?**
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Cost of One Hour of Cognitive Output"]
-    end
-    subgraph Human["Human Worker\n(1 hour of analysis)"]
-        cost["\$50-500/hr"]
-    end
-    subgraph LLM2024["LLM (2024)\n(1 hour of human-equivalent\nthinking at ~100 tok/s)"]
-        cost["\$0.05-0.50/hr"]
-    end
-    subgraph LLM2026["LLM (2026)\n(Same, frontier)"]
-        cost["\$0.10-1.00/hr"]
-    end
-    subgraph LLM2029["LLM (2029)\n(Same, frontier, 10-100x\ncheaper through\nefficiency gains)"]
-        cost["\$0.001-0.10/hr"]
-    end
-    Human -->|"1000x cheaper\n(but less capable)"| LLM2024
-    LLM2024 -->|"capability gap\nnarrowing"| LLM2026
-    LLM2026 -->|"10-100x cheaper\nper unit of reasoning"| LLM2029
+```d2
+# Diagram 178
+direction: down
+
+Title: "Cost of One Hour of Cognitive Output"
+
+Human: "Human Worker\n(1 hour of analysis)" {
+  cost: "$50-500/hr"
+}
+LLM2024: "LLM (2024)\n(1 hour of human-equivalent\nthinking at ~100 tok/s)" {
+  cost: "$0.05-0.50/hr"
+}
+LLM2026: "LLM (2026)\n(Same, frontier)" {
+  cost: "$0.10-1.00/hr"
+}
+LLM2029: "LLM (2029)\n(Same, frontier, 10-100x\ncheaper through\nefficiency gains)" {
+  cost: "$0.001-0.10/hr"
+}
+
+Human -> LLM2024: "1000x cheaper\n(but less capable)"
+LLM2024 -> LLM2026: "capability gap\nnarrowing"
+LLM2026 -> LLM2029: "10-100x cheaper\nper unit of reasoning"
 ```
 
 At $0.001-0.10 per hour of cognitive output, the marginal cost of "thinking" approaches the marginal cost of compute — essentially zero.
@@ -102,22 +101,19 @@ This is the threshold. When thinking costs near-zero, the question is no longer 
 
 ## Phase 1 (2024-2026): Augmentation — The Copilot Era
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Phase 1: Augmentation"]
-    end
-    subgraph Worker["Human Worker"]
-    end
-    subgraph LLM["LLM (Copilot)"]
-    end
-    subgraph Output["Output\n(3x productivity)"]
-    end
-    Worker -->|"Prompt / task"| LLM
-    LLM -->|"Draft, analyze,\nsummarize"| Output
-    Worker -->|"Review, edit,\napprove"| Output
-    subgraph Note["Human + LLM together\nproduce 3x more\nthan human alone"]
-    end
+```d2
+# Diagram 179
+direction: down
+
+Title: "Phase 1: Augmentation"
+Worker: "Human Worker"
+LLM: "LLM (Copilot)"
+Output: "Output\n(3x productivity)"
+Note: "Human + LLM together\nproduce 3x more\nthan human alone"
+
+Worker -> LLM: "Prompt / task"
+LLM -> Output: "Draft, analyze,\nsummarize"
+Worker -> Output: "Review, edit,\napprove"
 ```
 
 **Today.** The human does the work; the LLM accelerates it. A lawyer writes a brief with AI drafting. A consultant builds a model with AI generating code. An analyst reviews AI-generated insights.
@@ -138,29 +134,24 @@ flowchart TD
 
 ## Phase 2 (2026-2028): Agentification — The Delegation Era
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Phase 2: Agentification"]
-    end
-    subgraph Worker["Human (Supervisor)"]
-    end
-    subgraph Agent1["Agent A:\n(Research)"]
-    end
-    subgraph Agent2["Agent B:\n(Analysis)"]
-    end
-    subgraph Agent3["Agent C:\n(Output Generation)"]
-    end
-    subgraph Output["Deliverable"]
-    end
-    Worker -->|"Goal: research X"| Agent1
-    Worker -->|"Goal: analyze Y"| Agent2
-    Worker -->|"Goal: produce Z"| Agent3
-    Agent1 -->|"passes findings"| Agent2
-    Agent2 -->|"passes analysis"| Agent3
-    Agent3 --> Output
-    subgraph Note["Human manages agents\nexception-based review\n10-50x output multiplier"]
-    end
+```d2
+# Diagram 180
+direction: down
+
+Title: "Phase 2: Agentification"
+Worker: "Human (Supervisor)"
+Agent1: "Agent A:\n(Research)"
+Agent2: "Agent B:\n(Analysis)"
+Agent3: "Agent C:\n(Output Generation)"
+Output: "Deliverable"
+Note: "Human manages agents\nexception-based review\n10-50x output multiplier"
+
+Worker -> Agent1: "Goal: research X"
+Worker -> Agent2: "Goal: analyze Y"
+Worker -> Agent3: "Goal: produce Z"
+Agent1 -> Agent2: "passes findings"
+Agent2 -> Agent3: "passes analysis"
+Agent3 -> Output
 ```
 
 **2026-2028.** Token prices drop enough that running multiple agents for hours on a single problem is economical. The human shifts from "doing" to "directing."
@@ -191,37 +182,35 @@ A single senior analyst now manages 3-5 AI agents that:
 
 ## Phase 3 (2029+): Structural Shift — The Thinking-as-Commodity Era
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Phase 3: Structural Shift"]
-    end
-    subgraph OldLayers["Old White-Collar Stack"]
-    end
-    subgraph Exec["Executive (strategy)"]
-    end
-    subgraph Manager["Manager (coordination)"]
-    end
-    subgraph Analyst["Analyst (execution)"]
-    end
-    subgraph Associate["Associate (grunt work)"]
-    end
-    Exec --> Manager
-    Manager --> Analyst
-    Analyst --> Associate
-    subgraph NewLayers["New White-Collar Stack"]
-    end
-    subgraph NewExec["Strategist (what to do)"]
-    end
-    subgraph Builder["Builder (create tools/\nagents/guardrails)"]
-    end
-    subgraph Verifier["Verifier (check\nAI output)"]
-    end
-    subgraph AgentLayer["AI Agents (execution)"]
-    end
-    NewExec --> Builder
-    Builder --> Verifier
-    Verifier --> AgentLayer
+```d2
+# Diagram 181
+direction: down
+
+Title: "Phase 3: Structural Shift"
+
+OldLayers: "Old White-Collar Stack" {
+  direction: down
+  Exec: "Executive (strategy)"
+  Manager: "Manager (coordination)"
+  Analyst: "Analyst (execution)"
+  Associate: "Associate (grunt work)"
+  
+  Exec -> Manager
+  Manager -> Analyst
+  Analyst -> Associate
+}
+
+NewLayers: "New White-Collar Stack" {
+  direction: down
+  NewExec: "Strategist (what to do)"
+  Builder: "Builder (create tools/\nagents/guardrails)"
+  Verifier: "Verifier (check\nAI output)"
+  AgentLayer: "AI Agents (execution)"
+  
+  NewExec -> Builder
+  Builder -> Verifier
+  Verifier -> AgentLayer
+}
 ```
 
 By 2029, when frontier reasoning costs 10-100x less than today, the organizational structure of knowledge work inverts:
@@ -304,21 +293,20 @@ Bandwidth didn't get cheaper and people stopped using the internet. People used 
 
 Same for tokens:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Demand Elasticity for Cognitive Work"]
-    end
-    subgraph Phase1["2024\n\$1/M tok\nUse: Chat, code\nMarket: ~\$10B"]
-    end
-    subgraph Phase2["2026\n\$0.10/M tok\nUse: Agents, RAG,\ncontent gen\nMarket: ~\$100B"]
-    end
-    subgraph Phase3["2029\n\$0.01/M tok\nUse: Ambient agents,\npersonal AI, enterprise\nworkflow integration\nMarket: ~\$1T+"]
-    end
-    Phase1 -->|"10x cheaper\n10x more usage"| Phase2
-    Phase2 -->|"10x cheaper\n10x more usage"| Phase3
-    subgraph Note["Total token spend grows\neven as per-token cost drops.\nNew use-cases emerge at\neach price threshold."]
-    end
+```d2
+# Diagram 182
+direction: down
+
+Title: "Demand Elasticity for Cognitive Work"
+
+Phase1: "2024\n$1/M tok\nUse: Chat, code\nMarket: ~$10B"
+Phase2: "2026\n$0.10/M tok\nUse: Agents, RAG,\ncontent gen\nMarket: ~$100B"
+Phase3: "2029\n$0.01/M tok\nUse: Ambient agents,\npersonal AI, enterprise\nworkflow integration\nMarket: ~$1T+"
+
+Note: "Total token spend grows\neven as per-token cost drops.\nNew use-cases emerge at\neach price threshold."
+
+Phase1 -> Phase2: "10x cheaper\n10x more usage"
+Phase2 -> Phase3: "10x cheaper\n10x more usage"
 ```
 
 At today's prices, you use AI for important tasks. At 10x cheaper, you use AI for *every* task. At 100x cheaper, you use AI for tasks you didn't even know existed because they weren't worth doing manually.
@@ -334,19 +322,15 @@ At today's prices, you use AI for important tasks. At 10x cheaper, you use AI fo
 
 ## The Three Scenarios
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["White-Collar Employment 2029"]
-    end
-    subgraph Bear["Bear Case (-20%)\nAI replaces 20% of\nwhite-collar jobs\nRemaining roles:\nstrategist + verifier"]
-    end
-    subgraph Base["Base Case (0%)\nJobs destroyed ≈\nnew jobs created\nShift in composition"]
-    end
-    subgraph Bull["Bull Case (+30%)\nDemand elasticity creates\nmore cognitive work\nthan AI replaces"]
-    end
-    subgraph MyView["My View:\nBetween Base and Bull.\nCompression of middle layers\nbut expansion at the edges\n(supervision, integration,\nnew use-cases)."]
-    end
+```d2
+# Diagram 183
+direction: down
+
+Title: "White-Collar Employment 2029"
+Bear: "Bear Case (-20%)\nAI replaces 20% of\nwhite-collar jobs\nRemaining roles:\nstrategist + verifier"
+Base: "Base Case (0%)\nJobs destroyed ≈\nnew jobs created\nShift in composition"
+Bull: "Bull Case (+30%)\nDemand elasticity creates\nmore cognitive work\nthan AI replaces"
+MyView: "My View:\nBetween Base and Bull.\nCompression of middle layers\nbut expansion at the edges\n(supervision, integration,\nnew use-cases)."
 ```
 
 My assessment: between Base and Bull.
@@ -363,19 +347,15 @@ Each wave of automation expanded the scope of the domain while compressing the e
 
 ## What I'd Tell Someone Starting Their Career Today
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Advice for 2026 Grad"]
-    end
-    subgraph Dont["Don't specialize in:\n- Pure analysis (AI does this)\n- Pure writing (AI does this)\n- Pure coding (AI does this)\n- Compliance checking (AI does this)\n- Report generation (AI does this)"]
-    end
-    subgraph Do["Do specialize in:\n- Domain expertise + AI orchestration\n- Building and validating AI systems\n- Relationship ownership (clients, stakeholders)\n- Cross-domain synthesis\n- Real-world verification (is the AI right?)\n- Ethics, governance, and AI policy"]
-    end
-    subgraph Arrow[""]
-    end
-    Dont --> Arrow
-    Arrow --> Do
+```d2
+# Diagram 184
+direction: down
+
+Title: "Advice for 2026 Grad"
+Dont: "Don't specialize in:\n- Pure analysis (AI does this)\n- Pure writing (AI does this)\n- Pure coding (AI does this)\n- Compliance checking (AI does this)\n- Report generation (AI does this)"
+Do: "Do specialize in:\n- Domain expertise + AI orchestration\n- Building and validating AI systems\n- Relationship ownership (clients, stakeholders)\n- Cross-domain synthesis\n- Real-world verification (is the AI right?)\n- Ethics, governance, and AI policy"
+
+Dont -> Do
 ```
 
 The winning human in 2029 is not the one who competes with AI on execution. It's the one who:

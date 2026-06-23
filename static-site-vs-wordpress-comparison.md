@@ -11,29 +11,52 @@ My blog is a static site. WordPress powers ~43% of the web. Here's the real comp
 
 ## Architecture Overview
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Architecture Comparison"]
-    end
-    subgraph Static["Static Blog\n(Quickblog / Babashka)"]
-    end
-    subgraph WP["WordPress\n(PHP / MySQL)"]
-    end
-    subgraph StaticStack["Markdown files\n  → Babashka\n  → Static HTML files\n  → GitHub Pages CDN"]
-    end
-    subgraph WPStack["Browser request\n  → PHP executes\n  → MySQL queries\n  → HTML generated\n  → Sent to visitor"]
-    end
-    subgraph StaticCost["Cost: \$0/month\n(2 min GitHub Actions)"]
-    end
-    subgraph WPCost["Cost: \$10-40/month\n(hosting + domain)"]
-    end
-    Static --> StaticStack
-    StaticStack --> StaticCost
-    WP --> WPStack
-    WPStack --> WPCost
-    subgraph Note["Static: pre-built at deploy time\nDynamic: built per request"]
-    end
+```d2
+# Diagram 167
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Architecture Comparison"
+}
+
+Static: {
+  label: "Static Blog\n(Quickblog / Babashka)"
+}
+
+WP: {
+  label: "WordPress\n(PHP / MySQL)"
+}
+
+StaticStack: {
+  label: "Markdown files\n  \u2192 Babashka\n  \u2192 Static HTML files\n  \u2192 GitHub Pages CDN"
+}
+
+WPStack: {
+  label: "Browser request\n  \u2192 PHP executes\n  \u2192 MySQL queries\n  \u2192 HTML generated\n  \u2192 Sent to visitor"
+}
+
+StaticCost: {
+  label: "Cost: $0/month\n(2 min GitHub Actions)"
+}
+
+WPCost: {
+  label: "Cost: $10-40/month\n(hosting + domain)"
+}
+
+Note: {
+  label: "Static: pre-built at deploy time\nDynamic: built per request"
+}
+
+Static -> StaticStack
+StaticStack -> StaticCost
+WP -> WPStack
+WPStack -> WPCost
 ```
 
 ---
@@ -103,33 +126,26 @@ flowchart TD
 
 ## The Tradeoff Matrix
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Tradeoffs"]
-    end
-    subgraph Control["Control"]
-    end
-    subgraph Ease["Ease of Use"]
-    end
-    subgraph Cost["Cost"]
-    end
-    subgraph Speed["Speed"]
-    end
-    subgraph Security["Security"]
-    end
-    subgraph Ecosystem["Ecosystem"]
-    end
-    subgraph StaticWins["Static wins"]
-    end
-    subgraph WPWins["WordPress wins"]
-    end
-    Control --> StaticWins
-    Ease --> WPWins
-    Cost --> StaticWins
-    Speed --> StaticWins
-    Security --> StaticWins
-    Ecosystem --> WPWins
+```d2
+# Diagram 168
+direction: down
+
+Title: "Tradeoffs"
+Control: "Control"
+Ease: "Ease of Use"
+Cost: "Cost"
+Speed: "Speed"
+Security: "Security"
+Ecosystem: "Ecosystem"
+StaticWins: "Static wins"
+WPWins: "WordPress wins"
+
+Control -> StaticWins
+Ease -> WPWins
+Cost -> StaticWins
+Speed -> StaticWins
+Security -> StaticWins
+Ecosystem -> WPWins
 ```
 
 ---

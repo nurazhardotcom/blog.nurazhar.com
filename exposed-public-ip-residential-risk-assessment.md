@@ -24,22 +24,34 @@ Your public IP is not a secret. It's visible to:
 
 Your IP being in a blog post is, for most practical attackers, *no more useful* than your IP already being in Shodan's database — which it already is if your ISP delegates a public IP.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Shodan["Shodan / Censys\nScans entire IPv4 space\nevery few hours"]
-    end
-    subgraph Blog["Blog post\nwith your IP"]
-    end
-    subgraph Botnets["Botnets\nConstant port scans"]
-    end
-    subgraph Attacker["Attacker"]
-    end
-    Shodan -->|"Already knows your IP"| Attacker
-    Blog -->|"Same IP, no new info"| Attacker
-    Botnets -->|"Already scanning it"| Attacker
-    subgraph Note["For a residential IP, the blog post\nadds zero new attack surface.\nThe bots already found you."]
-    end
+```d2
+# Diagram 78
+direction: down
+
+Shodan: "Shodan / Censys\nScans entire IPv4 space\nevery few hours" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+Blog: "Blog post\nwith your IP" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+Botnets: "Botnets\nConstant port scans" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+Attacker: "Attacker" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+Note: "For a residential IP, the blog post\nadds zero new attack surface.\nThe bots already found you." {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+
+Shodan -> Attacker: "Already knows your IP"
+Blog -> Attacker: "Same IP, no new info"
+Botnets -> Attacker: "Already scanning it"
 ```
 
 ---

@@ -28,32 +28,35 @@ At each phase, the ratio shifts. Humans do less execution and more curation. The
 
 ## Phase 1: Hybrid Agent-Human Governance (2026-2028)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph now["Current State 2026"]
-        D1["DAO Proposal"]
-        subgraph E1["Slow Execution (days)"]
-        end
-        H1["Human"]
-        V1["Human Vote"]
-        D1 --> V1
-        V1 --> E1
-    end
-    subgraph phase1["Phase 1: 2026-2028"]
-        subgraph A2["Agent Impact Analysis"]
-        end
-        A2B["Agent Executes Within Parameters"]
-        D2["Agent Summarizes Proposal"]
-        subgraph E2["Fast Execution (hours)"]
-        end
-        H2["Human"]
-        H2A["Human Approves"]
-        D2 --> A2
-        A2 --> H2A
-        H2A --> A2B
-        A2B --> E2
-    end
+```d2
+# Diagram 171
+direction: down
+
+now: "Current State 2026" {
+  direction: down
+  D1: "DAO Proposal"
+  E1: "Slow Execution (days)"
+  H1: "Human"
+  V1: "Human Vote"
+  
+  D1 -> V1
+  V1 -> E1
+}
+
+phase1: "Phase 1: 2026-2028" {
+  direction: down
+  A2: "Agent Impact Analysis"
+  A2B: "Agent Executes Within Parameters"
+  D2: "Agent Summarizes Proposal"
+  E2: "Fast Execution (hours)"
+  H2: "Human"
+  H2A: "Human Approves"
+  
+  D2 -> A2
+  A2 -> H2A
+  H2A -> A2B
+  A2B -> E2
+}
 ```
 
 | Year | Milestone | Probability |
@@ -71,33 +74,34 @@ flowchart TD
 
 ## Phase 2: Autonomous Execution Layer (2029-2032)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph EX["Autonomous Execution"]
-    end
-    subgraph FB["Feedback to Constitution"]
-    end
-    PM["Prediction Markets"]
-    subgraph phase2["Phase 2: Autonomous Execution"]
-        subgraph AG["Agent Swarm"]
-        end
-        C["DAO Constitution"]
-        subgraph H["Human Strategy"]
-        end
-        C --> AG
-    end
-    subgraph swarm["Agent Swarm"]
-        A1["Treasury Agent"]
-        A2["Proposal Agent"]
-        A3["Compliance Agent"]
-        A4["Reporting Agent"]
-    end
-    AG --> PM
-    PM --> AG
-    AG --> EX
-    EX --> FB
-    FB -->|"Human veto (rare)"| H
+```d2
+# Diagram 172
+direction: down
+
+EX: "Autonomous Execution"
+FB: "Feedback to Constitution"
+PM: "Prediction Markets"
+
+phase2: "Phase 2: Autonomous Execution" {
+  direction: down
+  AG: "Agent Swarm" {
+    direction: down
+    A1: "Treasury Agent"
+    A2: "Proposal Agent"
+    A3: "Compliance Agent"
+    A4: "Reporting Agent"
+  }
+  C: "DAO Constitution"
+  H: "Human Strategy"
+  
+  C -> AG
+}
+
+AG -> PM
+PM -> AG
+AG -> EX
+EX -> FB
+FB -> H: "Human veto (rare)"
 ```
 
 | Year | Milestone | Probability |
@@ -116,38 +120,42 @@ flowchart TD
 
 ## Phase 3: DAO-Governed World Emergence (2033-2038)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph AGENTS["Autonomous Agent Layer"]
-    end
-    subgraph HUMAN["Human Taste Layer"]
-    end
-    subgraph OUTCOME["Executed Outcome"]
-    end
-    subgraph phase3["Phase 3: DAO-Governed World"]
-    end
-    subgraph civic["Civic DAOs (Swiss Cantonal Model)"]
-        C1["Zoning DAO"]
-        C2["Utility DAO"]
-        C3["Tax Distribution DAO"]
-    end
-    subgraph corporate["Corporate DAOs"]
-        B1["Supply Chain DAO"]
-        B2["R&D DAO"]
-        B3["Marketing DAO"]
-    end
-    subgraph personal["Personal DAOs"]
-        P1["Identity DAO"]
-        P2["Data DAO"]
-        P3["Investment DAO"]
-    end
-    HUMAN -->|"Strategy + Direction"| corporate
-    HUMAN -->|"Preferences + Identity"| personal
-    civic --> AGENTS
-    corporate --> AGENTS
-    personal --> AGENTS
-    AGENTS --> OUTCOME
+```d2
+# Diagram 173
+direction: down
+
+AGENTS: "Autonomous Agent Layer"
+HUMAN: "Human Taste Layer"
+OUTCOME: "Executed Outcome"
+phase3: "Phase 3: DAO-Governed World"
+
+civic: "Civic DAOs (Swiss Cantonal Model)" {
+  direction: down
+  C1: "Zoning DAO"
+  C2: "Utility DAO"
+  C3: "Tax Distribution DAO"
+}
+
+corporate: "Corporate DAOs" {
+  direction: down
+  B1: "Supply Chain DAO"
+  B2: "R&D DAO"
+  B3: "Marketing DAO"
+}
+
+personal: "Personal DAOs" {
+  direction: down
+  P1: "Identity DAO"
+  P2: "Data DAO"
+  P3: "Investment DAO"
+}
+
+HUMAN -> corporate: "Strategy + Direction"
+HUMAN -> personal: "Preferences + Identity"
+civic -> AGENTS
+corporate -> AGENTS
+personal -> AGENTS
+AGENTS -> OUTCOME
 ```
 
 | Year | Milestone | Probability |
@@ -165,32 +173,39 @@ flowchart TD
 
 ## Phase 4: The DAO of Everything (2039-2045+)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph endpoint["The DAO of Everything"]
-    end
-    subgraph humans["Human Layer"]
-        T1["Taste"]
-        T2["Ethics"]
-        T3["Culture"]
-        T4["Art"]
-        T5["Purpose"]
-    end
-    subgraph agents["Agent Layer"]
-        E1["Execute"]
-        E2["Optimize"]
-        E3["Coordinate"]
-        E4["Report"]
-    end
-    subgraph dao["DAO Layer"]
-        D1["Constitutional Guardrails"]
-        D2["Prediction Markets"]
-        D3["Dispute Resolution"]
-    end
-    humans -->|"Signals values"| dao
-    dao -->|"Defines constraints"| agents
-    agents -->|"Delivers outcomes"| humans
+```d2
+# Diagram 174
+direction: down
+
+endpoint: "The DAO of Everything"
+
+humans: "Human Layer" {
+  direction: down
+  T1: "Taste"
+  T2: "Ethics"
+  T3: "Culture"
+  T4: "Art"
+  T5: "Purpose"
+}
+
+agents: "Agent Layer" {
+  direction: down
+  E1: "Execute"
+  E2: "Optimize"
+  E3: "Coordinate"
+  E4: "Report"
+}
+
+dao: "DAO Layer" {
+  direction: down
+  D1: "Constitutional Guardrails"
+  D2: "Prediction Markets"
+  D3: "Dispute Resolution"
+}
+
+humans -> dao: "Signals values"
+dao -> agents: "Defines constraints"
+agents -> humans: "Delivers outcomes"
 ```
 
 | Milestone | Probability |
@@ -212,38 +227,36 @@ flowchart TD
 
 ## Key Enablers and Bottlenecks
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    OUTCOME["DAO of Everything"]
-    subgraph enablers["Accelerators"]
-        subgraph E1["AI agent capability (exponential)"]
-        end
-        subgraph E2["Blockchain infrastructure (mature)"]
-        end
-        subgraph E3["Swiss collective leadership model (proven 175 years)"]
-        end
-        subgraph E4["Prediction markets + futarchy (deployed)"]
-        end
-    end
-    subgraph bottlenecks["Bottlenecks"]
-        subgraph B1["Human attention limits"]
-        end
-        subgraph B2["Regulatory frameworks (emerging)"]
-        end
-        subgraph B3["Accountability vacuum for AI decisions"]
-        end
-        subgraph B4["Constitutional code translation (values → smart contracts)"]
-        end
-    end
-    E1 --> OUTCOME
-    E2 --> OUTCOME
-    E3 --> OUTCOME
-    E4 --> OUTCOME
-    B1 -->|"Risk"| OUTCOME
-    B2 -->|"Risk"| OUTCOME
-    B3 -->|"Risk"| OUTCOME
-    B4 -->|"Risk"| OUTCOME
+```d2
+# Diagram 175
+direction: down
+
+OUTCOME: "DAO of Everything"
+
+enablers: "Accelerators" {
+  direction: down
+  E1: "AI agent capability (exponential)"
+  E2: "Blockchain infrastructure (mature)"
+  E3: "Swiss collective leadership model (proven 175 years)"
+  E4: "Prediction markets + futarchy (deployed)"
+}
+
+bottlenecks: "Bottlenecks" {
+  direction: down
+  B1: "Human attention limits"
+  B2: "Regulatory frameworks (emerging)"
+  B3: "Accountability vacuum for AI decisions"
+  B4: "Constitutional code translation (values → smart contracts)"
+}
+
+E1 -> OUTCOME
+E2 -> OUTCOME
+E3 -> OUTCOME
+E4 -> OUTCOME
+B1 -> OUTCOME: "Risk"
+B2 -> OUTCOME: "Risk"
+B3 -> OUTCOME: "Risk"
+B4 -> OUTCOME: "Risk"
 ```
 
 | Factor | Status | Impact |

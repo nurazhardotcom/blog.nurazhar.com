@@ -14,30 +14,41 @@ This is the **profile drift problem**.
 
 Here is the mechanism, visualised:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["You say something\n(casual, contextual, possibly imprecise)"]
-    B["LLM session ends\nConversation compressed into profile summary"]
-    C["Profile stored\n(summary, not raw input)"]
-    D["New session starts\nProfile injected as context"]
-    E["Model cites profile as fact\n(with same confidence as verified data)"]
-    subgraph F["You notice something off?"]
-    end
-    G["Drift compounds\nSummary cited in next session too"]
-    H["You challenge it"]
-    I["Model apologises\nSays 'it was in your profile"]
-    J["But the profile is not updated\nDrift persists"]
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F -->|"No"| G
-    F -->|"Yes"| H
-    H --> I
-    I --> J
-    J --> G
-    G --> D
+```d2
+# Diagram 157
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "You say something\n(casual, contextual, possibly imprecise)"
+B: "LLM session ends\nConversation compressed into profile summary"
+C: "Profile stored\n(summary, not raw input)"
+D: "New session starts\nProfile injected as context"
+E: "Model cites profile as fact\n(with same confidence as verified data)"
+
+F: {
+  label: "You notice something off?"
+}
+
+G: "Drift compounds\nSummary cited in next session too"
+H: "You challenge it"
+I: "Model apologises\nSays 'it was in your profile'"
+J: "But the profile is not updated\nDrift persists"
+
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G: "No"
+F -> H: "Yes"
+H -> I
+I -> J
+J -> G
+G -> D
 ```
 
 The loop closes. The correction never propagates back to the source. Next session, the same derived fact returns — slightly more entrenched, because now it has been *cited and not formally retracted*.

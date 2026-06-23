@@ -21,22 +21,28 @@ To illustrate this, let's look at the architecture of `lagu-lagu` (a stateless p
 
 The architecture is designed to collapse operational cost to absolute zero ($0 server costs when idle):
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Browser["HTMX Client (GitHub Pages)"]
-    Fan["Fan: SGD Payment"]
-    GCP["GCP Cloud Function (Stateless Router)"]
-    Neon["Neon Postgres (Split Trigger Ledger)"]
-    Notary["BSV Notary Ledger (Anchored Proofs)"]
-    Tazapay["Tazapay API (Outbound Settlement)"]
-    Fan -->|"1. Pays SGD"| Tazapay
-    Tazapay -->|"2. Webhook Callback"| GCP
-    GCP -->|"3. Insert Transaction"| Neon
-    Neon -->|"4. Trigger: Splitting 85/15"| Neon
-    GCP -->|"5. Execute Wallet Payout"| Tazapay
-    GCP -->|"6. Anchor Proof Asynchronously"| Notary
-    Browser -->|"Read Live Feeds"| GCP
+```d2
+# Diagram 140
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Browser: "HTMX Client (GitHub Pages)"
+Fan: "Fan: SGD Payment"
+GCP: "GCP Cloud Function (Stateless Router)"
+Neon: "Neon Postgres (Split Trigger Ledger)"
+Notary: "BSV Notary Ledger (Anchored Proofs)"
+Tazapay: "Tazapay API (Outbound Settlement)"
+
+Fan -> Tazapay: "1. Pays SGD"
+Tazapay -> GCP: "2. Webhook Callback"
+GCP -> Neon: "3. Insert Transaction"
+Neon -> Neon: "4. Trigger: Splitting 85/15"
+GCP -> Tazapay: "5. Execute Wallet Payout"
+GCP -> Notary: "6. Anchor Proof Asynchronously"
+Browser -> GCP: "Read Live Feeds"
 ```
 
 ### The Technical Moat (That AI Can Copy)

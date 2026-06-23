@@ -15,74 +15,105 @@ This post is the full journey of **SmartShop**, our reference storefront. Everyt
 
 ## Diagram 1 - What SmartShop actually is
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    API["Django REST API\nport 8000"]
-    Gemini["Google Gemini\ngemini-1.5-flash / 2.0 / pro / gemma fallback"]
-    Media["(/media/product_images)"]
-    ORM["(SQLite\nusers + products + orders)"]
-    React["React + Vite SPA\nport 5173"]
-    subgraph User["Shopper"]
-    end
-    React -->|"Axios JSON"| API
-    API --> ORM
-    API --> Media
-    API -->|"optional"| Gemini
-    Gemini -->|"JSON or text"| API
+```d2
+# Diagram 14
+direction: down
+
+API: "Django REST API\nport 8000"
+Gemini: "Google Gemini\ngemini-1.5-flash / 2.0 / pro / gemma fallback"
+Media: "(/media/product_images)"
+ORM: "(SQLite\nusers + products + orders)"
+React: "React + Vite SPA\nport 5173"
+User: "Shopper"
+
+React -> API: "Axios JSON"
+API -> ORM
+API -> Media
+API -> Gemini: "optional"
+Gemini -> API: "JSON or text"
 ```
 
 Two services, one persistent volume for media, an optional AI leg. Everything else is convention.
 
 ## Diagram 1a - Complete request lifecycle
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    Browser->>FE: GET /
-    FE-->>Browser: index.html + assets
-    FE->>BE: GET /api/products/
-    BE->>DB: SELECT * FROM smartshop_product
-    DB-->>BE: product rows
-    BE-->>FE: JSON
-    FE-->>Browser: render catalogue cards
-    Browser->>FE: click Buy (authenticated)
-    FE->>BE: POST /api/buy/ \{ product_id \}
-    BE->>DB: INSERT purchase_order
-    BE->>DB: SELECT orders WHERE user_id = ...
-    DB-->>BE: order history
-    BE->>Disk: read GEMINI_API_KEY
-    Disk-->>BE: key or None
-    BE->>Gemini: generate_content(prompt)
-    Gemini-->>BE: AI comma-separated product names
-    BE->>BE: difflib.get_close_matches to real DB IDs
-    BE->>BE: category-count fallback query
-    BE-->>FE: { AIrecommend, AllProducts, method }
-    FE-->>Browser: show recommendations + method badge
+```d2
+# Diagram 15
+shape: sequence_diagram
+
+Browser: Browser
+FE: FE
+BE: BE
+DB: DB
+Disk: Disk
+Gemini: Gemini
+
+Browser -> FE: GET /
+FE -> Browser: index.html + assets {
+  style.stroke-dash: 5
+}
+FE -> BE: GET /api/products/
+BE -> DB: SELECT * FROM smartshop_product
+DB -> BE: product rows {
+  style.stroke-dash: 5
+}
+BE -> FE: JSON {
+  style.stroke-dash: 5
+}
+FE -> Browser: render catalogue cards {
+  style.stroke-dash: 5
+}
+Browser -> FE: click Buy (authenticated)
+FE -> BE: "POST /api/buy/ { product_id }"
+BE -> DB: INSERT purchase_order
+BE -> DB: SELECT orders WHERE user_id = ...
+DB -> BE: order history {
+  style.stroke-dash: 5
+}
+BE -> Disk: read GEMINI_API_KEY
+Disk -> BE: key or None {
+  style.stroke-dash: 5
+}
+BE -> Gemini: generate_content(prompt)
+Gemini -> BE: AI comma-separated product names {
+  style.stroke-dash: 5
+}
+BE -> BE: difflib.get_close_matches to real DB IDs
+BE -> BE: category-count fallback query
+BE -> FE: "{ AIrecommend, AllProducts, method }" {
+  style.stroke-dash: 5
+}
+FE -> Browser: show recommendations + method badge {
+  style.stroke-dash: 5
+}
 ```
 
 This is the loop that runs from cold start to a personalised recommendation in under a second.
 
 ## Diagram 1b - System trust boundaries
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    BE["Django REST"]
-    DB["(SQLite)"]
-    Disk["settings.json"]
-    FE["React SPA"]
-    Gemini["Google Gemini"]
-    subgraph Internet["Internet"]
-    end
-    LB["Docker host :5173/:8000"]
-    LS["localStorage"]
-    LB --> FE
-    FE -->|"store token"| LS
-    LB --> BE
-    BE -->|"read only if key set"| Disk
-    BE -->|"read/write"| DB
-    BE -->|"optional outbound"| Gemini
+```d2
+# Diagram 16
+direction: down
+
+BE: "Django REST"
+DB: "(SQLite)"
+Disk: "settings.json"
+FE: "React SPA"
+Gemini: "Google Gemini"
+Internet: "Internet" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+}
+LB: "Docker host :5173/:8000"
+LS: "localStorage"
+
+LB -> FE
+FE -> LS: "store token"
+LB -> BE
+BE -> Disk: "read only if key set"
+BE -> DB: "read/write"
+BE -> Gemini: "optional outbound"
 ```
 
 Trust is explicit: the frontend never sees the API key, the backend never trusts a client-supplied `user_id`, and the LLM is strictly optional.
@@ -105,19 +136,21 @@ Anything that ate more than a day of yak-shaving was a candidate to defer.
 
 ## Diagram 2 - The minimum viable stack
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Python 3.12 + Django 6"]
-    B["SQLite"]
-    C["Node 20 + Vite 5"]
-    D["React 18 SPA"]
-    E["Google Gemini SDK"]
-    F["localhost:5173"]
-    G["localhost:8000"]
-    A -->|"pip install"| E
-    D -->|"npm"| F
-    A -->|"runserver"| G
+```d2
+# Diagram 17
+direction: down
+
+A: "Python 3.12 + Django 6"
+B: "SQLite"
+C: "Node 20 + Vite 5"
+D: "React 18 SPA"
+E: "Google Gemini SDK"
+F: "localhost:5173"
+G: "localhost:8000"
+
+A -> E: "pip install"
+D -> F: "npm"
+A -> G: "runserver"
 ```
 
 Two runtimes, three pinned dependencies, one optional AI leg. We add Postgres, Redis, a queue, or a managed object store only when the SQLite boundary starts to hurt.
@@ -140,15 +173,20 @@ For a portfolio/demo, SQLite means: zero config, single file you can `rm` and re
 
 ## Diagram 3 - The physical layout
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Volume["./backend volume\n(avoids baked-in container)"]
-    subgraph dc["docker compose"]
-        Backend["backend service\npython:3.12-slim + Django\n8000:8000"]
-        Frontend["frontend service\nnode:20-alpine + Vite\n5173:5173"]
-    end
-    Frontend -->|"fetch /api/*"| Backend
+```d2
+# Diagram 18
+direction: down
+
+Volume: "./backend volume\n(avoids baked-in container)"
+
+dc: "docker compose" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  Backend: "backend service\npython:3.12-slim + Django\n8000:8000"
+  Frontend: "frontend service\nnode:20-alpine + Vite\n5173:5173"
+}
+
+dc.Frontend -> dc.Backend: "fetch /api/*"
 ```
 
 A bind mount on `backend/` is intentional - it lets us edit models and see them without rebuilding. Production would inject the image instead.
@@ -172,17 +210,25 @@ That's the entire schema.
 
 ## Diagram 4 - Entity-relationship
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph class["USER"]
-    end
-    subgraph class["PRODUCT"]
-    end
-    subgraph class["PURCHASE_ORDER"]
-    end
-    USER -- PURCHASE_ORDER: places["USER -- PURCHASE_ORDER: places"]
-    PRODUCT -- PURCHASE_ORDER: "is in["PRODUCT -- PURCHASE_ORDER: "is in"]
+```d2
+# Diagram 19
+direction: down
+
+USER: "USER" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+}
+PRODUCT: "PRODUCT" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+}
+PURCHASE_ORDER: "PURCHASE_ORDER" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+}
+
+USER -> PURCHASE_ORDER: "places"
+PRODUCT -> PURCHASE_ORDER: "is in"
 ```
 
 One user, many purchase orders. One product, many purchase orders. The recommender reads order history per user; the recommend endpoint takes `user_id` as a path parameter.
@@ -204,16 +250,23 @@ One user, many purchase orders. One product, many purchase orders. The recommend
 
 ## Diagram 5 - API controller map
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph class["UrlRouter"]
-    end
-    subgraph class["Views"]
-        + recommend_products(req, user_id)["+ recommend_products(req, user_id)"]
-        + product_ai_details(req, pk)["+ product_ai_details(req, pk)"]
-    end
-    UrlRouter -->|"resolves to function"| Views
+```d2
+# Diagram 20
+direction: down
+
+UrlRouter: "UrlRouter" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+}
+
+Views: "Views" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  recommend_products: "+ recommend_products(req, user_id)"
+  product_ai_details: "+ product_ai_details(req, pk)"
+}
+
+UrlRouter -> Views: "resolves to function"
 ```
 
 Function-based views on purpose. CBVs shine when you reuse mixins; we don't.
@@ -226,36 +279,38 @@ Function-based views on purpose. CBVs shine when you reuse mixins; we don't.
 
 ## Diagram 6 - Registration sequence
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    U->>A: POST \{ username, email, password \}
-    A->>DB: User.objects.create_user(...)
-    DB-->>A: User row
-    A->>DB: Token.objects.get_or_create(user=...)
-    DB-->>A: Token.key
-    A-->>U: 201 { token, username, email, user_id }
+```d2
+# Diagram 21
+shape: sequence_diagram
+U -> A: "POST { username, email, password }"
+A -> DB: "User.objects.create_user(...)"
+DB -> A: "User row" {
+  style.stroke-dash: 5
+}
+A -> DB: "Token.objects.get_or_create(user=...)"
+DB -> A: "Token.key" {
+  style.stroke-dash: 5
+}
+A -> U: "201 { token, username, email, user_id }" {
+  style.stroke-dash: 5
+}
 ```
 
 The login endpoint is identical except it calls `authenticate()` instead.
 
 ## Diagram 6a - Purchase-to-recommendation causal chain
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Buy["Buy action"]
-    Fetch["Fetch last 5 orders for user"]
-    Order["PurchaseOrder row\nuser_id + product_id + qty + timestamp"]
-    Parse["Parse AI output\ndifflib.get_close_matches"]
-    Prompt["Build Gemini prompt\nor category-only fallback"]
-    Return["Return AIrecommend\nwith method label"]
-    Users["Category frequency map"]
-    Order --> Fetch
-    Fetch --> Users
-    Users --> Prompt
-    Prompt --> Parse
-    Parse --> Return
+```d2
+# Diagram 22
+Buy: "Buy action"
+Fetch: "Fetch last 5 orders for user"
+Order: "PurchaseOrder row\nuser_id + product_id + qty + timestamp"
+Parse: "Parse AI output\ndifflib.get_close_matches"
+Prompt: "Build Gemini prompt\nor category-only fallback"
+Return: "Return AIrecommend\nwith method label"
+Users: "Category frequency map"
+
+Order -> Fetch -> Users -> Prompt -> Parse -> Return
 ```
 
 Every Buy mutates the recommendation surface for exactly one user. No fan-out, no cron, no cache invalidation - the query is cheap enough to run on demand.
@@ -283,38 +338,25 @@ The React side carries four top-level states:
 
 ## Diagram 7 - Frontend state lifecycle
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph initial["initial"]
-    end
-    GuestBrowse["GuestBrowse"]
-    initial --> GuestBrowse
-    GuestBrowse["GuestBrowse"]
-    GuestBrowse["GuestBrowse"]
-    LoggingIn["LoggingIn"]
-    GuestBrowse -->|"click Login"| LoggingIn
-    LoggingIn["LoggingIn"]
-    Authenticated["Authenticated"]
-    LoggingIn -->|"POST /api/login/ 200"| Authenticated
-    LoggingIn["LoggingIn"]
-    GuestBrowse["GuestBrowse"]
-    LoggingIn -->|"4xx"| GuestBrowse
-    Authenticated["Authenticated"]
-    ConfiguringAI["ConfiguringAI"]
-    Authenticated -->|"open admin bar"| ConfiguringAI
-    ConfiguringAI["ConfiguringAI"]
-    Authenticated["Authenticated"]
-    ConfiguringAI -->|"paste Gemini key"| Authenticated
-    Authenticated["Authenticated"]
-    Shopping["Shopping"]
-    Authenticated -->|"click Buy"| Shopping
-    Shopping["Shopping"]
-    Authenticated["Authenticated"]
-    Shopping -->|"200"| Authenticated
-    Authenticated["Authenticated"]
-    GuestBrowse["GuestBrowse"]
-    Authenticated -->|"logout"| GuestBrowse
+```d2
+# Diagram 23
+initial: "initial" {
+}
+GuestBrowse: "GuestBrowse"
+LoggingIn: "LoggingIn"
+Authenticated: "Authenticated"
+ConfiguringAI: "ConfiguringAI"
+Shopping: "Shopping"
+
+initial -> GuestBrowse
+GuestBrowse -> LoggingIn: "click Login"
+LoggingIn -> Authenticated: "POST /api/login/ 200"
+LoggingIn -> GuestBrowse: "4xx"
+Authenticated -> ConfiguringAI: "open admin bar"
+ConfiguringAI -> Authenticated: "paste Gemini key"
+Authenticated -> Shopping: "click Buy"
+Shopping -> Authenticated: "200"
+Authenticated -> GuestBrowse: "logout"
 ```
 
 The state machine helps when reading `App.jsx` - every conditional render maps to one of these nodes.
@@ -352,55 +394,67 @@ Two places, both deliberate:
 
 ## Diagram 8 - Secure API key storage flow
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    Admin->>FE: paste Gemini key in \"Keys Needed\" pill
-    FE->>BE: POST /api/settings/ \{ gemini_api_key \}
-    BE->>Disk: write settings.json
-    Disk-->>BE: ok
-    BE-->>FE: 200 { gemini_api_key_configured: true }
-    Admin->>FE: click Buy
-    FE->>BE: GET /api/recommend/\{uid\}/
-    BE->>Disk: read settings.json
-    BE-->>FE: results + Method=geminiflash-latest
+```d2
+# Diagram 24
+shape: sequence_diagram
+Admin: Admin
+FE: Front-end
+BE: Back-end
+Disk: Disk
+
+Admin -> FE: "paste Gemini key in \"Keys Needed\" pill"
+FE -> BE: "POST /api/settings/ { gemini_api_key }"
+BE -> Disk: "write settings.json"
+Disk -> BE: "ok" {
+  style.stroke-dash: 5
+}
+BE -> FE: "200 { gemini_api_key_configured: true }" {
+  style.stroke-dash: 5
+}
+Admin -> FE: "click Buy"
+FE -> BE: "GET /api/recommend/{uid}/"
+BE -> Disk: "read settings.json"
+BE -> FE: "results + Method=geminiflash-latest" {
+  style.stroke-dash: 5
+}
 ```
 
 The "red dot -> green dot" UI pill is intentional feedback. The user trusts the toggle more than a console log.
 
 ## Diagram 8a - API key precedence and fallback chain
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Configure["GenerativeModel\n(api_key = value)"]
-    subgraph Env["Process\n.env"]
-    end
-    NextModel["Rotate to next model"]
-    None["No key = offline mode"]
-    Return["Return AIrecommend + method"]
-    Rule["rule_fallback:\nCounter(purchased_categories)\n.most_common(1)"]
-    subgraph Runtime["settings.json\n(runtime file)"]
-    end
-    Start["View needs Gemini key"]
-    subgraph Success["Success?"]
-    end
-    TryModels["Try models in order:\n1. gemini-1.5-flash\n2. gemini-2.0-flash\n3. gemini-flash-latest\n4. gemini-1.5-pro\n5. gemma-2-27b-it\n6. gemma-2-9b-it"]
-    UseEnv["Use env value\n(Docker / startup)"]
-    UseRuntime["Use runtime value\n(admin pasted in-app)"]
-    empty --> UseRuntime
-    empty --> Env
-    set --> UseEnv
-    missing --> None
-    UseRuntime --> Configure
-    UseEnv --> Configure
-    Configure --> TryModels
-    TryModels --> Success
-    yes --> Return
-    NextModel --> TryModels
-    fail --> Rule
-    Rule --> Return
-    None --> Rule
+```d2
+# Diagram 25
+Start: "View needs Gemini key"
+Configure: "GenerativeModel\n(api_key = value)"
+NextModel: "Rotate to next model"
+None: "No key = offline mode"
+Return: "Return AIrecommend + method"
+Rule: "rule_fallback:\nCounter(purchased_categories)\n.most_common(1)"
+TryModels: "Try models in order:\n1. gemini-1.5-flash\n2. gemini-2.0-flash\n3. gemini-flash-latest\n4. gemini-1.5-pro\n5. gemma-2-27b-it\n6. gemma-2-9b-it"
+UseEnv: "Use env value\n(Docker / startup)"
+UseRuntime: "Use runtime value\n(admin pasted in-app)"
+
+Env: "Process\n.env" {
+}
+Runtime: "settings.json\n(runtime file)" {
+}
+Success: "Success?" {
+}
+
+empty -> UseRuntime
+empty -> Env
+set -> UseEnv
+missing -> None
+UseRuntime -> Configure
+UseEnv -> Configure
+Configure -> TryModels
+TryModels -> Success
+yes -> Return
+NextModel -> TryModels
+fail -> Rule
+Rule -> Return
+None -> Rule
 ```
 
 This precedence chain means the demo never hard-fails on quota: the speaker can keep clicking Buy even when Google returns 429.
@@ -425,88 +479,113 @@ Then we post-process: `difflib.get_close_matches(ai_name, real_names)` to map an
 
 ## Diagram 9 - The recommendation cascade
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Call["genai.GenerativeModel(...)"]
-    Cats["Same-category candidates\n(exclude already bought)"]
-    subgraph Check["history exists?"]
-    end
-    Cold["Popular items fallback"]
-    subgraph HasKey["Gemini key configured?"]
-    end
-    Hist["Fetch user's purchase history"]
-    Map["difflib.get_close_matches\ncutoff=0.5 against real product names"]
-    Mix["Mix AI hits + category hits"]
-    Parse["Parse comma-separated names"]
-    Prompt["Build strict prompt: return only comma-separated names"]
-    Rotate["Rotate to next model in chain"]
-    Rule["Return category hits"]
-    subgraph TryResult["Model responded?"]
-    end
-    Hist --> Check
-    no --> Cold
-    yes --> Cats
-    Cats --> HasKey
-    no --> Rule
-    yes --> Prompt
-    Prompt --> Call
-    Call --> TryResult
-    Rotate --> Call
-    yes --> Parse
-    Parse --> Map
-    Map --> Mix
-    Mix --> Out
-    Rule --> Out
-    Cold --> Out
+```d2
+# Diagram 26
+Call: "genai.GenerativeModel(...)"
+Cats: "Same-category candidates\n(exclude already bought)"
+Cold: "Popular items fallback"
+Hist: "Fetch user's purchase history"
+Map: "difflib.get_close_matches\ncutoff=0.5 against real product names"
+Mix: "Mix AI hits + category hits"
+Parse: "Parse comma-separated names"
+Prompt: "Build strict prompt: return only comma-separated names"
+Rotate: "Rotate to next model in chain"
+Rule: "Return category hits"
+Out: "Out"
+
+yes_check: "yes"
+no_check: "no"
+yes_key: "yes"
+no_key: "no"
+yes_res: "yes"
+
+Check: "history exists?" {
+}
+HasKey: "Gemini key configured?" {
+}
+TryResult: "Model responded?" {
+}
+
+Hist -> Check
+no_check -> Cold
+yes_check -> Cats
+Cats -> HasKey
+no_key -> Rule
+yes_key -> Prompt
+Prompt -> Call
+Call -> TryResult
+Rotate -> Call
+yes_res -> Parse
+Parse -> Map
+Map -> Mix
+Mix -> Out
+Rule -> Out
+Cold -> Out
 ```
 
 `method` is the UI fidelity bit. It returns `gemini (gemini-1.5-flash)`, `gemini_quota_exceeded`, `gemini_error (4xx: ...)`, or `rule_fallback`. The frontend shows the badge verbatim.
 
 ## Diagram 10 - LLM strict-prompting protocol
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    FE->>V: GET /recommend/\{uid\}/
-    V->>V: history = order list, last 5<br/>candidates = product catalog<br/>(deduped from history)
-    V->>G: configure(api_key)
-    V->>G: prompt = \"User history: X, Y, Z.<br/>Candidates: A, B, C, D, E, ...<br/>Return only comma-separated names.\
-    G-->>V: A, C, F (hallucinated), J
-    V->>V: parse -> ['A','C','F','J']
-    V->>V: difflib.get_close_matches for 'F
-    V->>V: F -> matched to 'Camping Solar Lamp (id=42)
-    V-->>FE: [A, C, matched-42, J, ...]<br/>method: gemini (gemini-1.5-flash)
+```d2
+# Diagram 27
+shape: sequence_diagram
+FE: Front-end
+V: View
+G: Gemini
+
+FE -> V: "GET /recommend/{uid}/"
+V -> V: "history = order list, last 5\ncandidates = product catalog\n(deduped from history)"
+V -> G: "configure(api_key)"
+V -> G: "prompt = \"User history: X, Y, Z.\nCandidates: A, B, C, D, E, ...\nReturn only comma-separated names.\""
+G -> V: "A, C, F (hallucinated), J" {
+  style.stroke-dash: 5
+}
+V -> V: "parse -> ['A','C','F','J']"
+V -> V: "difflib.get_close_matches for 'F'"
+V -> V: "F -> matched to 'Camping Solar Lamp (id=42)'"
+V -> FE: "[A, C, matched-42, J, ...]\nmethod: gemini (gemini-1.5-flash)" {
+  style.stroke-dash: 5
+}
 ```
 
 When you trace this in real terms, "context" is just a string with a shape. The discipline is in shaping it.
 
 ## Diagram 10a - Gemini fallback model rotation
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Start Gemini call"]
-    subgraph B["Try current model"]
-    end
-    subgraph C["Rate limit?"]
-    end
-    subgraph D["Bad key?"]
-    end
-    subgraph E["Transient?"]
-    end
-    F["Sleep 60s"]
-    G["Rotate to next model"]
-    H["Stop. Surface gemini_error"]
-    success --> Z
-    Quota --> C
-    Auth --> D
-    Server --> E
-    yes --> F
-    F --> G
-    yes --> H
-    yes --> F
-    G --> B
+```d2
+# Diagram 28
+A: "Start Gemini call"
+F: "Sleep 60s"
+G: "Rotate to next model"
+H: "Stop. Surface gemini_error"
+Z: "Z"
+Quota: "Quota"
+Auth: "Auth"
+Server: "Server"
+success: "success"
+yes_rate: "yes"
+yes_badkey: "yes"
+yes_transient: "yes"
+
+B: "Try current model" {
+}
+C: "Rate limit?" {
+}
+D: "Bad key?" {
+}
+E: "Transient?" {
+}
+
+success -> Z
+Quota -> C
+Auth -> D
+Server -> E
+yes_rate -> F
+F -> G
+yes_badkey -> H
+yes_transient -> F
+G -> B
 ```
 
 The 6-model list isn't just belt-and-braces - it's a deliberate cost/latency cascade. `gemini-1.5-flash` is tried first because it's cheapest; we only escalate if it fails.
@@ -534,58 +613,73 @@ The LLM does better, but the offline fallback does **okay enough** to keep the d
 
 ## Diagram 11 - Search paths
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Cat["Filter catalog by category"]
-    Dict["Synonym map\nwarm -> jackets, parkas, blankets, hoodies"]
-    subgraph Key["API key?"]
-    end
-    LLM["Gemini\nreturn comma-separated IDs from catalog"]
-    Q["Query input"]
-    Validate["Validate IDs against live catalog"]
-    no --> Dict
-    Dict --> Cat
-    Cat --> Results
-    yes --> LLM
-    LLM --> Validate
-    mismatch --> Dict
-    good --> Results
+```d2
+# Diagram 29
+Cat: "Filter catalog by category"
+Dict: "Synonym map\nwarm -> jackets, parkas, blankets, hoodies"
+LLM: "Gemini\nreturn comma-separated IDs from catalog"
+Q: "Query input"
+Validate: "Validate IDs against live catalog"
+Results: "Results"
+no: "no"
+yes: "yes"
+mismatch: "mismatch"
+good: "good"
+
+Key: "API key?" {
+}
+
+no -> Dict
+Dict -> Cat
+Cat -> Results
+yes -> LLM
+LLM -> Validate
+mismatch -> Dict
+good -> Results
 ```
 
 Each path has a different latency profile; the offline path is <50 ms, the LLM path is ~700 ms. We log both so the demo spokesperson can decide which to showcase.
 
 ## Diagram 11a - Search endpoint decision tree
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Build["Build catalog context:\nid, name, category for ALL products"]
-    Dict["Synonym dict lookup"]
-    Empty["Return empty list"]
-    Fallback["Fallback to synonym dict"]
-    subgraph Key["Gemini key\nconfigured?"]
-    end
-    Parse["Parse comma-separated IDs"]
-    Prompt["Prompt: 'Return only\ncomma-separated product IDs"]
-    subgraph Q["Query empty?"]
-    end
-    Render["Render matching rows"]
-    Req["GET /api/search/?q=..."]
-    subgraph Validate["All IDs exist\nin catalog?"]
-    end
-    yes --> Empty
-    no --> Key
-    no --> Dict
-    yes --> Build
-    Build --> Prompt
-    Prompt --> Parse
-    Parse --> Validate
-    no --> Fallback
-    yes --> Render
-    Dict --> Render
-    Fallback --> Render
-    Render --> Out
+```d2
+# Diagram 30
+Build: "Build catalog context:\nid, name, category for ALL products"
+Dict: "Synonym dict lookup"
+Empty: "Return empty list"
+Fallback: "Fallback to synonym dict"
+Parse: "Parse comma-separated IDs"
+Prompt: "Prompt: 'Return only\ncomma-separated product IDs'"
+Render: "Render matching rows"
+Req: "GET /api/search/?q=..."
+Out: "Out"
+
+yes_empty: "yes"
+no_key_config: "no"
+no_dict: "no"
+yes_build: "yes"
+no_fallback: "no"
+yes_render: "yes"
+
+Key: "Gemini key\nconfigured?" {
+}
+Q: "Query empty?" {
+}
+Validate: "All IDs exist\nin catalog?" {
+}
+
+yes_empty -> Empty
+no_key_config -> Key
+no_dict -> Dict
+yes_build -> Build
+Build -> Prompt
+Prompt -> Parse
+Parse -> Validate
+no_fallback -> Fallback
+yes_render -> Render
+Dict -> Render
+Fallback -> Render
+Render -> Out
 ```
 
 Why IDs instead of names for search? Because `42, 17, 3` either matches rows or it doesn't. There's no fuzzy-match ambiguity.
@@ -608,26 +702,28 @@ We force the LLM to return a JSON block (with a regex scrape if needed). Pure-te
 
 ## Diagram 12 - Forcing structured JSON out of the LLM
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BuildPrompt["prompt = 'Return only JSON:\n"]
-    end
-    Call["genai.GenerativeModel.generate_content"]
-    Extract["Regex scan for a JSON fenced block"]
-    Parse["json.loads"]
-    Post["POST /products/pk/ai-details/"]
-    Raw["Raw text response"]
-    Wrap["Wrap the whole text as summary"]
-    cons[""]
-    Post --> BuildPrompt
-    BuildPrompt --> Call
-    Call --> Raw
-    Raw --> Extract
-    Extract -->|"match"| Parse
-    Extract -->|"miss"| Wrap
-    Parse --> Out
-    Wrap --> Out
+```d2
+# Diagram 31
+Call: "genai.GenerativeModel.generate_content"
+Extract: "Regex scan for a JSON fenced block"
+Parse: "json.loads"
+Post: "POST /products/pk/ai-details/"
+Raw: "Raw text response"
+Wrap: "Wrap the whole text as summary"
+cons: ""
+Out: "Out"
+
+BuildPrompt: "prompt = 'Return only JSON:\n" {
+}
+
+Post -> BuildPrompt
+BuildPrompt -> Call
+Call -> Raw
+Raw -> Extract
+Extract -> Parse: "match"
+Extract -> Wrap: "miss"
+Parse -> Out
+Wrap -> Out
 ```
 
 Two failure modes for free:
@@ -638,31 +734,37 @@ Either way, the UI never breaks.
 
 ## Diagram 12a - AI details request with caching rationale
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Cache["AI details\nalready fetched?"]
-    end
-    Fetch["GET /api/products/pk/ai-details/"]
-    LLM["Prompt → generate_content"]
-    Modal["MaterialPanel opens"]
-    subgraph Model["Gemini\nkey?"]
-    end
-    Parse["Parse JSON from response"]
-    ProductClick["User clicks product card"]
-    Render["Cached render"]
-    Static["Return static template:\nsummary = product.name + category"]
-    Store["Store in selectedProductAiData"]
-    Modal --> Cache
-    yes --> Render
-    no --> Fetch
-    Fetch --> Model
-    yes --> LLM
-    no --> Static
-    LLM --> Parse
-    Parse --> Store
-    Static --> Store
-    Store --> Render
+```d2
+# Diagram 32
+Fetch: "GET /api/products/pk/ai-details/"
+LLM: "Prompt → generate_content"
+Modal: "MaterialPanel opens"
+Parse: "Parse JSON from response"
+ProductClick: "User clicks product card"
+Render: "Cached render"
+Static: "Return static template:\nsummary = product.name + category"
+Store: "Store in selectedProductAiData"
+
+yes_cache: "yes"
+no_cache: "no"
+yes_model: "yes"
+no_model: "no"
+
+Cache: "AI details\nalready fetched?" {
+}
+Model: "Gemini\nkey?" {
+}
+
+Modal -> Cache
+yes_cache -> Render
+no_cache -> Fetch
+Fetch -> Model
+yes_model -> LLM
+no_model -> Static
+LLM -> Parse
+Parse -> Store
+Static -> Store
+Store -> Render
 ```
 
 Why no server-side cache? Because the demo runs on SQLite and the product set is ~50 rows. A Redis layer would be a yak-shave we don't need; the LLM latency is acceptable for a stakeholder demo.
@@ -677,59 +779,55 @@ The bot is strictly read-only against the catalogue - it cannot perform actions.
 
 ## Diagram 13 - Chatbot async state
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph initial["initial"]
-    end
-    Idle["Idle"]
-    initial --> Idle
-    Idle["Bubble idle"]
-    Idle["Idle"]
-    Typing["Typing"]
-    Idle -->|"user types"| Typing
-    Typing["Typing"]
-    Posting["Posting"]
-    Typing -->|"send button"| Posting
-    Posting["Posting"]
-    Thinking["Thinking"]
-    Posting -->|"spinner"| Thinking
-    Thinking["Thinking"]
-    Rendering["Rendering"]
-    Thinking -->|"response ok"| Rendering
-    Thinking["Thinking"]
-    Idle["Idle"]
-    Thinking -->|"response 4xx<br/>(silent fallback message)"| Idle
-    Rendering["Rendering"]
-    Idle["Idle"]
-    Rendering --> Idle
+```d2
+# Diagram 33
+Idle: "Bubble idle"
+Typing: "Typing"
+Posting: "Posting"
+Thinking: "Thinking"
+Rendering: "Rendering"
+
+initial: "initial" {
+}
+
+initial -> Idle
+Idle -> Typing: "user types"
+Typing -> Posting: "send button"
+Posting -> Thinking: "spinner"
+Thinking -> Rendering: "response ok"
+Thinking -> Idle: "response 4xx\n(silent fallback message)"
+Rendering -> Idle
 ```
 
 The asymmetry between the happy path and the error path is important. **Errors don't bubble as red toast** - they degrade to a polite "Here are some popular items:" so the user never feels stranded.
 
 ## Diagram 13a - Chatbot context assembly
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Build["Build messages array:\nsystem + history + user"]
-    Call["chatbot_assist → genai.GenerativeModel"]
-    Catalog["Inject catalog:\nid, name, category, price for all products"]
-    Fallback["Return canned response:\n'Try our catalogue below!"]
-    subgraph Key["Gemini\nkey?"]
-    end
-    Msg["User message"]
-    Render["Append bot bubble"]
-    Resp["Return text response"]
-    Sys["System prompt assembly"]
-    Sys --> Catalog
-    Catalog --> Build
-    Build --> Key
-    no --> Fallback
-    yes --> Call
-    Call --> Resp
-    Resp --> Render
-    Fallback --> Render
+```d2
+# Diagram 34
+Build: "Build messages array:\nsystem + history + user"
+Call: "chatbot_assist → genai.GenerativeModel"
+Catalog: "Inject catalog:\nid, name, category, price for all products"
+Fallback: "Return canned response:\n'Try our catalogue below!'"
+Msg: "User message"
+Render: "Append bot bubble"
+Resp: "Return text response"
+Sys: "System prompt assembly"
+
+no: "no"
+yes: "yes"
+
+Key: "Gemini\nkey?" {
+}
+
+Sys -> Catalog
+Catalog -> Build
+Build -> Key
+no -> Fallback
+yes -> Call
+Call -> Resp
+Resp -> Render
+Fallback -> Render
 ```
 
 The catalog is injected as a system preamble so the bot can answer "Do you have anything under $50?" without a database round-trip.
@@ -744,12 +842,12 @@ The catalog is injected as a system preamble so the bot can answer "Do you have 
 
 ## Diagram 14 - Docker-Compose topology
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    B["backend service\nbuild: ./backend\nports: 8000:8000\nvolumes: ./backend:/app\nrestart: always"]
-    F["frontend service\nbuild: .\nDockerfile.frontend\nports: 5173:5173\nvolumes: .:/app,/app/node_modules\ndepends_on: [backend]"]
-    B -->|"exposes /api/*"| F
+```d2
+# Diagram 35
+B: "backend service\nbuild: ./backend\nports: 8000:8000\nvolumes: ./backend:/app\nrestart: always"
+F: "frontend service\nbuild: .\nDockerfile.frontend\nports: 5173:5173\nvolumes: .:/app,/app/node_modules\ndepends_on: [backend]"
+
+B -> F: "exposes /api/*"
 ```
 
 Three intentional choices:
@@ -759,34 +857,34 @@ Three intentional choices:
 
 ## Diagram 14a - Docker image layer composition
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    B1["FROM python:3.12-slim"]
-    B2["apt-get build-essential"]
-    B3["COPY requirements.txt"]
-    B4["pip install -r requirements.txt"]
-    B5["COPY . /app"]
-    B6["EXPOSE 8000"]
-    B7["CMD runserver"]
-    F1["FROM node:20-alpine"]
-    F2["WORKDIR /app"]
-    F3["COPY package*.json"]
-    F4["npm install"]
-    F5["COPY . /app"]
-    F6["EXPOSE 5173"]
-    F7["CMD npm run dev"]
-    Vol["./backend:/app\n./ :/app\n/app/node_modules volume"]
-    B2 --> B3
-    B3 --> B4
-    B4 --> B5
-    B5 --> B6
-    B6 --> B7
-    F2 --> F3
-    F3 --> F4
-    F4 --> F5
-    F5 --> F6
-    F6 --> F7
+```d2
+# Diagram 36
+B1: "FROM python:3.12-slim"
+B2: "apt-get build-essential"
+B3: "COPY requirements.txt"
+B4: "pip install -r requirements.txt"
+B5: "COPY . /app"
+B6: "EXPOSE 8000"
+B7: "CMD runserver"
+F1: "FROM node:20-alpine"
+F2: "WORKDIR /app"
+F3: "COPY package*.json"
+F4: "npm install"
+F5: "COPY . /app"
+F6: "EXPOSE 5173"
+F7: "CMD npm run dev"
+Vol: "./backend:/app\n./ :/app\n/app/node_modules volume"
+
+B2 -> B3
+B3 -> B4
+B4 -> B5
+B5 -> B6
+B6 -> B7
+F2 -> F3
+F3 -> F4
+F4 -> F5
+F5 -> F6
+F6 -> F7
 ```
 
 Layers are cached aggressively. Changing `views.py` reuses the pip layer; changing `package.json` reuses the node layer. Rebuilds after a single-file edit are typically under 20 seconds.
@@ -797,17 +895,24 @@ The top admin bar has a button labelled _"Reset Database"_. Click it, and the en
 
 ## Diagram 15 - The reseed round-trip
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    FE->>V: POST \{\}
-    V->>DB: DELETE FROM purchase_orders
-    V->>DB: DELETE FROM products
-    V->>DB: DELETE FROM sqlite_sequence WHERE name IN (...)
-    V->>SQL: read + executescript()
-    SQL->>DB: 50+ INSERTs products, ~30 inserts orders
-    V-->>FE: 200 { reseeded: true }
-    FE->>FE: toast 'Database reset - try logging in again
+```d2
+# Diagram 37
+shape: sequence_diagram
+FE: Front-end
+V: View
+DB: DB
+SQL: SQL
+
+FE -> V: "POST {}"
+V -> DB: "DELETE FROM purchase_orders"
+V -> DB: "DELETE FROM products"
+V -> DB: "DELETE FROM sqlite_sequence WHERE name IN (...)"
+V -> SQL: "read + executescript()"
+SQL -> DB: "50+ INSERTs products, ~30 inserts orders"
+V -> FE: "200 { reseeded: true }" {
+  style.stroke-dash: 5
+}
+FE -> FE: "toast 'Database reset - try logging in again'"
 ```
 
 The "log in again" toast is a tiny budget: we know the demo user wants to re-paste creds or hop accounts. We tell them rather than letting the UI silently 401.
@@ -824,37 +929,45 @@ For a demo that lives forever in SQLite, that's a fine trade.
 
 ## Diagram 15a - Reseed SQL file paths and env overrides
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Done["200 reseeded: true"]
-    subgraph Env1["RESEED\nPRODUCTS_SQL\nset?"]
-    end
-    subgraph Env2["RESEED\nPURCHASE_SQL\nset?"]
-    end
-    Exec["Execute SQL against SQLite connection"]
-    subgraph Missing["File missing?"]
-    end
-    P1["Use env path"]
-    P2["BASE_DIR/smartshop/fixtures/Products.sql"]
-    Q1["Use env path"]
-    Q2["BASE_DIR/smartshop/fixtures/PurchaseOrder.sql"]
-    Read["Read files via executescript"]
-    Start["POST /api/reseed/"]
-    Warn["Return warning + continue"]
-    yes --> P1
-    no --> P2
-    Start --> Env2
-    yes --> Q1
-    no --> Q2
-    P1 --> Read
-    P2 --> Read
-    Q1 --> Read
-    Q2 --> Read
-    Read --> Missing
-    yes --> Warn
-    no --> Exec
-    Exec --> Done
+```d2
+# Diagram 38
+Done: "200 reseeded: true"
+Exec: "Execute SQL against SQLite connection"
+P1: "Use env path"
+P2: "BASE_DIR/smartshop/fixtures/Products.sql"
+Q1: "Use env path"
+Q2: "BASE_DIR/smartshop/fixtures/PurchaseOrder.sql"
+Read: "Read files via executescript"
+Start: "POST /api/reseed/"
+Warn: "Return warning + continue"
+
+yes_env1: "yes"
+no_env1: "no"
+yes_env2: "yes"
+no_env2: "no"
+yes_missing: "yes"
+no_missing: "no"
+
+Env1: "RESEED\nPRODUCTS_SQL\nset?" {
+}
+Env2: "RESEED\nPURCHASE_SQL\nset?" {
+}
+Missing: "File missing?" {
+}
+
+yes_env1 -> P1
+no_env1 -> P2
+Start -> Env2
+yes_env2 -> Q1
+no_env2 -> Q2
+P1 -> Read
+P2 -> Read
+Q1 -> Read
+Q2 -> Read
+Read -> Missing
+yes_missing -> Warn
+no_missing -> Exec
+Exec -> Done
 ```
 
 The env-driven paths mean the published repo never hardcodes `~/ ...` - a post-audit fix.
@@ -904,61 +1017,68 @@ Public repos are great for portfolios, but if the project has any environment-sp
 
 ## Diagram 16 - Open-source release checklist
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    ExEnv["Write .env.example\nplaceholders only + docs link"]
-    GhCreate["gh repo create\n--public or --private"]
-    Ign["Apply .gitignore\n.env, settings.json,\ndb.sqlite3, venv, node_modules, dist"]
-    subgraph LocalSweep["Sweep LOCAL\nfor AIza / sk- / ghp_"]
-    end
-    PatchKey["Patch SECRET_KEY\nenv-first with dev fallback\n(django-insecure-DO-NOT-USE-IN-PRODUCTION)"]
-    Push["git push origin main"]
-    ReadMe["Write README\ndemo creds + setup +\nAPI key note + security notes"]
-    subgraph RemoteSweep["Sweep REMOTE\nvia gh api /git/trees"]
-    end
-    Repo["Local project\nready to ship"]
-    Ign --> ExEnv
-    ExEnv --> PatchKey
-    PatchKey --> ReadMe
-    ReadMe --> LocalSweep
-    hit --> Ign
-    clean --> GhCreate
-    GhCreate --> Push
-    Push --> RemoteSweep
-    hit --> PatchKey
-    clean --> Done
+```d2
+# Diagram 39
+ExEnv: "Write .env.example\nplaceholders only + docs link"
+GhCreate: "gh repo create\n--public or --private"
+Ign: "Apply .gitignore\n.env, settings.json,\ndb.sqlite3, venv, node_modules, dist"
+PatchKey: "Patch SECRET_KEY\nenv-first with dev fallback\n(django-insecure-DO-NOT-USE-IN-PRODUCTION)"
+Push: "git push origin main"
+ReadMe: "Write README\ndemo creds + setup +\nAPI key note + security notes"
+Repo: "Local project\nready to ship"
+Done: "Done"
+
+hit_local: "hit"
+clean_local: "clean"
+hit_remote: "hit"
+clean_remote: "clean"
+
+LocalSweep: "Sweep LOCAL\nfor AIza / sk- / ghp_" {
+}
+
+RemoteSweep: "Sweep REMOTE\nvia gh api /git/trees" {
+}
+
+Ign -> ExEnv
+ExEnv -> PatchKey
+PatchKey -> ReadMe
+ReadMe -> LocalSweep
+hit_local -> Ign
+clean_local -> GhCreate
+GhCreate -> Push
+Push -> RemoteSweep
+hit_remote -> PatchKey
+clean_remote -> Done
 ```
 
 The loop is real. We've needed two passes on real projects - the first push, the secret scan callout, the patch, the second push.
 
 ## Diagram 16a - Security audit findings mapped to code changes
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Hardcoded SECRET_KEY"]
-    A1["ImproperlyConfigured raised\nDJANGO_ALLOW_INSECURE_DEV_KEY opt-in"]
-    B["DEBUG=True hardcoded"]
-    B1["_env_bool(DJANGO_DEBUG, False)"]
-    C["ALLOWED_HOSTS=[]"]
-    C1["env-driven allowlist\nDocker-aware defaults"]
-    D["CORS_ALLOW_ALL_ORIGINS"]
-    D1["explicit allowlist\nDJANGO_CORS_ALLOW_ALL=1 escape hatch"]
-    E["IDOR: buy used body user_id"]
-    E1["IsAuthenticated\nrequest.user only\nqty 1-1000"]
-    F["reseed/manage_settings public"]
-    F1["IsAdminUser\nX-Admin-Token double-gate"]
-    G["Hardcoded fixture paths"]
-    G1["RESEED_PRODUCTS_SQL env\nsafe BASE_DIR defaults"]
-    H["settings.json hardcoded path"]
-    H1["DJANGO_SETTINGS_JSON\nconfigurable path"]
-    I["No rate limiting on auth"]
-    I1["5/m register, 10/m login\nenv-tunable"]
-    J["str-e in error responses"]
-    J1["logger.exception + generic body"]
-    K["No env wiring in compose"]
-    K1["DJANGO_SECRET_KEY required\n+ all overrides"]
+```d2
+# Diagram 40
+A: "Hardcoded SECRET_KEY"
+A1: "ImproperlyConfigured raised\nDJANGO_ALLOW_INSECURE_DEV_KEY opt-in"
+B: "DEBUG=True hardcoded"
+B1: "_env_bool(DJANGO_DEBUG, False)"
+C: "ALLOWED_HOSTS=[]"
+C1: "env-driven allowlist\nDocker-aware defaults"
+D: "CORS_ALLOW_ALL_ORIGINS"
+D1: "explicit allowlist\nDJANGO_CORS_ALLOW_ALL=1 escape hatch"
+E: "IDOR: buy used body user_id"
+E1: "IsAuthenticated\nrequest.user only\nqty 1-1000"
+F: "reseed/manage_settings public"
+F1: "IsAdminUser\nX-Admin-Token double-gate"
+G: "Hardcoded fixture paths"
+G1: "RESEED_PRODUCTS_SQL env\nsafe BASE_DIR defaults"
+H: "settings.json hardcoded path"
+H1: "DJANGO_SETTINGS_JSON\nconfigurable path"
+I: "No rate limiting on auth"
+I1: "5/m register, 10/m login\nenv-tunable"
+J: "str-e in error responses"
+J1: "logger.exception + generic body"
+K: "No env wiring in compose"
+K1: "DJANGO_SECRET_KEY required\n+ all overrides"
 ```
 
 Each finding maps to one or more code-level fixes in the published repo.
@@ -979,69 +1099,71 @@ A senior engineer reading the codebase gets a small, opinionated answer to "how 
 
 ## Diagram 17 - What changed when AI was bolted on
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    V0A["GET /products/"]
-    V0B["POST /buy/"]
-    V1A["GET /recommend/uid/"]
-    V1Rules["same-category dedupe"]
-    V2A["GET /recommend/uid/"]
-    V2LLM["Gemini prompt + diff-match"]
-    V2Method["method = name of winner"]
-    V2Rules["same-category dedupe"]
-    V1A --> V1Rules
-    V2A --> V2Rules
-    V2A --> V2LLM
-    V2A --> V2Method
-    V0A --> V1A
+```d2
+# Diagram 41
+V0A: "GET /products/"
+V0B: "POST /buy/"
+V1A: "GET /recommend/uid/"
+V1Rules: "same-category dedupe"
+V2A: "GET /recommend/uid/"
+V2LLM: "Gemini prompt + diff-match"
+V2Method: "method = name of winner"
+V2Rules: "same-category dedupe"
+
+V1A -> V1Rules
+V2A -> V2Rules
+V2A -> V2LLM
+V2A -> V2Method
+V0A -> V1A
 ```
 
 Each rung adds optionality. Never optionality on top of a broken baseline - always optionality on top of a working baseline.
 
 ## Diagram 18 - Full-system data flow for the assessor
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Auth["Login / Register forms"]
-    Badge["Method badge"]
-    Bot["chatbot_assist"]
-    Buy["purchase_product"]
-    Cards["Product cards"]
-    Chat["Chatbot bubble"]
-    Details["product_ai_details"]
-    DiffMatch["difflib.get_close_matches"]
-    GeminiClient["GenerativeModel"]
-    Login["login_user"]
-    Models["6-model fallback chain"]
-    Order["(PurchaseOrder)"]
-    Product["(Product)"]
-    Rec["recommend_products"]
-    Register["register_user"]
-    Reseed["reseed_db"]
-    Search["Search bar"]
-    Settings["manage_settings"]
-    SettingsFile["(settings.json)"]
-    Srch["smart_search"]
-    StrictPrompt["Strict prompt\ncomma-separated output"]
-    User["(User)"]
-    Auth --> Register
-    Auth --> Login
-    Cards --> Buy
-    Buy --> Rec
-    Rec --> Order
-    Rec --> SettingsFile
-    Rec --> GeminiClient
-    GeminiClient --> Models
-    StrictPrompt --> DiffMatch
-    Rec --> Badge
-    Search --> Srch
-    Chat --> Bot
-    Cards --> Details
-    Settings --> SettingsFile
-    Reseed --> Order
-    Reseed --> Product
+```d2
+# Diagram 42
+direction: down
+
+Auth: "Login / Register forms"
+Badge: "Method badge"
+Bot: "chatbot_assist"
+Buy: "purchase_product"
+Cards: "Product cards"
+Chat: "Chatbot bubble"
+Details: "product_ai_details"
+DiffMatch: "difflib.get_close_matches"
+GeminiClient: "GenerativeModel"
+Login: "login_user"
+Models: "6-model fallback chain"
+Order: "(PurchaseOrder)"
+Product: "(Product)"
+Rec: "recommend_products"
+Register: "register_user"
+Reseed: "reseed_db"
+Search: "Search bar"
+Settings: "manage_settings"
+SettingsFile: "(settings.json)"
+Srch: "smart_search"
+StrictPrompt: "Strict prompt\ncomma-separated output"
+User: "(User)"
+
+Auth -> Register
+Auth -> Login
+Cards -> Buy
+Buy -> Rec
+Rec -> Order
+Rec -> SettingsFile
+Rec -> GeminiClient
+GeminiClient -> Models
+StrictPrompt -> DiffMatch
+Rec -> Badge
+Search -> Srch
+Chat -> Bot
+Cards -> Details
+Settings -> SettingsFile
+Reseed -> Order
+Reseed -> Product
 ```
 
 This is the complete wiring diagram. Every arrow is a real code path.

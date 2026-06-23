@@ -57,21 +57,25 @@ By 2012, Bitcoin Core (via Pieter Wuille's pull request #1021) enabled IPv6 at c
 
 ### What IPv6 Enables at the Protocol Level
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Bitcoin P2P Address Evolution"]
-    end
-    subgraph V01["v0.1 (2009)\n16-byte IPv6 field\n(IPv4-mapped only)"]
-    end
-    subgraph V07["v0.7 (2012)\nNative IPv6 support\nUSE_IPV6 compile flag"]
-    end
-    subgraph Today["BSV (2026)\nNative IPv6 + IPv4\naddrv2 (BIP155)\nMandala overlay"]
-    end
-    V01 --> V07
-    V07 --> Today
-    subgraph Note["Protocol supported IPv6\naddressing since day one.\nOnly the client implementation\nneeded to catch up."]
-    end
+```d2
+# Diagram 49
+direction: down
+
+Title: "Bitcoin P2P Address Evolution" {
+  style.fill: "#eff6ff"
+  style.stroke: "#3b82f6"
+}
+V01: "v0.1 (2009)\n16-byte IPv6 field\n(IPv4-mapped only)"
+V07: "v0.7 (2012)\nNative IPv6 support\nUSE_IPV6 compile flag"
+Today: "BSV (2026)\nNative IPv6 + IPv4\naddrv2 (BIP155)\nMandala overlay"
+
+Note: "Protocol supported IPv6\naddressing since day one.\nOnly the client implementation\nneeded to catch up." {
+  style.fill: "#fef08a"
+  style.stroke: "#eab308"
+}
+
+V01 -> V07
+V07 -> Today
 ```
 
 ---

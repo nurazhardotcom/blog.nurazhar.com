@@ -25,24 +25,43 @@ In 2026, that person doesn't need to be a person. It needs to be an **AI with AP
 
 The interaction looks like this:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph User["I want to buy X for $Y"]
-    end
-    subgraph Butler["Financial Butler"]
-        Check["Check: current balance - (debt obligations + upcoming expenses + reserves)"]
-    end
-    subgraph Verdict:["Verdict:"]
-        Green["Approved — $Y fits within discretionary budget"]
-        Red["Rejected — $Y exceeds available discretionary funds"]
-    end
-    User -->|"Can we afford $Y?"| Butler
-    Butler --> Check
-    Check -->|"Yes — remaining headroom $Z"| Green
-    Check -->|"No — shortfall of $Z"| Red
-    Green -->|"✅ Go ahead"| User
-    Red -->|"❌ Not now. Options: defer, reduce Y, or allocate from Category W"| User
+```d2
+# Diagram 79
+direction: down
+
+User: "I want to buy X for $Y" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+
+Butler: "Financial Butler" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  Check: "Check: current balance - (debt obligations + upcoming expenses + reserves)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Verdict: "Verdict:" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  Green: "Approved — $Y fits within discretionary budget" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+  Red: "Rejected — $Y exceeds available discretionary funds" {
+    style.fill: "#f8d7da"
+    style.stroke: "#f5c6cb"
+  }
+}
+
+User -> Butler: "Can we afford $Y?"
+Butler -> Check
+Check -> Green: "Yes — remaining headroom $Z"
+Check -> Red: "No — shortfall of $Z"
+Green -> User: "✅ Go ahead"
+Red -> User: "❌ Not now. Options: defer, reduce Y, or allocate from Category W"
 ```
 
 ## Why This Doesn't Exist for Normal People

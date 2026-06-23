@@ -19,23 +19,30 @@ Agile, on the other hand, is built on **incremental and iterative** loops. Inste
 
 Here is how the two approaches compare visually:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph traditional["Traditional Waterfall (Sequential)"]
-        W1["Requirements"]
-        W2["Design"]
-        W3["Implementation"]
-        W4["Testing"]
-        W5["Deployment (Value at the end)"]
-    end
-    subgraph agile["Agile Lifecycle (Iterative Loops)"]
-        A1["Product Backlog"]
-        A2["Sprint Loop (1-4 Weeks)"]
-        A3["Usable Increment"]
-        A2 -->|"Iterate & Adapt"| A2
-        A2 -->|"Incremental Value"| A3
-    end
+```d2
+# Diagram 0
+direction: down
+
+traditional: "Traditional Waterfall (Sequential)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  W1: "Requirements"
+  W2: "Design"
+  W3: "Implementation"
+  W4: "Testing"
+  W5: "Deployment (Value at the end)"
+}
+
+agile: "Agile Lifecycle (Iterative Loops)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  A1: "Product Backlog"
+  A2: "Sprint Loop (1-4 Weeks)"
+  A3: "Usable Increment"
+
+  A2 -> A2: "Iterate & Adapt"
+  A2 -> A3: "Incremental Value"
+}
 ```
 
 ### Key Differences at a Glance
@@ -49,14 +56,17 @@ flowchart TD
 
 The Scrum Guide 2020 replaces the term "Roles" with **Accountabilities** to emphasize responsibility. A Scrum Team consists of three specific roles:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph team["The Scrum Team (Self-Managing & Cross-Functional)"]
-        DEV["Developers <br> (Builds Usable Increments)"]
-        PO["Product Owner <br> (Maximizes Product Value)"]
-        SM["Scrum Master <br> (Enables Team Effectiveness)"]
-    end
+```d2
+# Diagram 1
+direction: down
+
+team: "The Scrum Team (Self-Managing & Cross-Functional)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  DEV: "Developers\n(Builds Usable Increments)"
+  PO: "Product Owner\n(Maximizes Product Value)"
+  SM: "Scrum Master\n(Enables Team Effectiveness)"
+}
 ```
 
 ### The Scrum Master: Supporting Teamwork and Responsibility
@@ -77,17 +87,21 @@ A **Scrum Master (SM)** is not a "Project Manager." Instead, they support the te
 
 The standard Scrum flow routes requirements from the initial idea down to a finished, usable piece of software. Let's map out the four key components of the Scrum process diagram:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph flow["Scrum Artifact and Planning Flow"]
-        C1["1. Product Backlog <br> (Managed by PO)"]
-        C2["2. Sprint Planning Meeting"]
-        C3["3. Sprint Backlog <br> (Managed by Developers)"]
-        C4["4. Product Increment <br> (Usable & Meets DoD)"]
-        C2 -->|"Outputs Plan"| C3
-        C3 -->|"1-4 Week Sprint Execution"| C4
-    end
+```d2
+# Diagram 2
+direction: down
+
+flow: "Scrum Artifact and Planning Flow" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  C1: "1. Product Backlog\n(Managed by PO)"
+  C2: "2. Sprint Planning Meeting"
+  C3: "3. Sprint Backlog\n(Managed by Developers)"
+  C4: "4. Product Increment\n(Usable & Meets DoD)"
+
+  C2 -> C3: "Outputs Plan"
+  C3 -> C4: "1-4 Week Sprint Execution"
+}
 ```
 
 Let's break down these four components exactly:
@@ -103,13 +117,15 @@ Let's break down these four components exactly:
 
 Scrum is built on **empirical process control (Empiricism)**, which asserts that knowledge comes from experience and making decisions based on what is observed. Empiricism relies on **Three Pillars**:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    P1["Transparency <br> (Shared understanding of work)"]
-    P2["Inspection <br> (Frequent progress evaluation)"]
-    P3["Adaptation <br> (Adjustment based on findings)"]
-    P2 --> P3
+```d2
+# Diagram 3
+direction: down
+
+P1: "Transparency\n(Shared understanding of work)"
+P2: "Inspection\n(Frequent progress evaluation)"
+P3: "Adaptation\n(Adjustment based on findings)"
+
+P2 -> P3
 ```
 
 These pillars are exercised through the **five key Scrum events**, which form structured feedback loops to ensure continuous learning and process improvement:

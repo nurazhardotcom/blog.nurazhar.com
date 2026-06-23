@@ -58,11 +58,42 @@
 
 ;; ─── Hiccup Template: Single Post ──────────────────────────────────
 
+(defn compile-d2-diagram [slug idx d2-code]
+  (let [diagrams-dir (io/file out-dir "diagrams")
+        _ (.mkdirs diagrams-dir)
+        filename (str slug "-diagram-" idx "-" (Math/abs (.hashCode d2-code)) ".svg")
+        file (io/file diagrams-dir filename)]
+    ;; Only run compiler if the target file doesn't exist
+    (when-not (.exists file)
+      (let [escaped-d2 (str/replace d2-code #"(?<!\\)\$" "\\\\\\$")
+            result (sh "d2" "--theme" "0" "--dark-theme" "0" "-l" "dagre" "-" (.getAbsolutePath file)
+                       :in escaped-d2)]
+        (when-not (= 0 (:exit result))
+          (println "⚠️  D2 compilation failed for" filename ":" (:err result)))))
+    (str "diagrams/" filename)))
+
+(defn process-d2-blocks [slug markdown-content]
+  (if-not markdown-content
+    ""
+    (let [pattern #"```d2\s*([\s\S]*?)\n```"
+          matches (re-seq pattern markdown-content)]
+      (loop [content markdown-content
+             idx 1
+             [[full-match d2-code] & remaining] matches]
+        (if-not full-match
+          content
+          (let [svg-path (compile-d2-diagram slug idx d2-code)
+                replacement (str "\n\n<div class=\"d2-diagram\"><img src=\"" svg-path "\" alt=\"Architecture Diagram\" /></div>\n\n")]
+            (recur (str/replace-first content full-match replacement)
+                   (inc idx)
+                   remaining)))))))
+
 (defn render-post-html
   "Render a single blog post page as HTML.
    Uses a placeholder approach to inject raw HTML from pandoc into Hiccup output."
   [{:keys [title date tags description content content-html slug] :as post}]
-  (let [body-html (or content-html (markdown->html content))
+  (let [processed-content (process-d2-blocks slug content)
+        body-html (or content-html (markdown->html processed-content))
         page-html (html
                     [:html {:lang "en"}
                      [:head
@@ -101,14 +132,14 @@
      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
      [:title "Nur Azhar — Blog"]
      [:meta {:name "description"
-             :content "Clojure, automation, Bitcoin SV, and infrastructure insights"}]
+             :content "Singaporean Malay Technical Blog"}]
      [:link {:rel "stylesheet" :href "styles.css"}]
      [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
     [:body
      [:nav {:class "nav"}
       [:h1 {:style "margin:0; font-size:1.4em;"} "Nur Azhar"]]
      [:p {:style "color:#666; margin-bottom:20px;"}
-      "Clojure, automation, Bitcoin SV, and infrastructure insights"]
+      "Singaporean Malay Technical Blog"]
      [:main
       (for [{:keys [title date description slug]} posts]
         [:article {:class "post" :style "padding:20px;"}

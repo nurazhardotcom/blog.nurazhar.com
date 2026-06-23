@@ -17,53 +17,74 @@ This is not minimalism for aesthetics. It is the recognition that the interestin
 
 Here is what most agent orchestration stacks look like:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Runtime["Runtime Layer"]
-        PY["Python / Node.js"]
-    end
-    subgraph Orch["Orchestration Layer"]
-        LG["LangGraph / AutoGen / CrewAI"]
-    end
-    subgraph Auth["Auth Layer"]
-        OA["OAuth2 / API Keys / JWTs"]
-    end
-    subgraph Pay["Payment Layer"]
-        ST["Stripe / Billing SaaS"]
-    end
-    subgraph Data["Data Layer"]
-        PG["Postgres / Redis / S3"]
-    end
-    subgraph Model["Model Layer"]
-        LLM["OpenAI / Anthropic API"]
-    end
-    PY --> LG
-    OA --> Pay
-    LG --> Data
-    LG --> LLM
+```d2
+# Diagram 4
+direction: down
+
+Runtime: "Runtime Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  PY: "Python / Node.js"
+}
+Orch: "Orchestration Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  LG: "LangGraph / AutoGen / CrewAI"
+}
+Auth: "Auth Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  OA: "OAuth2 / API Keys / JWTs"
+}
+Pay: "Payment Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  ST: "Stripe / Billing SaaS"
+}
+Data: "Data Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  PG: "Postgres / Redis / S3"
+}
+Model: "Model Layer" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  LLM: "OpenAI / Anthropic API"
+}
+
+Runtime.PY -> Orch.LG
+Auth.OA -> Pay.ST
+Orch.LG -> Data.PG
+Orch.LG -> Model.LLM
 ```
 
 Each box is a vendor. Each arrow is a trust relationship you cannot audit. Each layer adds latency, cost, and a new way for the whole system to fail. The human operator at the top is not a feature — it is a crutch that disguises the fact that none of these layers trust each other.
 
 Now look at what two primitives get you:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph CLJ["Clojure — One Language"]
-        BEAM["Clojerl on BEAM: OTP Supervision + Distribution"]
-        CLJS["ClojureScript: Browser UI + Agent Monitor"]
-        JVM["JVM Runtime: Agent Logic + LLM calls"]
-    end
-    subgraph BSV["BSV — One Ledger"]
-        DATA["OP_RETURN: Receipts, contracts, audit trail"]
-        ID["Keypair Identity: Every agent = 1 BSV key"]
-        TX["Micropayments: Work proven and paid on-chain"]
-    end
-    JVM --> ID
-    BEAM --> TX
-    CLJS --> DATA
+```d2
+# Diagram 5
+direction: down
+
+CLJ: "Clojure — One Language" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  BEAM: "Clojerl on BEAM: OTP Supervision + Distribution"
+  CLJS: "ClojureScript: Browser UI + Agent Monitor"
+  JVM: "JVM Runtime: Agent Logic + LLM calls"
+}
+
+BSV: "BSV — One Ledger" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  DATA: "OP_RETURN: Receipts, contracts, audit trail"
+  ID: "Keypair Identity: Every agent = 1 BSV key"
+  TX: "Micropayments: Work proven and paid on-chain"
+}
+
+CLJ.JVM -> BSV.ID
+CLJ.BEAM -> BSV.TX
+CLJ.CLJS -> BSV.DATA
 ```
 
 No framework. No vendor. No permission boundary you don't own.
@@ -79,18 +100,20 @@ The misunderstanding people have about Clojure is thinking it means JVM. It does
 
 The same Clojure map `{:agent/id "1Abc..." :task/status :pending}` means the same thing in all four runtimes. You do not translate. You do not adapt. You write once and choose the runtime that fits the deployment constraint.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    BEAM["BEAM: OTP supervision, agent coordination"]
-    JS["JavaScript: Browser monitor, light agents"]
-    JVM["JVM: Agent logic, BSV tooling"]
-    SCRIPT["Babashka: CI, scripts, build tools"]
-    SRC["Clojure Source (.clj / .cljc)"]
-    SRC -->|"javac + tools.deps"| JVM
-    SRC -->|"clojerl compiler"| BEAM
-    SRC -->|"cljs compiler"| JS
-    SRC -->|"bb"| SCRIPT
+```d2
+# Diagram 6
+direction: down
+
+BEAM: "BEAM: OTP supervision, agent coordination"
+JS: "JavaScript: Browser monitor, light agents"
+JVM: "JVM: Agent logic, BSV tooling"
+SCRIPT: "Babashka: CI, scripts, build tools"
+SRC: "Clojure Source (.clj / .cljc)"
+
+SRC -> JVM: "javac + tools.deps"
+SRC -> BEAM: "clojerl compiler"
+SRC -> JS: "cljs compiler"
+SRC -> SCRIPT: "bb"
 ```
 
 For agent orchestration specifically, **Clojerl on BEAM** is the correct runtime for the coordination layer. You get:
@@ -125,18 +148,27 @@ This is the entire economic model for machine-to-machine coordination, and it co
 
 ## The Full Agent Lifecycle in Two Primitives
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    O->>B: Write task contract to OP_RETURN
-    W->>B: Read contract, verify reward output exists
-    W->>B: Bond micropayment as commitment signal
-    B-->>O: Worker 1Wkr... accepted task
-    O->>W: Send task payload, signed with 1Orc... key
-    W->>W: Execute task via LLM call and tool use
-    W->>B: Submit result hash to OP_RETURN, unlock reward
-    B-->>O: TXID proves work done and settled
-    O->>B: Verify TXID, record in audit trail OP_RETURN
+```d2
+# Diagram 7
+shape: sequence_diagram
+
+O: O
+B: B
+W: W
+
+O -> B: Write task contract to OP_RETURN
+W -> B: Read contract, verify reward output exists
+W -> B: Bond micropayment as commitment signal
+B -> O: Worker 1Wkr... accepted task {
+  style.stroke-dash: 5
+}
+O -> W: Send task payload, signed with 1Orc... key
+W -> W: Execute task via LLM call and tool use
+W -> B: Submit result hash to OP_RETURN, unlock reward
+B -> O: TXID proves work done and settled {
+  style.stroke-dash: 5
+}
+O -> B: Verify TXID, record in audit trail OP_RETURN
 ```
 
 Every step is verifiable by any third party reading the BSV ledger. The orchestrator does not need to trust the worker — the ledger proves the work. The worker does not need to trust the orchestrator will pay — the payment is locked in the transaction structure before work begins.
@@ -185,22 +217,29 @@ The GenServer is supervised by OTP. If it crashes, a new one starts, loads the s
 
 Look at what disappears when you collapse to two primitives:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Before["Before: 6 layers, 6 vendors"]
-        B1["Runtime vendor"]
-        B2["Orchestration framework"]
-        B3["Auth provider"]
-        B4["Payment processor"]
-        B5["Database"]
-        B6["Model API"]
-    end
-    subgraph After["After: 2 primitives, 0 vendors"]
-        A1["Clojure: all runtimes"]
-        A2["BSV: identity + payment + data"]
-    end
-    Before -->|"collapse"| After
+```d2
+# Diagram 8
+direction: down
+
+Before: "Before: 6 layers, 6 vendors" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  B1: "Runtime vendor"
+  B2: "Orchestration framework"
+  B3: "Auth provider"
+  B4: "Payment processor"
+  B5: "Database"
+  B6: "Model API"
+}
+
+After: "After: 2 primitives, 0 vendors" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  A1: "Clojure: all runtimes"
+  A2: "BSV: identity + payment + data"
+}
+
+Before -> After: "collapse"
 ```
 
 - **No OAuth** — BSV keypair signatures replace token-based auth entirely

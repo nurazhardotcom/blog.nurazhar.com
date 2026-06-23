@@ -19,30 +19,47 @@ The solution? **Threshold Payout Batching** implemented natively in Postgres.
 
 Initially, our `payouts` table had a `transaction_id` column with a `UNIQUE` constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph OldArchitecture["Old Architecture: 1-to-1"]
-        P1["Artist Payout"]
-        Tx["Fan Transaction"]
-    end
+```d2
+# Diagram 154
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+OldArchitecture: {
+  label: "Old Architecture: 1-to-1"
+  P1: "Artist Payout"
+  Tx: "Fan Transaction"
+}
 ```
 
 To support batching, we inverted this relation. A single `payout` can clear multiple incoming `transactions`. The database structure became **many-to-one**:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph NewArchitecture["New Architecture: Many-to-One"]
-        Artist["Artist Wallet - \$9.60"]
-        P["Grouped Payout - \$12.00"]
-        Platform["Platform Wallet - \$2.40"]
-        T1["Fan Transaction 1 - \$4.00"]
-        T2["Fan Transaction 2 - \$4.00"]
-        T3["Fan Transaction 3 - \$4.00"]
-        P -->|"80% Artist Split"| Artist
-        P -->|"20% Commission"| Platform
-    end
+```d2
+# Diagram 155
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+NewArchitecture: {
+  label: "New Architecture: Many-to-One"
+  Artist: "Artist Wallet - $9.60"
+  P: "Grouped Payout - $12.00"
+  Platform: "Platform Wallet - $2.40"
+  T1: "Fan Transaction 1 - $4.00"
+  T2: "Fan Transaction 2 - $4.00"
+  T3: "Fan Transaction 3 - $4.00"
+  
+  P -> Artist: "80% Artist Split"
+  P -> Platform: "20% Commission"
+}
 ```
 
 ### Architectural Comparison

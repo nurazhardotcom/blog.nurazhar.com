@@ -74,37 +74,31 @@ Back to 21. But the damage wasn't over.
 
 Here's what actually happened over the next 24 hours:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["AI says: '12 forks, make them private"]
-    end
-    subgraph B["I say: 'yes"]
-    end
-    subgraph C["12 repos → PRIVATE 😰"]
-    end
-    subgraph D["I realize: advice was WRONG"]
-    end
-    E["12 repos → PUBLIC again"]
-    subgraph F["Write blog post about it 🎉"]
-    end
-    subgraph G["Blog post references deleted repos 😱"]
-    end
-    subgraph H["Delete 7 repos for real this time"]
-    end
-    I["Scan 49 blog posts for dead links"]
-    J["Fix 13 blog posts manually"]
-    subgraph K["Write THIS post 😤"]
-    end
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-    H --> I
-    I --> J
-    J --> K
+```d2
+# Diagram 9
+direction: down
+
+A: "AI says: '12 forks, make them private"
+B: "I say: 'yes"
+C: "12 repos → PRIVATE 😰"
+D: "I realize: advice was WRONG"
+E: "12 repos → PUBLIC again"
+F: "Write blog post about it 🎉"
+G: "Blog post references deleted repos 😱"
+H: "Delete 7 repos for real this time"
+I: "Scan 49 blog posts for dead links"
+J: "Fix 13 blog posts manually"
+K: "Write THIS post 😤"
+
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G
+G -> H
+H -> I
+I -> J
+J -> K
 ```
 
 ---
@@ -115,22 +109,21 @@ It wasn't the visibility flip. That's reversible.
 
 It was that **I wrote a blog post about the mistake** — and that blog post referenced repos I then *deleted*.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["Write blog post\nabout deleted repos"]
-    end
-    B["Then delete the repos"]
-    subgraph C["Blog post now has\ndead links to nothing"]
-    end
-    D["Scan 49 posts\nfor references"]
-    E["Fix 13 posts\none by one"]
-    subgraph F["Why did I write\na blog post FIRST?"]
-    end
-    B --> C
-    C --> D
-    D --> E
-    E --> F
+```d2
+# Diagram 10
+direction: down
+
+A: "Write blog post\nabout deleted repos"
+B: "Then delete the repos"
+C: "Blog post now has\ndead links to nothing"
+D: "Scan 49 posts\nfor references"
+E: "Fix 13 posts\none by one"
+F: "Why did I write\na blog post FIRST?"
+
+B -> C
+C -> D
+D -> E
+E -> F
 ```
 
 I documented the crime scene *before* cleaning it. Classic.
@@ -139,9 +132,9 @@ I documented the crime scene *before* cleaning it. Classic.
 
 ## 📊 The Damage Report
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 11
+# (Empty diagram)
 ```
 
 | Metric | Count |
@@ -164,21 +157,22 @@ The AI wasn't hedging. It wasn't saying "I think" or "maybe." It produced a **ta
 
 They weren't.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["AI output has tables"]
-    B["Looks authoritative"]
-    C["Looks verified"]
-    D["I trust it"]
-    E["I don't check"]
-    subgraph F["🫠"]
-    end
-    A --> C
-    B --> D
-    C --> D
-    D --> E
-    E --> F
+```d2
+# Diagram 12
+direction: down
+
+A: "AI output has tables"
+B: "Looks authoritative"
+C: "Looks verified"
+D: "I trust it"
+E: "I don't check"
+F: "🫠"
+
+A -> C
+B -> D
+C -> D
+D -> E
+E -> F
 ```
 
 ### 2. One API Call Would Have Prevented Everything
@@ -215,28 +209,28 @@ You don't just delete a repo. You delete:
 - The GitHub stars (if any)
 - The SEO juice from search engines
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["Delete 1 repo"]
-    end
-    B["Dead links in blog posts"]
-    C["Broken references in other repos"]
-    D["Lost stars / watchers"]
-    E["SEO links → 404"]
-    F["Scan ALL posts for references"]
-    G["Fix everything manually"]
-    subgraph H["Wish you'd checked first"]
-    end
-    A --> C
-    A --> D
-    A --> E
-    B --> F
-    C --> F
-    D --> F
-    E --> F
-    F --> G
-    G --> H
+```d2
+# Diagram 13
+direction: down
+
+A: "Delete 1 repo"
+B: "Dead links in blog posts"
+C: "Broken references in other repos"
+D: "Lost stars / watchers"
+E: "SEO links → 404"
+F: "Scan ALL posts for references"
+G: "Fix everything manually"
+H: "Wish you'd checked first"
+
+A -> C
+A -> D
+A -> E
+B -> F
+C -> F
+D -> F
+E -> F
+F -> G
+G -> H
 ```
 
 ### 5. Write the Blog Post LAST

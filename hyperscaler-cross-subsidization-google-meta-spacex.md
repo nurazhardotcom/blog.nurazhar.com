@@ -37,30 +37,30 @@ This is not dumping or predatory pricing — it's portfolio economics. The hyper
 
 ## Case Study 1: Google — Gemini Protects the Search/Ads/Cloud Moat
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Google["Google"]
-    end
-    subgraph Gemini["Gemini AI\n(API + Assistant)"]
-    end
-    subgraph Search["Search\n(%90+ of revenue)"]
-    end
-    subgraph Cloud["Google Cloud\n(Infrastructure)"]
-    end
-    subgraph Android["Android / Chrome\n(Ecosystem)"]
-    end
-    subgraph Moat["Defense Moat:\nAI capability prevents\nusers from switching\nto ChatGPT/Bing/etc"]
-    end
-    Gemini -->|"AI Overviews keep users\nin Google search results"| Search
-    Gemini -->|"Gemini API drives\nGCP adoption (Vertex AI)"| Cloud
-    Gemini -->|"Gemini Nano on-device\nkeeps Android competitive"| Android
-    Gemini -->|"Loss leader"| Moat
-    subgraph PurePlay["Pure-Play AI\n(OpenAI/Anthropic)"]
-    end
-    subgraph Revenue["Revenue:\nAPI fees only"]
-    end
-    PurePlay -->|"Must cover:\n\$ training\n\$ inference\n\$ salaries\n\$ infrastructure"| Revenue
+```d2
+# Diagram 131
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Google: "Google"
+Gemini: "Gemini AI\n(API + Assistant)"
+Search: "Search\n(%90+ of revenue)"
+Cloud: "Google Cloud\n(Infrastructure)"
+Android: "Android / Chrome\n(Ecosystem)"
+Moat: "Defense Moat:\nAI capability prevents\nusers from switching\nto ChatGPT/Bing/etc"
+
+Gemini -> Search: "AI Overviews keep users\nin Google search results"
+Gemini -> Cloud: "Gemini API drives\nGCP adoption (Vertex AI)"
+Gemini -> Android: "Gemini Nano on-device\nkeeps Android competitive"
+Gemini -> Moat: "Loss leader"
+
+PurePlay: "Pure-Play AI\n(OpenAI/Anthropic)"
+Revenue: "Revenue:\nAPI fees only"
+
+PurePlay -> Revenue: "Must cover:\n$ training\n$ inference\n$ salaries\n$ infrastructure"
 ```
 
 ### How It Works
@@ -100,33 +100,32 @@ This is why Gemini Flash costs less than GPT-4o mini despite comparable capabili
 
 ## Case Study 2: Meta — Llama Protects the Social Graph
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Meta["Meta"]
-    end
-    subgraph Llama["Llama Models\n(Open Source)"]
-    end
-    subgraph Social["Facebook/Instagram\n(Social Graph)"]
-    end
-    subgraph Ads["Ad Network\n(%98 of revenue)"]
-    end
-    subgraph WhatsApp["WhatsApp/Messenger\n(Communication)"]
-    end
-    subgraph Moat["Defense Moat:\nOpen-source AI prevents\ncompetitors from owning\nthe reasoning layer"]
-    end
-    Llama -->|"AI features in feed/reels\nkeep users engaged longer"| Social
-    Llama -->|"AI improves ad targeting\n(Advantage+ / Lattice)"| Ads
-    Llama -->|"AI assistants in\nWhatsApp Business"| WhatsApp
-    Llama -->|"Free (zero revenue)"| Moat
-    subgraph PurePlay["Pure-Play AI\n(OpenAI/Anthropic)"]
-    end
-    subgraph Revenue["Revenue:\nAPI fees (must charge)"]
-    end
-    subgraph Competitor["Other Social Networks\n(TikTok, X, Snapchat)"]
-    end
-    PurePlay --> Revenue
-    Competitor -->|"Must charge for\nAI features or\nlose margins"| Revenue
+```d2
+# Diagram 132
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Meta: "Meta"
+Llama: "Llama Models\n(Open Source)"
+Social: "Facebook/Instagram\n(Social Graph)"
+Ads: "Ad Network\n(%98 of revenue)"
+WhatsApp: "WhatsApp/Messenger\n(Communication)"
+Moat: "Defense Moat:\nOpen-source AI prevents\ncompetitors from owning\nthe reasoning layer"
+
+Llama -> Social: "AI features in feed/reels\nkeep users engaged longer"
+Llama -> Ads: "AI improves ad targeting\n(Advantage+ / Lattice)"
+Llama -> WhatsApp: "AI assistants in\nWhatsApp Business"
+Llama -> Moat: "Free (zero revenue)"
+
+PurePlay: "Pure-Play AI\n(OpenAI/Anthropic)"
+Revenue: "Revenue:\nAPI fees (must charge)"
+Competitor: "Other Social Networks\n(TikTok, X, Snapchat)"
+
+PurePlay -> Revenue
+Competitor -> Revenue: "Must charge for\nAI features or\nlose margins"
 ```
 
 ### How It Works

@@ -8,23 +8,20 @@ Unlike conversational AIs that absorb patterns unconsciously, Hermes uses **expl
 
 ## The Memory Architecture
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["~/.hermes/memories/user.md"]
-    end
-    B["Character Budget"]
-    subgraph C["~/.hermes/memories/memory.md"]
-    end
-    D["Hermes Session"]
-    subgraph E["LLM Decision"]
-    end
-    F["Skills Directory"]
-    subgraph G["Explicit memory calls"]
-    end
-    subgraph H["Explicit skill calls"]
-    end
-    B -->|"Injected into every prompt"| D
+```d2
+# Diagram 116
+direction: down
+
+a: "~/.hermes/memories/user.md"
+b: "Character Budget"
+c: "~/.hermes/memories/memory.md"
+d: "Hermes Session"
+e: "LLM Decision"
+f: "Skills Directory"
+g: "Explicit memory calls"
+h: "Explicit skill calls"
+
+b -> d: "Injected into every prompt"
 ```
 
 ## Key Constraints

@@ -15,25 +15,26 @@ Then I realized the service isn't selling IPs — it's selling **reachability th
 
 You sign up. They assign you 5 IPv6 addresses. A WireGuard tunnel connects your home machine to their network. The internet sees your server at their IPv6 address; traffic flows through the tunnel to your machine.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Internet["Internet Client\n(IPv4 or IPv6)"]
-    end
-    subgraph IPv6rs["IPv6rs\nWireGuard endpoint\n+ IPv4 reverse proxy"]
-    end
-    subgraph NAT["Your ISP\nNAT / CGNAT"]
-    end
-    subgraph Home["Your Home Server"]
-    end
-    Internet -->|"1. Request to\nyour IPv6 or domain"| IPv6rs
-    IPv6rs -->|"2. WireGuard tunnel\n(encrypted)"| Home
-    Home --> IPv6rs
-    IPv6rs -->|"3. Response\nback through tunnel"| Internet
-    NAT -->|"ISP blocks inbound\n(no port forwarding)"| Home
-    IPv6rs -->|"Tunnel goes outbound,\nNAT can't block it"| NAT
-    subgraph Note["The tunnel is outbound from your machine.\nNAT only blocks inbound — outbound works fine.\nThe tunnel bypasses NAT entirely."]
-    end
+```d2
+# Diagram 136
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Internet: "Internet Client\n(IPv4 or IPv6)"
+IPv6rs: "IPv6rs\nWireGuard endpoint\n+ IPv4 reverse proxy"
+NAT: "Your ISP\nNAT / CGNAT"
+Home: "Your Home Server"
+Note: "The tunnel is outbound from your machine.\nNAT only blocks inbound — outbound works fine.\nThe tunnel bypasses NAT entirely."
+
+Internet -> IPv6rs: "1. Request to\nyour IPv6 or domain"
+IPv6rs -> Home: "2. WireGuard tunnel\n(encrypted)"
+Home -> IPv6rs
+IPv6rs -> Internet: "3. Response\nback through tunnel"
+NAT -> Home: "ISP blocks inbound\n(no port forwarding)"
+IPv6rs -> NAT: "Tunnel goes outbound,\nNAT can't block it"
 ```
 
 The clever part: the WireGuard connection is **initiated from your machine** (outbound). NAT doesn't block outbound connections, so even CGNAT can't stop it. Once the tunnel is up, it's a bidirectional link, and your machine has a public IP.

@@ -24,33 +24,85 @@ The original codebase had working coordination logic — identity protocols, ato
 
 The architecture required six modules with acyclic dependencies:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Core["core: Specs + Primitives"]
-    end
-    subgraph Identity["wallet: Keys + Addresses"]
-    end
-    subgraph Payment["brc105: HTTP 402"]
-    end
-    subgraph Audit["audit: OP_RETURN"]
-    end
-    subgraph SDK["agent-sdk: Agent Runtime"]
-    end
-    subgraph Testnet["testnet: Live BSV"]
-    end
-    ID --> WAL
-    WAL --> CORE
-    CORE --> COORD
-    COORD --> AUD
-    BRC --> POL
-    BRC --> WAL
-    SDK --> ID
-    SDK --> WAL
-    SDK --> BRC
-    SDK --> AUD
-    CLI --> ID
-    CLI --> WAL
+```d2
+# Diagram 80
+direction: down
+
+Core: "core: Specs + Primitives" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  CORE: "CORE" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  COORD: "COORD" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Identity: "wallet: Keys + Addresses" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  ID: "ID" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  WAL: "WAL" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Payment: "brc105: HTTP 402" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  BRC: "BRC" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  POL: "POL" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Audit: "audit: OP_RETURN" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  AUD: "AUD" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+SDK: "agent-sdk: Agent Runtime" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+
+Testnet: "testnet: Live BSV" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+
+CLI: "CLI" {
+  style.fill: "#ffffff"
+  style.stroke: "#dee2e6"
+}
+
+ID -> WAL
+WAL -> CORE
+CORE -> COORD
+COORD -> AUD
+BRC -> POL
+BRC -> WAL
+SDK -> ID
+SDK -> WAL
+SDK -> BRC
+SDK -> AUD
+CLI -> ID
+CLI -> WAL
 ```
 
 The goal: replace the dotted-line simulations with solid, broadcast-ready transactions without changing a single coordination-logic test.
@@ -90,20 +142,39 @@ Every identity now answers `(address identity)` returning `"m..."` or `"n..."` f
 
 The testnet client delegates to identity now, removing the cycle that forced forward-declarations.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Before["Before: Address in testnet client"]
-        TC1["testnet.client/pubkey->address"]
-        TC2["testnet.client/agent->address"]
-        TC1 --> TC2
-    end
-    subgraph After["After: Address in identity protocol"]
-        AG["AgentIdentity record"]
-        ID1["identity/address (protocol method)"]
-        ID1 --> AG
-    end
-    Before -->|"moved"| After
+```d2
+# Diagram 81
+direction: down
+
+Before: "Before: Address in testnet client" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+  TC1: "testnet.client/pubkey->address" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  TC2: "testnet.client/agent->address" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  TC1 -> TC2
+}
+
+After: "After: Address in identity protocol" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+  AG: "AgentIdentity record" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  ID1: "identity/address (protocol method)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  ID1 -> AG
+}
+
+Before -> After: "moved"
 ```
 
 ## Step 2: Live Transaction Building
@@ -140,40 +211,98 @@ Coin selection with fee estimation. The simplest approach: sort UTXOs descending
 
 Every byte matters. The BSV wire format is little-endian, with varint prefixes for variable-length fields:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Tx["Raw BSV Transaction"]
-        I1["Input 1"]
-        I2["Input 2 (optional)"]
-        IC["varint: Input Count"]
-        L["4 bytes: Locktime"]
-        O1["Output 1 (payment)"]
-        O2["Output 2 (change)"]
-        OC["varint: Output Count"]
-        V["4 bytes: Version (1)"]
-    end
-    subgraph Input["Each Input"]
-        SCR["ScriptSig (empty before signing)"]
-        SCRL["varint: ScriptSig Length"]
-        SEQ["4 bytes: Sequence (0xffffffff)"]
-        TXID["32 bytes: Prev TXID (reversed)"]
-        VOUT["4 bytes: Vout"]
-    end
-    subgraph Output["Each Output"]
-        SAT["8 bytes: Satoshis"]
-        SCR2["ScriptPubKey (P2PKH)"]
-        SCRL2["varint: ScriptPubKey Length"]
-    end
-    Tx --> Input
-    Tx --> Output
-    V --> IC
-    I1 --> I2
-    OC --> O1
-    O2 --> L
-    TXID --> VOUT
-    SCRL --> SCR
-    SAT --> SCRL2
+```d2
+# Diagram 82
+direction: down
+
+Tx: "Raw BSV Transaction" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+  I1: "Input 1" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  I2: "Input 2 (optional)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  IC: "varint: Input Count" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  L: "4 bytes: Locktime" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  O1: "Output 1 (payment)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  O2: "Output 2 (change)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  OC: "varint: Output Count" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  V: "4 bytes: Version (1)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Input: "Each Input" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+  SCR: "ScriptSig (empty before signing)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  SCRL: "varint: ScriptSig Length" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  SEQ: "4 bytes: Sequence (0xffffffff)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  TXID: "32 bytes: Prev TXID (reversed)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  VOUT: "4 bytes: Vout" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Output: "Each Output" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+  SAT: "8 bytes: Satoshis" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  SCR2: "ScriptPubKey (P2PKH)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  SCRL2: "varint: ScriptPubKey Length" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+}
+
+Tx -> Input
+Tx -> Output
+V -> IC
+I1 -> I2
+OC -> O1
+O2 -> L
+TXID -> VOUT
+SCRL -> SCR
+SAT -> SCRL2
 ```
 
 The serialization is a straightforward byte-array concatenation:
@@ -202,18 +331,26 @@ The serialization is a straightforward byte-array concatenation:
 
 The Bitcoin signing algorithm: double-SHA256 of the sighash preimage, ECDSA sign, append `0x01` (SIGHASH_ALL):
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    TX->>BUILD: For each input, set script = prevout scriptPubKey
-    BUILD->>BUILD: Serialize to bytes
-    BUILD->>BUILD: Append 0x01000000 (SIGHASH_ALL LE)
-    BUILD->>SIGN: 32 bytes: SHA256(SHA256(preimage))
-    SIGN->>SIGN: DER-encode signature
-    SIGN->>SIGN: Append 0x01 byte
-    SIGN->>TX: Build scriptSig: <sig+hashbyte> <pubkey>
-    TX->>BROADCAST: Broadcast raw hex
-    BROADCAST-->>TX: Return txid
+```d2
+# Diagram 83
+shape: sequence_diagram
+
+TX: "TX"
+BUILD: "BUILD"
+SIGN: "SIGN"
+BROADCAST: "BROADCAST"
+
+TX -> BUILD: "For each input, set script = prevout scriptPubKey"
+BUILD -> BUILD: "Serialize to bytes"
+BUILD -> BUILD: "Append 0x01000000 (SIGHASH_ALL LE)"
+BUILD -> SIGN: "32 bytes: SHA256(SHA256(preimage))"
+SIGN -> SIGN: "DER-encode signature"
+SIGN -> SIGN: "Append 0x01 byte"
+SIGN -> TX: "Build scriptSig: <sig+hashbyte> <pubkey>"
+TX -> BROADCAST: "Broadcast raw hex"
+BROADCAST -> TX: "Return txid" {
+  style.stroke-dash: 5
+}
 ```
 
 The signing function uses the same Bouncy Castle `SHA256withECDSA` that the identity protocol uses — butnote the double-hash:
@@ -234,31 +371,38 @@ The signing function uses the same Bouncy Castle `SHA256withECDSA` that the iden
 
 The `live-spend` function ties it all together:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    BROAD["broadcast-tx-with-retry(raw-hex)"]
-    BUILD["build-p2pkh-tx(utxos, recipient, amount, fee)"]
-    subgraph CHECK["UTXOs available?"]
-    end
-    DEDUCT["wallet/deduct(wallet, amount)"]
-    subgraph DONE["Return"]
-    end
-    subgraph ERROR["Return"]
-    end
-    FETCH["get-unspent-with-retry(from-address)"]
-    HEX["tx->hex(signed-tx)"]
-    subgraph OK["Status :ok?"]
-    end
-    SIGN["sign-tx(built-tx, identity)"]
-    START["live-spend(identity, wallet, recipient, amount)"]
-    START --> FETCH
-    CHECK -->|"no"| ERROR
-    CHECK -->|"yes"| BUILD
-    SIGN --> HEX
-    BROAD --> OK
-    OK -->|"yes"| DEDUCT
-    OK -->|"no"| ERROR
+```d2
+# Diagram 84
+direction: down
+
+START: "live-spend(identity, wallet, recipient, amount)"
+FETCH: "get-unspent-with-retry(from-address)"
+BUILD: "build-p2pkh-tx(utxos, recipient, amount, fee)"
+SIGN: "sign-tx(built-tx, identity)"
+HEX: "tx->hex(signed-tx)"
+BROAD: "broadcast-tx-with-retry(raw-hex)"
+DEDUCT: "wallet/deduct(wallet, amount)"
+
+CHECK: "UTXOs available?" {
+  style.fill: "#fafafa"
+}
+DONE: "Return" {
+  style.fill: "#fafafa"
+}
+ERROR: "Return" {
+  style.fill: "#fafafa"
+}
+OK: "Status :ok?" {
+  style.fill: "#fafafa"
+}
+
+START -> FETCH
+CHECK -> ERROR: "no"
+CHECK -> BUILD: "yes"
+SIGN -> HEX
+BROAD -> OK
+OK -> DEDUCT: "yes"
+OK -> ERROR: "no"
 ```
 
 ## Step 3: Real OP_RETURN Anchoring
@@ -292,17 +436,28 @@ The `bundle-and-anchor` function now takes an optional `:wallet` parameter. When
 
 HTTP 402 Payment Required is the mechanism. The BRCC-105 spec says: server returns 402 with `x-bsv-payment-*` headers, client pays and retries with `x-bsv-payment` header.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    C->>S: GET /api/translate
-    S-->>C: 402 Payment Required
-    C->>C: evaluate-payment(wallet, challenge, policy)
-    C->>L: Broadcast P2PKH payment (500 sats)
-    L-->>C: txid: a1b2c3...
-    C->>S: GET /api/translate
-    S->>S: verify-payment-header(header, 500, pubkey)
-    S-->>C: 200 OK + translation result
+```d2
+# Diagram 85
+shape: sequence_diagram
+
+C: Client
+S: Server
+L: Ledger
+
+C -> S: GET /api/translate
+S -> C: 402 Payment Required {
+  style.stroke-dash: 5
+}
+C -> C: evaluate-payment(wallet, challenge, policy)
+C -> L: Broadcast P2PKH payment (500 sats)
+L -> C: txid: a1b2c3... {
+  style.stroke-dash: 5
+}
+C -> S: GET /api/translate
+S -> S: verify-payment-header(header, 500, pubkey)
+S -> C: 200 OK + translation result {
+  style.stroke-dash: 5
+}
 ```
 
 The Ring middleware wraps any handler and intercepts configured routes:
@@ -366,24 +521,27 @@ Every layer has test coverage. The new code added tests for:
 | BRC-105 middleware | 5 | 402 issued, verified, rejected |
 | Faucet/hash160/refresh | 4 | Offline handling, byte lengths |
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph TestResults["100 tests | 242 assertions | 0 failures"]
-        AUD["audit: 15 tests"]
-        BRC["brc105: 18 tests"]
-        COORD["coordination: 10 tests"]
-        CORE["core: 13 tests"]
-        ID["identity: 9 tests"]
-        POL["policy: 9 tests"]
-        SDK["agent-sdk: 10 tests"]
-        TC["testnet: 17 tests"]
-        WAL["wallet: 9 tests"]
-    end
-    CORE --> ID
-    WAL --> AUD
-    POL --> BRC
-    SDK --> COORD
+```d2
+# Diagram 86
+direction: down
+
+TestResults: "100 tests | 242 assertions | 0 failures" {
+  style.fill: "#fafafa"
+  AUD: "audit: 15 tests"
+  BRC: "brc105: 18 tests"
+  COORD: "coordination: 10 tests"
+  CORE: "core: 13 tests"
+  ID: "identity: 9 tests"
+  POL: "policy: 9 tests"
+  SDK: "agent-sdk: 10 tests"
+  TC: "testnet: 17 tests"
+  WAL: "wallet: 9 tests"
+}
+
+TestResults.CORE -> TestResults.ID
+TestResults.WAL -> TestResults.AUD
+TestResults.POL -> TestResults.BRC
+TestResults.SDK -> TestResults.COORD
 ```
 
 ```clojure
@@ -398,21 +556,27 @@ The critical design constraint: `coordination.audit` needed to call `coordinatio
 
 The solution: pull `hex->bytes` and `bytes->hex` into `testnet.client` as local utilities (they are one-liners), then make `audit` depend on `testnet.client` only optionally through a `:wallet` key in `bundle-and-anchor`.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph AUD["audit.clj"]
-    end
-    subgraph RETRY["testnet.client/with-retry"]
-    end
-    subgraph TC["testnet.client"]
-    end
-    subgraph TXN["testnet.client/tx builders"]
-    end
-    AUD -->|"optional: wallet"| TC
-    TC --> TXN
-    TC --> RETRY
-    TXN -->|"no audit dep"| AUD
+```d2
+# Diagram 87
+direction: down
+
+AUD: "audit.clj" {
+  style.fill: "#fafafa"
+}
+RETRY: "testnet.client/with-retry" {
+  style.fill: "#fafafa"
+}
+TC: "testnet.client" {
+  style.fill: "#fafafa"
+}
+TXN: "testnet.client/tx builders" {
+  style.fill: "#fafafa"
+}
+
+AUD -> TC: "optional: wallet"
+TC -> TXN
+TC -> RETRY
+TXN -> AUD: "no audit dep"
 ```
 
 No cycles. No shared mutable state. Each module is independently testable.
@@ -421,9 +585,8 @@ No cycles. No shared mutable state. Each module is independently testable.
 
 This implementation followed the Scrum framework from the course: one-week sprints, daily self-inspection, Friday freezes. The product backlog was ordered by dependency (addresses before transactions, transactions before anchoring, anchoring before middleware).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 88
 ```
 
 The empirical pillars — transparency (open PRs), inspection (test suite), adaptation (breaking the audit cycle) — are not theoretical. They directly shaped the implementation.

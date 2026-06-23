@@ -13,37 +13,41 @@ This post serves as a high-signal reference to automate static analysis on these
 
 ### The Architecture: Before vs. After
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph LegacyWorkflow["Risky: Before aur-audit"]
-        A1["paru install google-chrome"]
-        A2["Fetch AUR Git Repository"]
-        A3["Human Review / Pager"]
-        A4["Execute PKGBUILD / makepkg"]
-        subgraph A5["System Compromised"]
-        end
-        A2 --> A3
-        A3 -->|"User presses q / confirms"| A4
-        A4 -->|"Malicious code runs on host"| A5
-    end
-    subgraph SecureWorkflow["Hardened: After aur-audit"]
-        B1["paru install google-chrome"]
-        B2["Fetch AUR Git Repository"]
-        B3["Trigger: PreBuildCommand"]
-        subgraph B4["aur-audit.clj Scan"]
-        end
-        subgraph B5["Abort Build & Halt execution"]
-        end
-        B6["Execute PKGBUILD / makepkg"]
-        subgraph B7["Secure Installation"]
-        end
-        B2 --> B3
-        B3 --> B4
-        B4 -->|"Exit Code: 1 / Threat Found"| B5
-        B4 -->|"Exit Code: 0 / Clean"| B6
-        B6 --> B7
-    end
+```d2
+# Diagram 134
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+LegacyWorkflow: "Risky: Before aur-audit" {
+  A1: "paru install google-chrome"
+  A2: "Fetch AUR Git Repository"
+  A3: "Human Review / Pager"
+  A4: "Execute PKGBUILD / makepkg"
+  A5: "System Compromised"
+
+  A2 -> A3
+  A3 -> A4: "User presses q / confirms"
+  A4 -> A5: "Malicious code runs on host"
+}
+
+SecureWorkflow: "Hardened: After aur-audit" {
+  B1: "paru install google-chrome"
+  B2: "Fetch AUR Git Repository"
+  B3: "Trigger: PreBuildCommand"
+  B4: "aur-audit.clj Scan"
+  B5: "Abort Build & Halt execution"
+  B6: "Execute PKGBUILD / makepkg"
+  B7: "Secure Installation"
+
+  B2 -> B3
+  B3 -> B4
+  B4 -> B5: "Exit Code: 1 / Threat Found"
+  B4 -> B6: "Exit Code: 0 / Clean"
+  B6 -> B7
+}
 ```
 
 ---
@@ -87,37 +91,36 @@ PreBuildCommand = ~/ .local/bin/aur-audit
 
 Whenever a build begins, the pre-build phase executes the following logic inside the package source directory:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph initial["initial"]
-    end
-    ReadTargets["ReadTargets"]
-    initial --> ReadTargets
-    ReadTargets["ReadTargets"]
-    ScanPKGBUILD["ScanPKGBUILD"]
-    ReadTargets -->|"Locate PKGBUILD"| ScanPKGBUILD
-    ReadTargets["ReadTargets"]
-    ScanInstallScripts["ScanInstallScripts"]
-    ReadTargets -->|"Locate *.install files"| ScanInstallScripts
-    CheckNetwork["CheckNetwork"]
-    CheckObfuscation["CheckObfuscation"]
-    CheckNetwork -->|"Regex matches base64/eval/openssl"| CheckObfuscation
-    CheckObfuscation["CheckObfuscation"]
-    CheckPersistence["CheckPersistence"]
-    CheckObfuscation -->|"Regex matches systemd/cron/profile"| CheckPersistence
-    ScanPKGBUILD["ScanPKGBUILD"]
-    EvaluateResults["EvaluateResults"]
-    ScanPKGBUILD --> EvaluateResults
-    ScanInstallScripts["ScanInstallScripts"]
-    EvaluateResults["EvaluateResults"]
-    ScanInstallScripts --> EvaluateResults
-    HighRiskFound["HighRiskFound"]
-    SystemExit1["SystemExit1"]
-    HighRiskFound -->|"Exit Code 1 (paru halts build)"| SystemExit1
-    Clean["Clean"]
-    SystemExit0["SystemExit0"]
-    Clean -->|"Exit Code 0 (paru compiles package)"| SystemExit0
+```d2
+# Diagram 135
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+initial: "initial"
+ReadTargets: "ReadTargets"
+ScanPKGBUILD: "ScanPKGBUILD"
+ScanInstallScripts: "ScanInstallScripts"
+CheckNetwork: "CheckNetwork"
+CheckObfuscation: "CheckObfuscation"
+CheckPersistence: "CheckPersistence"
+EvaluateResults: "EvaluateResults"
+HighRiskFound: "HighRiskFound"
+SystemExit1: "SystemExit1"
+Clean: "Clean"
+SystemExit0: "SystemExit0"
+
+initial -> ReadTargets
+ReadTargets -> ScanPKGBUILD: "Locate PKGBUILD"
+ReadTargets -> ScanInstallScripts: "Locate *.install files"
+CheckNetwork -> CheckObfuscation: "Regex matches base64/eval/openssl"
+CheckObfuscation -> CheckPersistence: "Regex matches systemd/cron/profile"
+ScanPKGBUILD -> EvaluateResults
+ScanInstallScripts -> EvaluateResults
+HighRiskFound -> SystemExit1: "Exit Code 1 (paru halts build)"
+Clean -> SystemExit0: "Exit Code 0 (paru compiles package)"
 ```
 
 With this integration, you establish a system-enforced defense gate that eliminates cognitive fatigue during package upgrades.

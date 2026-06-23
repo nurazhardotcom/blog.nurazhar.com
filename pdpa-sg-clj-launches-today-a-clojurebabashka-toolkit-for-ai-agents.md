@@ -37,34 +37,40 @@ Singapore's Personal Data Protection Act (2012, last revised 2026) puts 11 oblig
 
 The same 11 obligations, encoded so a build-step can read them:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Singapore PDPA\nPersonal Data Protection Act\n(11 Obligations)"]
-    O1["1. Consent\nexplicit opt-in + withdrawal"]
-    O10["10. Data Breach Notification\n≤ 3 days from assessment\n(PDPA §26D) to PDPC"]
-    O11["11. Accountability / DPO\ndesignate + publish"]
-    O2["2. Purpose Limitation\nno repurposing"]
-    O3["3. Notification\ndisclose at collection"]
-    O4["4. Accuracy\nvalidate + rectify"]
-    O5["5. Protection\nencryption + RBAC + audit logs"]
-    O6["6. Retention Limitation\nanonymise when done"]
-    O7["7. Transfer Limitation (§26)\ncomparable standard overseas"]
-    O8["8. Access & Correction\nDSR endpoints"]
-    O9["9. Withdrawal of Consent\nas easy as opt-in"]
-    X["Safe NRIC Rule\nban NRIC authentication\n(PDPC Feb 2026)\nby 31 Dec 2026"]
-    A --> O1
-    A --> O2
-    A --> O3
-    A --> O4
-    A --> O5
-    A --> O6
-    A --> O7
-    A --> O8
-    A --> O9
-    A --> O10
-    A --> O11
-    A --> X
+```d2
+# Diagram 143
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "Singapore PDPA\nPersonal Data Protection Act\n(11 Obligations)"
+O1: "1. Consent\nexplicit opt-in + withdrawal"
+O10: "10. Data Breach Notification\n≤ 3 days from assessment\n(PDPA §26D) to PDPC"
+O11: "11. Accountability / DPO\ndesignate + publish"
+O2: "2. Purpose Limitation\nno repurposing"
+O3: "3. Notification\ndisclose at collection"
+O4: "4. Accuracy\nvalidate + rectify"
+O5: "5. Protection\nencryption + RBAC + audit logs"
+O6: "6. Retention Limitation\nanonymise when done"
+O7: "7. Transfer Limitation (§26)\ncomparable standard overseas"
+O8: "8. Access & Correction\nDSR endpoints"
+O9: "9. Withdrawal of Consent\nas easy as opt-in"
+X: "Safe NRIC Rule\nban NRIC authentication\n(PDPC Feb 2026)\nby 31 Dec 2026"
+
+A -> O1
+A -> O2
+A -> O3
+A -> O4
+A -> O5
+A -> O6
+A -> O7
+A -> O8
+A -> O9
+A -> O10
+A -> O11
+A -> X
 ```
 
 > **Note:** The 3-day breach notification clock starts at the **assessment** of notifiability (not discovery), governed by an "as soon as practicable" floor. The 31 Dec 2026 deadline phases out NRIC for **authentication** (logins/passwords), distinct from the older 2018 display-masking rules.
@@ -79,98 +85,110 @@ That bifurcation is the central architectural idea. Anything a scanner can verif
 
 The repo lives at `nurazhardotcom/pdpa-sg-clj`. Here's how it's organised:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["pdpa.audit\norchestrator + report"]
-    C["pdpa.core\npublic API"]
-    CFG["CONFIG\ndeps.edn + bb.edn + .gitignore"]
-    CL["pdpa.checklist\nCHECKLIST.md auto-ticker"]
-    DOCS["DOCS\nREADME, CHECKLIST, ARCHITECTURE"]
-    EX["EXAMPLES\nend-to-end demo"]
-    I["pdpa.init\ntemplate copier"]
-    N["pdpa.nric\nMod-11 algorithm\n(hex false-positive guard)"]
-    P["pdpa.policy\ntemplate loader + filler"]
-    P1["PRIVACY_POLICY.template.md"]
-    P2["DPO_CONTACT.template.md"]
-    P3["CONSENT_FORM.template.md"]
-    P4["DATA_BREACH_RESPONSE.template.md"]
-    P5["DATA_TRANSFER_AGREEMENT.template.md"]
-    P6["DPIA.template.md"]
-    P7["SECURITY_HARDENING.template.md"]
-    P8["RETENTION_SCHEDULE.template.md"]
-    POL["POLICY TEMPLATES\n7 markdown templates"]
-    R["pdpa-sg-clj/\n(MIT, Public, Java 11+/Babashka 1.4+)"]
-    R2["pdpa.redact\nNRIC + phone + email pipeline"]
-    S["pdpa.scan\nripgrep severity classifier"]
-    SRC["SOURCE\n9 namespaces + 1 core API"]
-    TEST["TESTS\n4 test files, Cognitect runner"]
-    V["pdpa.version\nrule version stamp"]
-    R --> DOCS
-    R --> SRC
-    R --> TEST
-    R --> POL
-    R --> EX
-    R --> CFG
-    SRC --> N
-    SRC --> R2
-    SRC --> S
-    SRC --> CL
-    SRC --> P
-    SRC --> A
-    SRC --> I
-    SRC --> V
-    SRC --> C
-    POL --> P1
-    POL --> P2
-    POL --> P3
-    POL --> P4
-    POL --> P5
-    POL --> P6
-    POL --> P7
-    POL --> P8
+```d2
+# Diagram 144
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "pdpa.audit\norchestrator + report"
+C: "pdpa.core\npublic API"
+CFG: "CONFIG\ndeps.edn + bb.edn + .gitignore"
+CL: "pdpa.checklist\nCHECKLIST.md auto-ticker"
+DOCS: "DOCS\nREADME, CHECKLIST, ARCHITECTURE"
+EX: "EXAMPLES\nend-to-end demo"
+I: "pdpa.init\ntemplate copier"
+N: "pdpa.nric\nMod-11 algorithm\n(hex false-positive guard)"
+P: "pdpa.policy\ntemplate loader + filler"
+P1: "PRIVACY_POLICY.template.md"
+P2: "DPO_CONTACT.template.md"
+P3: "CONSENT_FORM.template.md"
+P4: "DATA_BREACH_RESPONSE.template.md"
+P5: "DATA_TRANSFER_AGREEMENT.template.md"
+P6: "DPIA.template.md"
+P7: "SECURITY_HARDENING.template.md"
+P8: "RETENTION_SCHEDULE.template.md"
+POL: "POLICY TEMPLATES\n7 markdown templates"
+R: "pdpa-sg-clj/\n(MIT, Public, Java 11+/Babashka 1.4+)"
+R2: "pdpa.redact\nNRIC + phone + email pipeline"
+S: "pdpa.scan\nripgrep severity classifier"
+SRC: "SOURCE\n9 namespaces + 1 core API"
+TEST: "TESTS\n4 test files, Cognitect runner"
+V: "pdpa.version\nrule version stamp"
+
+R -> DOCS
+R -> SRC
+R -> TEST
+R -> POL
+R -> EX
+R -> CFG
+SRC -> N
+SRC -> R2
+SRC -> S
+SRC -> CL
+SRC -> P
+SRC -> A
+SRC -> I
+SRC -> V
+SRC -> C
+POL -> P1
+POL -> P2
+POL -> P3
+POL -> P4
+POL -> P5
+POL -> P6
+POL -> P7
+POL -> P8
 ```
 
 The architecture is intentionally flat. Each namespace has one responsibility and a name that matches its noun. A call-graph walks from `pdpa.core` straight down through `pdpa.redact → pdpa.nric`, `pdpa.scan → pdpa.nric`, `pdpa.audit → pdpa.scan + pdpa.checklist`, and so on.
 
 The Babashka CLI surface maps one task to one namespace:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    ABOUT["bb about\nprints PDPA rule\nversion stamp"]
-    AUDIT["bb audit path\nscan + auto-tick + report"]
-    AUD_NS["pdpa.audit"]
-    CHECK["bb checklist\nobligation status table"]
-    CHK_NS["pdpa.checklist"]
-    CLJ["requires pdpa.nric-test\npdpa.redact-test\npdpa.checklist-test\npdpa.scan-test"]
-    CORE_NS["pdpa.version"]
-    DPO["bb dpo name email\ngenerate DPO page"]
-    INIT["bb init directory\ncopies CHECKLIST +\n7 templates"]
-    INIT_NS["pdpa.init"]
-    POL_NS["pdpa.policy"]
-    REDACT["bb redact file\nMod-11 + phone + email"]
-    RED_NS["pdpa.redact"]
-    SCAN["bb scan path\nripgrep classifier"]
-    SCAN_NS["pdpa.scan"]
-    TEST["bb test\nCognitect runner"]
-    USR["bb task invocation"]
-    USR --> ABOUT
-    USR --> INIT
-    USR --> SCAN
-    USR --> REDACT
-    USR --> CHECK
-    USR --> AUDIT
-    USR --> DPO
-    USR --> TEST
-    ABOUT --> CORE_NS
-    INIT --> INIT_NS
-    SCAN --> SCAN_NS
-    REDACT --> RED_NS
-    CHECK --> CHK_NS
-    AUDIT --> AUD_NS
-    DPO --> POL_NS
-    TEST --> CLJ
+```d2
+# Diagram 145
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+ABOUT: "bb about\nprints PDPA rule\nversion stamp"
+AUDIT: "bb audit path\nscan + auto-tick + report"
+AUD_NS: "pdpa.audit"
+CHECK: "bb checklist\nobligation status table"
+CHK_NS: "pdpa.checklist"
+CLJ: "requires pdpa.nric-test\npdpa.redact-test\npdpa.checklist-test\npdpa.scan-test"
+CORE_NS: "pdpa.version"
+DPO: "bb dpo name email\ngenerate DPO page"
+INIT: "bb init directory\ncopies CHECKLIST +\n7 templates"
+INIT_NS: "pdpa.init"
+POL_NS: "pdpa.policy"
+REDACT: "bb redact file\nMod-11 + phone + email"
+RED_NS: "pdpa.redact"
+SCAN: "bb scan path\nripgrep classifier"
+SCAN_NS: "pdpa.scan"
+TEST: "bb test\nCognitect runner"
+USR: "bb task invocation"
+
+USR -> ABOUT
+USR -> INIT
+USR -> SCAN
+USR -> REDACT
+USR -> CHECK
+USR -> AUDIT
+USR -> DPO
+USR -> TEST
+ABOUT -> CORE_NS
+INIT -> INIT_NS
+SCAN -> SCAN_NS
+REDACT -> RED_NS
+CHECK -> CHK_NS
+AUDIT -> AUD_NS
+DPO -> POL_NS
+TEST -> CLJ
 ```
 
 Every task uses `(requiring-resolve 'pdpa.x/y)` so each invocation loads only the namespace it needs. Startup time on cold `bb` is sub-second.
@@ -181,25 +199,47 @@ Every task uses `(requiring-resolve 'pdpa.x/y)` so each invocation loads only th
 
 CHECKLIST.md is the heart of the toolkit. It's a single Markdown file with `- [ ]` boxes for each obligation. Boxes that the scanner can verify have an HTML comment marker, like `<!-- agent:verify-protection -->`. The auto-tick logic reads both the file and the scan results in one pass:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    User->>CLI: bb audit ./your-project
-    CLI->>Scanner: scan(path)
-    Scanner->>Code: spawn ripgrep<br/>(stderr → parent to avoid deadlock)
-    Code-->>Scanner: NDJSON matches
-    Scanner->>Scanner: classify by severity<br/>(CRITICAL/HIGH/MEDIUM/LOW)
-    Scanner-->>CLI: {:counts {:critical 0 :high 0 ...} :clean? true}
-    CLI->>CLI: detect evidence<br/>(top-level files: PRIVACY_POLICY.md,<br/>DPO_CONTACT.md, etc.)
-    CLI->>Writer: auto-tick(checklist-md, scan-result, evidence)
-    Writer->>Writer: parse <!-- agent:verify-X --> marker
-    Writer->>Writer: call verifier {:consent :purpose ...} for X
-    Writer->>File: rewrite - [ ] → - [x]
-    Writer->>Writer: leave box [ ]
-    Writer-->>CLI: ticked markdown string
-    CLI->>CLI: only rewrite if different<br/>(avoids git thrash)
-    CLI->>File: spit(only if delta)
-    CLI-->>User: print ✅ 0 CRITICAL + 0 HIGH findings
+```d2
+# Diagram 146
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+shape: sequence_diagram
+
+User: "User"
+CLI: "CLI"
+Scanner: "Scanner"
+Code: "Code"
+Writer: "Writer"
+File: "File"
+
+User -> CLI: "bb audit ./your-project"
+CLI -> Scanner: "scan(path)"
+Scanner -> Code: "spawn ripgrep\n(stderr -> parent to avoid deadlock)"
+Code -> Scanner: "NDJSON matches" {
+  style.stroke-dash: 5
+}
+Scanner -> Scanner: "classify by severity\n(CRITICAL/HIGH/MEDIUM/LOW)"
+Scanner -> CLI: "{:counts {:critical 0 :high 0 ...} :clean? true}" {
+  style.stroke-dash: 5
+}
+CLI -> CLI: "detect evidence\n(top-level files: PRIVACY_POLICY.md,\nDPO_CONTACT.md, etc.)"
+CLI -> Writer: "auto-tick(checklist-md, scan-result, evidence)"
+Writer -> Writer: "parse <!-- agent:verify-X --> marker"
+Writer -> Writer: "call verifier {:consent :purpose ...} for X"
+Writer -> File: "rewrite - [ ] -> - [x]"
+Writer -> Writer: "leave box [ ]"
+Writer -> CLI: "ticked markdown string" {
+  style.stroke-dash: 5
+}
+CLI -> CLI: "only rewrite if different\n(avoids git thrash)"
+CLI -> File: "spit(only if delta)"
+CLI -> User: "print ✅ 0 CRITICAL + 0 HIGH findings" {
+  style.stroke-dash: 5
+}
 ```
 
 Here's a snippet from `CHECKLIST.md` to make it concrete:
@@ -240,30 +280,47 @@ Singapore NRIC validation is one of those algorithms that looks trivial but has 
 
 The check-digit algorithm:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    Citizen["S/T path:\nweights = [2 7 6 5 4 3 2]"]
-    subgraph Comp1["computed letter\n= provided?"]
-    end
-    Fin["M path (FIN):\nweights = [1 2 7 6 5 4 3 2]"]
-    subgraph Inv["INVALID\n→ ignore\n(hex string guard)"]
-    end
-    subgraph MCheck["prefix = M?"]
-    end
-    subgraph PrefixCheck["prefix ∈\nS/T/F/G?"]
-    end
-    Split["Split: prefix + digits + check"]
-    subgraph V["VALID → redact as\n[REDACTED_NRIC]"]
-    end
-    Start --> Split
-    Split --> PrefixCheck
-    Split --> MCheck
-    yes --> Fin
-    Citizen --> Comp1
-    Fin --> Comp1
-    yes --> V
-    no --> Inv
+```d2
+# Diagram 147
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Start: "Start"
+Split: "Split: prefix + digits + check"
+Citizen: "S/T path:\nweights = [2 7 6 5 4 3 2]"
+Fin: "M path (FIN):\nweights = [1 2 7 6 5 4 3 2]"
+yes: "yes"
+no: "no"
+
+Comp1: {
+  label: "computed letter\n= provided?"
+}
+Inv: {
+  label: "INVALID\n→ ignore\n(hex string guard)"
+}
+MCheck: {
+  label: "prefix = M?"
+}
+PrefixCheck: {
+  label: "prefix ∈\nS/T/F/G?"
+}
+V: {
+  label: "VALID → redact as\n[REDACTED_NRIC]"
+}
+
+Start -> Split
+Split -> PrefixCheck
+Split -> MCheck
+yes -> Fin
+Citizen -> Comp1
+Fin -> Comp1
+yes -> V
+no -> Inv
 ```
 
 Hand-computed reference values used by the test suite:
@@ -284,21 +341,37 @@ Why this matters in practice: my BSV transaction-hash-redacting work would have 
 
 The redactor runs four stages in fixed order on any text body:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    Caller->>R: redact-text(text)
-    R->>N: find-valid-nrics(text)
-    N->>N: compute Mod-11 check digit
-    N->>N: keep as valid NRIC
-    N->>N: drop (hex-like false-positive)
-    N-->>R: vector of valid NRICs
-    R->>R: re-seq SG mobile pattern<br/>[89]\d{7} or +65 \d{4}\d{4}
-    R->>R: re-seq email RFC pattern<br/>(skip *@example.{com,org,net})
-    R->>Out: replace-all(nrics, [REDACTED_NRIC])
-    R->>Out: replace-all(phones, [REDACTED_PHONE])
-    R->>Out: replace-all(emails, [REDACTED_EMAIL])
-    R-->>Caller: {:redacted final<br/>:counts {nric 2 phone 1 email 1}}
+```d2
+# Diagram 148
+shape: sequence_diagram
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Caller: "Caller"
+R: "R"
+N: "N"
+Out: "Out"
+
+Caller -> R: "redact-text(text)"
+R -> N: "find-valid-nrics(text)"
+N -> N: "compute Mod-11 check digit"
+N -> N: "keep as valid NRIC"
+N -> N: "drop (hex-like false-positive)"
+N -> R: "vector of valid NRICs" {
+  style.stroke-dash: 3
+}
+R -> R: "re-seq SG mobile pattern\n[89]\\d{7} or +65 \\d{4}\\d{4}"
+R -> R: "re-seq email RFC pattern\n(skip *@example.{com,org,net})"
+R -> Out: "replace-all(nrics, [REDACTED_NRIC])"
+R -> Out: "replace-all(phones, [REDACTED_PHONE])"
+R -> Out: "replace-all(emails, [REDACTED_EMAIL])"
+R -> Caller: "{:redacted final\n:counts {nric 2 phone 1 email 1}}" {
+  style.stroke-dash: 3
+}
 ```
 
 Idempotency is verified in tests: calling `redact-text` on the redacted output returns the same string. The redactor is safe to run in a CI pre-commit hook; running it twice doesn't double-mangle.
@@ -322,22 +395,48 @@ A worked example:
 
 When the user demands a single verdict — *is this project compliant?* — `bb audit ./your-project` answers in one shot:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    User->>Main: bb audit ../their-project --json
-    Main->>Arg: parse-args (--json, --with-evidence=…)
-    Arg-->>Main: [path, opts]
-    Main->>Scan: scan(path)
-    Scan-->>Main: {:findings [...] :counts {...}}
-    Main->>Evi: detect-evidence(path)
-    Evi-->>Main: [PRIVACY_POLICY] [DPO_CONTACT]
-    Main->>Main: read CHECKLIST.md (or fallback to resource)
-    Main->>Chk: auto-tick(checklist-md, scan-result, evidence)
-    Chk-->>Main: ticked-md
-    Main->>File: rewrite ONLY if ticked ≠ original (no thrash)
-    Main->>Out: emit JSON \| human summary
-    Out-->>User: ✅ 0 CRITICAL findings — auto-tick delta: APPLIED
+```d2
+# Diagram 149
+shape: sequence_diagram
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+User: "User"
+Main: "Main"
+Arg: "Arg"
+Scan: "Scan"
+Evi: "Evi"
+Chk: "Chk"
+File: "File"
+Out: "Out"
+
+User -> Main: "bb audit ../their-project --json"
+Main -> Arg: "parse-args (--json, --with-evidence=…)"
+Arg -> Main: "[path, opts]" {
+  style.stroke-dash: 3
+}
+Main -> Scan: "scan(path)"
+Scan -> Main: "{:findings [...] :counts {...}}" {
+  style.stroke-dash: 3
+}
+Main -> Evi: "detect-evidence(path)"
+Evi -> Main: "[PRIVACY_POLICY] [DPO_CONTACT]" {
+  style.stroke-dash: 3
+}
+Main -> Main: "read CHECKLIST.md (or fallback to resource)"
+Main -> Chk: "auto-tick(checklist-md, scan-result, evidence)"
+Chk -> Main: "ticked-md" {
+  style.stroke-dash: 3
+}
+Main -> File: "rewrite ONLY if ticked ≠ original (no thrash)"
+Main -> Out: "emit JSON | human summary"
+Out -> User: "✅ 0 CRITICAL findings — auto-tick delta: APPLIED" {
+  style.stroke-dash: 3
+}
 ```
 
 The write is the part I'm proudest of. Auto-tick should be invisible when nothing changed. The check `(when (and (.exists chk-file) (not= ticked-md chk-md)) (spit chk-file ticked-md))` means a clean `bb audit` produces zero diff in git — your working tree stays pristine.
@@ -350,53 +449,66 @@ The write is the part I'm proudest of. Auto-tick should be invisible when nothin
 
 The question your reviewer will actually ask is *what does the toolkit do that your existing repo cannot*? Let me show the two states:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph root["root"]
-        l1_1["Same Codebase"]
-        l2_2["WITHOUT"]
-        l3_3["Policy PDFon desktop"]
-        l3_4["Excel checklistlast edited3 months ago"]
-        l3_5["Manual NRIC spot-check"]
-        l3_6["Compliance review= one afternoonper quarter"]
-        l3_7["Statusunknown untilreviewer asks"]
-        l2_8["WITH pdpa-sg-clj"]
-        l3_9["CHECKLIST.mdin repo"]
-        l3_10["bb audit takes 3 seconds"]
-        l3_11["Mod-11 redactorin CI pre-commit"]
-        l3_12["Compliance ticknext to PR diff"]
-        l3_13["Status✅ cleanor ⚠️ 2 HIGHalways visible"]
-    end
+```d2
+# Diagram 150
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+root: {
+  label: "root"
+  l1_1: "Same Codebase"
+  l2_2: "WITHOUT"
+  l3_3: "Policy PDFon desktop"
+  l3_4: "Excel checklistlast edited3 months ago"
+  l3_5: "Manual NRIC spot-check"
+  l3_6: "Compliance review= one afternoonper quarter"
+  l3_7: "Statusunknown untilreviewer asks"
+  l2_8: "WITH pdpa-sg-clj"
+  l3_9: "CHECKLIST.mdin repo"
+  l3_10: "bb audit takes 3 seconds"
+  l3_11: "Mod-11 redactorin CI pre-commit"
+  l3_12: "Compliance ticknext to PR diff"
+  l3_13: "Status✅ cleanor ⚠️ 2 HIGHalways visible"
+}
 ```
 
 A graph view of the same shift:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Before_World["BEFORE: policy-not-code"]
-        subgraph A1["📄 PDF policy\n(lives in IT shared drive)"]
-        end
-        subgraph A2["📊 Spreadsheet checklist\n(edited by Compliance team)"]
-        end
-        subgraph A3["📂 Codebase\n(no compliance linkage)"]
-        end
-        A1 -->|"manual reconciliation\neach quarter"| A2
-        A2 -->|"hope it matches"| A3
-    end
-    subgraph After_World["AFTER: code IS the policy"]
-        subgraph B1["📝 CHECKLIST.md\n(in repo, versioned)"]
-        end
-        subgraph B2["🤖 bb audit\n(auto-ticks on scan)"]
-        end
-        subgraph B3["📂 Codebase\n(same repo)"]
-        end
-        B1 -->|"scan verifies"| B2
-        B2 -->|"rewrites"| B1
-        B2 -->|"scans"| B3
-    end
-    Before_World -->|"audit chain\n(maybe 1/week)"| After_World
+```d2
+# Diagram 151
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Before_World: {
+  label: "BEFORE: policy-not-code"
+  A1: "📄 PDF policy\n(lives in IT shared drive)"
+  A2: "📊 Spreadsheet checklist\n(edited by Compliance team)"
+  A3: "📂 Codebase\n(no compliance linkage)"
+  A1 -> A2: "manual reconciliation\neach quarter"
+  A2 -> A3: "hope it matches"
+}
+
+After_World: {
+  label: "AFTER: code IS the policy"
+  B1: "📝 CHECKLIST.md\n(in repo, versioned)"
+  B2: "🤖 bb audit\n(auto-ticks on scan)"
+  B3: "📂 Codebase\n(same repo)"
+  B1 -> B2: "scan verifies"
+  B2 -> B1: "rewrites"
+  B2 -> B3: "scans"
+}
+
+Before_World -> After_World: "audit chain\n(maybe 1/week)"
 ```
 
 The shift is from "documents that describe the policy" to "code that executes the policy." The PDF never had a chance.
@@ -407,40 +519,48 @@ The shift is from "documents that describe the policy" to "code that executes th
 
 When I scanned my own 17 public GitHub repos for PDPA-relevant personal data, they fell into five tiers:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph root["root"]
-        l1_1["17 Public Repos"]
-        l2_2["HIGH live-deploy tier"]
-        l3_3["headhunter-agent"]
-        l4_4["CV ingestionNS status(trigger obligations 1-11+ Safe NRIC)"]
-        l3_5["lagu-lagu"]
-        l4_6["PayNow phoneUEN targets(+ §26 Tazapay"]
-        l4_7["overseas transfer)"]
-        l2_8["HISTORICAL high-tier"]
-        l3_9["lithan_assignments"]
-        l4_10["Profile.phoneProfile.addressDjango JWTlocalStorage"]
-        l3_11["lithan_smartshop"]
-        l4_12["userData inlocalStoragehardcodedSECRET_KEY in repo"]
-        l3_13["lithan-dev-sandbox"]
-        l4_14["SECRET_KEY intemplate"]
-        l2_15["LOW pseudonymous tier"]
-        l3_16["bsv-de-tracker"]
-        l4_17["exchange scraping"]
-        l4_18["IP + UA persisted"]
-        l3_19["agent-bond"]
-        l4_20["BSV BRC-100identity certs"]
-        l3_21["ipso-agent"]
-        l4_22["BSV CLOBtrading"]
-        l2_23["NONE documentation tier"]
-        l3_24["aur-audit"]
-        l4_25["AUR packagesecurity"]
-        l3_26["bitcoin-wiki"]
-        l4_27["knowledgeindex only"]
-        l3_28["bsv-cljpaperclip-cljbunkernurazhardotcom"]
-        l4_29["READMEsstatic"]
-    end
+```d2
+# Diagram 152
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+root: {
+  label: "root"
+  l1_1: "17 Public Repos"
+  l2_2: "HIGH live-deploy tier"
+  l3_3: "headhunter-agent"
+  l4_4: "CV ingestionNS status(trigger obligations 1-11+ Safe NRIC)"
+  l3_5: "lagu-lagu"
+  l4_6: "PayNow phoneUEN targets(+ §26 Tazapay"
+  l4_7: "overseas transfer)"
+  l2_8: "HISTORICAL high-tier"
+  l3_9: "lithan_assignments"
+  l4_10: "Profile.phoneProfile.addressDjango JWTlocalStorage"
+  l3_11: "lithan_smartshop"
+  l4_12: "userData inlocalStoragehardcodedSECRET_KEY in repo"
+  l3_13: "lithan-dev-sandbox"
+  l4_14: "SECRET_KEY intemplate"
+  l2_15: "LOW pseudonymous tier"
+  l3_16: "bsv-de-tracker"
+  l4_17: "exchange scraping"
+  l4_18: "IP + UA persisted"
+  l3_19: "agent-bond"
+  l4_20: "BSV BRC-100identity certs"
+  l3_21: "ipso-agent"
+  l4_22: "BSV CLOBtrading"
+  l2_23: "NONE documentation tier"
+  l3_24: "aur-audit"
+  l4_25: "AUR packagesecurity"
+  l3_26: "bitcoin-wiki"
+  l4_27: "knowledgeindex only"
+  l3_28: "bsv-cljpaperclip-cljbunkernurazhardotcom"
+  l4_29: "READMEsstatic"
+}
 ```
 
 The seven repos in the **HIGH** + **HISTORICAL** tier are the ones that, if their authors ever flipped them to live-deployment with real users, would need every CHECKLIST.md box ticked. The toolkit gets them from "design draft" to "production-ready" in roughly 30 minutes of work plus policy-text authoring.
@@ -473,37 +593,39 @@ Five of the eleven have full or partial auto-tick. The other six are unambiguous
 
 Each obligation in CHECKLIST.md has a status that evolves:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph initial["initial"]
-    end
-    PENDING["PENDING"]
-    initial --> PENDING
-    PENDING["PENDING"]
-    SCAN_FAILED["SCAN_FAILED"]
-    PENDING -->|"bb audit finds<br/>CRITICAL or HIGH leak"| SCAN_FAILED
-    PENDING["PENDING"]
-    SCAN_PASSED["SCAN_PASSED"]
-    PENDING -->|"scan clean<br/>+ auto-tick verifier passes"| SCAN_PASSED
-    PENDING["PENDING"]
-    PENDING["PENDING"]
-    PENDING -->|"manual box;<br/>human must act"| PENDING
-    SCAN_FAILED["SCAN_FAILED"]
-    PENDING["PENDING"]
-    SCAN_FAILED -->|"developer runs<br/>bb redact or removes<br/>the secret"| PENDING
-    SCAN_PASSED["SCAN_PASSED"]
-    PUBLISHED["PUBLISHED"]
-    SCAN_PASSED -->|"human action item<br/>shipped (privacy policy,<br/>DPO contact, …)"| PUBLISHED
-    SCAN_PASSED["SCAN_PASSED"]
-    PENDING["PENDING"]
-    SCAN_PASSED -->|"verifier drift<br/>(later code regresses)"| PENDING
-    PUBLISHED["PUBLISHED"]
-    OK["OK"]
-    PUBLISHED -->|"ALL boxes<br/>in obligation = [x]"| OK
-    OK --> final_state
-    subgraph final_state["final"]
-    end
+```d2
+# Diagram 153
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+initial: {
+  label: "initial"
+}
+
+PENDING: "PENDING"
+SCAN_FAILED: "SCAN_FAILED"
+SCAN_PASSED: "SCAN_PASSED"
+PUBLISHED: "PUBLISHED"
+OK: "OK"
+
+final_state: {
+  label: "final"
+}
+
+initial -> PENDING
+PENDING -> SCAN_FAILED: "bb audit finds\nCRITICAL or HIGH leak"
+PENDING -> SCAN_PASSED: "scan clean\n+ auto-tick verifier passes"
+PENDING -> PENDING: "manual box;\nhuman must act"
+SCAN_FAILED -> PENDING: "developer runs\nbb redact or removes\nthe secret"
+SCAN_PASSED -> PUBLISHED: "human action item\nshipped (privacy policy,\nDPO contact, …)"
+SCAN_PASSED -> PENDING: "verifier drift\n(later code regresses)"
+PUBLISHED -> OK: "ALL boxes\nin obligation = [x]"
+OK -> final_state
 ```
 
 That's where the toolkit stops: at `OK`, yes, but **not** at `[*]`. The final deploy is a human decision involving PDPC, SOC2 audit, regulatory filings — none of which the toolkit can do for you.

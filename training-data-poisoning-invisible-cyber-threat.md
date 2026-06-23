@@ -47,34 +47,37 @@ When that trigger is presented during live deployment, the model executes a pre-
 
 **Detection:** Extremely difficult. Standard accuracy metrics remain pristine. The attack only activates under specific, attacker-controlled conditions.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph PoisoningTaxonomy["Data Poisoning Attack Taxonomy"]
-        A1["Inject random noise"]
-        A2["Skew label distributions"]
-        A3["Corrupt feature values"]
-        Avail["Availability Attack"]
-        subgraph AvailResult["Model degrades visibly"]
-        end
-        B1["Embed trigger pattern"]
-        B2["Clean-label manipulation"]
-        B3["Supply chain injection"]
-        subgraph IntResult["Model passes QA, activates on trigger"]
-        end
-        Integrity["Integrity / Backdoor Attack"]
-        subgraph Root["Training Data Poisoning"]
-        end
-        Root --> Integrity
-        Avail --> A1
-        Avail --> A2
-        Avail --> A3
-        Integrity --> B1
-        Integrity --> B2
-        Integrity --> B3
-        A1 --> AvailResult
-        B1 --> IntResult
-    end
+```d2
+# Diagram 185
+direction: down
+
+PoisoningTaxonomy: "Data Poisoning Attack Taxonomy" {
+  direction: down
+  Root: "Training Data Poisoning"
+  Avail: "Availability Attack"
+  Integrity: "Integrity / Backdoor Attack"
+  
+  A1: "Inject random noise"
+  A2: "Skew label distributions"
+  A3: "Corrupt feature values"
+  AvailResult: "Model degrades visibly"
+  
+  B1: "Embed trigger pattern"
+  B2: "Clean-label manipulation"
+  B3: "Supply chain injection"
+  IntResult: "Model passes QA, activates on trigger"
+  
+  Root -> Integrity
+  Avail -> A1
+  Avail -> A2
+  Avail -> A3
+  A1 -> AvailResult
+  
+  Integrity -> B1
+  Integrity -> B2
+  Integrity -> B3
+  B1 -> IntResult
+}
 ```
 
 ---
@@ -98,19 +101,19 @@ The border security example is not theoretical. Any system that relies on AI-dri
 
 Data poisoning does not exist in a vacuum. It is a foundational pillar of the broader **AI Cybercriminals** trend—an automated arms race where both attackers and defenders leverage machine intelligence.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph AICyberThreatLandscape["AI-Driven Cyber Threat Landscape"]
-        A["Autonomous AI Hacking"]
-        subgraph Core["AI Cybercriminals Ecosystem"]
-        end
-        subgraph D["Data Poisoning"]
-        end
-        M["Polymorphic Malware Gen"]
-        P["Hyper-Realistic Phishing"]
-        V["Accelerated Vuln Hunting"]
-    end
+```d2
+# Diagram 186
+direction: down
+
+AICyberThreatLandscape: "AI-Driven Cyber Threat Landscape" {
+  direction: down
+  A: "Autonomous AI Hacking"
+  Core: "AI Cybercriminals Ecosystem"
+  D: "Data Poisoning"
+  M: "Polymorphic Malware Gen"
+  P: "Hyper-Realistic Phishing"
+  V: "Accelerated Vuln Hunting"
+}
 ```
 
 **How cybercriminals leverage AI today:**
@@ -139,30 +142,30 @@ Defending against data poisoning requires a fundamentally different security pos
 | **Statistical Anomaly Detection** | Continuous monitoring of input distributions, label ratios, and feature drift during training. | Catch distribution shifts that indicate poisoning attempts. |
 | **Model Behavioral Testing** | Adversarial testing with known trigger patterns and edge-case inputs post-training. | Detect backdoor behaviors that standard accuracy metrics miss. |
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph DefensivePosture["Data Supply Chain Security Architecture"]
-        subgraph Behav["Behavioral Adversarial Testing"]
-        end
-        DS["Data Sources"]
-        DVC["DVC Baseline Snapshots"]
-        Deploy["Production Deployment"]
-        subgraph Hash["Integrity Hash Check"]
-        end
-        subgraph Monitor["Statistical Drift Monitor"]
-        end
-        Pipeline["ETL / Training Pipeline"]
-        subgraph Prov["Provenance Verification"]
-        end
-        Train["Model Training"]
-        Prov --> Pipeline
-        Pipeline --> Hash
-        Hash --> Train
-        Train --> Behav
-        Behav --> Deploy
-        Monitor --> Train
-    end
+```d2
+# Diagram 187
+direction: down
+
+DefensivePosture: "Data Supply Chain Security Architecture" {
+  direction: down
+  DS: "Data Sources"
+  DVC: "DVC Baseline Snapshots"
+  Pipeline: "ETL / Training Pipeline"
+  Train: "Model Training"
+  Deploy: "Production Deployment"
+  
+  Behav: "Behavioral Adversarial Testing"
+  Hash: "Integrity Hash Check"
+  Monitor: "Statistical Drift Monitor"
+  Prov: "Provenance Verification"
+  
+  Prov -> Pipeline
+  Pipeline -> Hash
+  Hash -> Train
+  Train -> Behav
+  Behav -> Deploy
+  Monitor -> Train
+}
 ```
 
 ---

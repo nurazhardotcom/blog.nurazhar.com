@@ -19,20 +19,23 @@ What if one already did?
 
 Hyperliquid splits its L1 into three layers:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    APPS["170+ projects building\nPrediction markets, spot, lending"]
-    subgraph BFT["HyperBFT (Consensus)\nPipelined HotStuff\n200k TPS, 0.2s finality"]
-    end
-    subgraph CORE["HyperCore (Trading)\nOn-chain CLOB\nMatching, margin, liquidations"]
-    end
-    subgraph EVM["HyperEVM (Smart Contracts)\nSolidity compatibility\nReads HyperCore state via precompiles"]
-    end
-    STATE["Clearinghouse State Tree\nUnified cross-margin\nPortfolio as single entity"]
-    BFT --> EVM
-    CORE --> STATE
-    EVM --> APPS
+```d2
+# Diagram 129
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+APPS: "170+ projects building\nPrediction markets, spot, lending"
+BFT: "HyperBFT (Consensus)\nPipelined HotStuff\n200k TPS, 0.2s finality"
+CORE: "HyperCore (Trading)\nOn-chain CLOB\nMatching, margin, liquidations"
+EVM: "HyperEVM (Smart Contracts)\nSolidity compatibility\nReads HyperCore state via precompiles"
+STATE: "Clearinghouse State Tree\nUnified cross-margin\nPortfolio as single entity"
+
+BFT -> EVM
+CORE -> STATE
+EVM -> APPS
 ```
 
 **HyperBFT** — A pipelined HotStuff BFT consensus achieving ~0.2 second finality. Validators stake HYPE, tolerate <1/3 Byzantine faults. Pipelining overlaps voting rounds so throughput stays high even with short block times.
@@ -63,23 +66,27 @@ The trade-off: **you forfeit composability with the rest of the crypto economy.*
 
 BSV with Chronicle (April 2026) and Teranode takes the opposite approach: a **general-purpose base layer** that achieves comparable throughput *without* forking the protocol, and an **overlay network architecture** that lets applications build their own execution engines on top.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BSV["BSV Base Layer\nPoW + Teranode\n1M+ TPS target\nSub-cent fees"]
-    end
-    CLOB_OV["CLOB Overlay\nOn-chain order book\nSame as HyperCore, but as overlay"]
-    COT1["COT1 Overlay\nIndelible persistent memory"]
-    EVM_OV["EVM Overlay\nSolidity contracts on BSV\nNo separate L1 needed"]
-    IP2IP["IP-to-IP Transactions\nWhitepaper Section 8\nDirect peer settlement"]
-    ORD_OV["Ordinals Overlay\n1Sat digital artifacts"]
-    subgraph OV["Overlay Services Engine\nApplication-specific indexing\nBRC-113 MPT state trees"]
-    end
-    OV --> CLOB_OV
-    OV --> EVM_OV
-    OV --> ORD_OV
-    OV --> COT1
-    BSV --> IP2IP
+```d2
+# Diagram 130
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+BSV: "BSV Base Layer\nPoW + Teranode\n1M+ TPS target\nSub-cent fees"
+CLOB_OV: "CLOB Overlay\nOn-chain order book\nSame as HyperCore, but as overlay"
+COT1: "COT1 Overlay\nIndelible persistent memory"
+EVM_OV: "EVM Overlay\nSolidity contracts on BSV\nNo separate L1 needed"
+IP2IP: "IP-to-IP Transactions\nWhitepaper Section 8\nDirect peer settlement"
+ORD_OV: "Ordinals Overlay\n1Sat digital artifacts"
+OV: "Overlay Services Engine\nApplication-specific indexing\nBRC-113 MPT state trees"
+
+OV -> CLOB_OV
+OV -> EVM_OV
+OV -> ORD_OV
+OV -> COT1
+BSV -> IP2IP
 ```
 
 **The base layer handles what HyperBFT handles:**

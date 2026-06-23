@@ -16,38 +16,48 @@ The BSV Agent Coordination Layer was glue: it connected AI agents to BSV testnet
 
 The engine is organized into five layers:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Core["Core Domain"]
-        CORE["paperclip.core\nproposals, organizations, voting"]
-        GOV["paperclip.governance\nexecute approved proposals"]
-        LEDGER["paperclip.ledger\nappend-only audit trail"]
-    end
-    subgraph Policy["Policy Layer"]
-        PLAY["paperclip.playbook\napproved task schemas"]
-        POL["paperclip.policy\nbudget caps, risk tiers, auto-approve"]
-        ROUTE["paperclip.routing\ngreen, yellow, red lanes"]
-    end
-    subgraph Billing["Billing Layer"]
-        BILL["paperclip.billing\nfee calculation, extraction math"]
-        COMM["paperclip.commercial\nprepaid escrow gate"]
-    end
-    subgraph Execution["Execution Layer"]
-        ATT["paperclip.attention\nmindshare scoring"]
-        FALLBACK["paperclip.fallback\nstatic safe states"]
-        REPAIR["paperclip.repair\nbounded self-healing"]
-    end
-    subgraph Adapters["Adapters"]
-        AGENT["adapters.agent\nLLM sandbox"]
-        BSV["adapters.bsv\nSHA-256 + OP_RETURN"]
-        EMAIL["adapters.email"]
-        WEBHK["adapters.webhook"]
-    end
-    Core --> Policy
-    Policy --> Billing
-    Billing --> Execution
-    Execution --> Adapters
+```d2
+# Diagram 141
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Core: "Core Domain" {
+  CORE: "paperclip.core\nproposals, organizations, voting"
+  GOV: "paperclip.governance\nexecute approved proposals"
+  LEDGER: "paperclip.ledger\nappend-only audit trail"
+}
+
+Policy: "Policy Layer" {
+  PLAY: "paperclip.playbook\napproved task schemas"
+  POL: "paperclip.policy\nbudget caps, risk tiers, auto-approve"
+  ROUTE: "paperclip.routing\ngreen, yellow, red lanes"
+}
+
+Billing: "Billing Layer" {
+  BILL: "paperclip.billing\nfee calculation, extraction math"
+  COMM: "paperclip.commercial\nprepaid escrow gate"
+}
+
+Execution: "Execution Layer" {
+  ATT: "paperclip.attention\nmindshare scoring"
+  FALLBACK: "paperclip.fallback\nstatic safe states"
+  REPAIR: "paperclip.repair\nbounded self-healing"
+}
+
+Adapters: "Adapters" {
+  AGENT: "adapters.agent\nLLM sandbox"
+  BSV: "adapters.bsv\nSHA-256 + OP_RETURN"
+  EMAIL: "adapters.email"
+  WEBHK: "adapters.webhook"
+}
+
+Core -> Policy
+Policy -> Billing
+Billing -> Execution
+Execution -> Adapters
 ```
 
 Every namespace is pure Clojure with no mutable state at the core. Side effects are isolated in the adapter layer.
@@ -70,24 +80,30 @@ Only tasks that pass all five gates reach the BSV settlement adapter.
 
 The routing engine maps every task into one of four lanes:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    DL["dead-letter queue"]
-    EXEC["silent execution\nauto-approve"]
-    PLAYBOOK["playbook.clj\nvalidate contract"]
-    REPAIR["repair.clj\n3 retry attempts"]
-    ROUTE["routing.clj\ndetermine lane"]
-    SETTLE["BSV settlement\nfounder authorized"]
-    TASK["Task Input"]
-    PLAYBOOK -->|"valid"| ROUTE
-    PLAYBOOK -->|"invalid"| DL
-    ROUTE -->|"green"| EXEC
-    ROUTE -->|"yellow"| REPAIR
-    ROUTE -->|"red"| SETTLE
-    ROUTE -->|"dead-letter"| DL
-    REPAIR -->|"success"| EXEC
-    REPAIR -->|"exhausted"| DL
+```d2
+# Diagram 142
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+DL: "dead-letter queue"
+EXEC: "silent execution\nauto-approve"
+PLAYBOOK: "playbook.clj\nvalidate contract"
+REPAIR: "repair.clj\n3 retry attempts"
+ROUTE: "routing.clj\ndetermine lane"
+SETTLE: "BSV settlement\nfounder authorized"
+TASK: "Task Input"
+
+PLAYBOOK -> ROUTE: "valid"
+PLAYBOOK -> DL: "invalid"
+ROUTE -> EXEC: "green"
+ROUTE -> REPAIR: "yellow"
+ROUTE -> SETTLE: "red"
+ROUTE -> DL: "dead-letter"
+REPAIR -> EXEC: "success"
+REPAIR -> DL: "exhausted"
 ```
 
 The green lane runs without any human attention. The yellow lane attempts bounded self-healing (3 retries max, no LLM repair loop). The red lane triggers BSV settlement with split payouts. Everything else drops silently into the dead-letter queue.

@@ -19,31 +19,37 @@ What we call "Recursive Self-Improvement" in LLMs is, in reality, a **scaffolded
 
 Here is how the system actually upgrades itself:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph humanLoop["Human-Scaffolded 'RSI' (The Reality)"]
-        A["LLM Output Failure (e.g., Mermaid Syntax Error)"]
-        B["Human Developer Audits & Debugs"]
-        C["Human Publishes Fix/Post on Web"]
-        D["Web Scrapers Ingest Human Data"]
-        E["Next-Gen Model Training (Offline)"]
-        F["LLM 'Self-Improved' Inference"]
-        B --> C
-        C --> D
-        D --> E
-        E --> F
-        F --> A
-    end
-    subgraph trueRSI["True Recursive Self-Improvement (The Exception)"]
-        G["LLM Agent Code Draft"]
-        H["Local Compiler / Testing Env"]
-        I["Autoregressive Self-Correction"]
-        J["State Update committed to weights"]
-        H -->|"Syntax Error / Fail"| I
-        I --> G
-        H -->|"Compile Pass / Success"| J
-    end
+```d2
+# Diagram 176
+direction: down
+
+humanLoop: "Human-Scaffolded 'RSI' (The Reality)" {
+  direction: down
+  A: "LLM Output Failure (e.g., Mermaid Syntax Error)"
+  B: "Human Developer Audits & Debugs"
+  C: "Human Publishes Fix/Post on Web"
+  D: "Web Scrapers Ingest Human Data"
+  E: "Next-Gen Model Training (Offline)"
+  F: "LLM 'Self-Improved' Inference"
+  
+  B -> C
+  C -> D
+  D -> E
+  E -> F
+  F -> A
+}
+
+trueRSI: "True Recursive Self-Improvement (The Exception)" {
+  direction: down
+  G: "LLM Agent Code Draft"
+  H: "Local Compiler / Testing Env"
+  I: "Autoregressive Self-Correction"
+  J: "State Update committed to weights"
+  
+  H -> I: "Syntax Error / Fail"
+  I -> G
+  H -> J: "Compile Pass / Success"
+}
 ```
 
 When an LLM generates a broken code block (such as an invalid Mermaid flowchart lacking quotes), the model itself is static and cannot learn from the mistake. 

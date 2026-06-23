@@ -17,24 +17,38 @@ Here is the structural blueprint of AI-driven threat generation and the architec
 
 Attackers use LLMs as automated, force-multiplying compilation engines rather than simple query-answering bots.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph OffensiveAIPipeline["The Adversarial Loop"]
-        subgraph A["Uncensored Local LLM"]
-        end
-        B["Polymorphic Script"]
-        C["Locate Zero-Day Logic Bug"]
-        D["Signature Evasion"]
-        E["Exploit Construction"]
-        subgraph F["Delivery: Supply Chain Injection / AUR"]
-        end
-        A -->|"2. Search Source Code"| C
-        B --> D
-        C --> E
-        D --> F
-        E --> F
-    end
+```d2
+# Diagram 158
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+OffensiveAIPipeline: {
+  label: "The Adversarial Loop"
+  
+  A: {
+    label: "Uncensored Local LLM"
+  }
+  
+  B: "Polymorphic Script"
+  C: "Locate Zero-Day Logic Bug"
+  D: "Signature Evasion"
+  E: "Exploit Construction"
+  
+  F: {
+    label: "Delivery: Supply Chain Injection / AUR"
+  }
+  
+  A -> C: "2. Search Source Code"
+  B -> D
+  C -> E
+  D -> F
+  E -> F
+}
 ```
 
 #### 1. Polymorphic Payload Generation
@@ -50,24 +64,42 @@ State-sponsored groups feed massive codebases (such as open-source libraries or 
 
 To secure LLM integrations and agentic workflows, we must treat the probabilistic model output as an **untrusted process**. We apply classic sandboxing and input/output contract boundaries.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph DefensiveEngineering["The Hardened RAG Gateway"]
-        subgraph Alert["Abort Execution & Log Telemetry"]
-        end
-        Gate1["Input Guardrail: Prompt Injection Filter"]
-        subgraph Gate2["Output Validator: Deterministic JSON Schema Parser"]
-        end
-        Input["User Prompt / File Input"]
-        subgraph Model["Probabilistic LLM Engine"]
-        end
-        Target["System Action / Tool Execution"]
-        Gate1 -->|"Clean Context"| Model
-        Model -->|"Raw String Output"| Gate2
-        Gate2 -->|"Valid Contract Match"| Target
-        Gate2 -->|"Invalid / Threat Flagged"| Alert
-    end
+```d2
+# Diagram 159
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+DefensiveEngineering: {
+  label: "The Hardened RAG Gateway"
+  
+  Alert: {
+    label: "Abort Execution & Log Telemetry"
+  }
+  
+  Gate1: "Input Guardrail: Prompt Injection Filter"
+  
+  Gate2: {
+    label: "Output Validator: Deterministic JSON Schema Parser"
+  }
+  
+  Input: "User Prompt / File Input"
+  
+  Model: {
+    label: "Probabilistic LLM Engine"
+  }
+  
+  Target: "System Action / Tool Execution"
+  
+  Gate1 -> Model: "Clean Context"
+  Model -> Gate2: "Raw String Output"
+  Gate2 -> Target: "Valid Contract Match"
+  Gate2 -> Alert: "Invalid / Threat Flagged"
+}
 ```
 
 #### The Core Security Principles

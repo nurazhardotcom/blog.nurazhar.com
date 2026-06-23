@@ -35,42 +35,44 @@ For my FTS5 use case, that means a Python bridge
 (`scripts/sqlite_bridge.py`) the butler calls via
 `clojure.java.shell/sh`. Yes, Python. Believe it.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph title:["title:"]
-        label["Butler — Hermes-class on Babashka"]
-        near["top-center"]
-    end
-    subgraph gateways:["gateways:"]
-        label["Gateways (you talk to the butler here)"]
-        cli["CLI ./butler"]
-        repl["REPL :1667"]
-        web["HTMX GUI"]
-        tg["Telegram"]
-    end
-    subgraph agent:["agent:"]
-        label["Agent loop"]
-        context["3-tier prompt\n(stable + context + volatile)"]
-        router["LLM router\n(priority + failover)"]
-        tools["Tool registry\n(spec-validated)"]
-        memory["Memory store\n(sqlite bridge)"]
-        skills["Skills EDN\n(+ auto-evolve)"]
-        context --> router
-        router --> tools
-        tools -->|"iterate"| memory
-    end
-    subgraph external:["external:"]
-        label["External (network)"]
-        naraya["Naraya (priority 1)"]
-        openrouter["OpenRouter (priority 2)"]
-        ollama["Ollama local"]
-    end
-    gateways -->|"user message"| agent
-    router -->|"HTTPS POST"| external
-    external -->|"JSON response"| router
-    agent -->|"save as EDN"| skills
-    skills -->|"load into context"| agent
+```d2
+# Diagram 62
+direction: down
+
+title: "Butler — Hermes-class on Babashka" {
+  near: "top-center"
+}
+
+gateways: "Gateways (you talk to the butler here)" {
+  cli: "CLI ./butler"
+  repl: "REPL :1667"
+  web: "HTMX GUI"
+  tg: "Telegram"
+}
+
+agent: "Agent loop" {
+  context: "3-tier prompt\n(stable + context + volatile)"
+  router: "LLM router\n(priority + failover)"
+  tools: "Tool registry\n(spec-validated)"
+  memory: "Memory store\n(sqlite bridge)"
+  skills: "Skills EDN\n(+ auto-evolve)"
+
+  context -> router
+  router -> tools
+  tools -> memory: "iterate"
+}
+
+external: "External (network)" {
+  naraya: "Naraya (priority 1)"
+  openrouter: "OpenRouter (priority 2)"
+  ollama: "Ollama local"
+}
+
+gateways -> agent: "user message"
+agent.router -> external: "HTTPS POST"
+external -> agent.router: "JSON response"
+agent.tools -> agent.skills: "save as EDN"
+agent.skills -> agent.context: "load into context"
 ```
 
 The line that matters more than the others: the dashed boundary around
@@ -102,31 +104,61 @@ bundle at session close, load it on session open. Pin yesterday's
 summary into today's volatile tier so the LLM sees it from message
 one.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph title:["title:"]
-        label["Stateless persistence — save + load bundle"]
-        near["top-center"]
-    end
-    session_close["Session close\n(scheduler 23:55)"]
-    memory_dump["memory summary\ntop 10 facts"]
-    traces_dump["tool traces\nlast 50 calls"]
-    volatile_dump["current volatile tier"]
-    bundle_write["agent/bundle.edn\nEDN blob"]
-    morning_wake["Morning wake\n(scheduler 04:00)"]
-    bundle_read["Read bundle EDN"]
-    volatile_pin["Pin yesterday\ninto volatile tier"]
-    first_message["First user message\nof the day"]
-    session_close --> memory_dump
-    session_close --> traces_dump
-    session_close --> volatile_dump
-    memory_dump --> bundle_write
-    traces_dump --> bundle_write
-    volatile_dump --> bundle_write
-    morning_wake -->|"next day"| bundle_read
-    bundle_read --> volatile_pin
-    volatile_pin --> first_message
+```d2
+# Diagram 63
+direction: down
+
+title: "title:" {
+  label: "Stateless persistence — save + load bundle"
+  near: "top-center"
+}
+
+session_close: "Session close\n(scheduler 23:55)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+memory_dump: "memory summary\ntop 10 facts" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+traces_dump: "tool traces\nlast 50 calls" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+volatile_dump: "current volatile tier" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+bundle_write: "agent/bundle.edn\nEDN blob" {
+  style.fill: "#e9ecef"
+  style.stroke: "#ced4da"
+}
+morning_wake: "Morning wake\n(scheduler 04:00)" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+bundle_read: "Read bundle EDN" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+volatile_pin: "Pin yesterday\ninto volatile tier" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+first_message: "First user message\nof the day" {
+  style.fill: "#e2e3e5"
+  style.stroke: "#d6d8db"
+}
+
+session_close -> memory_dump
+session_close -> traces_dump
+session_close -> volatile_dump
+memory_dump -> bundle_write
+traces_dump -> bundle_write
+volatile_dump -> bundle_write
+morning_wake -> bundle_read: "next day"
+bundle_read -> volatile_pin
+volatile_pin -> first_message
 ```
 
 Code shape, not pseudocode — what you'd actually write:

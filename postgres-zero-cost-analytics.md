@@ -70,19 +70,33 @@ To prevent this, we chose **strict isolation at zero cost**:
 
 The final architecture is incredibly clean:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BlogHTML["blog.nurazhar.com"]
-    end
-    subgraph CF["GCP Cloud Function"]
-    end
-    subgraph DB["(Neon Postgres DB)"]
-    end
-    StatsDashboard["stats.html"]
-    track --> CF
-    stats --> CF
-    Views --> DB
+```d2
+# Diagram 156
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+BlogHTML: {
+  label: "blog.nurazhar.com"
+}
+CF: {
+  label: "GCP Cloud Function"
+}
+DB: {
+  label: "(Neon Postgres DB)"
+}
+StatsDashboard: "stats.html"
+track: "track"
+stats: "stats"
+Views: "Views"
+
+track -> CF
+stats -> CF
+Views -> DB
 ```
 
 ### 1. The 10-Line Tracker

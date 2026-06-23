@@ -13,43 +13,48 @@ When Chrome reports "connection dropped" on sites like **x.com** or **github.com
 
 Before diving into commands, here's the decision tree we followed:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["🌐 Chrome reports connection drop"]
-    subgraph B["DNS resolves\nthe hostname?"]
-    end
-    B1["Fix DNS config\n(switch to 8.8.8.8)"]
-    C["🏓 Ping the host"]
-    C1["Problem is above L3\n(TLS, proxy, browser)"]
-    D["🔍 Traceroute"]
-    E["Check router /\nfirewall / iptables"]
-    F["Contact ISP"]
-    G["Host may be\nblocking ICMP"]
-    H["Remove / adjust\nfirewall rule"]
-    I["Try a different\nnetwork (hotspot)"]
-    J["✅ Retest — ping succeeds"]
-    K["Check for OS-level\nproxy / VPN"]
-    L["Test with curl\nor openssl s_client"]
-    M["🎉 Chrome works again"]
-    B -->|"No"| B1
-    B1 --> C
-    B -->|"Yes"| C
-    C -->|"Replies OK"| C1
-    C -->|"100% packet loss"| D
-    D -->|"Stops at local\ngateway"| E
-    D -->|"Stops at ISP\nedge"| F
-    D -->|"Reaches destination\nbut no reply"| G
-    E -->|"Rule found"| H
-    E -->|"No rule"| I
-    H --> J
-    F --> J
-    I -->|"Works on hotspot"| F
-    I -->|"Still fails"| K
-    G --> L
-    L --> J
-    K --> J
-    J --> M
+```d2
+# Diagram 138
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "🌐 Chrome reports connection drop"
+B: "DNS resolves\nthe hostname?"
+B1: "Fix DNS config\n(switch to 8.8.8.8)"
+C: "🏓 Ping the host"
+C1: "Problem is above L3\n(TLS, proxy, browser)"
+D: "🔍 Traceroute"
+E: "Check router /\nfirewall / iptables"
+F: "Contact ISP"
+G: "Host may be\nblocking ICMP"
+H: "Remove / adjust\nfirewall rule"
+I: "Try a different\nnetwork (hotspot)"
+J: "✅ Retest — ping succeeds"
+K: "Check for OS-level\nproxy / VPN"
+L: "Test with curl\nor openssl s_client"
+M: "🎉 Chrome works again"
+
+B -> B1: "No"
+B1 -> C
+B -> C: "Yes"
+C -> C1: "Replies OK"
+C -> D: "100% packet loss"
+D -> E: "Stops at local\ngateway"
+D -> F: "Stops at ISP\nedge"
+D -> G: "Reaches destination\nbut no reply"
+E -> H: "Rule found"
+E -> I: "No rule"
+H -> J
+F -> J
+I -> F: "Works on hotspot"
+I -> K: "Still fails"
+G -> L
+L -> J
+K -> J
+J -> M
 ```
 
 ---
@@ -159,22 +164,23 @@ If it works on the hotspot, the problem is **specific to your current LAN or ISP
 
 Network connectivity problems often masquerade as browser bugs. By systematically checking **DNS → ping → traceroute → firewall** you can pinpoint the failure layer in minutes and either fix it locally or hand concrete evidence to your ISP.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["Layer 7\nChrome"]
-    end
-    subgraph B["Layer 4\nTCP/TLS"]
-    end
-    subgraph C["Layer 3\nIP / ICMP"]
-    end
-    subgraph D["Layer 2\nEthernet / Wi-Fi"]
-    end
-    subgraph E["Layer 1\nPhysical"]
-    end
-    B --> C
-    C --> D
-    D --> E
+```d2
+# Diagram 139
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "Layer 7\nChrome"
+B: "Layer 4\nTCP/TLS"
+C: "Layer 3\nIP / ICMP"
+D: "Layer 2\nEthernet / Wi-Fi"
+E: "Layer 1\nPhysical"
+
+B -> C
+C -> D
+D -> E
 ```
 
 In our case the failure was at **Layer 3** (ICMP packets never reached the destination), which means Chrome's "connection dropped" error was just the messenger — not the cause.

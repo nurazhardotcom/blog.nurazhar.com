@@ -13,21 +13,27 @@ I ran this on my own machine — a Singtel Fibre Broadband connection in Ulu Bed
 
 ## Step 0: The Machine
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Machine["My Machine"]
-        ip["192.168.1.74/24"]
-        gw["192.168.1.254"]
-    end
-    subgraph ONT["Singtel ONT/ONR"]
-        ZTE_F660["ZTE F660 GPON ONT"]
-        ip["192.168.1.254"]
-    end
-    Machine -->|"WiFi 6 / Cat5e"| ONT
-    subgraph ONT -- ODN_GPON:["ONT -- ODN_GPON:"]
-        label["1310nm TX / 1490nm RX"]
-    end
+```d2
+# Diagram 188
+direction: down
+
+Machine: "My Machine" {
+  direction: down
+  ip: "192.168.1.74/24"
+  gw: "192.168.1.254"
+}
+
+ONT: "Singtel ONT/ONR" {
+  direction: down
+  ZTE_F660: "ZTE F660 GPON ONT"
+  ip: "192.168.1.254"
+}
+
+Machine -> ONT: "WiFi 6 / Cat5e"
+
+ODN_GPON: "ONT -- ODN_GPON:" {
+  rx_tx_label: "1310nm TX / 1490nm RX"
+}
 ```
 
 The machine sits at `192.168.1.74/24`. The default gateway is `192.168.1.254` — that's the Singtel-issued ONT, a ZTE F660 (for 1Gbps plans) or an XGS-PON ONR (for 3Gbps/10Gbps plans). The ONT is either in the living room or a utility closet, connected via WiFi 6 or a Cat5e patch cable.
@@ -40,27 +46,30 @@ Step one: the packet goes from the NIC to the ONT. Trivial, local, 1ms.
 
 The ONT converts the Ethernet frame into an optical signal at **1310 nm** and fires it upstream through a single-mode fibre patch cord, through the Fibre Termination Point (FTP) on the wall, out into the estate's Optical Distribution Network (ODN).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph ONT["ONT (Your Home)"]
-        TX["TX: +3.2 dBm @ 1310nm"]
-        RX["RX: -19.1 dBm @ 1490nm"]
-    end
-    subgraph FTP["Fibre Termination Point"]
-    end
-    subgraph Splitter["1:32 Splitter (estate cabinet)"]
-    end
-    subgraph ODN["ODN (aerial / underground fibre)"]
-    end
-    subgraph OLT["OLT (Singtel Exchange)"]
-        ZTE_C600["ZTE C600"]
-        RX_OLT["RX: -20 dBm @ 1310nm"]
-    end
-    ONT -->|"patch cord"| FTP
-    FTP -->|"feeder fibre ~2km"| Splitter
-    Splitter -->|"distribution fibre"| ODN
-    ODN -->|"10km max"| OLT
+```d2
+# Diagram 189
+direction: down
+
+ONT: "ONT (Your Home)" {
+  TX: "TX: +3.2 dBm @ 1310nm"
+  RX: "RX: -19.1 dBm @ 1490nm"
+}
+
+FTP: "Fibre Termination Point"
+
+Splitter: "1:32 Splitter (estate cabinet)"
+
+ODN: "ODN (aerial / underground fibre)"
+
+OLT: "OLT (Singtel Exchange)" {
+  ZTE_C600: "ZTE C600"
+  RX_OLT: "RX: -20 dBm @ 1310nm"
+}
+
+ONT -> FTP: "patch cord"
+FTP -> Splitter: "feeder fibre ~2km"
+Splitter -> ODN: "distribution fibre"
+ODN -> OLT: "10km max"
 ```
 
 The ODN is shared with 31 other households via a **1:32 optical splitter** in the estate cabinet. The total loss is typically **23–24 dB**, meaning the ONT's +3 dBm TX reaches the OLT at approximately **-20 dBm** — well within the B+ receiver sensitivity of -28 dBm.
@@ -73,28 +82,33 @@ At the other end, the OLT (ZTE C600 or Huawei MA5800 at the Singtel exchange) te
 
 Once the OLT terminates the GPON layer, the packet exits optics and becomes Ethernet again — but now it's tagged with **QinQ VLANs** (S-VLAN for service, C-VLAN for customer).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph OLT["OLT ZTE C600"]
-        QinQ["S-VLAN: 2001\nC-VLAN: 101"]
-    end
-    subgraph AGG["Metro Aggregation Switch"]
-    end
-    subgraph BRAS["BRAS / BNG"]
-        Cisco_ASR9K["Cisco ASR 9000"]
-        Nokia_7750["Nokia 7750 SR"]
-        PPPoE["PPPoE termination"]
-        RADIUS["RADIUS auth"]
-        QoS["QoS shaper"]
-    end
-    subgraph Core["Singtel IP Backbone AS9506"]
-    end
-    OLT -->|"10GE / 100GE uplink"| AGG
-    AGG -->|"QinQ trunk"| BRAS
-    BRAS -->|"BGP"| Core
-    subgraph Note["The BRAS is where you get your IP address and traffic enters the routed world."]
-    end
+```d2
+# Diagram 190
+direction: down
+
+OLT: "OLT ZTE C600" {
+  QinQ: "S-VLAN: 2001\nC-VLAN: 101"
+}
+
+AGG: "Metro Aggregation Switch"
+
+BRAS: "BRAS / BNG" {
+  Cisco_ASR9K: "Cisco ASR 9000"
+  Nokia_7750: "Nokia 7750 SR"
+  PPPoE: "PPPoE termination"
+  RADIUS: "RADIUS auth"
+  QoS: "QoS shaper"
+}
+
+Core: "Singtel IP Backbone AS9506"
+
+OLT -> AGG: "10GE / 100GE uplink"
+AGG -> BRAS: "QinQ trunk"
+BRAS -> Core: "BGP"
+
+Note: "The BRAS is where you get your IP address and traffic enters the routed world." {
+  style.fill: "#fffbc8"
+}
 ```
 
 The OLT uplinks at **10 Gbps or 100 Gbps** to a metro aggregation switch. From there, the QinQ-tagged frames travel to the **BRAS (Broadband Remote Access Server)** — Singtel uses primarily **Cisco ASR 9000/9900** and **Nokia 7750 SR** platforms.
@@ -107,26 +121,30 @@ The BRAS terminates the PPPoE session, authenticates via RADIUS, assigns your pu
 
 Now the packet is a plain IP packet with a source address of my Singtel public IP heading for `172.65.90.21` (opencode.ai, behind Cloudflare).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph BRAS["BRAS (AS9506)"]
-    end
-    subgraph Singtel_Peering["Singtel Peering"]
-        SGIX["SGIX (Singapore Internet Exchange)"]
-        BGP["Direct peering with Cloudflare"]
-    end
-    subgraph Cloudflare_Edge["Cloudflare Edge (Singapore)"]
-        ip["172.65.90.21"]
-        latency["4ms from this machine"]
-        anycast["anycast — nearest PoP"]
-    end
-    subgraph Backend["Inference Server (Behind Cloudflare)"]
-        location["??? US / Europe / SG?"]
-    end
-    BRAS -->|"BGP"| Singtel_Peering
-    Singtel_Peering -->|"SGIX / direct peer"| Cloudflare_Edge
-    Cloudflare_Edge -->|"Cloudflare tunnel / proxy"| Backend
+```d2
+# Diagram 191
+direction: down
+
+BRAS: "BRAS (AS9506)"
+
+Singtel_Peering: "Singtel Peering" {
+  SGIX: "SGIX (Singapore Internet Exchange)"
+  BGP: "Direct peering with Cloudflare"
+}
+
+Cloudflare_Edge: "Cloudflare Edge (Singapore)" {
+  ip: "172.65.90.21"
+  latency: "4ms from this machine"
+  anycast: "anycast — nearest PoP"
+}
+
+Backend: "Inference Server (Behind Cloudflare)" {
+  location: "??? US / Europe / SG?"
+}
+
+BRAS -> Singtel_Peering: "BGP"
+Singtel_Peering -> Cloudflare_Edge: "SGIX / direct peer"
+Cloudflare_Edge -> Backend: "Cloudflare tunnel / proxy"
 ```
 
 From my public IP to `172.65.90.21`:
@@ -149,30 +167,35 @@ Here's where it gets interesting. The Cloudflare edge in Singapore terminates th
 
 If the inference servers are in the **US** (California, Oregon, or wherever GPU capacity is available), the packet needs to cross the Pacific. From Singapore, there are three main submarine corridors:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Singapore["Singapore"]
-        Tuas["Tuas Landing Station"]
-        Changi["Changi Landing Station"]
-    end
-    subgraph Northern_Corridor["Northern Corridor"]
-        APG["APG (Asia Pacific Gateway)"]
-        SJC2["SJC2"]
-        via["→ Vietnam → Hong Kong → Taiwan → Japan → US"]
-    end
-    subgraph Southern_Corridor["Southern Corridor"]
-        Bifrost["Bifrost (2025)"]
-        Echo["Echo"]
-        via["→ Indonesia → Guam → California / Oregon / Mexico"]
-    end
-    subgraph Western_Corridor["Western Corridor"]
-        SMW6["SEA-ME-WE 6 (2026)"]
-        via["→ Malaysia → India → Middle East → Europe → Atlantic → US"]
-    end
-    Singapore -->|"US West Coast (13,000 km)"| Northern_Corridor
-    Singapore -->|"US West Coast (19,888 km)"| Southern_Corridor
-    Singapore -->|"US East Coast / Europe (21,700 km)"| Western_Corridor
+```d2
+# Diagram 192
+direction: down
+
+Singapore: "Singapore" {
+  Tuas: "Tuas Landing Station"
+  Changi: "Changi Landing Station"
+}
+
+Northern_Corridor: "Northern Corridor" {
+  APG: "APG (Asia Pacific Gateway)"
+  SJC2: "SJC2"
+  via: "→ Vietnam → Hong Kong → Taiwan → Japan → US"
+}
+
+Southern_Corridor: "Southern Corridor" {
+  Bifrost: "Bifrost (2025)"
+  Echo: "Echo"
+  via: "→ Indonesia → Guam → California / Oregon / Mexico"
+}
+
+Western_Corridor: "Western Corridor" {
+  SMW6: "SEA-ME-WE 6 (2026)"
+  via: "→ Malaysia → India → Middle East → Europe → Atlantic → US"
+}
+
+Singapore -> Northern_Corridor: "US West Coast (13,000 km)"
+Singapore -> Southern_Corridor: "US West Coast (19,888 km)"
+Singapore -> Western_Corridor: "US East Coast / Europe (21,700 km)"
 ```
 
 ### The Southern Corridor: Bifrost
@@ -191,24 +214,21 @@ The most likely path for Singapore-to-California inference traffic in 2026 is **
 
 Unlike older cables that route through the congested **Japan–Taiwan corridor** (earthquake risk, cable cuts), Bifrost takes a **southern route** through the Java Sea and Celebes Sea, then directly across the Pacific to California. The total distance from Singapore to Grover Beach is **16,556 km** on the main trunk.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Tuas["Tuas, SG"]
-    end
-    subgraph Manado["Manado, ID"]
-    end
-    subgraph Guam["Guam"]
-    end
-    subgraph Grover["Grover Beach, CA"]
-    end
-    subgraph Pacific["Pacific Ocean"]
-    end
-    Tuas -->|"Java Sea (1,800 km)"| Manado
-    Manado -->|"Celebes Sea → Pacific (2,500 km)"| Guam
-    Guam -->|"North Pacific (12,256 km)"| Grover
-    Guam --> Pacific
-    Pacific --> Grover
+```d2
+# Diagram 193
+direction: down
+
+Tuas: "Tuas, SG"
+Manado: "Manado, ID"
+Guam: "Guam"
+Grover: "Grover Beach, CA"
+Pacific: "Pacific Ocean"
+
+Tuas -> Manado: "Java Sea (1,800 km)"
+Manado -> Guam: "Celebes Sea → Pacific (2,500 km)"
+Guam -> Grover: "North Pacific (12,256 km)"
+Guam -> Pacific
+Pacific -> Grover
 ```
 
 **Latency on this route:**
@@ -262,66 +282,78 @@ Where those backend servers are physically located is opaque behind Cloudflare's
 
 ## The Full Path (Annotated)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Prompt["where does my packet go?"]
-    end
-    subgraph Machine["My Machine (Ulu Bedok)"]
-        192_168_1_74["192.168.1.74"]
-    end
-    subgraph ONT["ONT (Living Room)"]
-        GPON_TX["TX +3.2 dBm @1310nm"]
-    end
-    subgraph Splitter["1:32 Splitter (Estate)"]
-        loss_17dB["loss: 17 dB"]
-    end
-    subgraph OLT["ZTE C600 OLT (Exchange)"]
-        RX["RX -20 dBm"]
-    end
-    AGG["Metro Aggregation"]
-    subgraph BRAS["BRAS Cisco ASR9K"]
-        PPPoE_term["PPPoE term"]
-        IP_assign["IP: [redacted]"]
-    end
-    Singtel["Singtel AS9506"]
-    subgraph Peering["Peering"]
-        SGIX["SGIX / Direct"]
-    end
-    subgraph Cloudflare["Cloudflare Edge SG"]
-        anycast["anycast PoP"]
-        latency["4ms"]
-    end
-    subgraph Cable["Submarine Cable"]
-        Bifrost["Bifrost (to US)"]
-        SMW6["SEA-ME-WE 6 (to EU)"]
-        APG["APG (to Japan/US)"]
-    end
-    subgraph GPU["Inference GPU Server"]
-        deepseek["deepseek-v4-flash-free"]
-    end
-    Prompt --> Machine
-    Machine -->|"WiFi"| ONT
-    ONT -->|"GPON 1310nm"| Splitter
-    Splitter -->|"feeder fibre"| OLT
-    OLT -->|"10GE"| AGG
-    AGG -->|"QinQ VLAN"| BRAS
-    BRAS -->|"routed IP"| Singtel
-    Singtel -->|"BGP"| Peering
-    Peering -->|"4ms"| Cloudflare
-    Cloudflare -->|"reverse proxy"| Cable
-    Cable -->|"inference"| GPU
-    GPU -->|"token stream"| Cable
-    Cable --> Cloudflare
-    Cloudflare --> Peering
-    Peering --> Singtel
-    Singtel --> BRAS
-    BRAS --> AGG
-    AGG --> OLT
-    OLT --> Splitter
-    Splitter --> ONT
-    ONT --> Machine
-    Machine -->|"response stream"| Prompt
+```d2
+# Diagram 194
+direction: down
+
+Prompt: "where does my packet go?"
+
+Machine: "My Machine (Ulu Bedok)" {
+  ip_192_168_1_74: "192.168.1.74"
+}
+
+ONT: "ONT (Living Room)" {
+  GPON_TX: "TX +3.2 dBm @1310nm"
+}
+
+Splitter: "1:32 Splitter (Estate)" {
+  loss_17dB: "loss: 17 dB"
+}
+
+OLT: "ZTE C600 OLT (Exchange)" {
+  RX: "RX -20 dBm"
+}
+
+AGG: "Metro Aggregation"
+
+BRAS: "BRAS Cisco ASR9K" {
+  PPPoE_term: "PPPoE term"
+  IP_assign: "IP: [redacted]"
+}
+
+Singtel: "Singtel AS9506"
+
+Peering: "Peering" {
+  SGIX: "SGIX / Direct"
+}
+
+Cloudflare: "Cloudflare Edge SG" {
+  anycast: "anycast PoP"
+  latency: "4ms"
+}
+
+Cable: "Submarine Cable" {
+  Bifrost: "Bifrost (to US)"
+  SMW6: "SEA-ME-WE 6 (to EU)"
+  APG: "APG (to Japan/US)"
+}
+
+GPU: "Inference GPU Server" {
+  deepseek: "deepseek-v4-flash-free"
+}
+
+Prompt -> Machine
+Machine -> ONT: "WiFi"
+ONT -> Splitter: "GPON 1310nm"
+Splitter -> OLT: "feeder fibre"
+OLT -> AGG: "10GE"
+AGG -> BRAS: "QinQ VLAN"
+BRAS -> Singtel: "routed IP"
+Singtel -> Peering: "BGP"
+Peering -> Cloudflare: "4ms"
+Cloudflare -> Cable: "reverse proxy"
+Cable -> GPU: "inference"
+GPU -> Cable: "token stream"
+Cable -> Cloudflare
+Cloudflare -> Peering
+Peering -> Singtel
+Singtel -> BRAS
+BRAS -> AGG
+AGG -> OLT
+OLT -> Splitter
+Splitter -> ONT
+ONT -> Machine
+Machine -> Prompt: "response stream"
 ```
 
 The round trip takes **4 ms** to the Cloudflare edge + the submarine cable latency to wherever the GPU lives + the inference time itself. What feels instant to you is a photon that has travelled across an ocean floor, through a landing station in Tuas, up the Java Sea, under the Pacific to California, through a GPU server rack, and back — all before you finish reading this sentence.

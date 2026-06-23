@@ -30,12 +30,13 @@ end
 
 To a human, this looks perfectly readable. But to the Mermaid.js parser, the parentheses in `Linux (Lieutenants)` are control characters used for node shapes. To treat them as a literal string title, the syntax **must** be quoted:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph linux["Linux (Lieutenants)"]
-        L_Core["Linus Torvalds"]
-    end
+```d2
+# Diagram 200
+direction: down
+
+linux: "Linux (Lieutenants)" {
+  L_Core: "Linus Torvalds"
+}
 ```
 
 Why does an advanced model capable of writing complex Rust or Go algorithms repeatedly fail at this basic syntax rule?

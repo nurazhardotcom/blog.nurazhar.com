@@ -23,22 +23,27 @@ The "25%" figure conflates **Google alone** with the **Big Three combined**. For
 
 ## Core Architecture Comparison
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Google["Google: Centralized Hyperscale (Earthbound)"]
-        G_Campuses["130+ Campuses\nCustom TPU/GPU Clusters\nDedicated Power Substations\nPrivate Global Fiber"]
-        G_Compute["AI/ML Workloads\nVertex AI, TPU Pods\nEnterprise Cloud (GCP)"]
-        G_Storage["Exabyte-Scale Storage\nColossus/Bigtable/Spanner\nMulti-Regional Replication"]
-        G_Value["Infrastructure Value: \$100B+"]
-    end
-    subgraph SpaceX["SpaceX: Distributed LEO Mesh (Orbital)"]
-        S_Gateways["Ground Gateway Stations\nCo-located at Google DCs\nFiber Backhaul to Internet"]
-        S_Routing["Packet Switching at L3/L4\nSub-50ms Global Latency\nDirect-to-Cell (Future)"]
-        S_Satellites["6,000+ Starlink Satellites\nLaser Inter-Satellite Links\nOn-Board Flight Computers"]
-        S_Value["Infrastructure Value: \$15-30B+"]
-    end
-    G_Campuses -->|"Starlink Gateways / Peering"| S_Gateways
+```d2
+# Diagram 108
+direction: down
+
+google: {
+  label: "Google: Centralized Hyperscale (Earthbound)"
+  g_campuses: "130+ Campuses\nCustom TPU/GPU Clusters\nDedicated Power Substations\nPrivate Global Fiber"
+  g_compute: "AI/ML Workloads\nVertex AI, TPU Pods\nEnterprise Cloud (GCP)"
+  g_storage: "Exabyte-Scale Storage\nColossus/Bigtable/Spanner\nMulti-Regional Replication"
+  g_value: "Infrastructure Value: \$100B+"
+}
+
+spacex: {
+  label: "SpaceX: Distributed LEO Mesh (Orbital)"
+  s_gateways: "Ground Gateway Stations\nCo-located at Google DCs\nFiber Backhaul to Internet"
+  s_routing: "Packet Switching at L3/L4\nSub-50ms Global Latency\nDirect-to-Cell (Future)"
+  s_satellites: "6,000+ Starlink Satellites\nLaser Inter-Satellite Links\nOn-Board Flight Computers"
+  s_value: "Infrastructure Value: \$15-30B+"
+}
+
+google.g_campuses -> spacex.s_gateways: "Starlink Gateways / Peering"
 ```
 
 ---
@@ -63,18 +68,33 @@ The comparison table from the conversation, reframed for infrastructure decision
 
 This is the critical insight for **Platform Security** and **DevSecOps**:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-sequenceDiagram
-    User->>Starlink: RF Uplink (Ka/Ku Band)
-    Starlink->>Starlink: Laser Mesh Routing (Inter-Satellite Links)
-    Starlink->>Gateway: RF Downlink to Gateway
-    Gateway->>GoogleDC: Cross-Connect / Direct Peering (100Gbps+)
-    GoogleDC->>Internet: Google Global Fiber / Peering Fabric
-    Internet-->>GoogleDC: Response Traffic
-    GoogleDC-->>Gateway: Backhaul via Google Fiber
-    Gateway-->>Starlink: RF Uplink
-    Starlink-->>User: RF Downlink
+```d2
+# Diagram 109
+shape: sequence_diagram
+
+user: "User"
+starlink: "Starlink"
+gateway: "Gateway"
+googledc: "GoogleDC"
+internet: "Internet"
+
+user -> starlink: "RF Uplink (Ka/Ku Band)"
+starlink -> starlink: "Laser Mesh Routing (Inter-Satellite Links)"
+starlink -> gateway: "RF Downlink to Gateway"
+gateway -> googledc: "Cross-Connect / Direct Peering (100Gbps+)"
+googledc -> internet: "Google Global Fiber / Peering Fabric"
+internet -> googledc: "Response Traffic" {
+  style.stroke-dash: 5
+}
+googledc -> gateway: "Backhaul via Google Fiber" {
+  style.stroke-dash: 5
+}
+gateway -> starlink: "RF Uplink" {
+  style.stroke-dash: 5
+}
+starlink -> user: "RF Downlink" {
+  style.stroke-dash: 5
+}
 ```
 
 **SpaceX doesn't compete with Google's data centers — it depends on them.** Every Starlink gateway needs:
@@ -117,28 +137,29 @@ SpaceX's $15–30B creates different leverage: **physics** (latency floor) and *
 
 When evaluating any infrastructure decision — cloud vendor, CDN, edge platform, VPN backbone — I run this checklist:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Infrastructure Decision"]
-    subgraph B["What is the\nPrimary Function?"]
-    end
-    C["Centralized Hyperscale\nGoogle/AWS/Azure/Oracle"]
-    D["Distributed Mesh\nCloudflare/Starlink/Fastly/Akamai"]
-    E["Map the Dependency Chain\nWhere does edge terminate?"]
-    F["Evaluate:\n• MW Capacity & Density\n• Custom Silicon Access\n• Data Gravity Lock-in\n• Compliance Inheritance"]
-    G["Evaluate:\n• PoP Density & Latency\n• Backhaul Diversity\n• Edge Compute Limits\n• Tenant vs. Owner Risk"]
-    H["Critical Question:\nWho owns the fiber\nbetween edge and core?"]
-    I["Decision + Threat Model"]
-    B -->|"Compute/Storage/AI"| C
-    B -->|"Transport/Routing/Edge"| D
-    B -->|"Hybrid"| E
-    C --> F
-    D --> G
-    E --> H
-    F --> I
-    G --> I
-    H --> I
+```d2
+# Diagram 110
+direction: down
+
+a: "Infrastructure Decision"
+b: "What is the\nPrimary Function?"
+c: "Centralized Hyperscale\nGoogle/AWS/Azure/Oracle"
+d: "Distributed Mesh\nCloudflare/Starlink/Fastly/Akamai"
+e: "Map the Dependency Chain\nWhere does edge terminate?"
+f: "Evaluate:\n• MW Capacity & Density\n• Custom Silicon Access\n• Data Gravity Lock-in\n• Compliance Inheritance"
+g: "Evaluate:\n• PoP Density & Latency\n• Backhaul Diversity\n• Edge Compute Limits\n• Tenant vs. Owner Risk"
+h: "Critical Question:\nWho owns the fiber\nbetween edge and core?"
+i: "Decision + Threat Model"
+
+b -> c: "Compute/Storage/AI"
+b -> d: "Transport/Routing/Edge"
+b -> e: "Hybrid"
+c -> f
+d -> g
+e -> h
+f -> i
+g -> i
+h -> i
 ```
 
 ---

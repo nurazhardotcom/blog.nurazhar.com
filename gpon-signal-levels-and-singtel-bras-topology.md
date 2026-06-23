@@ -13,34 +13,27 @@ This post maps the full path an optical signal takes from your home to the inter
 
 ## The Full Path
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph ONT["Optical Network Terminal"]
-    end
-    subgraph ODN["Optical Distribution Network"]
-    end
-    subgraph Splitter["1:32 Splitter"]
-    end
-    subgraph OLT["Optical Line Terminal"]
-    end
-    subgraph AGG["Aggregation Switch"]
-    end
-    subgraph BRAS["Broadband Remote Access Server"]
-    end
-    subgraph IP_Core["Singtel IP Core"]
-    end
-    subgraph Internet["Internet"]
-    end
-    subgraph ONT -> Splitter:["ONT -> Splitter:"]
-    end
-    subgraph Splitter -> ODN:["Splitter -> ODN:"]
-    end
-    ODN --> OLT
-    OLT --> AGG
-    AGG --> BRAS
-    BRAS --> IP_Core
-    IP_Core --> Internet
+```d2
+# Diagram 112
+direction: down
+
+ont: "Optical Network Terminal"
+odn: "Optical Distribution Network"
+splitter: "1:32 Splitter"
+olt: "Optical Line Terminal"
+agg: "Aggregation Switch"
+bras: "Broadband Remote Access Server"
+ip_core: "Singtel IP Core"
+internet: "Internet"
+
+"ONT -> Splitter:": "ONT -> Splitter:"
+"Splitter -> ODN:": "Splitter -> ODN:"
+
+odn -> olt
+olt -> agg
+agg -> bras
+bras -> ip_core
+ip_core -> internet
 ```
 
 ---
@@ -49,29 +42,27 @@ flowchart TD
 
 The optical signal only exists in the Passive Optical Network (PON) segment — ONT to Splitter to OLT. Everything after the OLT is electrical (Ethernet).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph ONT["ONT (Your Home)"]
-        subgraph Tx_1310nm["TX: +0.5 to +5 dBm"]
-        end
-        subgraph Rx_1490nm["RX: -8 to -28 dBm (B+)"]
-        end
-        subgraph Rx_1490nm_Cplus["RX: -8 to -32 dBm (C+)"]
-        end
-    end
-    subgraph Optical_Path["~10 km fibre, 1:32 splitter ~17 dB loss"]
-    end
-    subgraph OLT["OLT (Exchange)"]
-        subgraph Tx_1490nm["TX: +1.5 to +5 dBm (B+)"]
-        end
-        subgraph Tx_1490nm_Cplus["TX: +3 to +7 dBm (C+)"]
-        end
-        subgraph Rx_1310nm["RX: -8 to -28 dBm (B+)"]
-        end
-    end
-    subgraph ONT -> Optical_Path -> OLT:["ONT -> Optical_Path -> OLT:"]
-    end
+```d2
+# Diagram 113
+direction: down
+
+ont: {
+  label: "ONT (Your Home)"
+  tx_1310nm: "TX: +0.5 to +5 dBm"
+  rx_1490nm: "RX: -8 to -28 dBm (B+)"
+  rx_1490nm_cplus: "RX: -8 to -32 dBm (C+)"
+}
+
+optical_path: "~10 km fibre, 1:32 splitter ~17 dB loss"
+
+olt: {
+  label: "OLT (Exchange)"
+  tx_1490nm: "TX: +1.5 to +5 dBm (B+)"
+  tx_1490nm_cplus: "TX: +3 to +7 dBm (C+)"
+  rx_1310nm: "RX: -8 to -28 dBm (B+)"
+}
+
+"ONT -> Optical_Path -> OLT:": "ONT -> Optical_Path -> OLT:"
 ```
 
 ### Practical signal level guide
@@ -92,67 +83,87 @@ Singtel typically aims for -18 to -22 dBm RX at the ONT for GPON B+ optics. If y
 
 After the OLT terminates the GPON signal, traffic enters the Ethernet/IP domain. Here's how Singtel's network is structured:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph ONT["Customer Premises"]
-        ZTE_F660["ZTE F660 / F620 ONT"]
-        Nokia_ONR["Nokia XGS-PON ONR"]
-    end
-    subgraph OLT_Access["OLT Access Layer"]
-        ZTE_C600["ZTE C600 (GPON)"]
-        Nokia_IXR["Nokia ISAM / IXR (XGS-PON)"]
-        Huawei_MA["Huawei MA5800 (GPON/XGS)"]
-    end
-    subgraph AGG["Aggregation Layer"]
-        Metro_E["Metro Ethernet Switch"]
-    end
-    subgraph BRAS_BNG["BRAS / BNG Layer"]
-        Cisco_ASR9K["Cisco ASR 9000 / 9900"]
-        Nokia_7750["Nokia 7750 SR"]
-        PPPoE_term["PPPoE session termination"]
-        Radius_auth["RADIUS auth + accounting"]
-        QoS_shaper["QoS policy enforcement"]
-    end
-    subgraph IP_Backbone["Singtel IP Backbone"]
-    end
-    subgraph ONT -> OLT_Access: GPON / XGS-PON["ONT -> OLT_Access: GPON / XGS-PON"]
-    end
-    OLT_Access -->|"10GE / 100GE uplink"| AGG
-    AGG -->|"QinQ VLAN (S-VLAN + C-VLAN)"| BRAS_BNG
-    BRAS_BNG -->|"BGP peering"| IP_Backbone
-    IP_Backbone -->|"Transit / Peering"| Internet
-    subgraph BB["Broadband Forum TR-101 / TR-156"]
-    end
+```d2
+# Diagram 114
+direction: down
+
+ont: {
+  label: "Customer Premises"
+  zte_f660: "ZTE F660 / F620 ONT"
+  nokia_onr: "Nokia XGS-PON ONR"
+}
+
+olt_access: {
+  label: "OLT Access Layer"
+  zte_c600: "ZTE C600 (GPON)"
+  nokia_ixr: "Nokia ISAM / IXR (XGS-PON)"
+  huawei_ma: "Huawei MA5800 (GPON/XGS)"
+}
+
+agg: {
+  label: "Aggregation Layer"
+  metro_e: "Metro Ethernet Switch"
+}
+
+bras_bng: {
+  label: "BRAS / BNG Layer"
+  cisco_asr9k: "Cisco ASR 9000 / 9900"
+  nokia_7750: "Nokia 7750 SR"
+  pppoe_term: "PPPoE session termination"
+  radius_auth: "RADIUS auth + accounting"
+  qos_shaper: "QoS policy enforcement"
+}
+
+ip_backbone: "Singtel IP Backbone"
+
+"ONT -> OLT_Access: GPON / XGS-PON": "ONT -> OLT_Access: GPON / XGS-PON"
+
+internet: "Internet"
+
+bb: "Broadband Forum TR-101 / TR-156"
+
+olt_access -> agg: "10GE / 100GE uplink"
+agg -> bras_bng: "QinQ VLAN (S-VLAN + C-VLAN)"
+bras_bng -> ip_backbone: "BGP peering"
+ip_backbone -> internet: "Transit / Peering"
 ```
 
 ### VLAN architecture (QinQ)
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Customer["Customer"]
-        Ont_Port["ONT Port 1"]
-        Ont_Port2["ONT Port 2"]
-    end
-    subgraph OLT["OLT"]
-        subgraph S_VLAN["S-VLAN (Service): 2001"]
-        end
-        subgraph C_VLAN["C-VLAN (Customer): 101"]
-        end
-    end
-    subgraph AGG["Aggregation Switch"]
-        S_VLAN_stack["S-VLAN termination"]
-        Transparent["Transparent C-VLAN pass-through"]
-    end
-    subgraph BRAS["BRAS"]
-        PPPoE_termination["PPPoE termination"]
-        IP_allocation["IP allocation via DHCP / IPCP"]
-    end
-    Customer -->|"Port 1 = Internet\nPort 2 = Singtel TV"| OLT
-    OLT -->|"QinQ: S-VLAN 2001 + C-VLAN 101"| AGG
-    AGG -->|"QinQ"| BRAS
-    BRAS -->|"Routed IP"| Internet
+```d2
+# Diagram 115
+direction: down
+
+customer: {
+  label: "Customer"
+  ont_port: "ONT Port 1"
+  ont_port2: "ONT Port 2"
+}
+
+olt: {
+  label: "OLT"
+  s_vlan: "S-VLAN (Service): 2001"
+  c_vlan: "C-VLAN (Customer): 101"
+}
+
+agg: {
+  label: "Aggregation Switch"
+  s_vlan_stack: "S-VLAN termination"
+  transparent: "Transparent C-VLAN pass-through"
+}
+
+bras: {
+  label: "BRAS"
+  pppoe_termination: "PPPoE termination"
+  ip_allocation: "IP allocation via DHCP / IPCP"
+}
+
+internet: "Internet"
+
+customer -> olt: "Port 1 = Internet\nPort 2 = Singtel TV"
+olt -> agg: "QinQ: S-VLAN 2001 + C-VLAN 101"
+agg -> bras: "QinQ"
+bras -> internet: "Routed IP"
 ```
 
 ---

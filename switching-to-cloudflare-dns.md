@@ -40,31 +40,24 @@ This matters because:
 
 I benchmarked four resolvers from this Singtel Fibre connection (AS9506, Ulu Bedok):
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["DNS Query Time (ms) — lower is better"]
-    end
-    subgraph Singtel_ONT["Singtel ONT (192.168.1.254)"]
-    end
-    subgraph Google["Google (8.8.8.8)"]
-    end
-    subgraph Quad9["Quad9 (9.9.9.9)"]
-    end
-    subgraph Cloudflare["Cloudflare (1.1.1.1)"]
-    end
-    subgraph latency_ont["latency: 28ms avg"]
-    end
-    subgraph latency_google["latency: 5ms avg"]
-    end
-    subgraph latency_quad9["latency: 8ms avg"]
-    end
-    subgraph latency_cloudflare["latency: 9ms avg"]
-    end
-    Singtel_ONT --> latency_ont
-    Google --> latency_google
-    Quad9 --> latency_quad9
-    Cloudflare --> latency_cloudflare
+```d2
+# Diagram 169
+direction: down
+
+Title: "DNS Query Time (ms) — lower is better"
+Singtel_ONT: "Singtel ONT (192.168.1.254)"
+Google: "Google (8.8.8.8)"
+Quad9: "Quad9 (9.9.9.9)"
+Cloudflare: "Cloudflare (1.1.1.1)"
+latency_ont: "latency: 28ms avg"
+latency_google: "latency: 5ms avg"
+latency_quad9: "latency: 8ms avg"
+latency_cloudflare: "latency: 9ms avg"
+
+Singtel_ONT -> latency_ont
+Google -> latency_google
+Quad9 -> latency_quad9
+Cloudflare -> latency_cloudflare
 ```
 
 ```bash

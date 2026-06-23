@@ -48,27 +48,24 @@ This is wrong. A role is not a large collection of tasks. A role is a **contextu
 
 An LLM does none of these. It cannot. There is no substrate for consequence, liability, or adaptation in a next-token predictor.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Adaptation to novel situations"]
-    subgraph C["Cognitive Role"]
-    end
-    D["Decision-making"]
-    subgraph MISSING["LLM cannot bridge this gap"]
-    end
-    R["Collection of Tasks"]
-    subgraph ROLE_WRONG["Role?\n(Miessler's assumption)"]
-    end
-    S["Skin in the game"]
-    subgraph T["Individual Task\n(LLM excels)"]
-    end
-    X["Missing: context,\nconsequence, liability"]
-    R --> ROLE_WRONG
-    R --> X
-    C --> S
-    C --> A
-    X -->|"G is Glue"| MISSING
+```d2
+direction: down
+
+ROLE_WRONG: "Role?\n(Miessler's assumption)"
+T: "Individual Task\n(LLM excels)"
+MISSING: "LLM cannot bridge this gap"
+C: "Cognitive Role"
+
+R: "Collection of Tasks"
+X: "Missing: context,\nconsequence, liability"
+S: "Skin in the game"
+A: "Adaptation to novel situations"
+
+R -> ROLE_WRONG
+R -> X
+C -> S
+C -> A
+X -> MISSING: "G is Glue"
 ```
 
 ---

@@ -27,21 +27,25 @@ For a machine to act as an economic actor — to pay for compute, to commit to a
 
 No transformer weight, no prompt engineering, and no fine-tuning provides these. They are not properties of models. They are properties of the network the model is embedded in.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    ID["Identity (IPv6 CGA)\nBRC-52, BRC-31"]
-    subgraph LLM["LLM\nPattern matching engine\nNo persistent state"]
-    end
-    MEM["Memory (Indelible COT1)\nBRC-78, SHIP/SLAP"]
-    PAY["Payments (BSV IP-to-IP)\nBRC-105, BRC-77"]
-    subgraph STACK["ipso-agent stack\n= Economic agency"]
-    end
-    LLM --> PAY
-    LLM --> MEM
-    ID --> STACK
-    PAY --> STACK
-    MEM --> STACK
+```d2
+# Diagram 128
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+ID: "Identity (IPv6 CGA)\nBRC-52, BRC-31"
+LLM: "LLM\nPattern matching engine\nNo persistent state"
+MEM: "Memory (Indelible COT1)\nBRC-78, SHIP/SLAP"
+PAY: "Payments (BSV IP-to-IP)\nBRC-105, BRC-77"
+STACK: "ipso-agent stack\n= Economic agency"
+
+LLM -> PAY
+LLM -> MEM
+ID -> STACK
+PAY -> STACK
+MEM -> STACK
 ```
 
 This is the *ipso-agent* thesis: **the "G" in AGI is Glue in a literal engineering sense.** It is the overlay stack — IPv6 CGA for identity, BSV IP-to-IP for payments, Indelible COT1 for memory — that glues machine output to economic consequence.

@@ -19,44 +19,119 @@ Here is a breakdown of the design philosophy, security model, and automation arc
 
 The developer sandbox breaks down the learning lifecycle into three distinct, low-friction phases:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Phase1["🛠️ 1. One-Time Setup"]
-        A1["Right-click 'setup.ps1"]
-        A2["Select 'Run with PowerShell"]
-        A3["Microsoft winget installs Git, Python, Node, & Babashka"]
-        A4["Virtual environment (.venv) & dependencies configured"]
-        A5["🎉 Ready! (No commands typed by student)"]
-        setup --> A2
-        A2 --> A3
-        A3 --> A4
-        A4 --> A5
-    end
-    subgraph Phase2["⚛️ 2. Daily Practice & Coding"]
-        B1["Double-click 'run.bat"]
-        B2["Babashka runner checks for upstream git updates"]
-        B3["Babashka runs 'run.clj' script"]
-        B4["Django Server starts (Port 8000)"]
-        B5["Vite + React Server starts (Port 5173)"]
-        B6["Open Web Browser to: http://localhost:5173"]
-        daily --> B2
-        B2 --> B3
-        B3 --> B4
-        B3 --> B5
-        B5 --> B6
-    end
-    subgraph Phase3["🤖 3. Getting Help from Claude AI"]
-        C1["Write code inside VS Code (Python or HTML/JS)"]
-        C2["Double-click 'generate-ai-context.bat"]
-        C3["Script packages all your code into 'ai_context.txt"]
-        C4["Drag & drop file into Claude in browser"]
-        C5["💬 Claude reads workspace and acts as an expert tutor"]
-        ai --> C2
-        C2 --> C3
-        C3 --> C4
-        C4 --> C5
-    end
+```d2
+# Diagram 77
+direction: down
+
+Phase1: "🛠️ 1. One-Time Setup" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  setup: "setup" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A1: "Right-click 'setup.ps1'" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A2: "Select 'Run with PowerShell'" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A3: "Microsoft winget installs Git, Python, Node, & Babashka" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A4: "Virtual environment (.venv) & dependencies configured" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  A5: "🎉 Ready! (No commands typed by student)" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+
+  setup -> A2
+  A2 -> A3
+  A3 -> A4
+  A4 -> A5
+}
+
+Phase2: "⚛️ 2. Daily Practice & Coding" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  daily: "daily" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B1: "Double-click 'run.bat'" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B2: "Babashka runner checks for upstream git updates" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B3: "Babashka runs 'run.clj' script" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B4: "Django Server starts (Port 8000)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B5: "Vite + React Server starts (Port 5173)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  B6: "Open Web Browser to: http://localhost:5173" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+
+  daily -> B2
+  B2 -> B3
+  B3 -> B4
+  B3 -> B5
+  B5 -> B6
+}
+
+Phase3: "🤖 3. Getting Help from Claude AI" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+
+  ai: "ai" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  C1: "Write code inside VS Code (Python or HTML/JS)" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  C2: "Double-click 'generate-ai-context.bat'" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  C3: "Script packages all your code into 'ai_context.txt'" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  C4: "Drag & drop file into Claude in browser" {
+    style.fill: "#ffffff"
+    style.stroke: "#dee2e6"
+  }
+  C5: "💬 Claude reads workspace and acts as an expert tutor" {
+    style.fill: "#d4edda"
+    style.stroke: "#c3e6cb"
+  }
+
+  ai -> C2
+  C2 -> C3
+  C3 -> C4
+  C4 -> C5
+}
 ```
 
 ---

@@ -30,42 +30,74 @@ A simple push to a repo. Should take 2 seconds. Instead, it opened a can of worm
 
 Before diving into commands, it helps to understand **how GitHub CLI (`gh`) and Git resolve credentials**. They don't just check one place — they walk a priority chain, and the first match wins:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    A["Git Push Request"]
-    subgraph B["GITHUB_TOKEN\nenv var set?"]
-    end
-    subgraph C["Use GITHUB_TOKEN\n(highest priority)"]
-    end
-    subgraph D["gh auth\nkeyring token?"]
-    end
-    subgraph E["Use keyring token\n([REDACTED]"]
-    end
-    subgraph F["SSH key\nconfigured?"]
-    end
-    G["Use SSH\n(git@github.com)"]
-    subgraph H["~/.git-credentials\nfile exists?"]
-    end
-    I["Use stored\ncredentials"]
-    J["❌ Auth fails"]
-    subgraph K["Token valid?"]
-    end
-    subgraph L["✅ Push succeeds"]
-    end
-    subgraph M["❌ Push fails\n(our problem)"]
-    end
-    B -->|"Yes"| C
-    B -->|"No"| D
-    D -->|"Yes"| E
-    D -->|"No"| F
-    F -->|"Yes"| G
-    F -->|"No"| H
-    H -->|"Yes"| I
-    H -->|"No"| J
-    C --> K
-    K -->|"Yes"| L
-    K -->|"No"| M
+```d2
+# Diagram 64
+direction: down
+
+A: "Git Push Request" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+B: "GITHUB_TOKEN\nenv var set?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+C: "Use GITHUB_TOKEN\n(highest priority)" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+D: "gh auth\nkeyring token?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+E: "Use keyring token\n([REDACTED]" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+F: "SSH key\nconfigured?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+G: "Use SSH\n(git@github.com)" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+H: "~/.git-credentials\nfile exists?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+I: "Use stored\ncredentials" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+J: "❌ Auth fails" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+K: "Token valid?" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+L: "✅ Push succeeds" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+M: "❌ Push fails\n(our problem)" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+
+B -> C: "Yes"
+B -> D: "No"
+D -> E: "Yes"
+D -> F: "No"
+F -> G: "Yes"
+F -> H: "No"
+H -> I: "Yes"
+H -> J: "No"
+C -> K
+K -> L: "Yes"
+K -> M: "No"
 ```
 
 **The critical insight:** If `GITHUB_TOKEN` is set — even to garbage — `gh` and Git will use it and **never fall through** to the perfectly valid keyring token below.
@@ -150,21 +182,33 @@ Clean. Nothing stale here.
 
 Here's what the full credential landscape looked like **before** the fix:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph ENV["🔴 GITHUB_TOKEN env var\n[REDACTED]"]
-    end
-    subgraph GC["⚪ ~/.git-credentials\n<b>Does not exist</b>"]
-    end
-    subgraph HELPER["⚪ Git credential helper\n<b>Not configured</b>"]
-    end
-    subgraph KR["🟢 Keyring token\n[REDACTED]"]
-    end
-    subgraph SSH["🟡 SSH key\n~/.ssh/id_ed25519\n<b>EXISTS — Not registered</b>"]
-    end
-    ENV -->|"Blocks"| KR
-    SSH -->|"Useless without\nGitHub registration"| SSH
+```d2
+# Diagram 65
+direction: down
+
+ENV: "🔴 GITHUB_TOKEN env var\n[REDACTED]" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+GC: "⚪ ~/.git-credentials\nDoes not exist" {
+  style.fill: "#e2e3e5"
+  style.stroke: "#d6d8db"
+}
+HELPER: "⚪ Git credential helper\nNot configured" {
+  style.fill: "#e2e3e5"
+  style.stroke: "#d6d8db"
+}
+KR: "🟢 Keyring token\n[REDACTED]" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+SSH: "🟡 SSH key\n~/.ssh/id_ed25519\nEXISTS — Not registered" {
+  style.fill: "#fff3cd"
+  style.stroke: "#ffeeba"
+}
+
+ENV -> KR: "Blocks"
+SSH -> SSH: "Useless without\nGitHub registration"
 ```
 
 Five credential slots. One broken and blocking. One valid but buried. One half-configured. Two empty. **Pure entropy.**
@@ -214,20 +258,30 @@ ssh -T git@github.com
 
 ## ✅ The Final State — Zero Entropy
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph FISH["🟢 config.fish override\nset -gx GITHUB_TOKEN (gh auth token)\n<b>Neutralizes IDE dummy token</b>"]
-    end
-    subgraph GH["🎯 github.com"]
-    end
-    subgraph KR2["🟢 Keyring token (HTTPS)\n[REDACTED]"]
-    end
-    subgraph SSH2["🟢 SSH key\n~/.ssh/id_ed25519\n<b>Registered on GitHub</b>"]
-    end
-    FISH -->|"Feeds real token to"| KR2
-    KR2 -->|"HTTPS transport"| GH
-    SSH2 -->|"SSH transport"| GH
+```d2
+# Diagram 66
+direction: down
+
+FISH: "🟢 config.fish override\nset -gx GITHUB_TOKEN (gh auth token)\nNeutralizes IDE dummy token" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+GH: "🎯 github.com" {
+  style.fill: "#e8f4fd"
+  style.stroke: "#bbeeeb"
+}
+KR2: "🟢 Keyring token (HTTPS)\n[REDACTED]" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+SSH2: "🟢 SSH key\n~/.ssh/id_ed25519\nRegistered on GitHub" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+
+FISH -> KR2: "Feeds real token to"
+KR2 -> GH: "HTTPS transport"
+SSH2 -> GH: "SSH transport"
 ```
 
 | Credential | Status |
@@ -258,23 +312,44 @@ flowchart TD
 
 ## 📋 Quick Reference: Auth Debugging Cheatsheet
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["Auth fails"]
-    end
-    B["gh auth status"]
-    C["env | grep GITHUB"]
-    D["ssh -T git@github.com"]
-    E["cat ~/.git-credentials"]
-    F["git config credential.helper"]
-    subgraph G["Fix the broken link\nin the chain"]
-    end
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
+```d2
+# Diagram 67
+direction: down
+
+A: "Auth fails" {
+  style.fill: "#f8d7da"
+  style.stroke: "#f5c6cb"
+}
+B: "gh auth status" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+C: "env | grep GITHUB" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+D: "ssh -T git@github.com" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+E: "cat ~/.git-credentials" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+F: "git config credential.helper" {
+  style.fill: "#f8f9fa"
+  style.stroke: "#dee2e6"
+}
+G: "Fix the broken link\nin the chain" {
+  style.fill: "#d4edda"
+  style.stroke: "#c3e6cb"
+}
+
+B -> C
+C -> D
+D -> E
+E -> F
+F -> G
 ```
 
 | Command | What it checks |

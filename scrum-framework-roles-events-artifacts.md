@@ -28,20 +28,35 @@ It's built on **empirical process control**: knowledge comes from experience, de
 
 ## The Three Pillars
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Empirical Process Control"]
-    end
-    subgraph Transparency["Transparency\nWork and process\nmust be visible\nto all"]
-    end
-    subgraph Inspection["Inspection\nFrequently examine\nartifacts and\nprogress toward\ngoals"]
-    end
-    subgraph Adaptation["Adaptation\nAdjust the process\nor materials as\nsoon as deviations\nare detected"]
-    end
-    Transparency -->|"You cannot inspect\nwhat you cannot see"| Inspection
-    Inspection -->|"Inspection without\nadaptation is\npointless"| Adaptation
-    Transparency -->|"All three required\nto generate value"| Adaptation
+```d2
+# Diagram 160
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Empirical Process Control"
+}
+
+Transparency: {
+  label: "Transparency\nWork and process\nmust be visible\nto all"
+}
+
+Inspection: {
+  label: "Inspection\nFrequently examine\nartifacts and\nprogress toward\ngoals"
+}
+
+Adaptation: {
+  label: "Adaptation\nAdjust the process\nor materials as\nsoon as deviations\nare detected"
+}
+
+Transparency -> Inspection: "You cannot inspect\nwhat you cannot see"
+Inspection -> Adaptation: "Inspection without\nadaptation is\npointless"
+Transparency -> Adaptation: "All three required\nto generate value"
 ```
 
 Every Scrum event exists to enable one of these three pillars. The Daily Scrum inspects progress toward the Sprint Goal. The Sprint Review inspects the Increment. The Retrospective inspects the process itself. None of this works without **Transparency** — if your Product Backlog is hidden, your Sprint Backlog is unreadable, or your Definition of Done is vague, inspection is meaningless.
@@ -52,26 +67,45 @@ Every Scrum event exists to enable one of these three pillars. The Daily Scrum i
 
 Values give the pillars their foundation. When the team embodies these, empiricism works:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Scrum Values"]
-    end
-    subgraph Commitment["Commitment\nCommit to goals\nand each other"]
-    end
-    subgraph Focus["Focus\nSprint work\nabove all else"]
-    end
-    subgraph Openness["Openness\nWork and challenges\nare visible"]
-    end
-    subgraph Respect["Respect\nTeam members are\ncapable and\nindependent"]
-    end
-    subgraph Courage["Courage\nDo the right thing;\ntackle tough\nproblems"]
-    end
-    Commitment -->|"You commit, so\nyou focus"| Focus
-    Focus -->|"Focus reveals\nchallenges → openness"| Openness
-    Openness -->|"Openness requires\npsychological safety"| Respect
-    Respect -->|"Respect gives you\ncourage to speak up"| Courage
-    Courage -->|"Courage lets you\ncommit honestly"| Commitment
+```d2
+# Diagram 161
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Scrum Values"
+}
+
+Commitment: {
+  label: "Commitment\nCommit to goals\nand each other"
+}
+
+Focus: {
+  label: "Focus\nSprint work\nabove all else"
+}
+
+Openness: {
+  label: "Openness\nWork and challenges\nare visible"
+}
+
+Respect: {
+  label: "Respect\nTeam members are\ncapable and\nindependent"
+}
+
+Courage: {
+  label: "Courage\nDo the right thing;\ntackle tough\nproblems"
+}
+
+Commitment -> Focus: "You commit, so\nyou focus"
+Focus -> Openness: "Focus reveals\nchallenges \u2192 openness"
+Openness -> Respect: "Openness requires\npsychological safety"
+Respect -> Courage: "Respect gives you\ncourage to speak up"
+Courage -> Commitment: "Courage lets you\ncommit honestly"
 ```
 
 ---
@@ -80,26 +114,47 @@ flowchart TD
 
 Scrum defines **three accountabilities**, not job titles:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Scrum Team Accountabilities"]
-    end
-    subgraph PO["Product Owner\nMaximizes value\nof the product"]
-    end
-    subgraph Dev["Developers\nCreate the Increment\neach Sprint"]
-    end
-    subgraph SM["Scrum Master\nEnsures Scrum is\nunderstood and\nenacted"]
-    end
-    subgraph POBottom["Key: One person, not a committee.\nOwns the Product Backlog.\nDecides order and priority.\nEveryone respects their decisions."]
-    end
-    subgraph DevBottom["Key: Cross-functional, self-managing.\n7±2 people.\nNo sub-teams (no \"Devs + QA + DB\").\nCreates Sprint Backlog plan."]
-    end
-    subgraph SMBottom["Key: Serves PO, Devs, and organization.\nCoach, facilitator, impediment remover.\nNot a project manager or team lead."]
-    end
-    PO --> POBottom
-    Dev --> DevBottom
-    SM --> SMBottom
+```d2
+# Diagram 162
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Scrum Team Accountabilities"
+}
+
+PO: {
+  label: "Product Owner\nMaximizes value\nof the product"
+}
+
+Dev: {
+  label: "Developers\nCreate the Increment\neach Sprint"
+}
+
+SM: {
+  label: "Scrum Master\nEnsures Scrum is\nunderstood and\nenacted"
+}
+
+POBottom: {
+  label: "Key: One person, not a committee.\nOwns the Product Backlog.\nDecides order and priority.\nEveryone respects their decisions."
+}
+
+DevBottom: {
+  label: "Key: Cross-functional, self-managing.\n7\u00b12 people.\nNo sub-teams (no \"Devs + QA + DB\").\nCreates Sprint Backlog plan."
+}
+
+SMBottom: {
+  label: "Key: Serves PO, Devs, and organization.\nCoach, facilitator, impediment remover.\nNot a project manager or team lead."
+}
+
+PO -> POBottom
+Dev -> DevBottom
+SM -> SMBottom
 ```
 
 Key insight for engineers: **there is no "project manager" in Scrum.** The Product Owner decides *what* to build. The Developers decide *how* to build it. The Scrum Master ensures the process works.
@@ -110,27 +165,47 @@ Key insight for engineers: **there is no "project manager" in Scrum.** The Produ
 
 Events are **time-boxed** (shorter for shorter Sprints) and create **regularity** — minimizing the need for meetings not defined in Scrum:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Scrum Events (1-month Sprint)"]
-    end
-    SprintBig["Sprint (≤1 month)"]
-    subgraph Sprint["The container.\nIdeas → value.\nNo changes that\nendanger Sprint\nGoal."]
-    end
-    subgraph Plan["Sprint Planning\n(≤8 hrs)\nWhy? → Sprint Goal\nWhat? → PBIs\nHow? → Plan"]
-    end
-    subgraph DS["Daily Scrum\n(15 min)\nInspect Sprint\nGoal progress.\nDaily plan."]
-    end
-    subgraph Review["Sprint Review\n(≤4 hrs)\nInspect Increment.\nUpdate Product\nBacklog."]
-    end
-    subgraph Retro["Sprint Retrospective\n(≤3 hrs)\nInspect team.\nPlan improvements\nfor next Sprint."]
-    end
-    SprintBig --> Plan
-    Plan -->|"Happens daily\nwithin Sprint"| DS
-    DS --> Review
-    Review --> Retro
-    Retro -->|"Next Sprint\nstarts immediately"| SprintBig
+```d2
+# Diagram 163
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Scrum Events (1-month Sprint)"
+}
+
+SprintBig: "Sprint (\u22641 month)"
+
+Sprint: {
+  label: "The container.\nIdeas \u2192 value.\nNo changes that\nendanger Sprint\nGoal."
+}
+
+Plan: {
+  label: "Sprint Planning\n(\u22648 hrs)\nWhy? \u2192 Sprint Goal\nWhat? \u2192 PBIs\nHow? \u2192 Plan"
+}
+
+DS: {
+  label: "Daily Scrum\n(15 min)\nInspect Sprint\nGoal progress.\nDaily plan."
+}
+
+Review: {
+  label: "Sprint Review\n(\u22644 hrs)\nInspect Increment.\nUpdate Product\nBacklog."
+}
+
+Retro: {
+  label: "Sprint Retrospective\n(\u22643 hrs)\nInspect team.\nPlan improvements\nfor next Sprint."
+}
+
+SprintBig -> Plan
+Plan -> DS: "Happens daily\nwithin Sprint"
+DS -> Review
+Review -> Retro
+Retro -> SprintBig: "Next Sprint\nstarts immediately"
 ```
 
 **Sprint** (the container):
@@ -165,35 +240,63 @@ flowchart TD
 
 Artifacts represent **work or value** and have explicit **commitments** that make them transparent:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Scrum Artifacts"]
-    end
-    subgraph PB["Product Backlog\nOrdered list of\nwhat's needed.\nEvolving, never\ncomplete."]
-    end
-    subgraph PG["Commitment:\nProduct Goal\nLong-term target\nfor the product."]
-    end
-    subgraph SB["Sprint Backlog\nSprint Goal +\nselected PBIs +\nplan to deliver."]
-    end
-    subgraph SG["Commitment:\nSprint Goal\nThe single objective\nfor this Sprint.\nCreates focus."]
-    end
-    subgraph Increment["Increment\nUsable, valuable\noutput of the\nSprint."]
-    end
-    subgraph DoD["Commitment:\nDefinition of Done\nQuality gate.\nIf not met →\nnot released."]
-    end
-    PB -->|"commits to"| PG
-    SB -->|"commits to"| SG
-    Increment -->|"committed to\nmeeting DoD"| DoD
-    subgraph PBOwner["Owner: Product Owner"]
-    end
-    subgraph SBOwner["Owner: Developers"]
-    end
-    subgraph IncOwner["Owner: Scrum Team"]
-    end
-    PB --> PBOwner
-    SB --> SBOwner
-    Increment --> IncOwner
+```d2
+# Diagram 164
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Scrum Artifacts"
+}
+
+PB: {
+  label: "Product Backlog\nOrdered list of\nwhat's needed.\nEvolving, never\ncomplete."
+}
+
+PG: {
+  label: "Commitment:\nProduct Goal\nLong-term target\nfor the product."
+}
+
+SB: {
+  label: "Sprint Backlog\nSprint Goal +\nselected PBIs +\nplan to deliver."
+}
+
+SG: {
+  label: "Commitment:\nSprint Goal\nThe single objective\nfor this Sprint.\nCreates focus."
+}
+
+Increment: {
+  label: "Increment\nUsable, valuable\noutput of the\nSprint."
+}
+
+DoD: {
+  label: "Commitment:\nDefinition of Done\nQuality gate.\nIf not met \u2192\nnot released."
+}
+
+PBOwner: {
+  label: "Owner: Product Owner"
+}
+
+SBOwner: {
+  label: "Owner: Developers"
+}
+
+IncOwner: {
+  label: "Owner: Scrum Team"
+}
+
+PB -> PG: "commits to"
+SB -> SG: "commits to"
+Increment -> DoD: "committed to\nmeeting DoD"
+
+PB -> PBOwner
+SB -> SBOwner
+Increment -> IncOwner
 ```
 
 **Product Backlog** (managed by the Product Owner):
@@ -220,48 +323,81 @@ flowchart TD
 
 Here's the full framework as a single diagram:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Scrum Framework — Complete System"]
-    end
-    subgraph ProductGoal["Product Goal"]
-    end
-    subgraph ProductBacklog["Product Backlog\nOrdered list of\nwhat's needed"]
-    end
-    subgraph SprintPlanning["Sprint Planning"]
-    end
-    subgraph SprintGoal["Sprint Goal"]
-    end
-    subgraph SprintBacklog["Sprint Backlog\nGoal + items + plan"]
-    end
-    subgraph Sprint["Sprint\n(≤1 month)"]
-    end
-    subgraph DailyScrum["Daily Scrum\n(15 min)"]
-    end
-    subgraph Increment["Increment"]
-    end
-    subgraph DoD["Definition\nof Done"]
-    end
-    subgraph SprintReview["Sprint Review"]
-    end
-    subgraph SprintRetro["Sprint Retro"]
-    end
-    ProductGoal -->|"informs"| ProductBacklog
-    ProductBacklog -->|"inputs"| SprintPlanning
-    SprintPlanning -->|"defines"| SprintGoal
-    SprintPlanning -->|"creates"| SprintBacklog
-    SprintGoal -->|"anchors"| SprintBacklog
-    SprintBacklog -->|"guides"| Sprint
-    Sprint -->|"inspects"| DailyScrum
-    Sprint -->|"produces"| Increment
-    DoD -->|"commits to\nquality gate"| Increment
-    Increment -->|"inspected at"| SprintReview
-    SprintReview -->|"may update"| ProductBacklog
-    SprintReview -->|"followed by"| SprintRetro
-    SprintRetro -->|"next Sprint"| SprintPlanning
-    subgraph Note["Accountabilities:\nProduct Owner (backlog)\nDevelopers (plan + build)\nScrum Master (process)"]
-    end
+```d2
+# Diagram 165
+direction: down
+
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: {
+  label: "Scrum Framework \u2014 Complete System"
+}
+
+ProductGoal: {
+  label: "Product Goal"
+}
+
+ProductBacklog: {
+  label: "Product Backlog\nOrdered list of\nwhat's needed"
+}
+
+SprintPlanning: {
+  label: "Sprint Planning"
+}
+
+SprintGoal: {
+  label: "Sprint Goal"
+}
+
+SprintBacklog: {
+  label: "Sprint Backlog\nGoal + items + plan"
+}
+
+Sprint: {
+  label: "Sprint\n(\u22641 month)"
+}
+
+DailyScrum: {
+  label: "Daily Scrum\n(15 min)"
+}
+
+Increment: {
+  label: "Increment"
+}
+
+DoD: {
+  label: "Definition\nof Done"
+}
+
+SprintReview: {
+  label: "Sprint Review"
+}
+
+SprintRetro: {
+  label: "Sprint Retro"
+}
+
+Note: {
+  label: "Accountabilities:\nProduct Owner (backlog)\nDevelopers (plan + build)\nScrum Master (process)"
+}
+
+ProductGoal -> ProductBacklog: "informs"
+ProductBacklog -> SprintPlanning: "inputs"
+SprintPlanning -> SprintGoal: "defines"
+SprintPlanning -> SprintBacklog: "creates"
+SprintGoal -> SprintBacklog: "anchors"
+SprintBacklog -> Sprint: "guides"
+Sprint -> DailyScrum: "inspects"
+Sprint -> Increment: "produces"
+DoD -> Increment: "commits to\nquality gate"
+Increment -> SprintReview: "inspected at"
+SprintReview -> ProductBacklog: "may update"
+SprintReview -> SprintRetro: "followed by"
+SprintRetro -> SprintPlanning: "next Sprint"
 ```
 
 The entire framework is a **closed feedback loop**:

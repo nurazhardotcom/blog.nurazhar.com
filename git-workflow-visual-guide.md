@@ -26,30 +26,37 @@ No nesting. No `~/Documents/Work/Projects/Active/Archived/`. Two top-level folde
 
 ## Directory Layout
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Local["~/Assistant/"]
-        CD["code/\n7 repos"]
-        GH["github/\n14 repos"]
-        PS["personal/"]
-        RS["research/"]
-    end
-    subgraph GitHub["github.com/nurazhardotcom"]
-        R1["aur-audit"]
-        R2["blog.nurazhar.com"]
-        R3["bsv-clj"]
-        R4["bsv-de-tracker"]
-        R5["14 repos total"]
-    end
-    subgraph Upstream["github.com/other-orgs"]
-        U1["bsv-blockchain/arcade"]
-        U2["bsv-blockchain/teranode"]
-        U3["yours-org/yours-wallet"]
-        U4["TruthMachine/ElectrumSVP"]
-    end
-    GH -->|"git push/pull"| GitHub
-    CD -->|"git pull / fork sync"| Upstream
+```d2
+# Diagram 102
+direction: down
+
+Local: "~/Assistant/" {
+  style.fill: "#fafafa"
+  CD: "code/\n7 repos"
+  GH: "github/\n14 repos"
+  PS: "personal/"
+  RS: "research/"
+}
+
+GitHub: "github.com/nurazhardotcom" {
+  style.fill: "#fafafa"
+  R1: "aur-audit"
+  R2: "blog.nurazhar.com"
+  R3: "bsv-clj"
+  R4: "bsv-de-tracker"
+  R5: "14 repos total"
+}
+
+Upstream: "github.com/other-orgs" {
+  style.fill: "#fafafa"
+  U1: "bsv-blockchain/arcade"
+  U2: "bsv-blockchain/teranode"
+  U3: "yours-org/yours-wallet"
+  U4: "TruthMachine/ElectrumSVP"
+}
+
+Local.GH -> GitHub: "git push/pull"
+Local.CD -> Upstream: "git pull / fork sync"
 ```
 
 Each repo in `github/` corresponds one-to-one with a repo on your GitHub profile. Each repo in `code/` is either a fork you cloned or a scratch project with no remote at all.
@@ -60,20 +67,25 @@ Each repo in `github/` corresponds one-to-one with a repo on your GitHub profile
 
 This is the simplest path. You own the repo, you work in it, you push.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Local["~/Assistant/github/bsv-de-tracker/"]
-        A["git add ."]
-        C["git commit -m 'msg"]
-        P["git push"]
-        W["edit files"]
-    end
-    subgraph Remote["github.com/nurazhardotcom/bsv-de-tracker"]
-        GH["GitHub remote"]
-    end
-    W --> A
-    C --> P
+```d2
+# Diagram 103
+direction: down
+
+Local: "~/Assistant/github/bsv-de-tracker/" {
+  style.fill: "#fafafa"
+  A: "git add ."
+  C: "git commit -m 'msg"
+  P: "git push"
+  W: "edit files"
+}
+
+Remote: "github.com/nurazhardotcom/bsv-de-tracker" {
+  style.fill: "#fafafa"
+  GH: "GitHub remote"
+}
+
+Local.W -> Local.A
+Local.C -> Local.P
 ```
 
 You never need to think about remotes, forks, or PRs. `git push` goes to your repo on GitHub. That's the entire loop.
@@ -84,23 +96,30 @@ You never need to think about remotes, forks, or PRs. `git push` goes to your re
 
 When you clone a repo you don't own, you need two remotes — `origin` (your fork) and `upstream` (the original).
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph YourFork["github.com/nurazhardotcom/arcade-teranode"]
-        ORIGIN["origin (your fork)"]
-    end
-    subgraph Upstream["github.com/bsv-blockchain/arcade"]
-        UP["upstream (original)"]
-    end
-    subgraph Local["~/Assistant/code/arcade-teranode/"]
-        FEAT["feature branch"]
-        MAIN["main branch"]
-    end
-    UP -->|"git pull upstream main"| MAIN
-    MAIN -->|"git checkout -b"| FEAT
-    FEAT -->|"git push origin feature"| ORIGIN
-    FEAT -->|"open PR"| UP
+```d2
+# Diagram 104
+direction: down
+
+YourFork: "github.com/nurazhardotcom/arcade-teranode" {
+  style.fill: "#fafafa"
+  ORIGIN: "origin (your fork)"
+}
+
+Upstream: "github.com/bsv-blockchain/arcade" {
+  style.fill: "#fafafa"
+  UP: "upstream (original)"
+}
+
+Local: "~/Assistant/code/arcade-teranode/" {
+  style.fill: "#fafafa"
+  FEAT: "feature branch"
+  MAIN: "main branch"
+}
+
+Upstream.UP -> Local.MAIN: "git pull upstream main"
+Local.MAIN -> Local.FEAT: "git checkout -b"
+Local.FEAT -> YourFork.ORIGIN: "git push origin feature"
+Local.FEAT -> Upstream.UP: "open PR"
 ```
 
 The key difference: you **pull** from `upstream` to stay synced, and you **push** to `origin` (your fork) to create pull requests.
@@ -111,17 +130,21 @@ The key difference: you **pull** from `upstream` to stay synced, and you **push*
 
 Some projects never touch GitHub. They live in `code/` with no remote at all — same git workflow, just no push step.
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    X["(done)"]
-    subgraph Local["~/Assistant/code/deterministic-knowledge-gate/"]
-        A["git add"]
-        C["git commit"]
-        W["edit"]
-    end
-    W --> A
-    C -->|"no remote"| X
+```d2
+# Diagram 105
+direction: down
+
+x: "(done)"
+
+local: {
+  label: "~/Assistant/code/deterministic-knowledge-gate/"
+  a: "git add"
+  c: "git commit"
+  w: "edit"
+}
+
+local.w -> local.a
+local.c -> x: "no remote"
 ```
 
 Git still tracks history, you can branch and diff and revert — you just skip `git push` because there's nowhere to send it. If you later decide to publish, run `gh repo create` and `git remote add origin <url> && git push`.
@@ -132,29 +155,39 @@ Git still tracks history, you can branch and diff and revert — you just skip `
 
 Here is the complete lifecycle across both directories:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Own["Your Repos"]
-        GH1["github/blognurazhar.com\ngit add → commit → push"]
-        GH2["github/paperclip-clj\ngit add → commit → push"]
-        GH3["github/bsv-clj\ngit add → commit → push"]
-    end
-    subgraph Fork["Forked Repos"]
-        CD1["code/arcade-teranode\npull upstream → branch → PR"]
-        CD2["code/bsv-desktop\npull upstream → branch → PR"]
-        CD3["code/ElectrumSVP\npull upstream → branch → PR"]
-    end
-    subgraph LocalOnly["Local-Only"]
-        CD4["code/deterministic-knowledge-gate\ncommit locally, no push"]
-    end
-    subgraph Other["Non-Repo Directories"]
-        BC["bootcamp/\ncoursework"]
-        PS["personal/\nnotes, finance, identity"]
-        RS["research/\ndocs, PDFs, references"]
-    end
-    subgraph Top["~/Assistant/"]
-    end
+```d2
+# Diagram 106
+direction: down
+
+top_dir: {
+  label: "~/Assistant/"
+
+  own: {
+    label: "Your Repos"
+    gh1: "github/blognurazhar.com\ngit add → commit → push"
+    gh2: "github/paperclip-clj\ngit add → commit → push"
+    gh3: "github/bsv-clj\ngit add → commit → push"
+  }
+
+  fork: {
+    label: "Forked Repos"
+    cd1: "code/arcade-teranode\npull upstream → branch → PR"
+    cd2: "code/bsv-desktop\npull upstream → branch → PR"
+    cd3: "code/ElectrumSVP\npull upstream → branch → PR"
+  }
+
+  local_only: {
+    label: "Local-Only"
+    cd4: "code/deterministic-knowledge-gate\ncommit locally, no push"
+  }
+
+  other: {
+    label: "Non-Repo Directories"
+    bc: "bootcamp/\ncoursework"
+    ps: "personal/\nnotes, finance, identity"
+    rs: "research/\ndocs, PDFs, references"
+  }
+}
 ```
 
 ---
@@ -184,23 +217,28 @@ Three reasons this survives real use:
 
 ## The Before and After
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Before["Before: Chaos"]
-        D1["~/Documents/repo-a"]
-        D2["~/Documents/repo-b"]
-        D3["~/paperclip-clj"]
-        D4["~/sol-de-tracker-bb"]
-        D5["~/Documents/repo-a (another copy)"]
-    end
-    subgraph After["After: Structure"]
-        G1["~/Assistant/github/repo-a"]
-        G2["~/Assistant/github/repo-b"]
-        G3["~/Assistant/github/paperclip-clj"]
-        G4["~/Assistant/github/bsv-de-tracker"]
-    end
-    Before -->|"consolidate"| After
+```d2
+# Diagram 107
+direction: down
+
+before: {
+  label: "Before: Chaos"
+  d1: "~/Documents/repo-a"
+  d2: "~/Documents/repo-b"
+  d3: "~/paperclip-clj"
+  d4: "~/sol-de-tracker-bb"
+  d5: "~/Documents/repo-a (another copy)"
+}
+
+after: {
+  label: "After: Structure"
+  g1: "~/Assistant/github/repo-a"
+  g2: "~/Assistant/github/repo-b"
+  g3: "~/Assistant/github/paperclip-clj"
+  g4: "~/Assistant/github/bsv-de-tracker"
+}
+
+before -> after: "consolidate"
 ```
 
 Every repo lives in exactly one place. You always know which directory to open. If an agent asks "where is the code?", you answer `~/Assistant/github/` or `~/Assistant/code/` depending on who owns it.

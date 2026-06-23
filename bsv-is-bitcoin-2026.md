@@ -19,40 +19,57 @@ This post systematically compares every major Bitcoin implementation (BTC, BCH, 
 
 Let's start with the source document. The Bitcoin whitepaper describes a **peer-to-peer electronic cash system**. The key architectural requirements are unambiguous:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph F1["BTC ✗"]
-    end
-    subgraph F2["BTC ✗"]
-    end
-    subgraph F4["BTC ✗"]
-    end
-    subgraph P1["BSV ✓"]
-    end
-    subgraph P2["BSV ✓"]
-    end
-    P2P["Peer-to-Peer Electronic Cash 2008"]
-    subgraph P3["BSV ✓"]
-    end
-    R1["Low Fees"]
-    R2["On-Chain Scaling"]
-    R3["SPV Verification"]
-    R4["UTXO State"]
-    R5["PoW Security"]
-    subgraph W2["BCH ~"]
-    end
-    P2P --> R2
-    P2P --> R3
-    P2P --> R4
-    P2P --> R5
-    R1 --> F1
-    R1 --> P1
-    R2 --> F2
-    R2 --> W2
-    R2 --> P2
-    R3 --> F4
-    R3 --> P3
+```d2
+# Diagram 56
+direction: down
+
+F1: "BTC ✗" {
+  style.fill: "#fee2e2"
+  style.stroke: "#ef4444"
+}
+F2: "BTC ✗" {
+  style.fill: "#fee2e2"
+  style.stroke: "#ef4444"
+}
+F4: "BTC ✗" {
+  style.fill: "#fee2e2"
+  style.stroke: "#ef4444"
+}
+P1: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+P2: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+P3: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+W2: "BCH ~" {
+  style.fill: "#fef9c3"
+  style.stroke: "#eab308"
+}
+
+P2P: "Peer-to-Peer Electronic Cash 2008"
+R1: "Low Fees"
+R2: "On-Chain Scaling"
+R3: "SPV Verification"
+R4: "UTXO State"
+R5: "PoW Security"
+
+P2P -> R2
+P2P -> R3
+P2P -> R4
+P2P -> R5
+R1 -> F1
+R1 -> P1
+R2 -> F2
+R2 -> W2
+R2 -> P2
+R3 -> F4
+R3 -> P3
 ```
 
 ### Scaling: The Most Critical Test
@@ -90,9 +107,9 @@ These opcodes were **never re-enabled in BTC**. For 16 years, BTC's script has b
 
 ### The Timeline of Restoration
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
+```d2
+# Diagram 57
+# (Empty diagram)
 ```
 
 ### What This Means in Practice
@@ -146,25 +163,29 @@ Chronicle (SV Node v1.2.0, activated April 7, 2026 at block 943,816) went far be
 
 Satoshi's original transaction signing algorithm was replaced by BIP143 in BTC to "fix" transaction malleability. This was a band-aid that changed how signatures commit to transaction data. Chronicle reinstates OTDA as an opt-in via the `CHRONICLE [0x20]` sighash flag:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph pre_chronicle["Pre-Chronicle (BIP143 only)"]
-        HASH1["BIP143 Hash (witness data included)"]
-        SIG1["Signature"]
-        TX1["Transaction Data"]
-        HASH1 --> SIG1
-    end
-    subgraph post_chronicle["Post-Chronicle (BSV)"]
-        HASH2A["BIP143 Hash"]
-        HASH2B["OTDA Hash (original algorithm)"]
-        SIG2A["Signature (legacy)"]
-        SIG2B["Signature (Chronicle)"]
-        TX2["Transaction Data"]
-        TX2 --> HASH2B
-        HASH2A --> SIG2A
-        HASH2B --> SIG2B
-    end
+```d2
+# Diagram 58
+direction: down
+
+pre_chronicle: "Pre-Chronicle (BIP143 only)" {
+  HASH1: "BIP143 Hash (witness data included)"
+  SIG1: "Signature"
+  TX1: "Transaction Data"
+
+  HASH1 -> SIG1
+}
+
+post_chronicle: "Post-Chronicle (BSV)" {
+  HASH2A: "BIP143 Hash"
+  HASH2B: "OTDA Hash (original algorithm)"
+  SIG2A: "Signature (legacy)"
+  SIG2B: "Signature (Chronicle)"
+  TX2: "Transaction Data"
+
+  TX2 -> HASH2B
+  HASH2A -> SIG2A
+  HASH2B -> SIG2B
+}
 ```
 
 ### B. Script Number Expansion
@@ -239,48 +260,79 @@ This remains the only independent, third-party audit comparing Bitcoin implement
 
 ## 7. Summary: The Verdict Is Deterministic
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    C1["No block size cap"]
-    subgraph C1B["BTC ✗"]
-    end
-    subgraph C1V["BSV ✓"]
-    end
-    C2["Full opcode set"]
-    subgraph C2B["BCH ~"]
-    end
-    subgraph C2V["BSV ✓"]
-    end
-    C3["Original Transaction Digest"]
-    subgraph C3V["BSV ✓"]
-    end
-    C4["Sub-cent fees"]
-    subgraph C4B["BCH ~"]
-    end
-    subgraph C4V["BSV ✓"]
-    end
-    C5["On-chain scaling"]
-    subgraph C5V["BSV ✓"]
-    end
-    C6["Protocol stability"]
-    subgraph C6V["BSV ✓"]
-    end
-    C7["SPV for light clients"]
-    subgraph C7V["BSV ✓"]
-    end
-    subgraph S["BTC 0/7  BCH 2/7  BSV 7/7"]
-    end
-    C1 --> C1V
-    C1B --> S
-    C2 --> C2V
-    C2B --> S
-    C3V --> S
-    C4 --> C4V
-    C4B --> S
-    C5V --> S
-    C6V --> S
-    C7V --> S
+```d2
+# Diagram 59
+direction: down
+
+C1: "No block size cap"
+C1B: "BTC ✗" {
+  style.fill: "#fee2e2"
+  style.stroke: "#ef4444"
+}
+C1V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C2: "Full opcode set"
+C2B: "BCH ~" {
+  style.fill: "#fef9c3"
+  style.stroke: "#eab308"
+}
+C2V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C3: "Original Transaction Digest"
+C3V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C4: "Sub-cent fees"
+C4B: "BCH ~" {
+  style.fill: "#fef9c3"
+  style.stroke: "#eab308"
+}
+C4V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C5: "On-chain scaling"
+C5V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C6: "Protocol stability"
+C6V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+C7: "SPV for light clients"
+C7V: "BSV ✓" {
+  style.fill: "#dcfce7"
+  style.stroke: "#22c55e"
+}
+
+S: "BTC 0/7  BCH 2/7  BSV 7/7" {
+  style.fill: "#eff6ff"
+  style.stroke: "#3b82f6"
+}
+
+C1 -> C1V
+C1B -> S
+C2 -> C2V
+C2B -> S
+C3V -> S
+C4 -> C4V
+C4B -> S
+C5V -> S
+C6V -> S
+C7V -> S
 ```
 
 There is no ambiguity. The criteria are measurable. The data is public. The restoration is complete as of April 7, 2026.

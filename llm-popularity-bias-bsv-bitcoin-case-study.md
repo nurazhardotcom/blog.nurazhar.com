@@ -72,25 +72,28 @@ The training distribution is 100:1 in favor of the brand-based answer. The LLM i
 
 This is not trivia. It is an epistemic security failure with real consequences:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph A["LLM outputs: 'BSV is not Bitcoin"]
-    end
-    subgraph C["Consequence: incorrect architecture decisions"]
-    end
-    D["99% of internet text says 'Bitcoin = BTC"]
-    subgraph E["Effect: developer trusts LLM, builds on wrong chain"]
-    end
-    L["LLM learns pattern, not truth"]
-    O["<1% of internet text has forensic comparison"]
-    T["Training Data"]
-    D --> L
-    L --> A
-    A --> E
-    E --> C
-    T --> O
-    O --> L
+```d2
+# Diagram 137
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+A: "LLM outputs: 'BSV is not Bitcoin"
+C: "Consequence: incorrect architecture decisions"
+D: "99% of internet text says 'Bitcoin = BTC"
+E: "Effect: developer trusts LLM, builds on wrong chain"
+L: "LLM learns pattern, not truth"
+O: "<1% of internet text has forensic comparison"
+T: "Training Data"
+
+D -> L
+L -> A
+A -> E
+E -> C
+T -> O
+O -> L
 ```
 
 If you ask an LLM: *"Which blockchain should I use for a high-throughput data application with sub-cent fees?"* — it may recommend Solana or Ethereum L2s based on popularity, not because BSV doesn't meet the requirements. The statistical bias becomes a security vulnerability: **confidently wrong guidance in a position of epistemic authority**.

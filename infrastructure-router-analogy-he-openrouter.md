@@ -36,23 +36,25 @@ Both companies built a **commodity router** at their layer:
 
 Both benefit from a **cross-side network effect**:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph Title["Cross-Side Network Effect"]
-    end
-    subgraph Router["The Router\n(HE / OpenRouter)"]
-    end
-    subgraph Producers["Producers\n(Networks / Model Providers)"]
-    end
-    subgraph Consumers["Consumers\n(ISPs / Developers)"]
-    end
-    Producers -->|"More producers →\nbetter selection"| Router
-    Router -->|"Better selection →\nmore consumers"| Consumers
-    Consumers -->|"More consumers →\nmore volume"| Router
-    Router -->|"More volume →\nbetter terms for producers"| Producers
-    subgraph Note["Both sides reinforce each other.\nThe router captures the middle."]
-    end
+```d2
+# Diagram 133
+vars: {
+  d2-config: {
+    theme-id: 200
+  }
+}
+
+Title: "Cross-Side Network Effect"
+Router: "The Router\n(HE / OpenRouter)"
+Producers: "Producers\n(Networks / Model Providers)"
+Consumers: "Consumers\n(ISPs / Developers)"
+
+Producers -> Router: "More producers ->\nbetter selection"
+Router -> Consumers: "Better selection ->\nmore consumers"
+Consumers -> Router: "More consumers ->\nmore volume"
+Router -> Producers: "More volume ->\nbetter terms for producers"
+
+Note: "Both sides reinforce each other.\nThe router captures the middle."
 ```
 
 More networks/providers → more value for consumers → more consumers → more volume → better terms for producers → more providers. The router sits in the middle and captures the spread.

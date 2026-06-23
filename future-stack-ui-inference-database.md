@@ -140,19 +140,24 @@ None of these fully replace a proper backend state machine for complex workflows
 
 The realistic future isn't two layers — it's three, but with inference in the middle:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph UI["UI Layer\n(Browser, Mobile, Voice, Terminal)"]
-    end
-    subgraph Inference["Inference Layer\nLLM + deterministic guards\n+ tool orchestration"]
-    end
-    subgraph DB["Data Layer\nDatabase + Vector Store\n+ Object Store + Cache"]
-    end
-    UI -->|"sends intent"| Inference
-    Inference -->|"tool calls / queries"| DB
-    DB -->|"results"| Inference
-    Inference -->|"response"| UI
+```d2
+# Diagram 89
+direction: down
+
+UI: "UI Layer\n(Browser, Mobile, Voice, Terminal)" {
+  style.fill: "#fafafa"
+}
+Inference: "Inference Layer\nLLM + deterministic guards\n+ tool orchestration" {
+  style.fill: "#fafafa"
+}
+DB: "Data Layer\nDatabase + Vector Store\n+ Object Store + Cache" {
+  style.fill: "#fafafa"
+}
+
+UI -> Inference: "sends intent"
+Inference -> DB: "tool calls / queries"
+DB -> Inference: "results"
+Inference -> UI: "response"
 ```
 
 The inference layer **replaces the traditional backend** but **splits into two paths**:

@@ -53,43 +53,34 @@ The Mandala is a **layered, recursive network** named after the concentric circu
    - Connect to one or more overlay services
    - Validate via Merkle proofs (SPV) — no need to run a full node
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph App1["App / Wallet"]
-    end
-    subgraph App2["App / Wallet"]
-    end
-    subgraph App3["App / Wallet"]
-    end
-    subgraph Overlay1["Token Overlay"]
-    end
-    subgraph Overlay2["Data Index"]
-    end
-    subgraph Core1["Teranode A"]
-    end
-    subgraph Core2["Teranode B"]
-    end
-    subgraph Core3["Teranode C"]
-    end
-    subgraph Edge["Edge Layer (Apps)"]
-    end
-    subgraph Middle["Overlay Layer"]
-    end
-    subgraph Core["Core Layer (Teranodes)\n~1.3 hop internal distance"]
-    end
-    App1 --> Overlay1
-    App2 --> Overlay1
-    App3 --> Overlay2
-    Overlay1 --> Core1
-    Overlay1 --> Core2
-    Overlay2 --> Core2
-    Overlay2 --> Core3
-    Core1 --> Core2
-    Core2 --> Core3
-    Core1 --> Core3
-    Edge --> Middle
-    Middle --> Core
+```d2
+# Diagram 60
+direction: down
+
+App1: "App / Wallet"
+App2: "App / Wallet"
+App3: "App / Wallet"
+Overlay1: "Token Overlay"
+Overlay2: "Data Index"
+Core1: "Teranode A"
+Core2: "Teranode B"
+Core3: "Teranode C"
+Edge: "Edge Layer (Apps)"
+Middle: "Overlay Layer"
+Core: "Core Layer (Teranodes)\n~1.3 hop internal distance"
+
+App1 -> Overlay1
+App2 -> Overlay1
+App3 -> Overlay2
+Overlay1 -> Core1
+Overlay1 -> Core2
+Overlay2 -> Core2
+Overlay2 -> Core3
+Core1 -> Core2
+Core2 -> Core3
+Core1 -> Core3
+Edge -> Middle
+Middle -> Core
 ```
 
 The critical property: **the topology is recursive**. Each overlay can itself contain sub-overlays in the same concentric pattern. This allows the network to scale unboundedly — new layers stack on top without congesting the core.
@@ -100,29 +91,23 @@ The critical property: **the topology is recursive**. Each overlay can itself co
 
 In a Mandala network, any edge node reaches any other node in **at most 2 hops**:
 
-```mermaid
-%%{init: {'theme': 'neutral', 'themeVariables': {'primaryColor': '#f5f5f5', 'primaryTextColor': '#333', 'primaryBorderColor': '#ccc', 'lineColor': '#555', 'secondaryColor': '#e8e8e8', 'tertiaryColor': '#fafafa'}}}%%
-flowchart TD
-    subgraph EdgeA["Edge A\n(Waller)"]
-    end
-    subgraph OverlayA["Overlay"]
-    end
-    subgraph CoreNode["Teranode Core\n(~1.3 hop internal)"]
-    end
-    subgraph OverlayB["Overlay"]
-    end
-    subgraph EdgeB["Edge B\n(App)"]
-    end
-    subgraph Hop1["Hop 1\n(Edge → Core)"]
-    end
-    subgraph Hop2["Hop 2\n(Core → Edge)"]
-    end
-    EdgeA --> OverlayA
-    OverlayA --> CoreNode
-    CoreNode --> OverlayB
-    OverlayB --> EdgeB
-    subgraph Hop1 -> Hop1: ["Hop1 -> Hop1: "]
-    end
+```d2
+# Diagram 61
+direction: down
+
+EdgeA: "Edge A\n(Waller)"
+OverlayA: "Overlay"
+CoreNode: "Teranode Core\n(~1.3 hop internal)"
+OverlayB: "Overlay"
+EdgeB: "Edge B\n(App)"
+Hop1: "Hop 1\n(Edge → Core)"
+Hop2: "Hop 2\n(Core → Edge)"
+
+EdgeA -> OverlayA
+OverlayA -> CoreNode
+CoreNode -> OverlayB
+OverlayB -> EdgeB
+Hop1 -> Hop1: "Hop1 -> Hop1: "
 ```
 
 Broken down:
