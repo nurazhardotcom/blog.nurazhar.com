@@ -1,4 +1,4 @@
-{:aliases {:dev {:extra-paths ["dev"]
-                 :extra-deps {org.babashka/babashka.cli {:mvn/version "1.3.173"}
-                             fabricate-site/fabricate {:local/root "."}}
-           :build {:main-opts ["-m" "site.fabricate.dev"]}}}
+{:deps {hiccup/hiccup {:mvn/version "1.0.5"}}
+ :paths ["src"]
+ :tasks {build {:doc "Build the static site"
+                :task (shell "bb -f src/site/fabricate/dev/dev.clj")}}}

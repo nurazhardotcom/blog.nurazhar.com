@@ -2,11 +2,11 @@ image: alpine:latest
 
 pages:
   stage: deploy
+  before_script:
+    - apk add --no-cache bash curl pandoc
+    - curl -sL https://raw.githubusercontent.com/babashka/babashka/master/install | bash
   script:
-    - mkdir -p public
-    - cp *.md public/
-    - cp -r src public/src
-    - cp bb.edn public/
+    - bb build
   artifacts:
     paths:
       - public/
