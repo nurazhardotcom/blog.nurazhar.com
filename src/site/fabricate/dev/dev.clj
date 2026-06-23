@@ -22,8 +22,12 @@
         sep-idx   (first (keep-indexed (fn [i line] 
                                          (when (= "---" (str/trim line)) i))
                                        lines))
-        meta-lines (if sep-idx (take sep-idx lines) [])
-        body-lines (if sep-idx (drop (inc sep-idx) lines) [])
+        meta-lines (if sep-idx 
+                     (take sep-idx lines) 
+                     (take-while #(re-find #"^(\w[\w\s]*?)\s*:\s*(.*)" %) lines))
+        body-lines (if sep-idx 
+                     (drop (inc sep-idx) lines) 
+                     (drop (count meta-lines) lines))
         body       (str/join "\n" body-lines)]
 
     ;; Parse key: value pairs
@@ -34,7 +38,7 @@
                 acc))
             {:content body
              :slug    (-> file-path io/file .getName
-                          (str/replace #"\.md$" ""))}
+                           (str/replace #"\.md$" ""))}
             meta-lines)))
 
 ;; ─── Markdown to HTML ──────────────────────────────────────────────
