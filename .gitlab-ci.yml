@@ -1,0 +1,23 @@
+# Build site with Fabricate
+build:
+  script: echo "🏗️  Building site with Fabricate..."
+         clojure -M:build
+  artifacts:
+    paths: - public/
+
+# Deploy to GitLab Pages
+pages:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - build
+  script:
+    - echo "🚀 Deploying to GitLab Pages..."
+    - mkdir -p public
+    - cp -r public/. public/
+    - echo "✅ Deploy complete"
+  artifacts:
+    paths:
+      - public/
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
