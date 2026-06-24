@@ -77,7 +77,10 @@ GitHub {
 
 ```d2
 runner -> "VM/Server" -> "Docker Engine" -> Job_Execution
-job -> {checkout, build, test, push_image}
+Job_Execution -> checkout
+Job_Execution -> build
+Job_Execution -> test
+Job_Execution -> push_image
 ```
 
 ### 4. Security Scanning Pipeline

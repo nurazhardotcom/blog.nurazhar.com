@@ -105,15 +105,20 @@
                       [:meta {:name "description" :content description}]
                       [:link {:rel "stylesheet" :href "styles.css"}]
                       [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
-                     [:body
-                      [:nav {:class "nav"}
-                       [:a {:href "index.html" :class "nav-link"} "← Home"]
-                       [:div {:style "display: flex; gap: 12px; align-items: center;"}
-                        [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
-                         "LinkedIn ↗"]
-                        [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
-                         "GitLab ↗"]]]
-                      [:article {:class "post"}
+                      [:body
+                       [:nav {:class "nav"}
+                        [:a {:href "index.html" :class "nav-link"} "← Home"]
+                        [:div {:style "display: flex; gap: 12px; align-items: center;"}
+                         [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
+                                   :title "Toggle dark mode"
+                                   :style "background:none;border:1px solid var(--color-border);color:var(--color-text-secondary);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:0.82rem;font-weight:500;transition:all 0.2s"}
+                          [:span {:class "icon-sun"} "Light"]
+                          [:span {:class "icon-moon"} "Dark"]]
+                         [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
+                          "LinkedIn ↗"]
+                         [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+                          "GitLab ↗"]]]
+                       [:article {:class "post"}
                        [:header {:class "post-header"}
                         [:h1 {:class "post-title"} title]
                         [:div {:class "post-meta"}
@@ -123,8 +128,9 @@
                             (for [t tag-list]
                               [:span {:class "post-tag"} t])])]]
                        [:div {:class "post-content"} "%%RAW_CONTENT%%"]]
-                      [:footer {:class "post-footer"}
-                       [:p "© 2026 nurazhar.com"]]]])]
+                       [:footer {:class "post-footer"}
+                        [:p "© 2026 nurazhar.com"]]
+                       [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n)}var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]]])]
     (let [[before after] (str/split page-html #"%%RAW_CONTENT%%" 2)]
       (str before body-html after))))
 
@@ -142,17 +148,22 @@
      [:meta {:name "description"
              :content "Systems Automation, Identity Governance, and Security Infrastructure."}]
      [:link {:rel "stylesheet" :href "styles.css"}]
-     [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
-    [:body
-     [:nav {:class "nav"}
-      [:div {:class "nav-left"}
-       [:h1 "Nur Azhar"]
-       [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
-      [:div {:style "display: flex; gap: 12px; align-items: center;"}
-       [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
-        "LinkedIn ↗"]
-       [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
-        "GitLab ↗"]]]
+                      [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
+                     [:body
+                      [:nav {:class "nav"}
+                       [:div {:class "nav-left"}
+                        [:h1 "Nur Azhar"]
+                        [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
+                       [:div {:style "display: flex; gap: 12px; align-items: center;"}
+                         [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
+                                   :title "Toggle dark mode"
+                                   :style "background:none;border:1px solid var(--color-border);color:var(--color-text-secondary);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:0.82rem;font-weight:500;transition:all 0.2s"}
+                          [:span {:class "icon-sun"} "Light"]
+                          [:span {:class "icon-moon"} "Dark"]]
+                        [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
+                         "LinkedIn ↗"]
+                        [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+                         "GitLab ↗"]]]
      [:main {:class "post-list"}
       (for [{:keys [title date description slug]} posts]
         [:a {:href (str slug ".html") :class "post-card"}
@@ -161,8 +172,9 @@
           [:time {:datetime date} date]]
          (when description
            [:p {:class "post-card-description"} description])])]
-     [:footer {:class "site-footer"}
-      [:p "© 2026 nurazhar.com"]]]]))
+      [:footer {:class "site-footer"}
+       [:p "© 2026 nurazhar.com"]]
+      [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n)}var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]]]))
 
 ;; ─── Asset Copying ─────────────────────────────────────────────────
 
