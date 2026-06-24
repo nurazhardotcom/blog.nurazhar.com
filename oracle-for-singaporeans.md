@@ -3,6 +3,8 @@ Date: 2026-06-24
 Tags: singapore, ai, governance, policy, glm, singpass, architecture
 Description: Instead of merging WDA and SSG into another bureaucratic layer, Singapore should have built a centralized AI Oracle—forked from GLM 5.2, fronted by Singpass, serving every citizen. Here's why they didn't and why they're wrong.
 
+---
+
 # The Oracle Singapore Needs But Won't Build
 
 They merged WDA and SSG into a new super-bureau. Another committee. Another
