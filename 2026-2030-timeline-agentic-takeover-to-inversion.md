@@ -10,10 +10,7 @@ We are living in the middle of this acceleration. The engineering pipelines for 
 Here is the month-by-month mapping for the rest of this year, followed by the seasonal and annual milestones leading to December 2030.
 
 ```d2
-direction: right
-title: |md
-  # 2026–2030 Acceleration Timeline
-|
+direction: down
 
 2026: 2026 — The Agentic Takeover {
   direction: down
