@@ -230,10 +230,14 @@
     (println "📋 Copying assets...")
     (copy-assets)
 
-    ;; Copy Resume
-    (println "📋 Copying resume...")
-    (io/copy (io/file "/home/nurazhar/Assistant/Lifestyle Design Coach/Job Hunting/Supabase_IT_Systems_Administrator_Resume.pdf")
-             (io/file (str out-dir "/resume.pdf"))))
+    ;; Copy Resume (skip gracefully if file doesn't exist — CI builds won't have it)
+    (let [resume-path "/home/nurazhar/Assistant/Lifestyle Design Coach/Job Hunting/Supabase_IT_Systems_Administrator_Resume.pdf"
+          resume-file (io/file resume-path)]
+      (if (.exists resume-file)
+        (do
+          (println "📋 Copying resume...")
+          (io/copy resume-file (io/file (str out-dir "/resume.pdf"))))
+        (println "⚠️  Resume PDF not found, skipping copy."))))
 
   (println (str "✅ Site built! Output in " out-dir "/")))
 
