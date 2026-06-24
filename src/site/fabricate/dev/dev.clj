@@ -94,28 +94,33 @@
   [{:keys [title date tags description content content-html slug] :as post}]
   (let [processed-content (process-d2-blocks slug content)
         body-html (or content-html (markdown->html processed-content))
+        tag-list   (when tags
+                     (map str/trim (str/split tags #",")))
         page-html (html
                     [:html {:lang "en"}
                      [:head
                       [:meta {:charset "UTF-8"}]
                       [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-                      [:title (str title " - nurazhar.com")]
+                      [:title (str title " — nurazhar.com")]
                       [:meta {:name "description" :content description}]
                       [:link {:rel "stylesheet" :href "styles.css"}]
                       [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
                      [:body
                       [:nav {:class "nav"}
-                       [:a {:href "index.html" :class "nav-link"} "← Home"]]
+                       [:a {:href "index.html" :class "nav-link"} "← Home"]
+                       [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+                        "GitLab ↗"]]
                       [:article {:class "post"}
                        [:header {:class "post-header"}
                         [:h1 {:class "post-title"} title]
                         [:div {:class "post-meta"}
                          [:time {:datetime date} date]
-                         " · "
-                         [:span {:class "post-tags"} tags]]]
+                         (when (seq tag-list)
+                           [:span {:class "post-tags"}
+                            (for [t tag-list]
+                              [:span {:class "post-tag"} t])])]]
                        [:div {:class "post-content"} "%%RAW_CONTENT%%"]]
                       [:footer {:class "post-footer"}
-                       [:hr]
                        [:p "© 2026 nurazhar.com"]]]])]
     (let [[before after] (str/split page-html #"%%RAW_CONTENT%%" 2)]
       (str before body-html after))))
@@ -137,18 +142,20 @@
      [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
     [:body
      [:nav {:class "nav"}
-      [:h1 {:style "margin:0; font-size:1.4em;"} "Nur Azhar"]]
-     [:p {:style "color:#666; margin-bottom:20px;"}
-      "Singaporean Malay Technical Blog"]
-     [:main
+      [:div {:class "nav-left"}
+       [:h1 "Nur Azhar"]
+       [:p {:class "tagline"} "Singaporean Malay Technical Blog"]]
+      [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+       "GitLab ↗"]]
+     [:main {:class "post-list"}
       (for [{:keys [title date description slug]} posts]
-        [:article {:class "post" :style "padding:20px;"}
-         [:h2 {:style "font-size:1.2em; margin:0 0 5px 0;"}
-          [:a {:href (str slug ".html") :style "color:#0066cc; text-decoration:none;"} title]]
-         [:div {:class "post-meta"}
+        [:a {:href (str slug ".html") :class "post-card"}
+         [:h2 {:class "post-card-title"} title]
+         [:div {:class "post-card-meta"}
           [:time {:datetime date} date]]
-         [:p {:style "margin-top:8px;"} description]])]
-     [:footer {:style "margin-top:40px; padding-top:20px; border-top:2px solid #e0e0e0; text-align:center; color:#666; font-size:0.9em;"}
+         (when description
+           [:p {:class "post-card-description"} description])])]
+     [:footer {:class "site-footer"}
       [:p "© 2026 nurazhar.com"]]]]))
 
 ;; ─── Asset Copying ─────────────────────────────────────────────────
