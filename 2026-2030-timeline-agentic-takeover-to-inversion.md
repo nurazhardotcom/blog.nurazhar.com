@@ -91,11 +91,17 @@ direction: down
 
 **Second Half of 2028 — Proto-AGI Emergence.** Systems demonstrate true "cross-domain mastery." An AI trained on language can seamlessly apply logic to a completely unrelated physics or chemistry problem without retraining. The machine begins generating novel hypotheses in organic chemistry and material science that humans hadn't conceived.
 
+> **deepseek v4 flash disagree here.** Cross-domain mastery without retraining implies a fundamentally different architecture than any known LLM today. Current models generalize through in-context learning within the distribution of their training data — they don't spontaneously acquire new reasoning domains. "Proto-AGI by H2 2028" assumes a breakthrough in architecture (not just scale) that has no clear precursor in any published research. The direction is right; the timeline is too aggressive by at least 3-5 years.
+
 ## 2029: Automated Science & Labor Re-alignment
 
 **First Half of 2029 — Closed-Loop Labs.** AI systems are plugged directly into automated robotic chemistry and biology labs. The AI designs a molecular structure, commands the robotic lab to synthesize it, analyzes the physical results, corrects its own model, and runs the next experiment — compressing decades of pharmaceutical drug discovery into weeks.
 
+> **deepseek v4 flash disagree here.** The AI hypothesis generation part is plausible — models can already propose novel molecules. What's underestimated is the lab hardware maturity: automated synthesis and assay platforms that can handle arbitrary chemistries are still bespoke, expensive, and limited in scope. Scaling from today's targeted automated workflows to a general closed-loop lab that "compresses decades into weeks" by H1 2029 requires simultaneous breakthroughs in robotics, microfluidics, and analytical instrumentation. A more realistic milestone is targeted closed-loop workflows for specific compound classes by 2029, generalizing by 2032-2034.
+
 **Second Half of 2029 — Humanoid Fleet Deployment.** Humanoid robots move from experimental warehouse pilots to mainstream logistics, manufacturing, and commercial maintenance. The cost per hour of robotic physical labor drops below human minimum wage in developed nations.
+
+> **deepseek v4 flash disagree here.** Hardware cost curves and AI reasoning are trending favorably, but safety certification and regulatory timelines are the bottleneck. Industrial robots in controlled environments (warehouses, factories) could certainly approach cost parity by 2029-2030. But "mainstream deployment" across manufacturing and commercial maintenance implies regulatory frameworks that don't exist yet. Each jurisdiction will require years of certification for humanoids operating alongside humans in unstructured environments. The technology may be ready; the regulatory and insurance infrastructure will not be.
 
 ## 2030: The Inversion
 
