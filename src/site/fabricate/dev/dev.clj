@@ -108,8 +108,10 @@
                      [:body
                       [:nav {:class "nav"}
                        [:a {:href "index.html" :class "nav-link"} "← Home"]
-                       [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
-                        "GitLab ↗"]]
+                       [:div {:style "display: flex; gap: 12px; align-items: center;"}
+                        [:a {:href "resume.pdf" :target "_blank" :class "gitlab-link" :title "Resume"} "Resume PDF"]
+                        [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+                         "GitLab ↗"]]]
                       [:article {:class "post"}
                        [:header {:class "post-header"}
                         [:h1 {:class "post-title"} title]
@@ -137,16 +139,18 @@
      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
      [:title "Nur Azhar — Blog"]
      [:meta {:name "description"
-             :content "Singaporean Malay Technical Blog"}]
+             :content "Systems Automation, Identity Governance, and Security Infrastructure."}]
      [:link {:rel "stylesheet" :href "styles.css"}]
      [:link {:rel "stylesheet" :href "d2-mobile.css"}]]
     [:body
      [:nav {:class "nav"}
       [:div {:class "nav-left"}
        [:h1 "Nur Azhar"]
-       [:p {:class "tagline"} "Singaporean Malay Technical Blog"]]
-      [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
-       "GitLab ↗"]]
+       [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
+      [:div {:style "display: flex; gap: 12px; align-items: center;"}
+       [:a {:href "resume.pdf" :target "_blank" :class "gitlab-link" :title "Resume"} "Resume PDF"]
+       [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
+        "GitLab ↗"]]]
      [:main {:class "post-list"}
       (for [{:keys [title date description slug]} posts]
         [:a {:href (str slug ".html") :class "post-card"}
@@ -224,7 +228,12 @@
 
     ;; Copy static assets
     (println "📋 Copying assets...")
-    (copy-assets))
+    (copy-assets)
+
+    ;; Copy Resume
+    (println "📋 Copying resume...")
+    (io/copy (io/file "/home/nurazhar/Assistant/Lifestyle Design Coach/Job Hunting/Supabase_IT_Systems_Administrator_Resume.pdf")
+             (io/file (str out-dir "/resume.pdf"))))
 
   (println (str "✅ Site built! Output in " out-dir "/")))
 
