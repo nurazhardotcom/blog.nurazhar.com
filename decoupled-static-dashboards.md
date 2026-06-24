@@ -56,7 +56,7 @@ In `bb.edn`, we read both the HTML template and the JSON file:
   (spit "public/kanban.html" rendered))
 ```
 
-Inside [templates/kanban.html](https://github.com/nurazhardotcom/blog.nurazhar.com/blob/main/templates/kanban.html), a simple script parses the pre-injected JSON variable and maps the elements to their CSS columns on the fly:
+Inside [templates/kanban.html](https://gitlab.com/nurazhar/blog.nurazhar.com/blob/main/templates/kanban.html), a simple script parses the pre-injected JSON variable and maps the elements to their CSS columns on the fly:
 
 ```javascript
 (function() {

@@ -7,7 +7,7 @@ Description: How to implement threshold-based payout batching using many-to-one 
 
 In a "No-Backend" architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key. 
 
-Recently, while building **[lagu-lagu](https://github.com/nurazhardotcom/lagu-lagu)**—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: **notary fee bloat**. 
+Recently, while building **[lagu-lagu](https://gitlab.com/nurazhar/lagu-lagu)**—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: **notary fee bloat**. 
 
 If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for *every single transaction* eats up all the artist's micro-liquidity in network transaction fees. 
 

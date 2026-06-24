@@ -57,4 +57,4 @@ We are conditioned to default to the web for everything. But for local-first uti
 
 Writing a native desktop app in Clojure is faster, runs better, and is vastly more stable. If your local tools are acting up because of browser quirks, stop trying to fix the JS bundle. Just delete it.
 
-*Codebase:* **[headhunter-agent](https://github.com/nurazhardotcom/headhunter-agent)**
+*Codebase:* **[headhunter-agent](https://gitlab.com/nurazhar/headhunter-agent)**

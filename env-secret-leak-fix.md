@@ -115,5 +115,5 @@ Never trust an allowlist alone. Secrets hide in filenames, not just extensions. 
 
 ---
 
-Fix merged: [PR #2](https://github.com/nurazhardotcom/lithan-dev-sandbox/pull/2) ·
+Fix merged: [PR #2](https://gitlab.com/nurazhar/lithan-dev-sandbox/pull/2) ·
 Stack: Babashka Clojure · Zero deps · Plain HTML/CSS blog

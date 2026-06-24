@@ -109,7 +109,8 @@
                       [:nav {:class "nav"}
                        [:a {:href "index.html" :class "nav-link"} "← Home"]
                        [:div {:style "display: flex; gap: 12px; align-items: center;"}
-                        [:a {:href "resume.pdf" :target "_blank" :class "gitlab-link" :title "Resume"} "Resume PDF"]
+                        [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
+                         "LinkedIn ↗"]
                         [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
                          "GitLab ↗"]]]
                       [:article {:class "post"}
@@ -148,7 +149,8 @@
        [:h1 "Nur Azhar"]
        [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
       [:div {:style "display: flex; gap: 12px; align-items: center;"}
-       [:a {:href "resume.pdf" :target "_blank" :class "gitlab-link" :title "Resume"} "Resume PDF"]
+       [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
+        "LinkedIn ↗"]
        [:a {:href "https://gitlab.com/nurazhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "GitLab"}
         "GitLab ↗"]]]
      [:main {:class "post-list"}
@@ -228,16 +230,7 @@
 
     ;; Copy static assets
     (println "📋 Copying assets...")
-    (copy-assets)
-
-    ;; Copy Resume (skip gracefully if file doesn't exist — CI builds won't have it)
-    (let [resume-path "/home/nurazhar/Assistant/Lifestyle Design Coach/Job Hunting/Supabase_IT_Systems_Administrator_Resume.pdf"
-          resume-file (io/file resume-path)]
-      (if (.exists resume-file)
-        (do
-          (println "📋 Copying resume...")
-          (io/copy resume-file (io/file (str out-dir "/resume.pdf"))))
-        (println "⚠️  Resume PDF not found, skipping copy."))))
+    (copy-assets))
 
   (println (str "✅ Site built! Output in " out-dir "/")))
 

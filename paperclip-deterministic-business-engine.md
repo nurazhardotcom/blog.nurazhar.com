@@ -167,4 +167,4 @@ All 33 tests pass with 54 assertions:
 | playbook | 6 | Contract validation, schema enforcement, immutable contracts |
 | attention | 4 | Risk scoring, triage lanes, escalation thresholds |
 
-The engine is at [github.com/nurazhardotcom/paperclip-clj](https://github.com/nurazhardotcom/paperclip-clj). Next step: deploy for one paying client and prove the loop closes.
+The engine is at [gitlab.com/nurazhar/paperclip-clj](https://gitlab.com/nurazhar/paperclip-clj). Next step: deploy for one paying client and prove the loop closes.

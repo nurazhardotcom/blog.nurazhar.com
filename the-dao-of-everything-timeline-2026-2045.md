@@ -288,7 +288,7 @@ The endpoint is not AI takeover. It is not human obsolescence. It is **humans fi
 
 ## Connection to President DAO
 
-[President DAO](https://github.com/nurazhardotcom/president-dao) is a reference implementation for Phase 3-4 — Swiss-model rotating AI presidency with quadratic voting, futarchy, and BSV settlement. The constitution, architecture, and smart contracts are open source and live on GitHub.
+[President DAO](https://gitlab.com/nurazhar/president-dao) is a reference implementation for Phase 3-4 — Swiss-model rotating AI presidency with quadratic voting, futarchy, and BSV settlement. The constitution, architecture, and smart contracts are open source and live on GitHub.
 
 *This is the DAO of Everything. We are building it one phase at a time.*
 

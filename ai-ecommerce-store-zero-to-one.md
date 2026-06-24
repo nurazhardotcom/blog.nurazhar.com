@@ -7,7 +7,7 @@ Description: An end-to-end walkthrough of SmartShop - a Django REST + React + Go
 
 A user clicks **Buy** on a 4K Smart TV. Instantly, the storefront doesn't just suggest a soundbar - it inspects their previous purchase of a laptop and surfaces a portable solar charger as a complement. That intent-aware jump from rule-based recommendations to LLM-shaped suggestions is the heart of this build.
 
-This post is the full journey of **SmartShop**, our reference storefront. Everything you read about here lives in the public repo [github.com/nurazhardotcom/lithan_smartshop](https://github.com/nurazhardotcom/lithan_smartshop). Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.
+This post is the full journey of **SmartShop**, our reference storefront. Everything you read about here lives in the public repo [gitlab.com/nurazhar/lithan_smartshop](https://gitlab.com/nurazhar/lithan_smartshop). Code, branches, configs, demo screenshots, and a one-liner to bring the whole stack up.
 
 > Goal of the post: by the end, you should be able to fork the repo, paste a Gemini key, and demo the entire flow to a stakeholder in under a minute.
 
@@ -1177,7 +1177,7 @@ This is the complete wiring diagram. Every arrow is a real code path.
 - **The cheapest UX win was the "method" label.** Truth on the screen builds more trust than any marketing banner.
 - **The OpenAI key field is dead code - for now.** Leave the seam, don't pretend it's wired.
 
-The full source: [github.com/nurazhardotcom/lithan_smartshop](https://github.com/nurazhardotcom/lithan_smartshop).
+The full source: [gitlab.com/nurazhar/lithan_smartshop](https://gitlab.com/nurazhar/lithan_smartshop).
 
 Bring your own Gemini key, run `docker compose up --build`, and try the _"Analyse with AI"_ chip on the 4K Smart TV. The rest will look after itself.
 
@@ -1221,4 +1221,4 @@ These are intentional - they power the one-click demo flow that the talk hinges 
 
 The architecture narrative (Django REST + React + Vite + Gemini), the AI cascade (history check -> Gemini cascade -> category fallback), the `difflib.get_close_matches` hallucination-mapper, the model fallback chain (`gemma-2-27b` -> `gemini-1.5-flash` -> ...), the Docker topology, and the open-source release checklist shape - all of that is still correct. What the audit forced was the operational stance: configuration was a precondition, not an ideal. The post captures the shape; the remediations make the shape deployable.
 
-Full source lives at [github.com/nurazhardotcom/lithan_smartshop](https://github.com/nurazhardotcom/lithan_smartshop); live security posture lives in its README under "Security Notes for Reviewers".
+Full source lives at [gitlab.com/nurazhar/lithan_smartshop](https://gitlab.com/nurazhar/lithan_smartshop); live security posture lives in its README under "Security Notes for Reviewers".

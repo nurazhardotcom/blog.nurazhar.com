@@ -137,4 +137,4 @@ Building `bsv-clj` reinforced my belief that **the data model is the program**.
 
 By stripping away the bloat of mutable state, heavy frameworks, and shifting protocols, I was able to build a portfolio-quality blockchain toolkit in under 2,500 lines of Clojure. It serves as both a stable toolkit for blockchain protocol research and a demonstration of Clojure's data-oriented design.
 
-You can inspect the codebase and try it yourself at: **[github.com/nurazhardotcom/bsv-clj](https://github.com/nurazhardotcom/bsv-clj)**.
+You can inspect the codebase and try it yourself at: **[gitlab.com/nurazhar/bsv-clj](https://gitlab.com/nurazhar/bsv-clj)**.

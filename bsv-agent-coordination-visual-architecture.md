@@ -298,6 +298,6 @@ VerifyAudit -> Report
 | Testnet API | Bitails API | — |
 | Runtime | Clojure on JVM | — |
 
-The full architecture page with interactive diagrams, all 9 module diagrams, and the complete business model breakdown is available in the repository's [architecture.html](https://github.com/nurazhardotcom/bsv-agent-coordination).
+The full architecture page with interactive diagrams, all 9 module diagrams, and the complete business model breakdown is available in the repository's [architecture.html](https://gitlab.com/nurazhar/bsv-agent-coordination).
 
 99 tests. 246 assertions. 0 failures. 9 modules. One coordination layer for sovereign agent commerce.

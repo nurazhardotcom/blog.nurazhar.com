@@ -721,7 +721,7 @@ The protocol is:
 
 The specification and implementation are part of the headhunter-agent project, which is MIT-licensed open source.
 
-For the full protocol specification, including detailed message formats, schema definitions, and the complete Clojure implementation, see the repository at [github.com/nurazhardotcom/headhunter-agent](https://github.com/nurazhardotcom/headhunter-agent).
+For the full protocol specification, including detailed message formats, schema definitions, and the complete Clojure implementation, see the repository at [gitlab.com/nurazhar/headhunter-agent](https://gitlab.com/nurazhar/headhunter-agent).
 
 ```d2
 direction: down

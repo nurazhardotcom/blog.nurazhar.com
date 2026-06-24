@@ -288,4 +288,4 @@ The structured data doesn't guarantee ranking or citation. But without it, the m
 
 ---
 
-*This blog runs on [quickblog](https://github.com/borkdude/quickblog) + [Babashka](https://babashka.org/), deployed to GitHub Pages. Source code at [github.com/nurazhardotcom/blog.nurazhar.com](https://github.com/nurazhardotcom/blog.nurazhar.com).*
+*This blog runs on [quickblog](https://github.com/borkdude/quickblog) + [Babashka](https://babashka.org/), deployed to GitHub Pages. Source code at [gitlab.com/nurazhar/blog.nurazhar.com](https://gitlab.com/nurazhar/blog.nurazhar.com).*

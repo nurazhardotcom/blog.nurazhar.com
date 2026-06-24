@@ -19,7 +19,7 @@ git push origin main
 
 ```
 remote: Invalid username or token.
-fatal: Authentication failed for 'https://github.com/nurazhardotcom/blog.nurazhar.com.git/'
+fatal: Authentication failed for 'https://gitlab.com/nurazhar/blog.nurazhar.com.git/'
 ```
 
 A simple push to a repo. Should take 2 seconds. Instead, it opened a can of worms.

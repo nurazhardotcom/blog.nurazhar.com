@@ -39,7 +39,7 @@ Built **agent-bond** — a complete programmatic insurance platform for AI agent
 - 41 tests, 106 assertions, all passing
 - README styled as corgi.insure landing page
 
-All this in Clojure, consistent with the [bsv-clj](https://github.com/nurazhardotcom/bsv-clj) CLOB overlay.
+All this in Clojure, consistent with the [bsv-clj](https://gitlab.com/nurazhar/bsv-clj) CLOB overlay.
 
 ### Fixes
 
@@ -48,7 +48,7 @@ All this in Clojure, consistent with the [bsv-clj](https://github.com/nurazhardo
 
 ### Curation
 
-Updated [original-bitcoin-awesome](https://github.com/nurazhardotcom/original-bitcoin-awesome) with ~40 new entries across the bopen.io stack, Babbage stack, prof-faustus repos, Rúnar compiler, and Traceport. Added new sections: Identity & Wallets, Payment Channels, Accounting & Audit.
+Updated [original-bitcoin-awesome](https://gitlab.com/nurazhar/original-bitcoin-awesome) with ~40 new entries across the bopen.io stack, Babbage stack, prof-faustus repos, Rúnar compiler, and Traceport. Added new sections: Identity & Wallets, Payment Channels, Accounting & Audit.
 
 ### Housekeeping
 

@@ -5,7 +5,7 @@ Description: The process, criteria, and research methodology behind original-bit
 
 ---
 
-[original-bitcoin-awesome](https://github.com/nurazhardotcom/original-bitcoin-awesome) is a curated list of projects, tools, and infrastructure built on the original Bitcoin protocol (BSV). It started as a simple README. It has grown to 216+ lines covering nodes, SDKs, wallets, smart contracts, identity, payment channels, accounting, and agent infrastructure.
+[original-bitcoin-awesome](https://gitlab.com/nurazhar/original-bitcoin-awesome) is a curated list of projects, tools, and infrastructure built on the original Bitcoin protocol (BSV). It started as a simple README. It has grown to 216+ lines covering nodes, SDKs, wallets, smart contracts, identity, payment channels, accounting, and agent infrastructure.
 
 This post explains how it is curated.
 
@@ -70,7 +70,7 @@ Some projects are deliberately omitted:
 
 ## How to Add a Project
 
-The list accepts PRs and issues with a simple bar: demonstrate 2026 activity. Open a PR or issue at `github.com/nurazhardotcom/original-bitcoin-awesome`.
+The list accepts PRs and issues with a simple bar: demonstrate 2026 activity. Open a PR or issue at `gitlab.com/nurazhar/original-bitcoin-awesome`.
 
 ---
 

@@ -10,7 +10,7 @@ Description: Comprehensive security and leakage scan across all 18 GitHub reposi
 **Date:** 2026-06-22
 **Scope:** 18 repositories (~2,775 files, ~438K LOC)
 **Tools used:**
-- [pdpa-sg-clj](https://github.com/nurazhardotcom/pdpa-sg-clj) — PII/secret/NRIC scanner (critical: NRIC, SG phone, email; high: AWS keys, Stripe, GitHub tokens, private keys; medium: passwords, secrets)
+- [pdpa-sg-clj](https://gitlab.com/nurazhar/pdpa-sg-clj) — PII/secret/NRIC scanner (critical: NRIC, SG phone, email; high: AWS keys, Stripe, GitHub tokens, private keys; medium: passwords, secrets)
 - **trufflehog** — git-history secret scanning
 - **detect-secrets (Yelp)** — entropy-based secret detection
 - **npm audit** — Node.js dependency vulnerability scanner

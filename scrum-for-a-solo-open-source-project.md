@@ -7,7 +7,7 @@ Description: Applying the 2020 Scrum Guide to a solo open-source Clojure project
 
 I'm taking the **Agile Project Management** module (PDWD-APM-0226) at Lithan Academy as part of my SCTP Professional Diploma in Full Stack Web Development. This post is the practical half of what I'm learning — applying Scrum to a real project I'm building alongside class.
 
-The project is [**Butler**](https://github.com/nurazhardotcom/butler) — a personal AI butler written in Clojure/Babashka. Think Hermes Agent (the #1 app on OpenRouter by token volume) but rebuilt from scratch in Clojure so I control the endpoints, the data, and the architecture. No vendor gatekeeping what models I can use.
+The project is [**Butler**](https://gitlab.com/nurazhar/butler) — a personal AI butler written in Clojure/Babashka. Think Hermes Agent (the #1 app on OpenRouter by token volume) but rebuilt from scratch in Clojure so I control the endpoints, the data, and the architecture. No vendor gatekeeping what models I can use.
 
 This post walks through: Scrum accountabilities in a solo context, the Product Backlog, how Sprint events work when you're a team of one, and the license choice for an open-source agent project.
 
@@ -15,7 +15,7 @@ This post walks through: Scrum accountabilities in a solo context, the Product B
 
 ## The Project
 
-Butler is a full rewrite of Hermes Agent capabilities in **Clojure/Babashka** — MIT licensed at [github.com/nurazhardotcom/butler](https://github.com/nurazhardotcom/butler). It started as `financial-butler` (a rule engine for "can I afford this?"), but the Sprint 1 review made it clear: incremental improvement wasn't going to close the gap. The rewrite went live on 22 Jun 2026 with all core subsystems in place.
+Butler is a full rewrite of Hermes Agent capabilities in **Clojure/Babashka** — MIT licensed at [gitlab.com/nurazhar/butler](https://gitlab.com/nurazhar/butler). It started as `financial-butler` (a rule engine for "can I afford this?"), but the Sprint 1 review made it clear: incremental improvement wasn't going to close the gap. The rewrite went live on 22 Jun 2026 with all core subsystems in place.
 
 The architecture is organized around Hermes Agent's key differentiators — the self-improving execution loop, persistent memory, and multi-provider routing:
 
@@ -201,4 +201,4 @@ The Scrum framework isn't cargo cult — it's a feedback loop. Even for one pers
 
 ---
 
-*Built with [Babashka](https://babashka.org/) and the 2020 Scrum Guide. Course: PDWD-APM-0226, Lithan Academy. Repo: [github.com/nurazhardotcom/butler](https://github.com/nurazhardotcom/butler)*
+*Built with [Babashka](https://babashka.org/) and the 2020 Scrum Guide. Course: PDWD-APM-0226, Lithan Academy. Repo: [gitlab.com/nurazhar/butler](https://gitlab.com/nurazhar/butler)*

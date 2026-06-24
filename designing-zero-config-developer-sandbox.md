@@ -9,7 +9,7 @@ Starting a transition into technology in your 40s is incredibly courageous, but 
 
 If a student gets stuck on an environment installation error, their confidence can be crushed before they even write their first line of code.
 
-To solve this for my classmates at **Lithan Academy**, I built **[lithan-dev-sandbox](https://github.com/nurazhardotcom/lithan-dev-sandbox)**—a zero-configuration, zero-administrator local development workspace that bootstraps a full React + Django environment natively on Windows 11 in a single click.
+To solve this for my classmates at **Lithan Academy**, I built **[lithan-dev-sandbox](https://gitlab.com/nurazhar/lithan-dev-sandbox)**—a zero-configuration, zero-administrator local development workspace that bootstraps a full React + Django environment natively on Windows 11 in a single click.
 
 Here is a breakdown of the design philosophy, security model, and automation architecture of the sandbox.
 
@@ -184,4 +184,4 @@ Supporting adult learners is about more than giving them tutorials; it is about 
 
 If you are a student, educator, or mentor looking to see how the system is put together, you can inspect the code directly on GitHub:
 
-👉 **[github.com/nurazhardotcom/lithan-dev-sandbox](https://github.com/nurazhardotcom/lithan-dev-sandbox)**
+👉 **[gitlab.com/nurazhar/lithan-dev-sandbox](https://gitlab.com/nurazhar/lithan-dev-sandbox)**

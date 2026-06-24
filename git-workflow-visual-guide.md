@@ -38,7 +38,7 @@ Local: "~/Assistant/" {
   RS: "research/"
 }
 
-GitHub: "github.com/nurazhardotcom" {
+GitHub: "gitlab.com/nurazhar" {
   style.fill: "#fafafa"
   R1: "aur-audit"
   R2: "blog.nurazhar.com"
@@ -79,7 +79,7 @@ Local: "~/Assistant/github/bsv-de-tracker/" {
   W: "edit files"
 }
 
-Remote: "github.com/nurazhardotcom/bsv-de-tracker" {
+Remote: "gitlab.com/nurazhar/bsv-de-tracker" {
   style.fill: "#fafafa"
   GH: "GitHub remote"
 }
@@ -100,7 +100,7 @@ When you clone a repo you don't own, you need two remotes — `origin` (your for
 # Diagram 104
 direction: down
 
-YourFork: "github.com/nurazhardotcom/arcade-teranode" {
+YourFork: "gitlab.com/nurazhar/arcade-teranode" {
   style.fill: "#fafafa"
   ORIGIN: "origin (your fork)"
 }

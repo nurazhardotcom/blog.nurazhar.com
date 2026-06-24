@@ -245,4 +245,4 @@ PUBLIC  lithan-dev-sandbox
 
 ---
 
-*Written at 2:00 AM because I couldn't sleep thinking about this. The Mermaid diagrams render on GitHub natively — if you're reading this in a viewer that doesn't support Mermaid, the source is in the [blog repo](https://github.com/nurazhardotcom/blog.nurazhar.com).*
+*Written at 2:00 AM because I couldn't sleep thinking about this. The Mermaid diagrams render on GitHub natively — if you're reading this in a viewer that doesn't support Mermaid, the source is in the [blog repo](https://gitlab.com/nurazhar/blog.nurazhar.com).*

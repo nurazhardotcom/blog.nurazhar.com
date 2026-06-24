@@ -664,7 +664,7 @@ If you have a project that handles personal data:
 
 ```bash
 # 1. Get the toolkit
-git clone https://github.com/nurazhardotcom/pdpa-sg-clj
+git clone https://gitlab.com/nurazhar/pdpa-sg-clj
 
 # 2. Drop the checklist + 7 templates into your project
 cd pdpa-sg-clj
@@ -724,9 +724,9 @@ Throw it at any private project you're about to push to a Singapore user. If you
 
 ### Links
 
-- **Repo:** <https://github.com/nurazhardotcom/pdpa-sg-clj>
+- **Repo:** <https://gitlab.com/nurazhar/pdpa-sg-clj>
 - **License:** MIT
-- **Roadmap & issues:** <https://github.com/nurazhardotcom/pdpa-sg-clj/issues>
+- **Roadmap & issues:** <https://gitlab.com/nurazhar/pdpa-sg-clj/issues>
 
 If you ship something on top — a `bb audit` integration, a new policy template, a Mermaid diagram for an obligation — open a PR. Compliance-by-read should be a public conversation, not a paid service.
 

@@ -60,4 +60,4 @@ Added `test_bulk_archive_sessions` and `test_bulk_unarchive_sessions` in `tests/
 ## Links
 
 - [Issue #48843](https://github.com/NousResearch/hermes-agent/issues/48843)
-- [PR #2](https://github.com/nurazhardotcom/hermes-agent/pull/2)
+- [PR #2](https://gitlab.com/nurazhar/hermes-agent/pull/2)

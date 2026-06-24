@@ -257,7 +257,7 @@ Or a `systemd` timer for more control. The Babashka binary starts fast enough th
 
 ## Links
 
-- **Source:** [sol-de-tracker](https://github.com/nurazhardotcom/sol-de-tracker) (original Python)
+- **Source:** [sol-de-tracker](https://gitlab.com/nurazhar/sol-de-tracker) (original Python)
 - **Babashka:** [babashka.org](https://babashka.org/)
 - **CoinGecko API:** [coingecko.com/api](https://www.coingecko.com/en/api)
 - **quickblog:** [github.com/borkdude/quickblog](https://github.com/borkdude/quickblog) (this blog's engine)

@@ -11,7 +11,7 @@ The thing is, I didn't know that at first. The error output from `paru` was nois
 
 ## The Tool That Made It Obvious
 
-I used [aur-audit](https://github.com/nurazhardotcom/aur-audit) — a tool I wrote specifically for this kind of situation. You point it at your AUR package repo, and it tells you exactly what's wrong.
+I used [aur-audit](https://gitlab.com/nurazhar/aur-audit) — a tool I wrote specifically for this kind of situation. You point it at your AUR package repo, and it tells you exactly what's wrong.
 
 The output was surgical:
 
@@ -57,4 +57,4 @@ The audit approach: check before you build, not after it fails.
 
 ---
 
-*Running CachyOS (Arch-based). AUR helper: `paru`. The `aur-audit` tool is on [GitHub](https://github.com/nurazhardotcom/aur-audit).*
+*Running CachyOS (Arch-based). AUR helper: `paru`. The `aur-audit` tool is on [GitHub](https://gitlab.com/nurazhar/aur-audit).*
