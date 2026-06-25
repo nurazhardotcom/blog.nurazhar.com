@@ -110,8 +110,7 @@
                         [:a {:href "index.html" :class "nav-link"} "← Home"]
                         [:div {:style "display: flex; gap: 12px; align-items: center;"}
                          [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
-                                   :title "Toggle dark mode"
-                                   :style "background:none;border:1px solid var(--color-border);color:var(--color-text-secondary);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:0.82rem;font-weight:500;transition:all 0.2s"}
+                                   :title "Toggle dark mode"}
                           [:span {:class "icon-sun"} "Light"]
                           [:span {:class "icon-moon"} "Dark"]]
                          [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
@@ -156,8 +155,7 @@
                         [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
                        [:div {:style "display: flex; gap: 12px; align-items: center;"}
                          [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
-                                   :title "Toggle dark mode"
-                                   :style "background:none;border:1px solid var(--color-border);color:var(--color-text-secondary);cursor:pointer;padding:6px 10px;border-radius:6px;font-size:0.82rem;font-weight:500;transition:all 0.2s"}
+                                   :title "Toggle dark mode"}
                           [:span {:class "icon-sun"} "Light"]
                           [:span {:class "icon-moon"} "Dark"]]
                         [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}

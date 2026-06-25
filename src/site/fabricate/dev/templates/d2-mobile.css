@@ -3,7 +3,7 @@
 
 @media (max-width: 640px) {
   .d2-diagram {
-    margin: 1.25em -16px;
+    margin: 1.25em calc(-1 * var(--gap));
   }
 
   .d2-diagram img,
