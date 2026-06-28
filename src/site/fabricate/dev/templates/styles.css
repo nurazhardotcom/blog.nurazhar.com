@@ -307,6 +307,18 @@ a:hover {
   border-radius: var(--radius-sm);
   font-size: 0.78rem;
   font-weight: 500;
+  text-decoration: none;
+}
+
+.post-tag:hover {
+  background: var(--color-link);
+  color: white;
+}
+
+.tag-header {
+  margin-bottom: 24px;
+  font-size: 1.3rem;
+  color: var(--color-text-secondary);
 }
 
 /* ─── Post Content Typography ──────────────────────────────────── */
