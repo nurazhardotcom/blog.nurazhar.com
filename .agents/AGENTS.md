@@ -49,3 +49,6 @@ Encountered during past runs. These are the failure modes future agents will hit
 3. **The diff in Deployment Workflow step 1 only applies to template / site-config changes.** For blog-post edits you only touch root-level `*.md` files, not `src/site/fabricate/dev/dev.clj`. Substitute `git diff -- '*.md'` or `git diff <new-post>.md` to confirm the frontmatter and prose before committing.
 
 4. **Both pushes are mandatory, even though the intro line claims origin pushes to both.** In this repo, `origin` is the GitLab remote only — the GitHub mirror is a separate URL. Always run `git push origin main` and `git push git@github.com:nurazhardotcom/nurazhar.com.git main`. Skipping the second push leaves GitHub behind GitLab.
+
+5. **Always use `.html` extension instead of `.md` in relative links to other blog posts** (as resolved in commit `90dc22f`). Although the source files are written in Markdown (`.md`), they are compiled into HTML files in the `public/` directory. Linking to `.md` files will cause broken 404 links on the live site. For example, write `*Related: [Postgres Threshold Batching](./postgres-threshold-batching.html)*` instead of `*Related: [Postgres Threshold Batching](./postgres-threshold-batching.md)*`.
+

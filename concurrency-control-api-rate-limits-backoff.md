@@ -97,3 +97,8 @@ By shifting our optimization from the macro-level (coarse-grained concurrency sc
 ## Takeaway
 
 True velocity in software engineering isn't just about throwing more threads at a problem. It's about designing your threads to be **polite, adaptive citizens** that can automatically pace themselves to match the natural limits of the systems they interact with. Sometimes, slowing down a thread for a few human-scale seconds is the fastest way to speed up the entire pipeline.
+
+---
+
+*Related: [Postgres Threshold Batching](./postgres-threshold-batching.html)*
+
