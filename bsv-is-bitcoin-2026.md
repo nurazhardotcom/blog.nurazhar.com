@@ -341,4 +341,4 @@ There is no ambiguity. The criteria are measurable. The data is public. The rest
 
 ---
 
-*This post is part of a series on Bitcoin protocol engineering. See also: [Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling](/posts/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown/) and [Clojure & Bitcoin: Building a Sovereign Node & Integration Sandbox](/posts/sovereign-clojure-bitcoin-integration/).*
+*This post is part of a series on Bitcoin protocol engineering. See also: [Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling](./solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown.html) and [Clojure & Bitcoin: Building a Sovereign Node & Integration Sandbox](./sovereign-clojure-bitcoin-integration.html).*

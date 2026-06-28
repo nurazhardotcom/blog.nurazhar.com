@@ -7,7 +7,7 @@ Description: I tried to contribute a feature to Hermes Agent and discovered my r
 
 ## The Confusion
 
-I built a [bulk session archive feature](/hermes-desktop-bulk-session-archive.html) for Hermes Desktop. To contribute it back to the project, I needed to create a pull request to `NousResearch/hermes-agent`.
+I built a [bulk session archive feature](./hermes-desktop-bulk-session-archive.html) for Hermes Desktop. To contribute it back to the project, I needed to create a pull request to `NousResearch/hermes-agent`.
 
 But GitHub said: *"There isn't anything to compare."*
 

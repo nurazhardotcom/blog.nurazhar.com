@@ -7,7 +7,7 @@ Description: A practical guide to running DeepSeek V4 locally — model weights,
 
 DeepSeek V4 was released on April 24, 2026 — two models (pro: 1.6T parameters, 49B active; flash: 284B parameters, 13B active), MIT license, open-weight. The API version has censorship. The self-hosted version does not.
 
-I covered the censorship in [a previous post](/deepseek-v4-censorship). This one is about the practical path to running it yourself.
+I covered the censorship in [a previous post](./deepseek-v4-censorship.html). This one is about the practical path to running it yourself.
 
 ## Why Self-Host
 

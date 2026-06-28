@@ -1,4 +1,6 @@
 {:deps {hiccup/hiccup {:mvn/version "1.0.5"}}
  :paths ["src"]
  :tasks {build {:doc "Build the static site"
-                :task (shell "bb -f src/site/fabricate/dev/dev.clj")}}}
+                :task (shell "bb -f src/site/fabricate/dev/dev.clj")}
+         validate-links {:doc "Validate all built internal hyperlinks"
+                         :task (shell "python3 scripts/validate_links.py")}}}

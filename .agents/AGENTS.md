@@ -9,20 +9,27 @@
 
 ## Deployment Workflow Reference
 
-When modifying site configurations, templates, or blog posts, execute the following commands to build the site and deploy the changes to both repositories:
+When modifying site configurations, templates, or blog posts, execute the following commands to build the site, validate links, and deploy the changes to both repositories:
 
-1. **Verify Git Status and Diff**:
+1. **Build the Site and Validate Hyperlinks**:
+   Before committing, always build the site locally and run the hyperlink validation script to catch any broken references (such as missing/empty diagrams, malformed markdown links, or false .md links) immediately:
+   ```bash
+   bb build
+   bb validate-links
+   ```
+
+2. **Verify Git Status and Diff**:
    ```bash
    git status
    git diff src/site/fabricate/dev/dev.clj
    ```
 
-2. **Stage, Commit, and Deploy to GitLab**:
+3. **Stage, Commit, and Deploy to GitLab**:
    ```bash
    git add . && git commit -m "feat: replace resume link with linkedin link and remove resume copying" && git push origin main
    ```
 
-3. **Deploy to GitHub Mirror**:
+4. **Deploy to GitHub Mirror**:
    ```bash
    git push git@github.com:nurazhardotcom/nurazhar.com.git main
    ```

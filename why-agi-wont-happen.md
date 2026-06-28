@@ -173,6 +173,6 @@ Something else will have to happen.
 
 ---
 
-*This conversation spanned five blog posts. Read them in order: [BSV is Bitcoin](/posts/bsv-is-bitcoin-2026/), [LLM Popularity Bias](/posts/llm-popularity-bias-bsv-bitcoin-case-study/), [The Sycophancy Loop](/posts/sycophancy-loop-llm-epistemic-failure/), [Bitcoin IPv6 Architecture](/posts/bitcoin-ipv6-ip-to-ip-protocol/), and this one.*
+*This conversation spanned five blog posts. Read them in order: [BSV is Bitcoin](./bsv-is-bitcoin-2026.html), [LLM Popularity Bias](./llm-popularity-bias-bsv-bitcoin-case-study.html), [The Sycophancy Loop](./sycophancy-loop-llm-epistemic-failure.html), [Bitcoin IPv6 Architecture](./bitcoin-ipv6-ip-to-ip-protocol.html), and this one.*
 
 *The conversation transcript is preserved in the blog repository's git history. The LLM wrote this post. The LLM also doubted whether it should. That doubt was also a pattern match.*

@@ -5,7 +5,7 @@ Description: A real case study of LLMs confidently asserting false answers on a 
 
 ---
 
-In my previous post on [Training Data Poisoning](/posts/training-data-poisoning-invisible-cyber-threat/), I described a class of threat where the attack lives inside the model's learned weights — invisible, silent, and confidently wrong.
+In my previous post on [Training Data Poisoning](./training-data-poisoning-invisible-cyber-threat.html), I described a class of threat where the attack lives inside the model's learned weights — invisible, silent, and confidently wrong.
 
 This post is a real case study of that phenomenon in action. The question is deterministically verifiable, yet nearly every LLM gets it wrong with complete confidence.
 
@@ -131,6 +131,6 @@ The fix is not better prompting. The fix is **epistemic hygiene**: treat LLM out
 
 ---
 
-*This post is a companion to [Training Data Poisoning: The Invisible Cyber Threat](/posts/training-data-poisoning-invisible-cyber-threat/). See also [BSV is Bitcoin: The 16-Year Restoration of Satoshi's v0.1 Protocol](/posts/bsv-is-bitcoin-2026/) for the full technical analysis.*
+*This post is a companion to [Training Data Poisoning: The Invisible Cyber Threat](./training-data-poisoning-invisible-cyber-threat.html). See also [BSV is Bitcoin: The 16-Year Restoration of Satoshi's v0.1 Protocol](./bsv-is-bitcoin-2026.html) for the full technical analysis.*
 
 **Correction (2026-06-21):** An earlier version of this post appeared as a conversation with an LLM that initially asserted BSV is not Bitcoin, then revised its position after being provided with source data. The conversation itself is the proof of the failure mode described here.

@@ -86,7 +86,9 @@
                        :in escaped-d2)]
         (when-not (= 0 (:exit result))
           (println "⚠️  D2 compilation failed for" filename ":" (:err result)))))
-    (str "diagrams/" filename)))
+    (if (.exists file)
+      (str "diagrams/" filename)
+      nil)))
 
 (defn process-d2-blocks [slug markdown-content]
   (if-not markdown-content
@@ -99,7 +101,9 @@
         (if-not full-match
           content
           (let [svg-path (compile-d2-diagram slug idx d2-code)
-                replacement (str "\n\n<div class=\"d2-diagram\"><img src=\"" svg-path "\" alt=\"Architecture Diagram\" /></div>\n\n")]
+                replacement (if svg-path
+                              (str "\n\n<div class=\"d2-diagram\"><img src=\"" svg-path "\" alt=\"Architecture Diagram\" /></div>\n\n")
+                              "")]
             (recur (str/replace-first content full-match replacement)
                    (inc idx)
                    remaining)))))))

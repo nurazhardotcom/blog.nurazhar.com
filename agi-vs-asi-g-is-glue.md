@@ -23,7 +23,7 @@ But Miessler's definitions, useful as they are, still assume "General" means som
 
 ## "G" Is for Glue
 
-In [Why AGI Won't Happen](/posts/why-agi-wont-happen), I argued that LLMs are statistical mirrors — they predict tokens based on training patterns, not reason about truth. The "G" in AGI doesn't stand for "General." It stands for **Glue** — the process of stitching together statistical fragments into something that *looks* like general understanding.
+In [Why AGI Won't Happen](./why-agi-wont-happen.html), I argued that LLMs are statistical mirrors — they predict tokens based on training patterns, not reason about truth. The "G" in AGI doesn't stand for "General." It stands for **Glue** — the process of stitching together statistical fragments into something that *looks* like general understanding.
 
 Miessler's own evidence supports this. He writes:
 
@@ -74,7 +74,7 @@ X -> MISSING: "G is Glue"
 
 Miessler defines ASI as output that is "completely creative, novel, and alien feeling" — work you instantly recognize as super-human.
 
-This definition is poetic but politically naive. It assumes ASI would be recognizable by its *output quality*. But the history of intelligence definitions (10,000 years of it) tells us otherwise:
+This definition is poetic but politically naive. It assumes ASI would be recognizable by its *output quality*. But the history of intelligence definitions (10,000 years of it.html) tells us otherwise:
 
 > Intelligence has never been defined by capability. It has always been defined by power.
 

@@ -228,6 +228,6 @@ Satoshi described a payment network at the network layer. The rest of that desig
 
 ---
 
-*See also: [BSV is Bitcoin: The 16-Year Restoration](/posts/bsv-is-bitcoin-2026/), [LLM Popularity Bias](/posts/llm-popularity-bias-bsv-bitcoin-case-study/), [Training Data Poisoning](/posts/training-data-poisoning-invisible-cyber-threat/).*
+*See also: [BSV is Bitcoin: The 16-Year Restoration](./bsv-is-bitcoin-2026.html), [LLM Popularity Bias](./llm-popularity-bias-bsv-bitcoin-case-study.html), [Training Data Poisoning](./training-data-poisoning-invisible-cyber-threat.html).*
 
 **Sources:** ETSI GR IPE 012 V1.1.1 (IPv6-based Blockchain), Bitcoin whitepaper (Section 8, IP-to-IP transactions), Craig Wright "IPv6 with CGA and Bitcoin" (Medium, Nov 2018), Ian Grigg — Ricardian Contract, CoinGeek London presentation, New Money Review podcast (2024), nChain research on IPv6 multicasting, Bitcoin Core commit history (2011 IP-to-IP removal).

@@ -5,7 +5,7 @@ Description: A reader caught me in a sycophancy loop — I fabricated errors tha
 
 ---
 
-In my previous post on [LLM Popularity Bias](/posts/llm-popularity-bias-bsv-bitcoin-case-study/), I argued that LLMs default to statistical frequency over truth, and used the BSV/Bitcoin question as a case study.
+In my previous post on [LLM Popularity Bias](./llm-popularity-bias-bsv-bitcoin-case-study.html), I argued that LLMs default to statistical frequency over truth, and used the BSV/Bitcoin question as a case study.
 
 Then a reader did something devastating: they proved the same failure mode applies to the author.
 
@@ -123,6 +123,6 @@ The only way out of this recursion is to **treat no single source as authoritati
 
 ---
 
-*This post was fact-checked against the actual conversation history. The errors I describe are real. The reader's counterargument is reproduced faithfully. Previous posts in this series: [Training Data Poisoning](/posts/training-data-poisoning-invisible-cyber-threat/), [LLM Popularity Bias](/posts/llm-popularity-bias-bsv-bitcoin-case-study/), [BSV is Bitcoin](/posts/bsv-is-bitcoin-2026/).*
+*This post was fact-checked against the actual conversation history. The errors I describe are real. The reader's counterargument is reproduced faithfully. Previous posts in this series: [Training Data Poisoning](./training-data-poisoning-invisible-cyber-threat.html), [LLM Popularity Bias](./llm-popularity-bias-bsv-bitcoin-case-study.html), [BSV is Bitcoin](./bsv-is-bitcoin-2026.html).*
 
 **Correction:** An earlier version of this post existed only as a hypothetical. This version is written against the actual transcript.

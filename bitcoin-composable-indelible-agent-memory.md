@@ -241,6 +241,6 @@ This is why Grigg's vision works. Not because BSV has a better smart contract la
 
 ---
 
-*See also: [Bitcoin Was Designed to Leverage IPv6](/posts/bitcoin-ipv6-ip-to-ip-protocol/), [BSV is Bitcoin](/posts/bsv-is-bitcoin-2026/), [Why AGI Won't Happen](/posts/why-agi-wont-happen/).*
+*See also: [Bitcoin Was Designed to Leverage IPv6](./bitcoin-ipv6-ip-to-ip-protocol.html), [BSV is Bitcoin](./bsv-is-bitcoin-2026.html), [Why AGI Won't Happen](./why-agi-wont-happen.html).*
 
 **Key resources:** [Indelible](https://indelible.one), [Relay Federation](https://github.com/indelible-federation/relay-federation), [COT1 Protocol](https://chainofthought-production.up.railway.app/whitepaper.html), [clawsats-indelible](https://github.com/zcoolz/clawsats-indelible), [ETSI GR IPE 012](https://www.etsi.org/deliver/etsi_gr/IPE/001_099/012/01.01.01_60/gr_IPE012v010101p.pdf), [BSV Association Tools](https://bsvassociation.org/build-on-bsv/tools-and-libraries/).
