@@ -24,7 +24,7 @@ dev: dev.clj:235 {
   shape: code
   style.font: mono
   label: |md
-    `(io/copy (io/file "/home/nurazhar/Assistant/.../Resume.pdf")
+    `(io/copy (io/file "/home/nurazhar/Work/.../Resume.pdf")
               (io/file "public/resume.pdf"))`
   |
 }
@@ -47,7 +47,7 @@ In the GitLab CI runner (Alpine Linux Docker container), the build script tried 
 
 ```
 java.io.FileNotFoundException:
-  /home/nurazhar/Assistant/Lifestyle Design Coach/Job Hunting/...
+  /home/nurazhar/Work/lifestyle/Job Hunting/...
   Supabase_IT_Systems_Administrator_Resume.pdf (No such file or directory)
 ```
 

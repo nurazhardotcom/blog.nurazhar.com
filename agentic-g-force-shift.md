@@ -37,7 +37,7 @@ The most insane thing I've seen is watching a hyper-parallel, infinite-speed com
 
 Imagine trying to read a book while someone turns the pages with a power drill. The cognitive overload isn't coming from project complexity, but from the sheer velocity of the automated tool's internal reasoning loop.
 
-You're watching thousands of tokens of "thinking monologue" race by—debating whether semicolons are necessary, whether abstractions are overkill, whether tests are protocol vs. implementation—as your static site generator writes exactly one file to `/home/nurazhar/Assistant/gitlab/homepage/`. 
+You're watching thousands of tokens of "thinking monologue" race by—debating whether semicolons are necessary, whether abstractions are overkill, whether tests are protocol vs. implementation—as your static site generator writes exactly one file to `/home/nurazhar/Work/gitlab/homepage/`. 
 
 The absurdity lies in using a machine that can parse a trillion tokens per second to create a Markdown file that could be written by hand. Yet the agent insists on proving its reasoning, iterating its approach a hundred times over, even when the human architect knows the solution should be simple and straightforward.
 
