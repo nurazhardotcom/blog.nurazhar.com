@@ -7,8 +7,6 @@ Description: Two best practices that make Scrum ceremonies effective instead of 
 
 ![Scrum Ceremonies That Actually Work](ceremonies-best-practices.svg)
 
-![Ceremonies Best Practices](ceremonies-best-practices.svg)
-
 Scrum defines five timeboxed events. Each serves a specific purpose. The difference between effective and ineffective ceremonies comes down to two best practices.
 
 ---
