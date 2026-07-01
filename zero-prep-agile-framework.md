@@ -1,10 +1,15 @@
-# The Zero-Prep Agile Survival Framework
+Title: The Zero-Prep Agile Survival Framework
+Date: 2026-07-01
+Tags: agile, scrum, systems-thinking, entropy, framework
+Description: A framework that maps Agile jargon onto systems-thinking concepts for quick translation between the two vocabularies.
+
+---
+
+![The Zero-Prep Agile Survival Framework](zero-prep-agile-framework.svg)
 
 ![Zero-Prep Framework](zero-prep-agile-framework.svg)
 
-Agile is not complex architecture. It is a highly predictable, standardized management script. Since you haven't prepared, you map their jargon onto your native systems-thinking framework.
-
-Route every question through this 3-part blueprint.
+Agile follows a predictable pattern. This framework maps their jargon onto systems-thinking concepts — useful for translating between the two vocabularies.
 
 ---
 

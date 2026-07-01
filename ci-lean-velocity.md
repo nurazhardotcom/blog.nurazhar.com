@@ -1,10 +1,15 @@
-# Continuous Improvement, Lean, and Velocity — The Engine Room of Agile
+Title: Continuous Improvement, Lean, and Velocity — The Engine Room of Agile
+Date: 2026-07-01
+Tags: agile, continuous-improvement, lean, velocity, kaizen
+Description: How Continuous Improvement, Lean waste elimination, and Velocity work together to drive Agile team performance.
+
+---
+
+![Continuous Improvement, Lean, and Velocity — The Engine Room of Agile](ci-lean-velocity.svg)
 
 ![Continuous Improvement + Lean + Velocity](ci-lean-velocity.svg)
 
-Three concepts. One continuous loop. When your assessor asks about **Continuous Improvement**, **Lean**, or **Velocity**, they're not testing three isolated facts — they're testing whether you see how they fit together.
-
-Here's the connection.
+Three concepts fit together — Continuous Improvement drives adaptation, Lean identifies what to fix, and Velocity measures the result.
 
 ---
 
@@ -68,9 +73,7 @@ If your manager asks for velocity as a performance metric, push back respectfull
 
 ## Putting It Together — Rapidly Changing Requirements
 
-Your assessor will likely give you this scenario: **"Requirements change constantly. What do you do?"**
-
-Here's the Agile answer:
+When requirements change constantly, the Agile answer is:
 
 - **Prioritize high-value items first** — PO keeps the backlog ordered by value. Change just means reordering.
 - **WIP limits** — Don't start new work until you finish current work. Task switching is a waste (see above).

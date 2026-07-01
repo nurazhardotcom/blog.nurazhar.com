@@ -1,10 +1,15 @@
-# Your Scrum Master Is Not Your Project Manager
+Title: Your Scrum Master Is Not Your Project Manager
+Date: 2026-07-01
+Tags: scrum, scrum-master, project-manager, agile, leadership
+Description: Scrum Master is a servant-leader who coaches and removes blockers. Project Manager is a command-and-control director. They are fundamentally different roles.
+
+---
+
+![Your Scrum Master Is Not Your Project Manager](scrum-master-vs-pm.svg)
 
 ![Scrum Master vs Project Manager](scrum-master-vs-pm.svg)
 
-I watched a team member ask their Scrum Master for permission to take a day off. The SM shrugged and said, "That's between you and your line manager — I just clear your blockers." That moment crystallized something most people miss: **Scrum Master and Project Manager are opposite leadership philosophies dressed in similar suits.**
-
-Scrum has **no Project Manager role**. The SM exists precisely because traditional command-and-control management kills self-managing teams. Here's the breakdown — one role is a **servant-leader**, the other is a **command-and-control director**.
+Scrum has **no Project Manager role**. The Scrum Master exists because traditional command-and-control management kills self-managing teams. One role is a **servant-leader**; the other is a **command-and-control director**.
 
 ---
 

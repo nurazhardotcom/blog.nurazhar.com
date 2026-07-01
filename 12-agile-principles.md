@@ -1,10 +1,15 @@
-# The 12 Agile Principles That Made Scrum Possible
+Title: The 12 Agile Principles That Made Scrum Possible
+Date: 2026-07-01
+Tags: agile, scrum, manifesto, principles
+Description: The 12 principles behind the Agile Manifesto explained in plain language.
+
+---
+
+![The 12 Agile Principles That Made Scrum Possible](12-agile-principles.svg)
 
 ![12 Agile Principles](12-agile-principles.svg)
 
-In 2001, 17 software developers met at a ski resort in Utah and wrote the Agile Manifesto. Four values. Twelve principles. The entire Scrum framework exists to serve them.
-
-Here they are, in plain language.
+The Agile Manifesto (2001) defines 12 principles that every Scrum framework is built on. Here they are in plain language.
 
 ---
 

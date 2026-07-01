@@ -5,8 +5,6 @@ Description: The official Hermes Desktop (Electron/React) has persistent bugs th
 
 ---
 
-# Why We Built Our Own Hermes Desktop — The Electron GUI Is Buggy, So We Wrote 500 Lines of Clojure/JavaFX
-
 ## The Setup
 
 We use [Hermes Agent](https://hermes-agent.nousresearch.com/) daily. It is the best local-first AI agent we have used — tool execution, session management, provider routing, all solid.
@@ -137,6 +135,6 @@ All of these are additive. The core functionality — chat with any Hermes provi
 
 ## The Code
 
-The project lives at [github.com/nurazhar/hermes-clj-gui](https://github.com/nurazhar/hermes-clj-gui). It is a `deps.edn` Clojure project with cljfx. The entire chat UI is a single namespace. The HTTP bridge is another.
+The project is a `deps.edn` Clojure project with cljfx. The entire chat UI is a single namespace. The HTTP bridge is another. Source is not yet published.
 
 If you are hitting the same Hermes Desktop bugs, consider this: the CLI works. A GUI is just a chat window talking to `hermes serve`. You do not need Electron for that.

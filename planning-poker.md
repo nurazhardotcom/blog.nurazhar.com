@@ -1,8 +1,15 @@
-# Why Your Team Should Estimate With Cards, Not Hours
+Title: Why Your Team Should Estimate With Cards, Not Hours
+Date: 2026-07-01
+Tags: agile, estimation, planning-poker, story-points, velocity
+Description: Planning Poker is a consensus-based estimation technique using Fibonacci cards. Here's how it works and why relative sizing beats hourly estimates.
+
+---
+
+![Why Your Team Should Estimate With Cards, Not Hours](planning-poker.svg)
 
 ![Planning Poker Flow](planning-poker.svg)
 
-The first time I watched a team spend 45 minutes debating whether a story was "8 hours vs 12 hours," I knew something was broken. Hours-based estimation is a trap — it feels precise but is almost always wrong. **Planning Poker** fixes this by swapping calendar time for relative sizing.
+Hours-based estimation feels precise but is almost always wrong. **Planning Poker** fixes this by swapping calendar time for relative sizing.
 
 ---
 

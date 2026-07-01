@@ -1,10 +1,15 @@
-# Scrum 3-5-3 vs Kanban: What Every Developer Needs to Know
+Title: Scrum 3-5-3 vs Kanban: What Every Developer Needs to Know
+Date: 2026-07-01
+Tags: scrum, kanban, agile, comparison, framework
+Description: Scrum is 3 roles, 5 events, 3 artifacts. Kanban is continuous flow with WIP limits. Here's how they compare and when to use each.
+
+---
+
+![Scrum 3-5-3 vs Kanban: What Every Developer Needs to Know](scrum-3-5-3-vs-kanban.svg)
 
 ![Scrum 3-5-3 vs Kanban](scrum-3-5-3-vs-kanban.svg)
 
-If you're a full-stack developer joining a software team, you'll live in **Scrum**. It's the industry standard — roughly 80% of agile software teams run Scrum. Kanban is the other major framework, more common in operations and support.
-
-**Scrum = 3 roles, 5 events, 3 artifacts.** That's the whole framework. Once you memorize the 3-5-3, you understand Scrum. Here's a breakdown with Kanban as the contrast, so you know both.
+**Scrum = 3 roles, 5 events, 3 artifacts.** Kanban is the other major Agile framework. Here's how they compare.
 
 ---
 
@@ -77,7 +82,7 @@ The core idea: **visualize your workflow, limit work-in-progress, and optimize f
 
 ## Why Scrum Over Kanban for Software Teams
 
-Simple: **you're training to be a full-stack developer.** Software product teams use Scrum. Sprint Planning, Daily Scrums, Sprint Reviews, Retros — that's the rhythm you'll encounter on day one of a dev job.
+Software product teams use Scrum. Sprint Planning, Daily Scrums, Sprint Reviews, Retros — that's the standard rhythm for product development teams.
 
 Kanban is taught as the comparison because you'll still see it (or hybrid "Scrumban" approaches) in the wild. But Scrum is the foundation.
 

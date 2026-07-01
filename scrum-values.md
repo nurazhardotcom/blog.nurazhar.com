@@ -1,10 +1,15 @@
-# The 5 Scrum Values That Make Self-Managing Teams Work
+Title: The 5 Scrum Values That Make Self-Managing Teams Work
+Date: 2026-07-01
+Tags: scrum, scrum-values, agile, teamwork, self-management
+Description: Commitment, Focus, Openness, Respect, Courage — the five Scrum Values that underpin every high-functioning Scrum team.
+
+---
+
+![The 5 Scrum Values That Make Self-Managing Teams Work](scrum-values.svg)
 
 ![5 Scrum Values](scrum-values.svg)
 
-When I first learned Scrum, I memorized the 3-5-3 (roles, events, artifacts) cold. But I kept wondering: *what makes a team actually pull together instead of falling apart?* The answer is the five Scrum Values — the invisible operating system behind every high-functioning Scrum team.
-
-The 2020 Scrum Guide doesn't treat these values as nice-to-have. They're **required** — the framework breaks without them.
+The 2020 Scrum Guide defines five values that underpin every Scrum event and artifact. Without them, the framework becomes mechanical.
 
 ---
 

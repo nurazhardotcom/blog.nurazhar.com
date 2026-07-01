@@ -1,8 +1,15 @@
-# Agile vs Traditional: Which Project Management Style Actually Works?
+Title: Agile vs Traditional: Which Project Management Style Actually Works?
+Date: 2026-07-01
+Tags: agile, scrum, waterfall, traditional, project-management
+Description: A side-by-side comparison of Agile (Scrum) and Traditional (Waterfall) project management across flexibility, delivery, collaboration, team structure, and risk.
+
+---
+
+![Agile vs Traditional: Which Project Management Style Actually Works?](agile-vs-traditional.svg)
 
 ![Agile vs Traditional (Waterfall)](agile-vs-traditional.svg)
 
-I've seen both approaches implode — and thrive. The difference wasn't the methodology itself, but how well it matched the problem. Here's what I learned comparing **Agile (Scrum)** against **Traditional (Waterfall)** project management.
+Two dominant approaches to project management exist — traditional (Waterfall) and Agile (Scrum). Here's how they compare.
 
 ---
 

@@ -1,10 +1,15 @@
-# Stop Wasting Everyone's Time: Scrum Ceremonies That Actually Work
+Title: Scrum Ceremonies That Actually Work
+Date: 2026-07-01
+Tags: scrum, ceremonies, agile, best-practices, timeboxing
+Description: Two best practices that make Scrum ceremonies effective instead of wasteful.
+
+---
+
+![Scrum Ceremonies That Actually Work](ceremonies-best-practices.svg)
 
 ![Ceremonies Best Practices](ceremonies-best-practices.svg)
 
-Scrum has five events — Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective, and Backlog Refinement. Most teams run them on autopilot, and that's exactly when ceremonies become noise instead of leverage. The difference between a team that "does Scrum" and a team that *gets* Scrum is how they treat these timeboxed events.
-
-Here are the two best practices that separate living ceremonies from zombie meetings.
+Scrum defines five timeboxed events. Each serves a specific purpose. The difference between effective and ineffective ceremonies comes down to two best practices.
 
 ---
 

@@ -5,8 +5,6 @@ Description: Z.AI does not expose a separate model ID for their free GLM-4.7-Fla
 
 ---
 
-# The $0 GLM Hack — Running GLM-4.7 on Hermes Desktop for Free
-
 ## The Trap
 
 You find `unsloth/GLM-5.2-GGUF` on Hugging Face. MIT licensed. Free to download. 466 GB (Q4_K_M) down to 217 GB (IQ1_S). You think: I can run this.

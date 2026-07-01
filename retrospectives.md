@@ -1,10 +1,15 @@
-# Why the Retrospective Is the Most Important Meeting You'll Skip
+Title: Why the Retrospective Is the Most Important Meeting You'll Skip
+Date: 2026-07-01
+Tags: scrum, retrospective, kaizen, continuous-improvement, agile
+Description: The Sprint Retrospective is Agile Principle 12 in action. Here's why it matters and how to run one that improves your team every Sprint.
+
+---
+
+![Why the Retrospective Is the Most Important Meeting You'll Skip](retrospectives.svg)
 
 ![Retrospective Engine](retrospectives.svg)
 
-I've seen teams nail Sprint Planning, crush Daily Scrums, and deliver great Sprint Reviews. Then they skip the Retro because "we don't have time" — and wonder why they plateau. The **Sprint Retrospective** is Agile Principle 12 in action: the one event that turns Sprints into a compounding improvement engine.
-
-Here's why it matters, what it delivers, and how to run one that doesn't suck.
+The **Sprint Retrospective** is Agile Principle 12 in action — the event that turns Sprints into a compounding improvement engine. Here's why it matters and how to run one effectively.
 
 ---
 
