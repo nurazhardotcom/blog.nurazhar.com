@@ -24,7 +24,10 @@
      scaling the diagram DOWN to fit, which would re-shrink text. Capping the
      figure gives internal vertical scroll instead, keeping text at the
      designed size. */
-  .post-content figure {
+  /* Only apply scroll-container caps when the figure actually holds an SVG diagram.
+     This way future photo <figure>s (e.g. <figure><img src="photo.jpg"></figure>)
+     don't get the max-height + overflow-x/y treatment they don't need. */
+  .post-content figure:has(img[src$=".svg"]) {
     overflow-x: auto;
     overflow-y: auto;
     max-height: 75vh;
