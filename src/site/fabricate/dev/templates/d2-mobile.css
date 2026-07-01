@@ -17,8 +17,17 @@
      The huge intrinsic width (e.g. 3344px) crushes into 390px viewports, making
      labels unreadable. Let the figure scroll horizontally and enforce a minimum
      readable width so text resolves at a legible size. */
+
+  /* The <img> keeps its forced horizontal min-width so text stays at the size
+     we set when regenerating SVGs at 2x fonts. The CAP goes on the parent
+     <figure> instead — SVG-as-<img> honors width + max-height together by
+     scaling the diagram DOWN to fit, which would re-shrink text. Capping the
+     figure gives internal vertical scroll instead, keeping text at the
+     designed size. */
   .post-content figure {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 75vh;
     -webkit-overflow-scrolling: touch;
     margin-left: calc(-1 * var(--gap));
     margin-right: calc(-1 * var(--gap));
