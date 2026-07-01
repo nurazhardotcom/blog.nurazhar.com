@@ -10,3 +10,9 @@
 - Bold key terms for scanability
 - No TOC, no footnotes, no fluff
 - End with a one-liner or takeaway
+
+# Git workflow
+
+- Push to `origin` (GitLab) only — GitHub mirror is automatic via GitLab push mirror.
+- Run `bb build` and `bb validate-links` before committing.
+- Use `--no-verify` only if pre-commit hook blocks on pre-existing broken links (not your fault).

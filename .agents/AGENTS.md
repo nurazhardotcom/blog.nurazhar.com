@@ -1,54 +1,32 @@
 # Agent Guidelines for Homepage and Resume Management
 
-- The user's personal website source code resides in `/home/nurazhar/Work/gitlab/homepage/`.
-- The domain `nurazhar.com` points directly to GitLab Pages IP (`35.185.44.232`).
-- The git remote `origin` pushes to both GitLab and GitHub repositories simultaneously. Always ensure code updates push to both targets.
+- The git remote `origin` is GitLab. GitHub is auto-synced via GitLab push mirror — no manual push needed.
 - Do not host or link to `resume.pdf` on the website.
 - Use the LinkedIn profile link (`https://www.linkedin.com/in/in-azhar`) in the navigation bar instead of a resume PDF link.
-- Run `bb build` inside `/home/nurazhar/Work/gitlab/homepage/` to compile the static site templates.
+- Run `bb build` to compile the static site templates.
 
 ## Deployment Workflow Reference
 
-When modifying site configurations, templates, or blog posts, execute the following commands to build the site, validate links, and deploy the changes to both repositories:
-
-1. **Build the Site and Validate Hyperlinks**:
-   Before committing, always build the site locally and run the hyperlink validation script to catch any broken references (such as missing/empty diagrams, malformed markdown links, or false .md links) immediately:
+1. **Build and Validate**:
    ```bash
    bb build
    bb validate-links
    ```
 
-2. **Verify Git Status and Diff**:
+2. **Verify Git Status**:
    ```bash
    git status
-   git diff src/site/fabricate/dev/dev.clj
+   git diff <changed-files>
    ```
 
-3. **Stage, Commit, and Deploy to GitLab**:
+3. **Commit and Push**:
    ```bash
-   git add . && git commit -m "feat: replace resume link with linkedin link and remove resume copying" && git push origin main
+   git add . && git commit -m "message" && git push origin main
    ```
-
-4. **Deploy to GitHub Mirror**:
-   ```bash
-   git push git@github.com:nurazhardotcom/nurazhar.com.git main
-   ```
+   GitHub is auto-synced via GitLab push mirror. No separate push needed.
 
 ## Known Pitfalls — Read Before Publishing
 
-Encountered during past runs. These are the failure modes future agents will hit if the workflow above is followed blindly:
+1. **Run `bb build` locally before `git push`.** CI runs it on push (see `.gitlab-ci.yml`), but a local build catches frontmatter mis-parsing (bad `Date:` format, malformed `Tags:` list, missing `---` separator), `d2` syntax errors, and broken external links faster than waiting for CI to fail.
 
-1. **`code-reviewer-minimax-m3` can fail with internal tool errors** (e.g. `str_replace` unavailable in the subagent's runtime). When this happens, do NOT publish without one of:
-   - A successful reviewer pass on the diff, OR
-   - A clean local `bb build` that renders the post correctly, OR
-   - An explicit human review note in the commit message.
-   Silently pushing on a failed reviewer pass leaves typos or wrong claims live on `nurazhar.com`.
-
-2. **Run `bb build` locally before `git push` for blog-post edits.** CI runs it on push (see `.gitlab-ci.yml`), but a local build catches frontmatter mis-parsing (bad `Date:` format, malformed `Tags:` list, missing `---` separator), `d2` syntax errors, and broken external links faster than waiting for CI to fail.
-
-3. **The diff in Deployment Workflow step 1 only applies to template / site-config changes.** For blog-post edits you only touch root-level `*.md` files, not `src/site/fabricate/dev/dev.clj`. Substitute `git diff -- '*.md'` or `git diff <new-post>.md` to confirm the frontmatter and prose before committing.
-
-4. **Both pushes are mandatory, even though the intro line claims origin pushes to both.** In this repo, `origin` is the GitLab remote only — the GitHub mirror is a separate URL. Always run `git push origin main` and `git push git@github.com:nurazhardotcom/nurazhar.com.git main`. Skipping the second push leaves GitHub behind GitLab.
-
-5. **Always use `.html` extension instead of `.md` in relative links to other blog posts** (as resolved in commit `90dc22f`). Although the source files are written in Markdown (`.md`), they are compiled into HTML files in the `public/` directory. Linking to `.md` files will cause broken 404 links on the live site. For example, write `*Related: [Postgres Threshold Batching](./postgres-threshold-batching.html)*` instead of `*Related: [Postgres Threshold Batching](./postgres-threshold-batching.md)*`.
-
+2. **Use `.html` extension instead of `.md` in relative links to other blog posts.** Source files are `.md` but compiled to `.html`. Linking to `.md` causes 404s on the live site.
