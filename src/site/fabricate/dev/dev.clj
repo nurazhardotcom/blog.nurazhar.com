@@ -330,7 +330,15 @@
             :when (and (.isFile f)
                        (str/ends-with? (.getName f) ".svg"))]
       (io/copy f (io/file out-dir (.getName f)))
-      (println "   🖼️  Copied" (.getName f)))))
+      (println "   🖼️  Copied" (.getName f))))
+  ;; Copy LICENSE to public/ so the README's badge and footer link resolve.
+  ;; Kept lean: a single small text file, mirrors what GitHub/GitLab Pages
+  ;; do by default. Inline so the README serves its license info even when
+  ;; viewed at /README.html rather than via the GitLab repo.
+  (let [license-file (io/file src-dir "LICENSE")]
+    (when (.exists license-file)
+      (io/copy license-file (io/file out-dir "LICENSE"))
+      (println "   📜 Copied LICENSE"))))
 
 ;; ─── Sitemap Generator ─────────────────────────────────────────────
 

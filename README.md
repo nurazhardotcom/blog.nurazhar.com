@@ -11,7 +11,9 @@
 
 This isn't a off-the-shelf static-site generator. The build pipeline is a small
 **custom generator written in [Babashka](https://github.com/babashka/babashka)
-(Clojure)** — see [`src/`](./src) and [`bb.edn`](./bb.edn). Posts are plain
+(Clojure)** — see [`src/`](https://gitlab.com/nurazhar/homepage/-/tree/main/src)
+and [`bb.edn`](https://gitlab.com/nurazhar/homepage/-/blob/main/bb.edn).
+Posts are plain
 Markdown (`*.md`) at the repo root, rendered with `pandoc` and diagrams with
 [`d2`](https://d2lang.com), then published via GitLab Pages.
 
@@ -21,7 +23,8 @@ Markdown (`*.md`) at the repo root, rendered with `pandoc` and diagrams with
 bb build      # render markdown -> public/
 ```
 
-Deploy is automatic on push to `main` via [`.gitlab-ci.yml`](./.gitlab-ci.yml)
+Deploy is automatic on push to `main` via
+[`.gitlab-ci.yml`](https://gitlab.com/nurazhar/homepage/-/blob/main/.gitlab-ci.yml)
 (GitLab Pages, artifact: `public/`).
 
 ## Featured writing

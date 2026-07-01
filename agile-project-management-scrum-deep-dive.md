@@ -5,6 +5,22 @@ Description: An in-depth pedagogical breakdown of Agile principles and the Scrum
 
 ---
 
+```d2
+direction: right
+banner: "A Developer's Guide to Agile & Scrum" {
+  shape: page
+  style.fill: "#f8f9fa"
+  style.stroke: "#cccccc"
+  style.font-size: 28
+  style.bold: true
+}
+subtitle: "Demystifying Assignment 1" {
+  shape: text
+  style.font-size: 18
+}
+banner -> subtitle: "what this guide covers"
+```
+
 Welcome to our Agile classroom! Today, we are going to demystify **Agile Project Management** and the **Scrum Framework**. 
 
 Whether you are preparing for your formative assessments or trying to understand how to apply Scrum to real-world software engineering, this guide breaks down the core concepts from **Assignment 1** into clear, digestible sections with visual diagrams.
