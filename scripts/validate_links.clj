@@ -16,7 +16,7 @@
 (require '[babashka.fs :as fs]
          '[clojure.string :as str])
 
-(def public-dir "public")
+(def public-dir (or (first *command-line-args*) "public"))
 
 (defn bail! [msg]
   (binding [*out* *err*]

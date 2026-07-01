@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <!-- Known-good internal link: resolves to tests/.test-workspace/public/good.html -->
+  <p><a href="good.html">good internal link</a></p>
+
+  <!-- Known-broken internal link: target never created -->
+  <p><a href="broken-target.html">broken internal link</a></p>
+
+  <!-- External link: skipped by the validator (external scheme) -->
+  <p><a href="https://example.com">external link</a></p>
+
+  <!-- .md link: counted but not flagged -->
+  <p><a href="source.md">md link (source ref)</a></p>
+</body>
+</html>

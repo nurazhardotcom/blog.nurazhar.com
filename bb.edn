@@ -3,4 +3,6 @@
  :tasks {build {:doc "Build the static site"
                 :task (shell "bb -f src/site/fabricate/dev/dev.clj")}
          validate-links {:doc "Validate all built internal hyperlinks"
-                         :task (shell "bb scripts/validate_links.clj")}}}
+                         :task (shell "bb scripts/validate_links.clj")}
+         test {:doc "Smoke test for the link validator (runs scripts/validate_links.clj against a tiny fixture under tests/.test-workspace/)"
+               :task (shell "bb tests/run-test.bb")}}}
