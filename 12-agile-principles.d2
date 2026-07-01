@@ -1,0 +1,170 @@
+direction: down
+
+title: "12 Agile Principles" {
+  shape: text
+  style: {
+    font-size: 24
+  }
+}
+
+subtitle: "From the Agile Manifesto (2001)" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+root: "Agile Manifesto\n4 Values" {
+  shape: hexagon
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+  }
+}
+
+# ─── PRINCIPLES ROW 1 ───
+
+p1: "1. Customer satisfaction\nthrough early & continuous\ndelivery" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+  }
+}
+
+p2: "2. Welcome changing\nrequirements — even\nlate in development" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+  }
+}
+
+p3: "3. Deliver working\nsoftware frequently\n(every few weeks)" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+  }
+}
+
+p4: "4. Business people &\ndevelopers work\ntogether daily" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+  }
+}
+
+# ─── PRINCIPLES ROW 2 ───
+
+p5: "5. Build projects around\nmotivated individuals.\nTrust them." {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+p6: "6. Face-to-face\nconversation is most\nefficient communication" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+p7: "7. Working software\nis the primary measure\nof progress" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+p8: "8. Sustainable pace\n— teams should maintain\nit indefinitely" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+# ─── PRINCIPLES ROW 3 ───
+
+p9: "9. Continuous attention\nto technical excellence\n— enhances agility" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+  }
+}
+
+p10: "10. Simplicity\n— maximize work\nnot done" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+  }
+}
+
+p11: "11. Self-organizing\nteams produce the best\narchitectures" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+  }
+}
+
+p12: "12. Regular reflection\n(Retro) — team tunes\nand adjusts" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+  }
+}
+
+# ─── ORAL FOCUS ───
+
+oral: "ORAL EXAM FOCUS" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#C62828"
+  }
+}
+
+hot: "HOT TOPICS" {
+  shape: hexagon
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+h12: "#12 → Retrospective\n(continuous improvement)"
+h2: "#2 → Embrace change\n(backlog refinement)"
+h4: "#4 → Collaboration\n(PO + developers daily)"
+h7: "#7 → Working software\n(Increment every Sprint)"
+
+# ─── CONNECTIONS ───
+
+root -> p1
+root -> p2
+root -> p3
+root -> p4
+root -> p5
+root -> p6
+root -> p7
+root -> p8
+root -> p9
+root -> p10
+root -> p11
+root -> p12
+
+root -> hot
+hot -> h12
+hot -> h2
+hot -> h4
+hot -> h7

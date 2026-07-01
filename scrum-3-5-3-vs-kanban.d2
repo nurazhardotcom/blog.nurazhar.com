@@ -1,0 +1,270 @@
+direction: right
+
+title: "Scrum 3-5-3 vs Kanban" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+# ─── SCRUM SIDE ───
+
+Scrum: "SCRUM" {
+  shape: text
+  style: {
+    font-size: 20
+    font-color: "#1E88E5"
+  }
+}
+
+sub_scrum: "" {
+  Roles: "3 ROLES" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#1E88E5"
+    }
+  }
+
+  PO: "Product Owner" {
+    shape: circle
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1E88E5"
+    }
+  }
+
+  SM: "Scrum Master" {
+    shape: circle
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1E88E5"
+    }
+  }
+
+  Dev: "Developers" {
+    shape: circle
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1E88E5"
+    }
+  }
+
+  Events: "5 EVENTS" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#1E88E5"
+    }
+  }
+
+  Sprint: "Sprint (1-4 wks)" {
+    shape: rectangle
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  SprintP: "Sprint Planning" {
+    shape: oval
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  Daily: "Daily Scrum (15m)" {
+    shape: oval
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  Review: "Sprint Review" {
+    shape: oval
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  Retro: "Sprint Retro" {
+    shape: oval
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  Artifacts: "3 ARTIFACTS" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#1E88E5"
+    }
+  }
+
+  PB: "Product Backlog" {
+    shape: cloud
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#FB8C00"
+    }
+  }
+
+  SB: "Sprint Backlog" {
+    shape: class
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#FB8C00"
+    }
+  }
+
+  Inc: "Increment" {
+    shape: hexagon
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#FB8C00"
+    }
+  }
+
+  Sprint -> SprintP: "starts"
+  SprintP -> Daily
+  Daily -> Review: "ends"
+  Review -> Retro: "follows"
+  Retro -> Sprint: "feeds next"
+  PB -> SB: "selected"
+  SB -> Inc: "built"
+}
+
+# ─── DIVIDER ───
+
+divider: "|" {
+  shape: text
+  style: {
+    font-size: 60
+    font-color: "#CCC"
+  }
+}
+
+# ─── KANBAN SIDE ───
+
+Kanban: "KANBAN" {
+  shape: text
+  style: {
+    font-size: 20
+    font-color: "#E53935"
+  }
+}
+
+sub_kanban: "" {
+  KR: "ROLES" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#E53935"
+    }
+  }
+
+  KTeam: "No fixed roles" {
+    shape: circle
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#E53935"
+    }
+  }
+
+  KS: "Self-organizing" {
+    shape: circle
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#E53935"
+    }
+  }
+
+  KE: "EVENTS" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#E53935"
+    }
+  }
+
+  KRepl: "Replenishment" {
+    shape: oval
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#E53935"
+    }
+  }
+
+  KStand: "Daily Standup" {
+    shape: oval
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#E53935"
+    }
+  }
+
+  KSD: "Service Delivery\nReview" {
+    shape: oval
+    style: {
+      fill: "#FFEBEE"
+      stroke: "#E53935"
+    }
+  }
+
+  KA: "ARTIFACTS" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#E53935"
+    }
+  }
+
+  KBoard: "Visual Board" {
+    shape: queue
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#E53935"
+    }
+  }
+
+  KWIP: "WIP Limits" {
+    shape: hexagon
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#E53935"
+    }
+  }
+
+  KRepl -> KStand
+  KStand -> KSD
+}
+
+# ─── BOTTOM COMPARISON ───
+
+vs: "KEY DIFFERENCES" {
+  shape: text
+  style: {
+    font-size: 16
+  }
+}
+
+vs_scrum: "SCRUM ←→ KANBAN" {
+  shape: text
+  style: {
+    font-size: 13
+  }
+}
+
+c1: "Fixed Sprints (1-4 wks)  ←→  Continuous flow"
+c2: "Scope frozen mid-Sprint  ←→  Reprioritize anytime"
+c3: "Velocity metric  ←→  Cycle time / throughput"
+c4: "Implicit WIP (Sprint scope)  ←→  Explicit WIP limits"
+c5: "4 mandated events  ←→  Flexible / event-triggered"
+c6: "Best for: Product dev  ←→  Best for: Ops / support"
+
+c1 -> c2 -> c3 -> c4 -> c5 -> c6

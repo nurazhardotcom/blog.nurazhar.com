@@ -1,0 +1,235 @@
+direction: right
+
+title: "Zero-Prep Agile Survival Framework" {
+  shape: text
+  style: {
+    font-size: 24
+  }
+}
+
+subtitle: "Route their Agile jargon through your systems-thinking framework" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+# ─── CORE PHILOSOPHY ───
+
+core: "1. CORE PHILOSOPHY" {
+  shape: text
+  style: {
+    font-size: 16
+    font-color: "#1565C0"
+  }
+}
+
+jargon: "THEIR JARGON" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#E53935"
+  }
+}
+
+j1: "Embracing change\nover rigid planning" {
+  shape: rectangle
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+j2: "Iterative value\ndelivery" {
+  shape: rectangle
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+j3: "Continuous\nfeedback loops" {
+  shape: rectangle
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+translation: "YOUR TRANSLATION" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#2E7D32"
+  }
+}
+
+t1: "Collapse entropy by\ndelivering small functioning\nchunks instead of planning\na massive fragile system" {
+  shape: rectangle
+  style: {
+    fill: "#C8E6C9"
+    stroke: "#43A047"
+  }
+}
+
+jargon -> j1
+jargon -> j2
+jargon -> j3
+j1 -> t1
+j2 -> t1
+j3 -> t1
+
+# ─── MECHANICS ───
+
+mechanics: "2. THE MECHANICS (Scrum Loop)" {
+  shape: text
+  style: {
+    font-size: 16
+    font-color: "#1565C0"
+  }
+}
+
+pb: "Product Backlog\nMaster list of requirements\nprioritized by business value" {
+  shape: cloud
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+planning: "Sprint Planning\nSelect high-priority chunk\nfor fixed 2-week window" {
+  shape: hexagon
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+daily: "Daily Standup\n15-min sync\nIdentify impediments\nZero-entropy alignment" {
+  shape: hexagon
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+review: "Sprint Review &\nRetrospective\nDemo to stakeholders\nOptimize execution protocol\nfor next cycle" {
+  shape: hexagon
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+pb -> planning: "pull next"
+planning -> daily: "execute"
+daily -> review: "deliver"
+review -> pb: "feedback"
+
+# ─── IMPEDIMENTS ───
+
+impediments: "3. HANDLING IMPEDIMENTS (The Pivot)" {
+  shape: text
+  style: {
+    font-size: 16
+    font-color: "#1565C0"
+  }
+}
+
+crisis: "Crisis, delay, or\nchanging requirement?" {
+  shape: diamond
+  style: {
+    fill: "#FCE4EC"
+    stroke: "#E91E63"
+  }
+}
+
+answer: "YOUR ANSWER" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#2E7D32"
+  }
+}
+
+a1: "Log it as an\nimpediment" {
+  shape: rectangle
+  style: {
+    fill: "#C8E6C9"
+    stroke: "#43A047"
+  }
+}
+
+a2: "Discuss in daily\nstandup immediately" {
+  shape: rectangle
+  style: {
+    fill: "#C8E6C9"
+    stroke: "#43A047"
+  }
+}
+
+a3: "Pivot Sprint backlog\nto preserve velocity" {
+  shape: rectangle
+  style: {
+    fill: "#C8E6C9"
+    stroke: "#43A047"
+  }
+}
+
+a4: "Ensure stakeholder\ntransparency" {
+  shape: rectangle
+  style: {
+    fill: "#C8E6C9"
+    stroke: "#43A047"
+  }
+}
+
+crisis -> answer
+answer -> a1 -> a2 -> a3 -> a4
+
+# ─── ORAL CHEAT SHEET ───
+
+cheat: "ORAL CHEAT SHEET" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#C62828"
+  }
+}
+
+csm: "Scrum Master =\nEntropy janitor" {
+  shape: hexagon
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+cretro: "Retrospective =\nProtocol optimization" {
+  shape: hexagon
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+cbacklog: "Backlog =\nEntropy-ordered queue" {
+  shape: hexagon
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+csprint: "Sprint =\nFixed-capacity\nentropy batch" {
+  shape: hexagon
+  style: {
+    fill: "#FFCDD2"
+    stroke: "#E53935"
+  }
+}
+
+core -> mechanics
+mechanics -> impediments
+mechanics -> cheat

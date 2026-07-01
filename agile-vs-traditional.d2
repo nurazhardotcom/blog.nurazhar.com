@@ -1,0 +1,218 @@
+layout: elk
+direction: right
+
+title: "Agile vs Traditional (Waterfall)" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+# ─── TRADITIONAL SIDE ───
+
+Traditional: "TRADITIONAL (WATERFALL)" {
+  shape: text
+  style: {
+    font-size: 18
+    font-color: "#E53935"
+  }
+}
+
+sub_trad: "" {
+  trad_flow: "Sequential Phases" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#E53935"
+    }
+  }
+
+  Req: "Requirements" {
+    shape: rectangle
+    style: {
+      fill: "#FFCDD2"
+      stroke: "#E53935"
+    }
+  }
+
+  Design: "Design" {
+    shape: rectangle
+    style: {
+      fill: "#FFCDD2"
+      stroke: "#E53935"
+    }
+  }
+
+  Impl: "Implementation" {
+    shape: rectangle
+    style: {
+      fill: "#FFCDD2"
+      stroke: "#E53935"
+    }
+  }
+
+  Test: "Testing" {
+    shape: rectangle
+    style: {
+      fill: "#FFCDD2"
+      stroke: "#E53935"
+    }
+  }
+
+  Deploy: "Deployment" {
+    shape: rectangle
+    style: {
+      fill: "#FFCDD2"
+      stroke: "#E53935"
+    }
+  }
+
+  Req -> Design -> Impl -> Test -> Deploy: "one-way"
+
+  trad_delivery: "Delivery: Single release at end" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#C62828"
+    }
+  }
+
+  trad_flex: "Change: Resisted after sign-off" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#C62828"
+    }
+  }
+
+  trad_team: "Team: Hierarchical, PM directs" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#C62828"
+    }
+  }
+
+  trad_risk: "Risk: Discovered late at integration" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#C62828"
+    }
+  }
+}
+
+# ─── DIVIDER ───
+
+divider: "|" {
+  shape: text
+  style: {
+    font-size: 60
+    font-color: "#CCC"
+  }
+}
+
+# ─── AGILE SIDE ───
+
+Agile: "AGILE (SCRUM)" {
+  shape: text
+  style: {
+    font-size: 18
+    font-color: "#1E88E5"
+  }
+}
+
+sub_agile: "" {
+  agile_flow: "Iterative Loops" {
+    shape: text
+    style: {
+      font-size: 14
+      font-color: "#1E88E5"
+    }
+  }
+
+  Backlog: "Product\nBacklog" {
+    shape: cloud
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1E88E5"
+    }
+  }
+
+  Sprint: "Sprint\n(1-4 wks)" {
+    shape: rectangle
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#43A047"
+    }
+  }
+
+  Increment: "Usable\nIncrement" {
+    shape: hexagon
+    style: {
+      fill: "#E3F2FD"
+      stroke: "#1E88E5"
+    }
+  }
+
+  Feedback: "Feedback" {
+    shape: diamond
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#FB8C00"
+    }
+  }
+
+  Backlog -> Sprint -> Increment
+  Increment -> Feedback
+  Feedback -> Backlog: "adapt"
+
+  agile_delivery: "Delivery: Incremental every sprint" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#1565C0"
+    }
+  }
+
+  agile_flex: "Change: Welcomed anytime" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#1565C0"
+    }
+  }
+
+  agile_team: "Team: Self-managing, cross-functional" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#1565C0"
+    }
+  }
+
+  agile_risk: "Risk: Caught early via feedback loops" {
+    shape: text
+    style: {
+      font-size: 11
+      font-color: "#1565C0"
+    }
+  }
+}
+
+# ─── BOTTOM COMPARISON ───
+
+vs: "COMPARISON AT A GLANCE" {
+  shape: text
+  style: {
+    font-size: 16
+  }
+}
+
+c1: "Flexibility:      Change resisted  ←→  Change welcomed"
+c2: "Delivery:         Single big bang  ←→  Incremental every sprint"
+c3: "Collaboration:    Contract-driven  ←→  Continuous customer partnership"
+c4: "Team:             Hierarchical PM  ←→  Self-managing, empowered"
+c5: "Risk:             Late integration ←→  Early feedback loops"
+
+c1 -> c2 -> c3 -> c4 -> c5

@@ -1,0 +1,233 @@
+layout: elk
+
+title: "5 Scrum Values" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+subtitle: "The foundation that makes the 3-5-3 work" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+center: "Scrum\nValues" {
+  shape: hexagon
+  style: {
+    fill: "#1565C0"
+    stroke: "#0D47A1"
+    font-color: "#FFF"
+    font-size: 20
+    bold: true
+  }
+}
+
+commitment: "COMMITMENT" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    font-color: "#1565C0"
+    bold: true
+  }
+}
+
+focus: "FOCUS" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    font-color: "#2E7D32"
+    bold: true
+  }
+}
+
+openness: "OPENNESS" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+    font-color: "#FB8C00"
+    bold: true
+  }
+}
+
+respect: "RESPECT" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    font-color: "#8E24AA"
+    bold: true
+  }
+}
+
+courage: "COURAGE" {
+  shape: rectangle
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+    font-color: "#E53935"
+    bold: true
+  }
+}
+
+# ─── VALUE DESCRIPTIONS ───
+
+c_desc: "Personal commitment\nto Sprint Goal.\nDo whatever it takes\nto deliver as a team." {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#1565C0"
+  }
+}
+
+f_desc: "Focus on Sprint\nwork. Ignore\ndistractions. Protect\nthe Sprint Goal." {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#2E7D32"
+  }
+}
+
+o_desc: "Be transparent.\nShare progress,\nblockers, and\nconcerns openly." {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#FB8C00"
+  }
+}
+
+r_desc: "Respect different\nperspectives.\nTrust your team.\nAssume good intent." {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#8E24AA"
+  }
+}
+
+co_desc: "Have courage to\nspeak up, say no,\nand raise hard\ntruths early." {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#E53935"
+  }
+}
+
+# ─── ACTION / BEHAVIOR EXAMPLES ───
+
+c_action: "ACTION: Team pulls work\ninto Sprint, owns delivery\nend-to-end. No blame\ngame — team succeeds\nor fails together." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+f_action: "ACTION: Daily Scrum\naligned to Sprint Goal.\nNo context-switching.\nPO doesn't add work\nmid-Sprint." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+o_action: "ACTION: Burndown is\nvisible. Blockers raised\nin Daily Scrum.\nSprint Review shows\nreal progress." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+r_action: "ACTION: Devs challenge\nestimates respectfully.\nEveryone's voice heard.\nDecisions are team\ndecisions." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+co_action: "ACTION: Sprint Retro\nsays the hard thing.\nSM escalates blockers.\nDevs push back on\nunrealistic scope." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+# ─── CONNECTIONS ───
+
+center -> commitment
+center -> focus
+center -> openness
+center -> respect
+center -> courage
+
+commitment -> c_desc
+commitment -> c_action
+focus -> f_desc
+focus -> f_action
+openness -> o_desc
+openness -> o_action
+respect -> r_desc
+respect -> r_action
+courage -> co_desc
+courage -> co_action
+
+# ─── VALUE LABELS ───
+
+clabel: "Personal commitment to\nthe Sprint Goal" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+flabel: "Focus on Sprint work\nignore distractions" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+olabel: "Transparency in\nall things" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+rlabel: "Respect diverse\nperspectives" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+colabel: "Courage to speak\nhard truths" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+commitment -> clabel
+focus -> flabel
+openness -> olabel
+respect -> rlabel
+courage -> colabel

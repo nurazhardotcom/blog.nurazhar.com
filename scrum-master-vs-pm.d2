@@ -1,0 +1,155 @@
+layout: elk
+direction: right
+
+title: "Scrum Master vs Project Manager" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+subtitle: "Two roles, opposite mindsets — one serves, the other commands" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#666"
+  }
+}
+
+# ─── SCRUM MASTER SIDE ───
+
+SM_heading: "SCRUM MASTER" {
+  shape: text
+  style: {
+    font-size: 20
+    font-color: "#1E88E5"
+  }
+}
+
+SM_label: "Servant-Leader" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#1565C0"
+  }
+}
+
+SM_coach: "Coach & Mentor\nTeaches the team\nScrum and self-\nmanagement" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+SM_facilitate: "Facilitator\nRuns Sprint events,\nensures collaboration\nand outcomes" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+SM_blocker: "Blocker Remover\nShields the team from\ninterruptions and\nremoves impediments" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1E88E5"
+  }
+}
+
+SM_coach -> SM_facilitate
+SM_facilitate -> SM_blocker
+
+SM_authority: "Power: Influence only\nNo formal authority\nCannot fire, hire, or\nassign tasks" {
+  shape: hexagon
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#43A047"
+  }
+}
+
+SM_blocker -> SM_authority
+
+# ─── PROJECT MANAGER SIDE ───
+
+PM_heading: "PROJECT MANAGER" {
+  shape: text
+  style: {
+    font-size: 20
+    font-color: "#E53935"
+  }
+}
+
+PM_label: "Command & Control" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#C62828"
+  }
+}
+
+PM_direct: "Director\nAssigns tasks to\nindividuals, tells\nthem what to do" {
+  shape: rectangle
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+  }
+}
+
+PM_budget: "Budget & Timeline\nOwns the budget,\nschedule, and\nresource plan" {
+  shape: rectangle
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+  }
+}
+
+PM_report: "Reporting\nReports project\nstatus to\nstakeholders" {
+  shape: rectangle
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+  }
+}
+
+PM_direct -> PM_budget
+PM_budget -> PM_report
+
+PM_authority: "Power: Formal authority\nCan hire, fire, assign\nwork, and make\nexecutive decisions" {
+  shape: hexagon
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#EF6C00"
+  }
+}
+
+PM_report -> PM_authority
+
+# ─── DIVIDER ───
+
+divider: "|" {
+  shape: text
+  style: {
+    font-size: 80
+    font-color: "#CCC"
+  }
+}
+
+# ─── BOTTOM COMPARISON ───
+
+comparison: "HEAD-TO-HEAD COMPARISON" {
+  shape: text
+  style: {
+    font-size: 16
+  }
+}
+
+c1: "Servant-leader  ←→  Command & control"
+c2: "Coaches & facilitates  ←→  Directs & assigns"
+c3: "Removes blockers  ←→  Manages risk & issues"
+c4: "Influence (no authority)  ←→  Formal authority"
+c5: "Owns Scrum process  ←→  Owns budget & timeline"
+c6: "Shields team  ←→  Reports to stakeholders"
+
+c1 -> c2 -> c3 -> c4 -> c5 -> c6

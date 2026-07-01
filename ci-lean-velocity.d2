@@ -1,0 +1,269 @@
+direction: right
+
+title: "Continuous Improvement + Lean + Velocity" {
+  shape: text
+  style: {
+    font-size: 22
+  }
+}
+
+subtitle: "From Agile Principle 12, through Lean, to measurable outcomes" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#666"
+  }
+}
+
+# ============================================================
+# SECTION 1: Continuous Improvement Loop (Empiricism)
+# ============================================================
+
+ci_header: "CONTINUOUS IMPROVEMENT" {
+  shape: text
+  style: {
+    font-size: 15
+    font-color: "#0D47A1"
+    bold: true
+  }
+}
+
+ci_loop: "Empiricism\nLoop" {
+  shape: circle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    stroke-width: 2
+  }
+}
+
+ci_transparency: "Transparency\n(facts visible to all)" {
+  shape: rectangle
+  width: 180
+  style: {
+    fill: "#BBDEFB"
+    stroke: "#1565C0"
+    border-radius: 8
+  }
+}
+
+ci_inspection: "Inspection\n(check progress & quality)" {
+  shape: rectangle
+  width: 180
+  style: {
+    fill: "#BBDEFB"
+    stroke: "#1565C0"
+    border-radius: 8
+  }
+}
+
+ci_adaptation: "Adaptation\n(adjust based on feedback)" {
+  shape: rectangle
+  width: 180
+  style: {
+    fill: "#BBDEFB"
+    stroke: "#1565C0"
+    border-radius: 8
+  }
+}
+
+ci_12: "Agile Principle 12:\nRegular reflection → tune & adjust" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#1565C0"
+  }
+}
+
+kaizen: "Kaizen:\ncontinuous small improvements" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#1565C0"
+  }
+}
+
+ci_loop -> ci_transparency -> ci_inspection -> ci_adaptation -> ci_loop
+ci_loop -> ci_12
+ci_12 -> kaizen
+
+# ============================================================
+# SECTION 2: Lean Waste Elimination
+# ============================================================
+
+lean_header: "LEAN: 7 WASTES" {
+  shape: text
+  style: {
+    font-size: 15
+    font-color: "#B71C1C"
+    bold: true
+  }
+}
+
+wastes_group: "" {
+  shape: class
+  style: {
+    fill: "#FFF5F5"
+    stroke: "#E53935"
+    stroke-width: 2
+    border-radius: 12
+  }
+}
+
+w1: "Partially done work\n→ Done = shippable (DoD)" {
+  shape: rectangle
+  width: 240
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+    border-radius: 6
+    font-size: 10
+  }
+}
+w2: "Extra features\n→ YAGNI + PO prioritization"
+w3: "Relearning\n→ Shared ownership"
+w4: "Handoffs\n→ Cross-functional team + daily standup"
+w5: "Delays\n→ Timeboxed Sprint + WIP limits"
+w6: "Task switching\n→ One Sprint Goal + WIP limits"
+w7: "Defects\n→ Test in Sprint + automation + DoD"
+
+lean_benefits: "Benefits: ↑ product quality • ↑ team efficiency • ↑ innovation culture" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#B71C1C"
+  }
+}
+
+wastes_group -> w1
+wastes_group -> w2
+wastes_group -> w3
+wastes_group -> w4
+wastes_group -> w5
+wastes_group -> w6
+wastes_group -> w7
+
+ci_adaptation -> wastes_group
+wastes_group -> lean_benefits
+
+# ============================================================
+# SECTION 3: Velocity
+# ============================================================
+
+vel_header: "VELOCITY" {
+  shape: text
+  style: {
+    font-size: 15
+    font-color: "#1B5E20"
+    bold: true
+  }
+}
+
+vel_box: "Story Points\nper Sprint" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    border-radius: 8
+  }
+}
+
+vel_planning: "Improves\nplanning accuracy" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    border-radius: 8
+  }
+}
+
+vel_trends: "Reveals\nteam trends over time" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    border-radius: 8
+  }
+}
+
+vel_not_kpi: "NOT a\nperformance KPI" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#FFF9C4"
+    stroke: "#F57F17"
+    border-radius: 8
+  }
+}
+
+ci_loop -> vel_box
+vel_box -> vel_planning
+vel_box -> vel_trends
+vel_box -> vel_not_kpi
+
+# ============================================================
+# SCENARIO: Rapidly Changing Requirements (Slide 19)
+# ============================================================
+
+scen_header: "SCENARIO: Rapidly Changing Requirements" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#4A148C"
+    bold: true
+  }
+}
+
+scen_pri: "Prioritize\nhigh-value items\n(PO + backlog)" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    border-radius: 8
+  }
+}
+
+scen_wip: "WIP limits\n(focus, finish first)" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    border-radius: 8
+  }
+}
+
+scen_retro: "Sprint\nRetrospective\n(reflect & adapt)" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    border-radius: 8
+  }
+}
+
+scen_cross: "Cross-functional\nteam\n(no handoffs)" {
+  shape: rectangle
+  width: 160
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    border-radius: 8
+  }
+}
+
+scen_header -> scen_pri
+scen_header -> scen_wip
+scen_header -> scen_retro
+scen_header -> scen_cross
+
+# Connect scenario back to core concepts
+scen_pri -> wastes_group: "eliminates\nextra features"
+scen_wip -> wastes_group: "limits task\nswitching"
+scen_retro -> ci_loop: "feeds"
+scen_cross -> wastes_group: "reduces handoffs\n& relearning"

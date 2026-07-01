@@ -1,0 +1,157 @@
+layout: elk
+
+title: "PO Strategies for Clarity" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+subtitle: "Four levers to kill ambiguity and ship what matters" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+# ─── CENTRAL PO ───
+
+po: "Product\nOwner" {
+  shape: hexagon
+  style: {
+    fill: "#1565C0"
+    stroke: "#0D47A1"
+    font-color: "#FFF"
+    font-size: 20
+    bold: true
+  }
+}
+
+# ─── 4 STRATEGIES ───
+
+s1: "Regular Backlog\nRefinement" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    font-color: "#1565C0"
+    bold: true
+  }
+}
+
+s2: "Clear Acceptance\nCriteria (GWT)" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    font-color: "#2E7D32"
+    bold: true
+  }
+}
+
+s3: "Align Work with\nProduct Goal" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+    font-color: "#FB8C00"
+    bold: true
+  }
+}
+
+s4: "Proactive Stakeholder\nEngagement" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    font-color: "#8E24AA"
+    bold: true
+  }
+}
+
+po -> s1
+po -> s2
+po -> s3
+po -> s4
+
+# ─── DETAILS ───
+
+s1_detail: "• Review & estimate upcoming items\n• Break down large stories\n• 10% of team capacity per sprint" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+s2_detail: "• Given / When / Then format\n• Example: Given user is logged in,\n  When they click 'Submit',\n  Then order is confirmed" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+s3_detail: "• Every PBI maps to Product Goal\n• Kill low-value work early\n• Sprint Goal = step toward PG" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+s4_detail: "• Sprint Reviews as feedback magnets\n• Stakeholder demos > status reports\n• Dig out hidden assumptions" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+s1 -> s1_detail
+s2 -> s2_detail
+s3 -> s3_detail
+s4 -> s4_detail
+
+# ─── SCENARIO BLOCK ───
+
+scenario_title: "REAL-WORLD SCENARIO" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#E53935"
+    bold: true
+  }
+}
+
+scenario: "Unclear requirements + stakeholder resistance\nPO hasn't refined the backlog. Devs spend\nsprints building wrong things. Stakeholders\nblame the team, not the process.\n\n• Without refinement: devs interpret vaguely\n• Without GWT: acceptance is a surprise\n• Without goal alignment: team builds\n  features that don't move the needle\n• Without engagement: stakeholders\n  disengage until it's too late" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+  }
+}
+
+scenario_title -> scenario
+
+# ─── BENEFITS ───
+
+benefit_title: "BENEFITS" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#2E7D32"
+    bold: true
+  }
+}
+
+benefit: "✓ Predictable delivery cadence\n✓ Fewer mid-sprint surprises\n✓ Stakeholders stay bought-in\n✓ Team builds what users actually need\n✓ Less rework, more momentum" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#2E7D32"
+  }
+}
+
+benefit_title -> benefit

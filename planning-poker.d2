@@ -1,0 +1,143 @@
+layout: elk
+direction: right
+
+title: "Planning Poker Flow" {
+  shape: text
+  style: {
+    font-size: 26
+  }
+}
+
+subtitle: "Relative sizing beats hourly estimates" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+# ─── 5-STEP FLOW ───
+
+step1: "1. PO Presents\nUser Story" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    font-color: "#1565C0"
+    bold: true
+    font-size: 14
+  }
+}
+
+step2: "2. Devs Discuss\n& Ask Clarifications" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    font-color: "#2E7D32"
+    bold: true
+    font-size: 14
+  }
+}
+
+step3: "3. Private Vote\n(Fibonacci Cards)" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+    font-color: "#FB8C00"
+    bold: true
+    font-size: 14
+  }
+}
+
+step4: "4. Reveal Cards\n& Discuss Outliers" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+    font-color: "#8E24AA"
+    bold: true
+    font-size: 14
+  }
+}
+
+step5: "5. Reach\nConsensus" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#1B5E20"
+    font-color: "#1B5E20"
+    bold: true
+    font-size: 14
+  }
+}
+
+step1 -> step2 -> step3 -> step4 -> step5
+
+# ─── FIBONACCI REFERENCE ───
+
+fib: "Fibonacci Deck:\n1, 2, 3, 5, 8, 13, 21, 34, 55, ?" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#FB8C00"
+  }
+}
+
+# ─── OUTLIER LOOP ───
+
+loop: "↺ Repeat 3-4\nuntil consensus" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+    italic: true
+  }
+}
+
+step4 -> loop
+loop -> step3
+
+# ─── VELOCITY OUTPUT ───
+
+velocity: "Feeds Velocity\n→ Forecast future sprints" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#666"
+  }
+}
+
+step5 -> velocity: "sum of\naccepted\nestimates"
+
+# ─── TIPS ───
+
+tip1: "Don't round up estimates — they compound." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+tip2: "If > 13, the story is too big — split it." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+tip3: "Watch for anchoring when outliers speak." {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#999"
+    italic: true
+  }
+}
+
+tip1 -> tip2 -> tip3

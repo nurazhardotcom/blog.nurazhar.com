@@ -1,0 +1,128 @@
+direction: right
+
+title: "The Retrospective Engine" {
+  shape: text
+  style: {
+    font-size: 24
+  }
+}
+
+subtitle: "Agile Principle 12 — Inspect, Adapt, Improve" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+# ─── INSPECT-ADAPT LOOP ───
+
+center_loop: "Inspect-Adapt Loop" {
+  shape: circle
+  style: {
+    fill: "#1565C0"
+    stroke: "#0D47A1"
+    font-color: "#FFF"
+    font-size: 16
+    bold: true
+  }
+}
+
+inspect: "Inspect" {
+  shape: rectangle
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    font-color: "#1565C0"
+    bold: true
+  }
+}
+
+adapt: "Adapt" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+    font-color: "#2E7D32"
+    bold: true
+  }
+}
+
+improve: "Improve" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+    font-color: "#FB8C00"
+    bold: true
+  }
+}
+
+center_loop -> inspect: "review the sprint"
+inspect -> adapt: "identify gaps"
+adapt -> improve: "one change"
+improve -> center_loop: "next sprint"
+
+# ─── WHAT TO INSPECT ───
+
+inspect_items: "Inspect" {
+  processes: "Processes\n- How we work together\n- Sprint flow\n- Tooling friction"
+  interactions: "Interactions\n- Communication\n- Collaboration\n- Team dynamics"
+  practices: "Practices\n- Engineering standards\n- Definition of Done\n- Technical debt"
+}
+
+inspect -> processes
+inspect -> interactions
+inspect -> practices
+
+# ─── ADAPTATION OUTPUTS ───
+
+adapt_outputs: "Adaptation Outputs" {
+  action1: "1 Actionable\nImprovement"
+  owner: "Assigned\nOwner"
+  deadline: "Deadline\n(next Sprint)"
+}
+
+adapt -> action1
+action1 -> owner
+owner -> deadline
+
+# ─── BENEFITS ───
+
+benefits: "Why Retros Matter" {
+  kaizen: "Kaizen\nContinuous\nImprovement" {
+    style: {
+      fill: "#E8F5E9"
+      stroke: "#2E7D32"
+    }
+  }
+  safety: "Psychological\nSafety\nTrust & Openness" {
+    style: {
+      fill: "#FFF3E0"
+      stroke: "#FB8C00"
+    }
+  }
+  workflow: "Workflow\nOptimization\nEliminate Waste" {
+    style: {
+      fill: "#F3E5F5"
+      stroke: "#8E24AA"
+    }
+  }
+}
+
+center_loop -> kaizen: "compounds"
+center_loop -> safety: "builds"
+center_loop -> workflow: "drives"
+
+# ─── AGILE PRINCIPLE 12 ───
+
+p12: "Agile Principle #12\n\"At regular intervals, the team\nreflects on how to become more\neffective, then tunes and\nadjusts its behavior.\"" {
+  shape: text
+  style: {
+    font-size: 11
+    font-color: "#666"
+    italic: true
+  }
+}
+
+center_loop -> p12

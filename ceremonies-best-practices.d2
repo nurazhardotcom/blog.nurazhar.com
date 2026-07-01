@@ -1,0 +1,149 @@
+direction: down
+
+title: "Scrum Ceremonies Best Practices" {
+  shape: text
+  style: {
+    font-size: 24
+  }
+}
+
+subtitle: "Timeboxed events that power the empiricism loop" {
+  shape: text
+  style: {
+    font-size: 13
+    font-color: "#666"
+  }
+}
+
+# ─── SPRINT CONTAINER ───
+
+sprint: "SPRINT\n1-4 weeks" {
+  shape: square
+  style: {
+    fill: "#E3F2FD"
+    stroke: "#1565C0"
+    font-color: "#1565C0"
+    bold: true
+    font-size: 14
+  }
+}
+
+# ─── 5 EVENTS ───
+
+sprint_planning: "Sprint Planning\nMax 8 hrs (4 wks)\nMax 4 hrs (2 wks)\n\nWhat will we do?\nHow will we do it?\nWhy does it matter?" {
+  shape: rectangle
+  style: {
+    fill: "#E8F5E9"
+    stroke: "#2E7D32"
+  }
+}
+
+daily_scrum: "Daily Scrum\n15 mins\n\nWhat did we do?\nWhat's next?\nAny blockers?" {
+  shape: rectangle
+  style: {
+    fill: "#FFF3E0"
+    stroke: "#FB8C00"
+  }
+}
+
+sprint_review: "Sprint Review\nMax 4 hrs (4 wks)\nMax 2 hrs (2 wks)\n\nDemo the Increment\nGather feedback\nUpdate Product Backlog" {
+  shape: rectangle
+  style: {
+    fill: "#F3E5F5"
+    stroke: "#8E24AA"
+  }
+}
+
+sprint_retro: "Sprint Retrospective\nMax 3 hrs (4 wks)\nMax 1.5 hrs (2 wks)\n\nInspect process\nIdentify improvements\nPlan one change" {
+  shape: rectangle
+  style: {
+    fill: "#FFEBEE"
+    stroke: "#E53935"
+  }
+}
+
+backlog_refinement: "Backlog Refinement\nOngoing (10% capacity)\n\nBreak down items\nEstimate effort\nReprioritize" {
+  shape: rectangle
+  style: {
+    fill: "#E0F2F1"
+    stroke: "#00695C"
+  }
+}
+
+# ─── EVENT FLOW ───
+
+sprint_planning -> daily_scrum: "sets direction"
+daily_scrum -> daily_scrum: "daily loop"
+daily_scrum -> sprint_review: "shows progress"
+sprint_review -> sprint_retro: "collects feedback"
+sprint_retro -> sprint_planning: "feeds next"
+
+sprint -> sprint_planning: "starts with"
+sprint -> daily_scrum: "runs daily"
+sprint -> sprint_review: "ends with"
+sprint -> sprint_retro: "followed by"
+
+backlog_refinement -> sprint_planning: "prepares"
+
+# ─── BEST PRACTICE 1: STRICT TIMEBOXING ───
+
+bp1: "Best Practice #1: Strict Timeboxing + Clear Goals" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#1565C0"
+    bold: true
+  }
+}
+
+bp1_tip1: "Set a timer. When it rings — stop. No extensions."
+bp1_tip2: "Every event must have a stated goal before starting."
+bp1_tip3: "Timeboxes force focus and prevent meeting bloat."
+
+bp1 -> bp1_tip1
+bp1 -> bp1_tip2
+bp1 -> bp1_tip3
+
+# ─── BEST PRACTICE 2: ACTION-ORIENTED OUTCOMES ───
+
+bp2: "Best Practice #2: Action-Oriented Outcomes" {
+  shape: text
+  style: {
+    font-size: 14
+    font-color: "#2E7D32"
+    bold: true
+  }
+}
+
+bp2_tip1: "Sprint Planning → Sprint Goal + Sprint Backlog"
+bp2_tip2: "Daily Scrum → Updated plan for next 24h"
+bp2_tip3: "Sprint Review → Revised Product Backlog"
+bp2_tip4: "Sprint Retro → One actionable improvement"
+
+bp2 -> bp2_tip1
+bp2 -> bp2_tip2
+bp2 -> bp2_tip3
+bp2 -> bp2_tip4
+
+# ─── EMPIRICISM PILLARS ───
+
+emp_title: "Pillars of Empiricism" {
+  shape: text
+  style: {
+    font-size: 12
+    font-color: "#666"
+    bold: true
+  }
+}
+
+transparency: "Transparency"
+inspection_label: "Inspection"
+adaptation: "Adaptation"
+
+emp_title -> transparency
+emp_title -> inspection_label
+emp_title -> adaptation
+
+sprint_planning -> transparency: "visible plan"
+daily_scrum -> inspection_label: "daily check"
+sprint_retro -> adaptation: "improve"
