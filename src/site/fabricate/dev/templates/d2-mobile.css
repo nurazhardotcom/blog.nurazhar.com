@@ -12,4 +12,24 @@
     border-left: none;
     border-right: none;
   }
+
+  /* Standalone D2 SVGs are rendered via Pandoc's <figure> wrapper, not .d2-diagram.
+     The huge intrinsic width (e.g. 3344px) crushes into 390px viewports, making
+     labels unreadable. Let the figure scroll horizontally and enforce a minimum
+     readable width so text resolves at a legible size. */
+  .post-content figure {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: calc(-1 * var(--gap));
+    margin-right: calc(-1 * var(--gap));
+    padding: 0 var(--gap);
+  }
+
+  .post-content figure img[src$=".svg"] {
+    max-width: none;
+    width: max(220%, 880px);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
