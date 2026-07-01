@@ -28,15 +28,23 @@
 
 ;; Pre-computed set of all files in public/ relative to public-dir.
 ;; Used to check internal references without stat()-ing every one.
-(def existing-files
+;; We glob `**` (which works correctly in babashka.fs) and filter post-hoc for
+;; both .html files and the general existing-files set. The two-arg form
+;; `(fs/glob public-dir "**/*.html")` returned 0 files empirically — `**`
+;; alone does, so we derive both from a single walk.
+(def all-paths
   (->> (fs/glob public-dir "**")
-       (filter fs/file?)
-       (map str)
+       (map str)))
+
+(def existing-files
+  (->> all-paths
+       (filter fs/regular-file?)
        (map #(subs % (inc (count public-dir))))
        set))
 
-(def html-files (->> (fs/glob public-dir "**/*.html")
-                     (map str)
+(def html-files (->> all-paths
+                     (filter fs/regular-file?)
+                     (filter #(str/ends-with? % ".html"))
                      sort))
 
 (def ^:private attr-re #"(?:href|src)=[\"']([^\"']+)[\"']")
@@ -112,5 +120,6 @@
         (println (format "  - In %s: broken reference %s (expected at %s)"
                          src url target)))
       (System/exit 1))
-    (println "✅ All internal links are working perfectly!")
-    (System/exit 0)))
+    (do
+      (println "✅ All internal links are working perfectly!")
+      (System/exit 0))))
