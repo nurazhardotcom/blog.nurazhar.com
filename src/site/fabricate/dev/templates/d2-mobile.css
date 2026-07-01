@@ -30,7 +30,7 @@
   .post-content figure:has(img[src$=".svg"]) {
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 75vh;
+    max-height: clamp(500px, 75vh, 80vh);
     -webkit-overflow-scrolling: touch;
     margin-left: calc(-1 * var(--gap));
     margin-right: calc(-1 * var(--gap));
