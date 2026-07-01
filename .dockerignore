@@ -1,0 +1,8 @@
+.git
+.agents/
+.idea/
+.vscode/
+public/
+target/
+*.log
+.DS_Store
