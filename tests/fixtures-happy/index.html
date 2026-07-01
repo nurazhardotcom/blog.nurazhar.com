@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <!-- Good internal link to a sibling file that DOES exist. -->
+  <p><a href="sibling.html">good internal link</a></p>
+
+  <!-- External link: validator skips external schemes. -->
+  <p><a href="https://example.com">external link</a></p>
+
+  <!-- .md link: counted as md-link, not flagged broken. -->
+  <p><a href="source.md">md link (source ref)</a></p>
+
+  <!-- In-page anchor: validator skips #anchors. -->
+  <p><a href="#footer">anchored link</a></p>
+
+  <!-- Edge-case schemes that the validator's `external?` must accept.
+       If a future refactor breaks that predicate (e.g., drops mailto:),
+       the happy fixture's broken-link count would silently rise above 0
+       and fail the test. -->
+  <p><a href="mailto:hello@example.com">email link</a></p>
+  <p><a href="tel:+6512345678">phone link</a></p>
+  <p><a href="data:text/plain;base64,SGVsbG8=">data URI</a></p>
+</body>
+</html>
