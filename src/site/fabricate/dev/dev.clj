@@ -315,7 +315,7 @@
 ;; ─── Asset Copying ─────────────────────────────────────────────────
 
 (defn copy-assets
-  "Copy static assets (CSS) from templates dir to public/."
+  "Copy static assets (CSS + SVG) to public/."
   []
   (when (.isDirectory (io/file css-dir))
     (doseq [f (file-seq (io/file css-dir))
@@ -323,7 +323,14 @@
             :let [name (.getName f)]
             :when (str/ends-with? name ".css")]
       (io/copy f (io/file out-dir name))
-      (println "   📄 Copied" name))))
+      (println "   📄 Copied" name)))
+  ;; Copy standalone SVGs from root to public/
+  (let [root (io/file src-dir)]
+    (doseq [f (.listFiles root)
+            :when (and (.isFile f)
+                       (str/ends-with? (.getName f) ".svg"))]
+      (io/copy f (io/file out-dir (.getName f)))
+      (println "   🖼️  Copied" (.getName f)))))
 
 ;; ─── Sitemap Generator ─────────────────────────────────────────────
 
