@@ -1,49 +1,24 @@
 stages:
-  - build
   - deploy
 
-# Build & push the CI image, then publish the site.
+# pages: build the static site on a self-hosted runner and publish to
+# GitLab Pages.
 #
-# docker-build: builds the Dockerfile at repo root, pushes both
-#   :latest (so the next docker-build can use it as --cache-from)
-#   and :$CI_COMMIT_SHORT_SHA (so `pages` job this pipeline uses a known-good
-#   image even if a concurrent update mutated `latest`).
+# A self-hosted runner is exempt from GitLab.com's 400-min compute quota —
+# that quota only applies to GitLab-managed shared runners. The runner
+# here is `shell` executor with `bb`, `pandoc`, `d2`, `make`, and docker
+# (for any future docker-executor migration) installed natively; no
+# Docker-in-Docker image pull is needed.
 #
-# pages: runs `bb build` then `bb validate-links` (per AGENTS.md), uploads
-#   `public/` as a Pages artifact. Image SHA-pinned to avoid pulling a
-#   half-published `latest` if another pipeline run is in flight.
-
-variables:
-  DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: "tcp://docker:2375"
-  DOCKER_BUILDKIT: "1"
-
-docker-build:
-  stage: build
-  image: docker:27
-  services:
-    - name: docker:27-dind
-      alias: docker
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-  script:
-    - docker build --pull
-        --cache-from "$CI_REGISTRY_IMAGE:latest"
-        --build-arg BUILDKIT_INLINE_CACHE=1
-        -t "$CI_REGISTRY_IMAGE:latest"
-        -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
-        .
-    - docker push "$CI_REGISTRY_IMAGE:latest"
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+# Tag `homepage-self-hosted` matches the registered runner's tag-list,
+# so GitLab routes the build straight to this box and shared runners
+# never see the job. See `local-gitlab-runner-unlimited-ci.md` for the
+# architectural write-up.
 
 pages:
   stage: deploy
-  image: "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
-  needs:
-    - job: docker-build
-      artifacts: false
+  tags:
+    - homepage-self-hosted
   script:
     - bb build
     - bb validate-links
