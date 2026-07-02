@@ -11,6 +11,32 @@
 - No TOC, no footnotes, no fluff.
 - End with one-liner or takeaway.
 
+# D2 Diagram Framework
+
+When creating or editing diagrams in blog posts, use the three-tier decision framework to ensure mobile-friendly rendering:
+
+**Tier 1: Simple Relationships (2-4 nodes) → HTML Cards**
+- Use for diagrams showing simple relationships (e.g., system component flow, decision trees with ≤4 nodes)
+- Render as vertical HTML cards instead of D2 SVG
+- Ensures readable text at any width
+- Zero dependency on SVG rendering
+
+**Tier 2: Complex Diagrams (5+ nodes) → D2 SVG + CSS Scaling**
+- Use for architecture diagrams, framework overviews, and process flows
+- Use D2's layout engine for diagrams with ≥5 nodes and labeled connections
+- Apply `max-width: 100%` and `overflow-x: auto` CSS for mobile
+- SVG scales down proportionally, pinch-zoom available for detail
+
+**Tier 3: Data Comparisons → Markdown Tables**
+- Use for dimension-by-dimension comparisons (e.g., feature matrices)
+- Built-in `overflow-x: auto` on tables handles horizontal scrolling
+- More efficient than wide D2 containers
+
+Validation:
+- Auto-escape $ signs in D2 code before compilation (D2 v0.6.9 treats $ as substitution prefix)
+- Remove bare `direction:` directives outside ```d2 fences
+- Contact if in doubt
+
 # Git Workflow
 
 - Push to `origin` (GitLab) only — GitHub mirror is automatic via GitLab push mirror.

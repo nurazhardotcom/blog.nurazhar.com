@@ -31,28 +31,22 @@ direction: down
 
 User: "I want to buy X for $Y" {
   style.fill: "#f8f9fa"
-  style.stroke: "#dee2e6"
 }
 
 Butler: "Financial Butler" {
   style.fill: "#f8f9fa"
-  style.stroke: "#dee2e6"
   Check: "Check: current balance - (debt obligations + upcoming expenses + reserves)" {
     style.fill: "#ffffff"
-    style.stroke: "#dee2e6"
   }
 }
 
 Verdict: "Verdict:" {
   style.fill: "#f8f9fa"
-  style.stroke: "#dee2e6"
   Green: "Approved — $Y fits within discretionary budget" {
     style.fill: "#d4edda"
-    style.stroke: "#c3e6cb"
   }
   Red: "Rejected — $Y exceeds available discretionary funds" {
     style.fill: "#f8d7da"
-    style.stroke: "#f5c6cb"
   }
 }
 
