@@ -514,14 +514,17 @@ a:hover {
 
 /* ─── D2 Diagrams ──────────────────────────────────────────────── */
 .d2-diagram {
-  max-width: 100%;
+  /* 1100px matches the natural D2 intrinsic width (~1588px) scaled down
+     to a comfortable reading size on desktop. Mobile (≤640px) keeps parent
+     via the d2-mobile.css negative-margin breakout; standalone <figure>-wrapped SVGs scroll at very wide sizes. */
+  max-width: 1100px;
   margin: 2em auto;
   text-align: center;
 }
 
 .d2-diagram img,
 .d2-diagram svg {
-  max-width: 100%;
+  width: 100%;       /* fills the .d2-diagram block; SVG has viewBox so it scales proportionally */
   height: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -531,6 +534,18 @@ a:hover {
               box-shadow var(--transition), 
               filter var(--transition), 
               background-color var(--transition);
+}
+
+/* Desktop (≥1024px): break the diagram block out of the 70ch reading column
+   so the rendered SVG is ~1100px wide instead of being clipped at ~728px.
+   Uses viewport-aware negative-margin breakout, clamped so the diagram stays
+   within the page gutter on narrower screens (no horizontal scroll). */
+@media (min-width: 1024px) {
+  .post-content .d2-diagram {
+    width: min(1100px, calc(100vw - 2 * var(--gap)));
+    margin-left: max(auto, calc(-1 * (min(1100px, calc(100vw - 2 * var(--gap))) - 100%) / 2));
+    margin-right: max(auto, calc(-1 * (min(1100px, calc(100vw - 2 * var(--gap))) - 100%) / 2));
+  }
 }
 
 .d2-diagram img:hover,

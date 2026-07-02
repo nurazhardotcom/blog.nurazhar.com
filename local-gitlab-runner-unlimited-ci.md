@@ -96,41 +96,7 @@ That's the entire insight. The cost is not platform-level — it's *who owns the
 
 ## What Changed
 
-```d2
-direction: right
-
-title: "Where the job runs — before vs after" {
-  shape: text
-  near: top-center
-  style: {font-size: 24}
-}
-
-pushA: "git push" {shape: cloud}
-glA: "GitLab.com" {
-  style.fill: "#E3F2FD"
-  queueA: "Pipeline Queue\n(tag: homepage)" {shape: rectangle}
-  pagesA: "GitLab Pages\n(artifact: public/)" {
-    style.fill: "#C8E6C9"
-    shape: hexagon
-  }
-}
-laptop: "My Machine" {
-  shape: cloud
-  style.fill: "#E8F5E9"
-  runnerA: "gitlab-runner\nshell executor" {
-    style.fill: "#C8E6C9"
-    shape: hexagon
-  }
-  tools: "bb + pandoc + d2" {shape: cylinder}
-}
-
-pushA -> glA.queueA: "git push\nmain"
-glA.queueA -> laptop.runnerA: "pulls job\nby tag"
-laptop.runnerA -> laptop.tools: "uses"
-laptop.runnerA -> glA.pagesA: "uploads\npublic/"
-```
-
-Same `pages` job, identical artifact, GitLab Pages unchanged. Only difference: the executor is **my box** instead of GitLab's box. And since GitLab's quota model only taxes *GitLab's* box, I'm in the clear.
+Same `pages` job, identical artifact, GitLab Pages unchanged. Only difference: the executor is **my box** instead of GitLab's box. And since GitLab's quota model only taxes *GitLab's* box, I'm in the clear. The hero diagram above already shows the topology — no second pass needed.
 
 ## Cost Math
 
@@ -153,7 +119,7 @@ That image was the *reason* we even needed CI in the first place. On my own host
 - ✅ `docker-build` stage deleted
 - ✅ Runner switched from `docker` executor to `shell` executor
 - ✅ Build directly: `bb build && bb validate-links`
-- ✅ Pipeline drops from ~45s (broken DinD + image pull) to ~10s (native tools)
+- ✅ Pipeline drops from ~45s (broken DinD + image pull) to ~78s warm (`bb build` + `bb validate-links` measured locally on the host; ~88s end-to-end once GitLab runner handshake, checkout, and artifact upload are included)
 
 That's not just "faster" — it's an entire artifact of infrastructure erased because the constraint that justified it (*"we need a portable CI image"*) no longer applies when the CI literally *is* my portable image.
 
@@ -224,7 +190,7 @@ Self-hosting is great. It is not free:
 | Dimension | Shared runner | Self-hosted runner |
 |---|---|---|
 | **Quota cost** | Burns 400 min cap | $0 against quota |
-| **Speed (warm)** | ~45s (DinD boot + image pull) | ~10s (native tools) |
+| **Speed (warm)** | ~45s (DinD boot + image pull) | ~78s (`bb build` + `bb validate-links` natively) |
 | **Job sandboxing** | Yes (ephemeral container) | Limited on `shell` |
 | **Maintenance** | None (GitLab owns it) | Yours |
 | **Best for** | Teams, multi-person projects, security-sensitive inputs | Solo devs, daily pushing, low-risk builds |

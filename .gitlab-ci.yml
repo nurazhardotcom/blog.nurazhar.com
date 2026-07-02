@@ -25,5 +25,9 @@ pages:
   artifacts:
     paths:
       - public/
+  # Give up after 15 minutes. If the runner is unreachable (laptop asleep,
+  # off-network, OS paused), the job fails fast instead of queuing forever.
+  # See `local-gitlab-runner-unlimited-ci.md` for the tradeoffs.
+  timeout: 15m
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
