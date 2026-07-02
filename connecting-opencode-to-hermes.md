@@ -1,162 +1,95 @@
-title: "OpenCode + Hermes Agent: Architecture & Connection"
+Title: Connecting OpenCode to Hermes Agent — No GUI Required
+Date: 2026-07-02
+Tags: opencode, hermes, hermes-agent, cli, llm, ai-agents, architecture, devops, self-hosting
+Description: OpenCode and Hermes Agent both want to be your AI interface — but they serve different roles in the stack. Here's how to wire them together so they complement instead of compete.
+---
 
 ```d2
-direction: RIGHT
+direction: right
 
-# Nodes
-OpenCode: "OpenCode\n(UI: Terminal/Desktop)" as OpenCode
-HermesAPI: "Hermes Agent\nAPI Server (9119)" as HermesAPI
-HermesCore: "Hermes Core\n(routing + memory)" as HermesCore
-Models: "Any OpenAI-compatible\n(Cohere, GPT, etc.)" as Models
-Tools: "Hermes Tools\n(registry + exec)" as Tools
+OpenCode: "OpenCode\nTerminal / Desktop"
+HermesAPI: "Hermes Agent\nHTTP Server :9119"
+HermesCore: "Hermes Core\nRouting + Memory"
+Models: "Any LLM\nCohere / OpenAI / etc"
+Tools: "Hermes Tool\nRegistry + Exec"
 
-# Connections
-OpenCode -> HermesAPI: "HTTP/HTTPS\n(OpenAI API)"
-HermesAPI -> HermesCore: "Internal RPC"
-HermesCore -> Models: "Provider routing"
-HermesCore -> Tools: "Tool registry"
-HermesCore -> OpenCode: "Responses + memory"
-
-# Styling
-OpenCode: fill:#f0f8ff,stroke:#4682b4,stroke-width:2px
-HermesAPI: fill:#e6ffe6,stroke:#228b22,stroke-width:2px
-HermesCore: fill:#fff0e5,stroke:#ff8c00,stroke-width:2px
-Models: fill:#f5f5dc,stroke:#696969,stroke-width:2px
-Tools: fill:#fafad2,stroke:#8b4513,stroke-width:2px
-
-# Labels
-OpenCode.in: "Your interface\nto AI"
-HermesAPI.in: "Entry point\n(OpenAI compatible)"
-HermesCore.in: "The brain\n(routing + memory)"
-Models.in: "Actual LLMs\nany provider"
-Tools.in: "Actionable tools\nregistry + exec"
-
-# Legend
-legend: "OpenCode = UI\nHermesAPI = HTTP server\nHermesCore = Core logic\nModels = LLMs\nTools = Tool execution"
+OpenCode -> HermesAPI: "OpenAI-compatible\nPOST /v1/chat/completions"
+HermesAPI -> HermesCore: "Internal dispatch"
+HermesCore -> Models: "Provider router"
+HermesCore -> Tools: "Tool execution"
+HermesCore -> OpenCode: "Response + memory"
 ```
 
-# Architecture Overview
+I use both daily — OpenCode for the terminal interface, Hermes Agent for the memory and provider routing. They don't compete. They're two layers of the same stack. But connecting them took figuring out why the GUI captures the port.
 
-OpenCode sits between you and Hermes Agent. You talk to OpenCode (terminal or desktop). OpenCode makes OpenAI-compatible requests to Hermes Agent's HTTP server. Hermes Agent routes those requests to the actual model (Cohere, GPT, etc.) and manages conversation memory. It can also execute tools. Everything stays local for privacy.
+**OpenCode** is the UI layer (terminal/desktop). **Hermes Agent** is the backend (API server, provider router, persistent memory, tool registry). Together they form a local-first AI pipeline where nothing hits the cloud unless you route it that way.
 
-## Detailed Network Flow
+## The `--no-gui` Trick
 
-```d2
-direction: DOWN
+`hermes serve` launches the full Hermes Desktop GUI, which binds port 9119 and won't release it. OpenCode can't connect. The fix:
 
-# HTTP Request Flow
-Client: "OpenCode\n(terminal/desktop)" as Client
-HTTP: "POST /v1/chat/completions\nOpenAI API format" as HTTP
-Router: "Hermes Router\n(provider selection)" as Router
-LLM: "Cohere Command\n(cohere/command-a-plus-05-2026)" as LLM
-Response: "JSON response\n(back to OpenCode)" as Response
-
-Client -> HTTP: "User message + context"
-HTTP -> Router: "Parse + route"
-Router -> LLM: "Forward to chosen model"
-LLM -> Response: "Generate + format"
-Response -> HTTP: "Add memory context"
-HTTP -> Client: "Return final response"
+```bash
+hermes serve --no-gui &
 ```
 
-## OpenCode Configuration
+This starts the **HTTP server only** — no Electron window, no GUI rendering, just the OpenAI-compatible endpoint on port 9119. OpenCode talks to it like any OpenAI API.
 
-Edit `~/.config/opencode/opencode.json` (create if missing):
+| Mode | Port 9119 | OpenCode connects? | What you get |
+|------|-----------|-------------------|--------------|
+| `hermes serve` | GUI captures it | No | Desktop app |
+| `hermes serve --no-gui` | HTTP server | Yes | API-only backend |
+
+## Wiring OpenCode
+
+Point OpenCode at the Hermes endpoint. Config file at `~/.config/opencode/opencode.json`:
 
 ```json
 {
   "api": {
     "endpoint": "http://localhost:9119/v1",
     "model": "cohere/command-a-plus-05-2026",
-    "api_key": "your-openai-key-or-empty",
+    "api_key": "",
     "temperature": 0.7,
     "max_tokens": 4096
-  },
-  "memory": {
-    "persist": true,
-    "storage": "~/.local/share/opencode/memory"
   }
 }
 ```
 
-## Hermes Agent Configuration
+OpenCode sends OpenAI-format requests. Hermes translates, routes to the chosen provider, and returns the response with memory context attached.
 
-Hermes uses `config.yaml` in `~/.hermes/hermes-agent/`:
+## What Hermes Adds
 
-```yaml
-api:
-  enabled: true
-  port: 9119
-  cors_origins: ["*"]
+| Feature | Without Hermes | With Hermes |
+|---------|---------------|-------------|
+| **Model switching** | Change config manually | Router handles it |
+| **Memory** | Ephemeral | Persisted to SQLite |
+| **Tool execution** | OpenCode native only | Hermes registry + OpenCode |
+| **Provider abstraction** | None | Any OpenAI-compatible |
 
-providers:
-  - name: cohere
-    type: "cohere"
-    model: "command-a-plus-05-2026"
-    api_key: "${COHERE_API_KEY}"
+## The Network Flow
 
-memory:
-  backend: "sqlite"
-  path: "~/.local/share/hermes/memory.db"
+```d2
+direction: down
 
-tools:
-  registry_path: "~/.local/share/hermes/tools"
+OpenCode: "OpenCode CLI"
+Hermes: "Hermes Agent\n:9119"
+Router: "Provider Router"
+LLM: "Cohere command-\na-plus-05-2026"
+
+OpenCode -> Hermes: "POST /v1/chat/completions"
+Hermes -> Router: "Parse + select provider"
+Router -> LLM: "Forward request"
+LLM -> Router: "Stream tokens"
+Router -> Hermes: "Attach memory context"
+Hermes -> OpenCode: "JSON response"
 ```
 
-## Security & Privacy
+## Security
 
-| Aspect | Implementation | Result |
-|----|----------------|--------|
-|----|----------------|--------|
-| **Network** | Localhost only (127.0.0.1) | No external exposure |
-| **Data** | No cloud transmission | Your data stays local |
-| **Storage** | Encrypted SQLite | Memory persisted securely |
-| **Access** | File system permissions | Only you can read/write |
+Everything runs on localhost (`127.0.0.1`). No data leaves your machine unless you configure Hermes to route through a cloud provider. The memory persists in an encrypted SQLite database at `~/.local/share/hermes/memory.db`.
 
-## Performance Characteristics
+## The Takeaway
 
-- **Latency**: 50-200ms for local inference
-- **Throughput**: Single model ~2-3 RPS
-- **Memory**: ~500MB per active session
-- **CPU**: 4 cores recommended for Cohere models
+`hermes serve --no-gui` is the one-liner you need. OpenCode for the terminal. Hermes for the backend. Both on localhost, zero cloud dependency, one port.
 
-## Troubleshooting
-
-| Symptom | Check | Fix |
-|----|-------|-----|
-|----|-------|-----|
-| Can't connect | `curl http://localhost:9119/v1/models` | Start `hermes serve --no-gui` in background |
-| Wrong model | OpenCode shows different model | Verify Hermes config `providers[0].model` matches |
-| No memory | Conversations reset | Check `memory.persist: true` in both configs |
-| Tools not working | Tool calls fail | Ensure `tools.registry_path` exists and has YAML files |
-
-## Advanced Usage
-
-### Multiple Sessions
-
-```bash
-# Session A: coding
-opencode --session coding --model cohere/command-a-plus-05-2026
-
-# Session B: writing
-opencode --session writing --model openai/gpt-4
-```
-
-### Tool Execution
-
-Hermes tools are YAML files in `~/.local/share/hermes/tools/`:
-
-```yaml
-# tools/git.yaml
-name: git
-description: Git operations
-parameters:
-  commit_message: string
-  repository: string
-```
-
-OpenCode will auto-complete tool usage based on registry.
-
-> TL;DR: OpenCode is the UI, Hermes Agent is the brain. Run `--no-gui` to expose the API port. Configure both via JSON/YAML for full control.
-
-*Published from OpenCode terminal using Hermes Agent for model inference*
+*Published from OpenCode terminal — inference via Hermes Agent routing to Cohere command-a-plus-05-2026.*
