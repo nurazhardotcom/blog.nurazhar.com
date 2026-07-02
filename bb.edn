@@ -5,4 +5,9 @@
          validate-links {:doc "Validate all built internal hyperlinks"
                          :task (shell "bb scripts/validate_links.clj")}
          test {:doc "Smoke test for the link validator (runs scripts/validate_links.clj against a tiny fixture under tests/.test-workspace/)"
-               :task (shell "bb tests/run-test.bb")}}}
+               :task (shell "bb tests/run-test.bb")}
+         bench {:doc "Time a warm bb build + bb validate-links and print both real-times. Use the numbers when quoting build/pipeline benchmarks in blog posts — avoids stale claims like '~10s' that drift over time."
+                ;; Warm-up pass first so JIT caches land; then a single timed
+                ;; pass each. POSIX `time` writes `real <seconds>` to stderr
+                ;; which we filter through grep for a parseable single line.
+                :task (shell "bb build > /dev/null && echo 'bb build (warm):' && { time bb build > /dev/null; } 2>&1 | grep real && echo 'bb validate-links:' && { time bb validate-links > /dev/null; } 2>&1 | grep real")}}}

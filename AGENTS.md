@@ -15,6 +15,7 @@
 
 - Push to `origin` (GitLab) only — GitHub mirror is automatic via GitLab push mirror.
 - Run `bb build && bb test && bb validate-links` before committing (also wired into `.git/hooks/pre-commit`, but a manual run catches failures faster than waiting for the hook to abort).
+- Use `bb bench` to time a warm local build before quoting build / pipeline numbers in a blog post. Manual `time` measurements drift over time as the corpus grows and d2 SVG complexity shifts. The task is the audit trail.
 - Use `--no-verify` only if pre-commit hook blocks on pre-existing broken links (not your fault).
 
 # CI
