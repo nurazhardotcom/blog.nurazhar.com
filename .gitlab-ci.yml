@@ -19,6 +19,33 @@ pages:
   stage: deploy
   tags:
     - homepage-self-hosted
+  # Cache `public/` across pipeline runs on this self-hosted runner. Cache
+  # lives on the runner host in `~/.gitlab-runner/cache/...` — no upload
+  # cost to GitLab.com's object store.
+  #
+  # Content-hash key (4 source files): invalidates when dev pipeline or
+  # CSS changes within the same branch. dev.clj's mtime-skip catches
+  # individual .md changes within a cache hit. Note: this cache path
+  # intentionally widens past the originally requested `public/diagrams/`
+  # — caching all of `public/` is cheaper on restore and the user's
+  # `diagrams/` subset is already inside `public/`. The originally
+  # requested `.bb-cache/` does not exist in babashka (no built-in cache
+  # dir), so it's not added.
+  cache:
+    key:
+      files:
+        - bb.edn
+        - src/site/fabricate/dev/dev.clj
+        - src/site/fabricate/dev/templates/styles.css
+        - src/site/fabricate/dev/templates/d2-mobile.css
+    paths:
+      - public/
+    policy: pull-push
+  before_script:
+    # Tell dev.clj whether to skip clear-output + per-post pandoc (CI
+    # cache mode) or do a full cold build (no cache). Always-set env var
+    # avoids `set -e` brittleness with `&& ... || true` patterns.
+    - if [ -f public/index.html ]; then export CI_CACHE_PRESENT=1; else unset CI_CACHE_PRESENT; fi
   script:
     - bb build
     - bb validate-links

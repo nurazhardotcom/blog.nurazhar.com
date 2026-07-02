@@ -416,18 +416,24 @@
 ;; ─── Build ─────────────────────────────────────────────────────────
 
 (defn clear-output
-  "Clean and recreate the output directory."
+  "Clean and recreate the output directory. Honors CI_CACHE_PRESENT to
+  skip the destructive delete so cached d2 SVGs and pandoc HTML survive
+  between pipeline runs on the self-hosted runner. See .gitlab-ci.yml
+  cache block for the trigger; the per-post mtime check lives in `build`."
   []
   (let [d (io/file out-dir)]
-    (when (.exists d)
-      (println "🧹 Clearing" out-dir "...")
-      (let [all (reverse (vec (file-seq d)))]
-        (doseq [f all :when (.isFile f)]
-          (io/delete-file f true))
-        (doseq [f all :when (and (.isDirectory f) (not= f d))]
-          (io/delete-file f true))))
-    (.mkdirs d)
-    (println "✅ Output directory ready.")))
+    (if (= "1" (= "1" (System/getenv "CI_CACHE_PRESENT"))))
+      (println "⏭️  Skipping clear-output (CI cache present)")
+      (do
+        (when (.exists d)
+          (println "🧹 Clearing" out-dir "...")
+          (let [all (reverse (vec (file-seq d)))]
+            (doseq [f all :when (.isFile f)]
+              (io/delete-file f true))
+            (doseq [f all :when (and (.isDirectory f) (not= f d))]
+              (io/delete-file f true))))
+        (.mkdirs d)
+        (println "✅ Output directory ready.")))))
 
 (defn discover-posts
   "Find all .md files in the root directory (non-recursive),
@@ -458,9 +464,18 @@
   (let [posts (discover-posts)]
     ;; Generate individual post pages
     (doseq [post posts]
-      (let [out-file (str out-dir "/" (:slug post) ".html")]
-        (println "   ✍️ " (:slug post))
-        (spit out-file (render-post-html post))))
+      (let [out-file (str out-dir "/" (:slug post) ".html")
+            out-f (io/file out-file)
+            src-f (io/file src-dir (str (:slug post) ".md"))
+            cache-hit? (and (= "1" (= "1" (System/getenv "CI_CACHE_PRESENT"))))
+                            (.exists out-f)
+                            (.exists src-f)
+                            (>= (.lastModified out-f) (.lastModified src-f)))]
+        (if cache-hit?
+          (println "   ⏭️  " (:slug post) " (cached, mtime up-to-date)")
+          (do
+            (println "   ✍️ " (:slug post))
+            (spit out-file (render-post-html post))))))
 
     ;; Generate tag archive pages
     (println "   🏷️  Generating tag pages...")
