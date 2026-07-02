@@ -1,0 +1,29 @@
+direction: right
+
+USER: "Me\n(CachyOS / KDE / Wayland)" {
+  shape: person
+  style.stroke: "#2980b9"
+}
+
+TRIGGER: "Wait State\n(build / compile / paru)" {
+  style.stroke: "#f39c12"
+  style.fill: "#fef9e7"
+}
+
+FIREWALL: "4-Desktop Cognitive Firewall\n(KWin Special Rules)" {
+  DEV: "Desktop 1: DEV\nKonsole, Neovim, fish\nNo browser allowed"
+  WEB: "Desktop 2: WEB\nFirefox (docs, localhost)\nNo editor allowed"
+  OPS: "Desktop 3: OPS\nbtop, journalctl, deploy logs\nNo comms allowed"
+  COM: "Desktop 4: COM\nSlack, Signal, email\nMuted during flow"
+}
+
+OUTPUT: "Sequential Execution\n(single-threaded focus)" {
+  shape: "diamond"
+  style.stroke: "#27ae60"
+  style.fill: "#e8f8f5"
+}
+
+USER -> TRIGGER: "paru -S / bb build / compile"
+TRIGGER -> FIREWALL: "stay on current desktop"
+FIREWALL -> OUTPUT: "no context switch → keep focus"
+OUTPUT -> USER: "cycle complete"

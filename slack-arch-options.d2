@@ -1,0 +1,35 @@
+direction: right
+
+USER: "User\n(CachyOS / KDE / Wayland)" {
+  shape: person
+}
+
+AUR: "AUR" {
+  AUR_SWAY: "slack-desktop-wayland"
+  AUR_STD: "slack-desktop"
+  AUR_TERM: "slack-term"
+}
+
+FLATPAK: "Flathub" {
+  FS: "com.slack.Slack"
+}
+
+SLACK: "Slack API\n(upstream)" {
+  shape: cloud
+}
+
+RIPCORD: "Ripcord"
+
+BROWSER: "Browser\n(what we avoid)" {
+  shape: "code"
+}
+
+USER -> AUR: "paru -S"
+USER -> FLATPAK: "flatpak install"
+USER -> RIPCORD: "alternative"
+USER -> BROWSER: "last resort"
+AUR.AUR_SWAY -> SLACK: "Electron + Wayland"
+AUR.AUR_STD -> SLACK: "Electron (default)"
+AUR.AUR_TERM -> SLACK: "Terminal UI"
+FLATPAK -> SLACK: "Sandboxed"
+RIPCORD -> SLACK: "Native Qt"

@@ -431,14 +431,18 @@
 
 (defn discover-posts
   "Find all .md files in the root directory (non-recursive),
-   parse their frontmatter, return sorted list."
+   parse their frontmatter, return sorted list.
+   Excludes contributor artifacts (e.g. CHANGELOG.md) that live at the
+   repo root by convention but should not render as blog posts."
   []
   (let [root-dir (io/file src-dir)
-        md-files (->> (.listFiles root-dir)
-                      (filter #(and (.isFile %)
-                                    (str/ends-with? (.getName %) ".md")
-                                    (not (str/starts-with? (.getName %) "."))))
-                      (map #(.getAbsolutePath %)))]
+        excluded  #{"CHANGELOG.md"}
+        md-files  (->> (.listFiles root-dir)
+                       (filter #(and (.isFile %)
+                                     (str/ends-with? (.getName %) ".md")
+                                     (not (str/starts-with? (.getName %) "."))
+                                     (not (contains? excluded (.getName %)))))
+                       (map #(.getAbsolutePath %)))]
     (println (str "📄 Found " (count md-files) " markdown files."))
     (->> md-files
          (map parse-frontmatter)

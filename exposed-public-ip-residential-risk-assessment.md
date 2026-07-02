@@ -5,7 +5,7 @@ Description: I accidentally published my home IP in a blog post. Here's the actu
 
 ---
 
-I published my home public IP (`116.15.188.9`) in two blog posts. This is bad for PDPA compliance (it's personal data), but **how bad is it for actual security?**
+I published my home public IP in two blog posts. This is bad for PDPA compliance (it's personal data), but **how bad is it for actual security?**
 
 Let's walk through the real threat model.
 
@@ -97,7 +97,6 @@ If this happens consistently, you can request a new IP from your ISP or use a DD
 An IP reveals approximate location (usually the ISP's PoP, not your street address). For Singtel Fibre in Singapore, this typically resolves to:
 
 ```
-116.15.188.9
 City: Singapore
 ISP: Singtel Fibre (AS9506)
 Organization: Singapore Telecom
