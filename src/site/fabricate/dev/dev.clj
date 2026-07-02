@@ -422,7 +422,7 @@
   cache block for the trigger; the per-post mtime check lives in `build`."
   []
   (let [d (io/file out-dir)]
-    (if (= "1" (= "1" (System/getenv "CI_CACHE_PRESENT"))))
+    (if (System/getenv "CI_CACHE_PRESENT")
       (println "⏭️  Skipping clear-output (CI cache present)")
       (do
         (when (.exists d)
@@ -467,10 +467,10 @@
       (let [out-file (str out-dir "/" (:slug post) ".html")
             out-f (io/file out-file)
             src-f (io/file src-dir (str (:slug post) ".md"))
-            cache-hit? (and (= "1" (= "1" (System/getenv "CI_CACHE_PRESENT"))))
-                            (.exists out-f)
-                            (.exists src-f)
-                            (>= (.lastModified out-f) (.lastModified src-f)))]
+        cache-hit? (and (System/getenv "CI_CACHE_PRESENT")
+                        (.exists out-f)
+                        (.exists src-f)
+                        (>= (.lastModified out-f) (.lastModified src-f)))]
         (if cache-hit?
           (println "   ⏭️  " (:slug post) " (cached, mtime up-to-date)")
           (do
